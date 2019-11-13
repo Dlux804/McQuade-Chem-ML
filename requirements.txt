@@ -1,5 +1,6 @@
 certifi==2019.9.11
 cycler==0.10.0
+git+//github.com/bp-kelley/descriptastorus.git
 descriptastorus==2.2.0.2
 joblib==0.14.0
 kiwisolver==1.1.0

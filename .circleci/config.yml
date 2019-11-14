@@ -34,9 +34,10 @@ jobs:
           command: |
             pwd
             ls
+            source /opt/anaconda3/etc/profile.d/conda.sh
             conda env create -f mlapp.yml
             ls
-            source ~/repo/anaconda3/etc/profile.d/conda.sh
+            source /opt/anaconda3/etc/profile.d/conda.sh
             conda activate mlapp
 
       - save_cache:

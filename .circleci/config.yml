@@ -23,9 +23,9 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "mlapp.yml" }}
+            - condareqs-{{ checksum "mlapp.yml" }}
             # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+            - condareqs-
 
         # Install the necessary Python packages
       - run:
@@ -37,7 +37,7 @@ jobs:
       - save_cache:
           paths:
             - ./anaconda3/envs/mlapp
-          key: v1-dependencies-{{ checksum "mlapp.yml" }}
+          key: condareqs-{{ checksum "mlapp.yml" }}
       # run tests!
       # this example uses Django's built-in test-runner
       # other common Python testing frameworks include pytest and nose
@@ -46,7 +46,9 @@ jobs:
       - run:
           name: run tests
           command: |
+            pwd
             source ~/anaconda3/etc/profile.d/conda.sh
+            conda init bash
             conda activate mlapp
             python hte-models.py test
 

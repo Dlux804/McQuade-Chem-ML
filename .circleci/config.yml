@@ -34,7 +34,8 @@ jobs:
           command: |
             pwd
             ls
-            source /opt/anaconda3/etc/profile.d/conda.sh
+            echo "source activate myenv" > ~/.bashrc
+            source /opt/conda/etc/profile.d/conda.sh
             conda env create -f mlapp.yml
             ls
             source /opt/anaconda3/etc/profile.d/conda.sh

@@ -246,7 +246,6 @@ def replicate_model(df, params, n, title, feat):
     return r2_avg, r2_std, mse_avg, mse_std, rmse_avg, rmse_std
 
 
-
 def run_models(model,  tuning = False):
     results = pd.DataFrame([], columns=['Data Set', 'Features', 'Hyperparamters', 'r2_avg', 'r2_std', 'mse_avg', 'mse_std', 'rmse_avg', 'rmse_std'])
     if model == 'gdb':

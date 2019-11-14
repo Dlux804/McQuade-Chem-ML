@@ -46,6 +46,7 @@ jobs:
       - run:
           name: run tests
           command: |
+            source ~/anaconda3/etc/profile.d/conda.sh
             conda activate mlapp
             python hte-models.py test
 

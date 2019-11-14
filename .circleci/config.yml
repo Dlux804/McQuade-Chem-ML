@@ -29,8 +29,6 @@ jobs:
 
         # Install the necessary Python packages
         # activate conda env for future use
-        # echo "source activate myenv" > ~/.bashrc
-        # source /opt/conda/etc/profile.d/conda.sh
       - run:
           name: Install dependencies
           command: |
@@ -50,6 +48,7 @@ jobs:
       - run:
           name: run tests
           command: |
+            source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
             python hte-models.py test
 

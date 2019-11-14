@@ -31,7 +31,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            pwd
             conda env create -f mlapp.yml
+            source ~/anaconda3/etc/profile.d/conda.sh
             conda activate mlapp
 
       - save_cache:

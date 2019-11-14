@@ -37,8 +37,7 @@ jobs:
       - save_cache:
           paths:
             - ./anaconda3/envs/mlapp
-          key:
-            - v1-dependencies-{{ checksum "mlapp.yml" }}
+          key: v1-dependencies-{{ checksum "mlapp.yml" }}
       # run tests!
       # this example uses Django's built-in test-runner
       # other common Python testing frameworks include pytest and nose

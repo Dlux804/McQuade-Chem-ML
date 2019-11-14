@@ -40,7 +40,7 @@ jobs:
 
       - save_cache:
           paths:
-            - ./anaconda3/envs/mlapp
+            - /opt/conda/envs/mlapp
           key: condareqs-{{ checksum "mlapp.yml" }}
       # run tests!
       # this example uses Django's built-in test-runner
@@ -50,9 +50,6 @@ jobs:
       - run:
           name: run tests
           command: |
-            pwd
-            source ~/anaconda3/etc/profile.d/conda.sh
-            conda init bash
             conda activate mlapp
             python hte-models.py test
 

@@ -28,6 +28,7 @@ jobs:
             - condareqs-
 
         # Install the necessary Python packages
+        # activate conda env for future use
       - run:
           name: Install dependencies
           command: |

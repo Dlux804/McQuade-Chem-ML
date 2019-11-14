@@ -29,16 +29,13 @@ jobs:
 
         # Install the necessary Python packages
         # activate conda env for future use
+        # echo "source activate myenv" > ~/.bashrc
+        # source /opt/conda/etc/profile.d/conda.sh
       - run:
           name: Install dependencies
           command: |
-            pwd
-            ls
-            echo "source activate myenv" > ~/.bashrc
-            source /opt/conda/etc/profile.d/conda.sh
             conda env create -f mlapp.yml
-            ls
-            source /opt/anaconda3/etc/profile.d/conda.sh
+            source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
 
       - save_cache:

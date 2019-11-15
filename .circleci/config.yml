@@ -7,8 +7,8 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6
+      # using anaconda3 from continuumio
+      - image: continuumio/anaconda3
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -23,23 +23,23 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
+            - v2-condareqs-{{ checksum "mlapp.yml" }}
             # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+            - v2-condareqs-
 
+        # Install the necessary Python packages
+        # activate conda env for future use
       - run:
-          name: install dependencies
+          name: Install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install --upgrade pip
-            pip install -r requirements.txt
+            conda env create -f mlapp.yml
+            source /opt/conda/etc/profile.d/conda.sh
+            conda activate mlapp
 
       - save_cache:
           paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-
+            - /root/repo/dependencies/envs/mlapp
+          key: v2-condareqs-{{ checksum "mlapp.yml" }}
       # run tests!
       # this example uses Django's built-in test-runner
       # other common Python testing frameworks include pytest and nose
@@ -48,8 +48,10 @@ jobs:
       - run:
           name: run tests
           command: |
-            . venv/bin/activate
-            python hte-models.py test
+            source /opt/conda/etc/profile.d/conda.sh
+            conda activate mlapp
+            pytest test_tests.py
+
 
       - store_artifacts:
           path: test-reports

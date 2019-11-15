@@ -39,6 +39,7 @@ jobs:
       - save_cache:
           paths:
             - /opt/conda/envs/mlapp
+            - /root/repo/anaconda3/envs/mlapp
           key: condareqs-{{ checksum "mlapp.yml" }}
       # run tests!
       # this example uses Django's built-in test-runner

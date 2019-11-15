@@ -52,6 +52,7 @@ jobs:
             conda activate mlapp
             pytest test_tests.py
 
+
       - store_artifacts:
           path: test-reports
           destination: test-reports

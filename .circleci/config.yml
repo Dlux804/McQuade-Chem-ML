@@ -51,7 +51,7 @@ jobs:
           command: |
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
-            python hte-models.py test
+            python test_tests.py test
 
       - store_artifacts:
           path: test-reports

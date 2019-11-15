@@ -1,15 +1,12 @@
-import unittest
+def some_function(x):
+    return x+1
 
+class TestClass:
 
+    def test_answer(self):
+        k = some_function(4)
+        assert k == 5
 
-class TestSum(unittest.TestCase):
-    def test_sample(self):
-        """
-        Test that it can do a test
-        """
-        data = [1, 2, 3]
-        result = sum(data)
-        self.assertEqual(result, 6)
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_dtype(self):
+        k = some_function(4)
+        assert type(k) == int

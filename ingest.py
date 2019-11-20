@@ -11,7 +11,8 @@ def load_smiles(self, file):
         #                molob_col = pd.DataFrame(molob, columns = 'molobj')
         except:# TypeError:
             pass
-
+    # rename the column with SMILES to 'smiles'
+    csv = csv.rename(columns={smiles_col.name: "smiles"})
     return csv, smiles_col
 
 def ingest_test(self, k):

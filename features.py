@@ -1,14 +1,17 @@
-def feature_select(csv_file, model_name, selected_feat=None):
-    ''' Caclulate molecular features.  Returns DataFrame and list of selected features.
+from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
+import pandas as pd
+
+def feature_select(df, model_name, selected_feat=None):
+    """ Caclulate molecular features.  Returns DataFrame and list of selected features.
 
     Keyword arguments:
     selected_feat -- Features you want.  Default = None (require user input)
-    '''
+    """
 
-    df, smiles_col = csvhandling.findsmiles(csv_file)
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']
-    log.at[exp, 'Model Name'] = model_name
+
+    # Remove un-normalized feature option depending on model type
     if model_name == 'nn' or model_name == 'knn':
         feat_sets.remove('rdkit2d')
         print(feat_sets)
@@ -33,4 +36,25 @@ def feature_select(csv_file, model_name, selected_feat=None):
         print("You have selected the following featurizations: ", end="   ", flush=True)
         print(*selected_feat, sep=', ')
 
-    return df, smiles_col, selected_feat
+    # Use descriptastorus generator
+    generator = MakeGenerator(selected_feat)
+    columns = []
+
+    # get the names of the features for column labels
+    for name, numpy_type in generator.GetColumns():
+        columns.append(name)
+    smi = df['smiles']
+    data = []
+    print('Calculating features...', end=' ', flush=True)
+    for mol in smi:
+        # actually calculate the descriptors.  Function accepts a smiles
+        desc = generator.process(mol)
+        data.append(desc)
+    print('Done.')
+
+    # make dataframe of all features and merge with lipo df
+    features = pd.DataFrame(data, columns=columns)
+    df = pd.concat([df, features], axis=1)
+    df = df.dropna()
+
+    return df, selected_feat

@@ -91,7 +91,7 @@ def feature_select(csv_file, model_name, selected_feat = None):
         print(*selected_feat, sep=', ')
         
         
-    return df, smiles_col ,selected_feat
+    return selected_feat
 
 
 

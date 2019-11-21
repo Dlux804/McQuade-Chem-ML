@@ -27,4 +27,6 @@ environment on our repo (mlapp.yml).
  
  
 # Workflow
+This is the overview of how our object oriented code operates.  Obviously, it is incomplete just like our code. 
+Update it as you update the code.
 ![Alt text](./hte-models-overview.svg)

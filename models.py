@@ -9,7 +9,7 @@ model.results be the r2, rmse, time, etc.
 '''
 import ingest
 import features
-import parameters
+import grid
 class MlModel:
     def __init__(self, algorithm, dataset, target):
         """Learning algorithm, dataset and target property's column name."""
@@ -33,7 +33,7 @@ class MlModel:
         if tune:  # Do hyperparameter tuning
 
             # Make parameter grid
-            param_grid = parameters.make_grid(self.algorithm)
+            param_grid = grid.make_grid(self.algorithm)
 
 
 

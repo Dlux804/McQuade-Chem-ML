@@ -1,3 +1,5 @@
+# TODO: ADD DOC STRINGS!!!
+
 def Adaparamgrid():
     base_estimator = [tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=3), GradientBoostingRegressor(), SVR(kernel = 'linear'),RandomForestRegressor(n_estimators=500)]
     n_estimators = [int(x) for x in np.linspace(start = 50, stop = 1000, num = 30)]
@@ -73,6 +75,7 @@ def MLPparamgrid():
             'learning_rate': learning_rate,
             }
     return param_grid
+
 def KNNparamgrid():
     #Number of neighbors to use
     n_neighbors = [int(x) for x in np.linspace(start = 5, stop = 30, num = 20)]

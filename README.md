@@ -24,3 +24,8 @@ environment on our repo (mlapp.yml).
     See the mlapp.yml file for an example (descriptastorus) for an example of how to account for this
     in the mlapp.yml file.  
  4. Commit your changes, which include the mlapp.yml file. ```git commit -m "your commit message here"```
+ 
+ 
+# Workflow
+![Alt text](./hte-models-overview.svg)
+<img src="./hte-models-overview.svg">

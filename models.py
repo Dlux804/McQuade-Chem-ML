@@ -23,7 +23,7 @@ class MlModel:
 model1 = MlModel('rf', 'ESOL.csv')
 
 # Featurize molecules and add to class instance
-model1.data, model1.features = features.feature_select(model1.data, model1.algorithm)
+model1.data, model1.features = features.feature_select(model1.data, model1.algorithm, [0])
 
 what = model1.data
 

@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 
-def feature_select(df, model_name, selected_feat=None):
+def featurize(df, model_name, selected_feat=None):
     """ Caclulate molecular features.  Returns DataFrame and list of selected features.
 
     Keyword arguments:
@@ -20,7 +20,6 @@ def feature_select(df, model_name, selected_feat=None):
         if selected_feat == None:  # ask for features
             print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
             [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
-            # selected_feat = input('Choose your features from list above.  You can choose multiple with \'space\' delimiter')
             selected_feat = [int(x) for x in input(
                 'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
 
@@ -33,7 +32,6 @@ def feature_select(df, model_name, selected_feat=None):
         if selected_feat == None:  # ask for features
             print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
             [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
-            # selected_feat = input('Choose your features from list above.  You can choose multiple with \'space\' delimiter')
             selected_feat = [int(x) for x in input(
                 'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
         selected_feat = [feat_sets[i] for i in selected_feat]
@@ -64,7 +62,7 @@ def feature_select(df, model_name, selected_feat=None):
     return df, selected_feat
 
 
-def targets_features(df, random = None):
+def targets_features(df, train=0.8, random = None):
     '''Take in a data frame, the target column name, and list of columns to be dropped
     returns a numpy array with the target variable,
     a numpy array (matrix) of feature variables,
@@ -83,22 +81,22 @@ def targets_features(df, random = None):
     # convert features to numpy
     featuresarr = np.array(features)
 
-    train_percent = 0.8
+    train_percent = train
     test_percent = 1 - train_percent
     train_features, test_features, train_target, test_target = train_test_split(featuresarr, target,
                                                                                 test_size=test_percent,
                                                                                 random_state=random)  # what data to split and how to do it.
-    # print('Total Feature Shape:', features.shape)
-    # print('Total Target Shape', target.shape)
-    # print()
-    # print('Training Features Shape:', train_features.shape)
-    # print('Training Target Shape:', train_target.shape)
-    # print()
-    # print('Test Features Shape:', test_features.shape)
-    # print('Test Target Shape:', test_target.shape)
-    # print()
-    #
-    # print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
-    #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))
+    print('Total Feature Shape:', features.shape)
+    print('Total Target Shape', target.shape)
+    print()
+    print('Training Features Shape:', train_features.shape)
+    print('Training Target Shape:', train_target.shape)
+    print()
+    print('Test Features Shape:', test_features.shape)
+    print('Test Target Shape:', test_target.shape)
+    print()
+
+    print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
+          np.round(test_features.shape[0] / features.shape[0] * 100, -1))
 
     return train_features, test_features, train_target, test_target, feature_list

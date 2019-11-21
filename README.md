@@ -28,4 +28,3 @@ environment on our repo (mlapp.yml).
  
 # Workflow
 ![Alt text](./hte-models-overview.svg)
-<img src="./hte-models-overview.svg">

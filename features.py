@@ -1,5 +1,7 @@
 from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 import pandas as pd
+from sklearn.model_selection import train_test_split
+
 
 def feature_select(df, model_name, selected_feat=None):
     """ Caclulate molecular features.  Returns DataFrame and list of selected features.
@@ -25,6 +27,8 @@ def feature_select(df, model_name, selected_feat=None):
         selected_feat = [feat_sets[i] for i in selected_feat]
         print("You have selected the following featurizations: ", end="   ", flush=True)
         print(*selected_feat, sep=', ')
+
+    # un-normalized features are OK
     else:
         if selected_feat == None:  # ask for features
             print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
@@ -58,3 +62,43 @@ def feature_select(df, model_name, selected_feat=None):
     df = df.dropna()
 
     return df, selected_feat
+
+
+def targets_features(df, random = None):
+    '''Take in a data frame, the target column name, and list of columns to be dropped
+    returns a numpy array with the target variable,
+    a numpy array (matrix) of feature variables,
+    and a list of strings of the feature headers.'''
+
+    # make array of target values
+    target = np.array(df['exp'])
+
+    # remove target from features
+    # axis 1 is the columns.
+    features = df.drop(['exp', 'smiles'], axis=1)
+
+    # save list of strings of features
+    feature_list = list(features.columns)
+
+    # convert features to numpy
+    featuresarr = np.array(features)
+
+    train_percent = 0.8
+    test_percent = 1 - train_percent
+    train_features, test_features, train_target, test_target = train_test_split(featuresarr, target,
+                                                                                test_size=test_percent,
+                                                                                random_state=random)  # what data to split and how to do it.
+    # print('Total Feature Shape:', features.shape)
+    # print('Total Target Shape', target.shape)
+    # print()
+    # print('Training Features Shape:', train_features.shape)
+    # print('Training Target Shape:', train_target.shape)
+    # print()
+    # print('Test Features Shape:', test_features.shape)
+    # print('Test Target Shape:', test_target.shape)
+    # print()
+    #
+    # print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
+    #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))
+
+    return train_features, test_features, train_target, test_target, feature_list

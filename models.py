@@ -19,9 +19,11 @@ class MlModel:
     # featurize = features.feature_select
 
 
+# Initiate Model
+model1 = MlModel('rf', 'ESOL.csv')
 
-model1 = MlModel('rf', 'Lipophilicity-ID.csv')
-model1.data = features.feature_select(model1.data, model1.algorithm, [0])
+# Featurize molecules and add to class instance
+model1.data, model1.features = features.feature_select(model1.data, model1.algorithm)
 
 what = model1.data
 

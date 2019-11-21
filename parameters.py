@@ -1,6 +1,6 @@
 # TODO: ADD DOC STRINGS!!!
 
-
+import numpy as np
 def ada_paramgrid():
     base_estimator = [tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=3), GradientBoostingRegressor(), SVR(kernel = 'linear'),RandomForestRegressor(n_estimators=500)]
     n_estimators = [int(x) for x in np.linspace(start = 50, stop = 1000, num = 30)]
@@ -105,11 +105,17 @@ other_function(method):
     grid = grids(method)
     return grid
 '''
-grids = {
-    "ada" : ada_paramgrid,
-    'rf' : rf_paramgrid,
-    'svr': svr_paramgrid,
-    'gdb': gdb_paramgrid,
-    'mlp': mlp_paramgrid,
-    'knn': knn_paramgrid
-}
+def make_grid(method):
+    grids = {
+        "ada" : ada_paramgrid,
+        'rf' : rf_paramgrid,
+        'svr': svr_paramgrid,
+        'gdb': gdb_paramgrid,
+        'mlp': mlp_paramgrid,
+        'knn': knn_paramgrid
+    }
+    return grids[method]()
+
+# test = make_grid('rf')
+# print(test)
+

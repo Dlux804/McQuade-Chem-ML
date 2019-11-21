@@ -9,6 +9,7 @@ model.results be the r2, rmse, time, etc.
 '''
 import ingest
 import features
+import parameters
 class MlModel:
     def __init__(self, algorithm, dataset, target):
         """Learning algorithm, dataset and target property's column name."""
@@ -23,6 +24,19 @@ class MlModel:
             feats -- Features you want.  Default = None (requires user input)
         """
         self.data, self.feat_meth = features.featurize(self.data, self.algorithm, feats)
+
+    def run(self, tune=False):
+        """ Runs model. Returns log of results and graphs."""
+        # Split data up
+        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data)
+
+        if tune:  # Do hyperparameter tuning
+
+            # Make parameter grid
+            param_grid = parameters.make_grid(self.algorithm)
+
+
+
 
 
     # featurize = features.feature_select

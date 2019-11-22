@@ -2,6 +2,7 @@ name: mlapp
 channels:
   - anaconda-fusion
   - defaults
+  - rdkit
 dependencies:
   - numpy
   - pandas

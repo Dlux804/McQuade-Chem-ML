@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 
 
 def featurize(df, model_name, selected_feat=None):
-    """ Caclulate molecular features.  Returns DataFrame and list of selected features.
+    """ Caclulate molecular features.  Returns DataFrame and list of selected features (numeric values. i.e [0,4]).
 
     Keyword arguments:
     selected_feat -- Features you want.  Default = None (require user input)
@@ -63,10 +63,10 @@ def featurize(df, model_name, selected_feat=None):
 
 
 def targets_features(df, train=0.8, random = None):
-    '''Take in a data frame, the target column name, and list of columns to be dropped
+    """Take in a data frame, the target column name, and list of columns to be dropped
     returns a numpy array with the target variable,
     a numpy array (matrix) of feature variables,
-    and a list of strings of the feature headers.'''
+    and a list of strings of the feature headers."""
 
     # make array of target values
     target = np.array(df['exp'])

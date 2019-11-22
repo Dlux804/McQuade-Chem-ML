@@ -10,6 +10,7 @@ model.results be the r2, rmse, time, etc.
 import ingest
 import features
 import grid
+import regressors
 class MlModel:
     def __init__(self, algorithm, dataset, target):
         """Learning algorithm, dataset and target property's column name."""
@@ -29,11 +30,20 @@ class MlModel:
         """ Runs model. Returns log of results and graphs."""
         # Split data up
         train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data)
-
+        self.regressor = regressors.regressor(self.algorithm)
         if tune:  # Do hyperparameter tuning
+
+            # ask for tuning variables
+            folds = int(input('Please state the number of folds for hyperparameter searching: '))
+            iters = int(input('Please state the number of iterations for hyperparameter searching: '))
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)
+            params, param_dict, tuneTime = regressors.hyperTune(self.regressor, self.algorithm, train_features,
+                                                                train_target, param_grid, folds, iters, self.feat_meth)
+
+
+
 
 
 

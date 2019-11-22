@@ -227,7 +227,7 @@ def hyperTune(model,model_name, train_features, train_target, grid, folds, iters
     time_par = {str(model_name)+'-'+expt: (stop_tune-start_tune)}
     print('Best Parameter Found After ',(stop_tune-start_tune),"sec\n")
     print(tuned)
-    return tuned,param_dict, time_par
+    return tuned, param_dict, time_par
 
 #Graphs for ML results
 def pva_graphs(pva,model_name, expt):
@@ -303,6 +303,8 @@ def RegressHyper(train_features, test_features, train_target, test_target, csv_f
         params, param_dict,time_par = hyperTune(model,model_name, train_features, train_target,param.SVRparamgrid(),  folds, iters, expt)
         model = SVR(kernel = params['kernel'], C = params['C'], gamma = params['gamma'], epsilon = params['epsilon'], degree = params['degree'])
         r2_dict, mse_dict, rmse_dict, time_var = runRegress(model, model_name,train_features, test_features, train_target, test_target, expt)
+
+
     elif model_name == 'gdb':
         model = GradientBoostingRegressor()
         params,param_dict, time_par = hyperTune(model,model_name, train_features, train_target,param.GDBparamgrid(), folds, iters, expt)
@@ -311,6 +313,8 @@ def RegressHyper(train_features, test_features, train_target, test_target, csv_f
                                , min_samples_leaf=params['min_samples_leaf'],learning_rate = params['learning_rate'],
                                random_state=25)
         r2_dict, mse_dict, rmse_dict, time_var = runRegress(model, model_name,train_features, test_features, train_target, test_target, expt)
+
+
     elif model_name == 'ada':
         model = AdaBoostRegressor()
         params,param_dict, time_par = hyperTune(model,model_name, train_features, train_target,param.Adaparamgrid(), folds, iters, expt)

@@ -39,8 +39,12 @@ class MlModel:
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)
+
+            # Run Hyper Tuning
             params, param_dict, tuneTime = regressors.hyperTune(self.regressor, self.algorithm, train_features,
                                                                 train_target, param_grid, folds, iters, self.feat_meth)
+            # redefine regressor model with best parameters.
+            self.regressor = self.regressor()
 
 
 

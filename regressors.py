@@ -61,7 +61,6 @@ def regressor(model, tune=False):
         'knn': KNeighborsRegressor
     }
     return regressors[model]()
-    # if tune: # run hyperparamter tuning
-    #     params, param_dict, tune_time = hyperTune(regressors[model](),model,)
+
 
 

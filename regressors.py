@@ -12,6 +12,20 @@ from sklearn.svm import SVR
 from sklearn.model_selection import RandomizedSearchCV
 from time import time
 
+def regressor(model, tune=False):
+    """Returns model specific regressor function."""
+
+    # Create Dictionary of regressors to be called with self.algorithm as key.
+    regressors = {
+        'ada': AdaBoostRegressor,
+        'rf': RandomForestRegressor,
+        'svr': SVR,
+        'gdb': GradientBoostingRegressor,
+        'mlp': MLPRegressor,
+        'knn': KNeighborsRegressor
+    }
+    return regressors[model]
+
 
 def runRegress(model, model_name,train_features, test_features, train_target, test_target, expt):
     # TODO: Add doc string
@@ -46,25 +60,7 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1):
     return tuned, tune_time
 
 
-def regressor(model, tune=False):
-    """
-    Run machine learning regression specific to learning algorithm.
-    Returns dictionaries for r2, mse, rmse, and hyperparameters. Returns timing values as well.
 
-    Keyword Arguments:
-        tune -- Do Hyperparameter tuning (default=False)
-    """
-
-    # Create Dictionary of regressors to be called with self.algorithm as key.
-    regressors = {
-        'ada': AdaBoostRegressor,
-        'rf': RandomForestRegressor,
-        'svr': SVR,
-        'gdb': GradientBoostingRegressor,
-        'mlp': MLPRegressor,
-        'knn': KNeighborsRegressor
-    }
-    return regressors[model]
 
 
 

@@ -54,26 +54,17 @@ class MlModel:
 
 
 
-
-
-
-
-
-
-
-    # featurize = features.feature_select
-
-
 # Initiate Model
 model1 = MlModel('rf', 'water-energy.csv', 'expt')
 
-# Featurize molecules and add to class instance
-# model1.data, model1.features = features.featurize(model1.data, model1.algorithm, [0])
+# featurize data with rdkit2d
 model1.featurization([0])
-what = model1.data
-
-print(what)
 print(model1.feat_meth)
 
+# isolate dataframe
+what = model1.data
+print(what)
+
+# Run the model with hyperparameter optimization
 model1.run(tune=True)
 

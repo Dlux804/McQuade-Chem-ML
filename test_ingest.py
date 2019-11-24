@@ -8,6 +8,3 @@ class TestIngest(unittest.TestCase):
         csv, smiles_col = load_smiles(self, "water-energy.csv")
         assert type(csv) == pd.DataFrame
         assert type(smiles_col) == pd.Series
-
-
-

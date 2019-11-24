@@ -16,7 +16,7 @@ environment on our repo (mlapp.yml).
 1. Create an conda virual environment from the mlapp.yml file
  ```conda env create -f mlapp.yml```
  2. Update the virtual environment as necessary using ```conda install```
- 3. Update the mlapp.yml file using ```conda env export > mlapp.yml --no-builds```. Make sure that you add the 
+ 3. Update the mlapp.yml file using ```conda env export > mlapp.yml --no-builds --from-history```. Make sure that you add the 
  mlapp.yml file to git, if it not already being watched.
 
     **Note:** Sometimes packages cannot be installed from conda, such as descriptastorus.

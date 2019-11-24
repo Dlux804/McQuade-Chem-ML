@@ -11,6 +11,7 @@ import ingest
 import features
 import grid
 import regressors
+
 class MlModel:
     def __init__(self, algorithm, dataset, target):
         """Learning algorithm, dataset and target property's column name."""
@@ -29,36 +30,41 @@ class MlModel:
     def run(self, tune=False):
         """ Runs model. Returns log of results and graphs."""
         # Split data up
-        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data)
+        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data, self.target)
+
+        # set the model specific regressor function from sklearn
         self.regressor = regressors.regressor(self.algorithm)
+
         if tune:  # Do hyperparameter tuning
 
             # ask for tuning variables
             folds = int(input('Please state the number of folds for hyperparameter searching: '))
             iters = int(input('Please state the number of iterations for hyperparameter searching: '))
+            jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)
-            params, param_dict, tuneTime = regressors.hyperTune(self.regressor, self.algorithm, train_features,
-                                                                train_target, param_grid, folds, iters, self.feat_meth)
 
+            # Run Hyper Tuning
+            params,  tuneTime = regressors.hyperTune(self.regressor(), train_features,
+                                                                train_target, param_grid, folds, iters, jobs=jobs)
 
+            # redefine regressor model with best parameters.
+            self.regressor = self.regressor(**params)  # **dict will unpack a dictionary for use as keywrdargs
 
-
-
-
-
-
-    # featurize = features.feature_select
 
 
 # Initiate Model
-model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
+model1 = MlModel('rf', 'water-energy.csv', 'expt')
 
-# Featurize molecules and add to class instance
-# model1.data, model1.features = features.featurize(model1.data, model1.algorithm, [0])
+# featurize data with rdkit2d
 model1.featurization([0])
-what = model1.data
-
-print(what)
 print(model1.feat_meth)
+
+# isolate dataframe
+what = model1.data
+print(what)
+
+# Run the model with hyperparameter optimization
+model1.run(tune=True)
+

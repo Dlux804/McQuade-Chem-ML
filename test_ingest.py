@@ -4,10 +4,23 @@ import pandas as pd
 
 
 class TestIngest(unittest.TestCase):
-    def test_load_smiles(self):
-    """
-    This script is created to test if ingest.py is returning a csv and a SMILES column
-    """
-        csv, smiles_col = load_smiles(self, "water-energy.csv")  #Load the funtion
-        assert type(csv) == pd.DataFrame  #See if csv is a dataframe
-        assert type(smiles_col) == pd.Series  # See if smiles_col is a series
+    def test_load_smiles_dropfalse(self):
+        """
+        This script was made to test if ingest.py is returning a dataframe and a SMILES column when drop=False
+
+        """
+        csv, smiles_col = load_smiles(self, "water-energy.csv", drop=False)
+        self.assertEqual(type(csv), pd.DataFrame, 'Something is wrong, i can feel it')
+        self.assertEqual(type(smiles_col), pd.Series, 'Something is wrong, i can feel it')
+        # assert type(csv) == pd.DataFrame
+        # assert type(smiles_col) == pd.Series
+
+    def test_load_smiles_droptrue(self):
+        """
+        This script was made to test if ingest.py is returning a dataframe and a SMILES column when drop=True
+
+        """
+        csv, smiles_col = load_smiles(self, "water-energy.csv", drop=True)
+        self.assertEqual(type(csv), pd.DataFrame, 'Something is wrong, i can feel it')
+        self.assertEqual(type(smiles_col), pd.Series, 'Something is wrong, i can feel it')
+

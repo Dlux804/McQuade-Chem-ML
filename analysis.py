@@ -36,7 +36,7 @@ def replicate_model(self, n):
     t = np.empty(n)
     for i in range(0,n): # run model n times
         train_features, test_features, train_target, test_target, feature_list = features.targets_features(self.data, self.target, random=None)
-        pva , fit_time = predict(self.regressor(), train_features, test_features, train_target, test_target)
+        pva , fit_time = predict(self.regressor, train_features, test_features, train_target, test_target)
 
         r2[i] = r2_score(pva['actual'], pva['predicted'])
         mse[i] = mean_squared_error(pva['actual'], pva['predicted'])

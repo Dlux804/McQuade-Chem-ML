@@ -47,18 +47,22 @@ class MlModel:
             param_grid = grid.make_grid(self.algorithm)
 
             # Run Hyper Tuning
-            params,  tuneTime = regressors.hyperTune(self.regressor(), train_features,
+            params,  self.tuneTime = regressors.hyperTune(self.regressor(), train_features,
                                                                 train_target, param_grid, folds, iters, jobs=jobs)
 
             # redefine regressor model with best parameters.
             self.regressor = self.regressor(**params)  # **dict will unpack a dictionary for use as keywrdargs
+        else:
+            self.regressor = self.regressor() #make it callable?
+            self.tuneTime = 0
 
         # Done tuning, time to fit and predict
-        pva, fit_time = analysis.predict(self.regressor(), train_features, test_features, train_target, test_target)
+        pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
         self.graph = analysis.pva_graphs(pva, self.algorithm)
 
         # run the model 5 times and collect the metric stats as dictionary
         self.stats = analysis.replicate_model(self, 5)
+
 
 
 
@@ -74,7 +78,8 @@ what = model1.data
 print(what)
 
 # Run the model with hyperparameter optimization
-model1.run(tune=False)
+model1.run(tune=True)
+# print('Tune Time:', model1.tuneTime)
 
 # display PvA graph
 model1.graph.show()

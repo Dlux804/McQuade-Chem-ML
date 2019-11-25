@@ -14,12 +14,12 @@ import regressors
 import analysis
 
 class MlModel:
-    def __init__(self, algorithm, dataset, target):
+    def __init__(self, algorithm, dataset, target, drop=True):
         """Learning algorithm, dataset and target property's column name."""
         self.algorithm = algorithm
         self.dataset = dataset
         self.target = target
-        self.data, self.smiles = ingest.load_smiles(self,dataset)
+        self.data, self.smiles = ingest.load_smiles(self,dataset, drop)
 
     def featurization(self, feats=None):
         """ Featurizes molecules in dataset.

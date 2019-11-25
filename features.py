@@ -1,7 +1,7 @@
 from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 import pandas as pd
 from sklearn.model_selection import train_test_split
-
+import numpy as np
 
 def featurize(df, model_name, selected_feat=None):
     """ Caclulate molecular features.  Returns DataFrame and list of selected features (numeric values. i.e [0,4]).
@@ -62,18 +62,21 @@ def featurize(df, model_name, selected_feat=None):
     return df, selected_feat
 
 
-def targets_features(df, train=0.8, random = None):
-    """Take in a data frame, the target column name, and list of columns to be dropped
-    returns a numpy array with the target variable,
+def targets_features(df, exp, train=0.8, random = None):
+    """Take in a data frame, the target column name (exp).
+    Returns a numpy array with the target variable,
     a numpy array (matrix) of feature variables,
-    and a list of strings of the feature headers."""
+    and a list of strings of the feature headers.
+
+    Keyword Arguments
+    random -- Integer. Set random seed using in data splitting.  Default = None"""
 
     # make array of target values
-    target = np.array(df['exp'])
+    target = np.array(df[exp])  # exp input should be target variable string
 
     # remove target from features
     # axis 1 is the columns.
-    features = df.drop(['exp', 'smiles'], axis=1)
+    features = df.drop([exp, 'smiles'], axis=1)
 
     # save list of strings of features
     feature_list = list(features.columns)

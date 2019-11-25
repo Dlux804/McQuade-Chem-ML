@@ -193,23 +193,22 @@ class param:
 
 
 #Run ML for non hyperparameter
-def defaultML(model,model_name, train_features, test_features, train_target, test_target, expt):
+def predict(regressor, train_features, test_features, train_target, test_target):
     fit_time = time()
-    model.fit(train_features, train_target)
+    regressor.fit(train_features, train_target)
     done_time = time()
-    time_var = {str(model_name)+'-'+expt: (done_time-fit_time)}
+    fit_time = done_time - fit_time
     print('Finished Training After ',(done_time-fit_time),"sec\n")
     # Make predictions
-    predictions = model.predict(test_features)  # Val predictions
+    predictions = regressor.predict(test_features)  # Val predictions
 
     true = test_target
     pva = pd.DataFrame([], columns=['actual', 'predicted'])
     pva['actual'] = true
     pva['predicted'] = predictions
-    # print(pva)
 #    pva.to_csv(exp+expt+'-pva_data.csv')
 
-    return pva, time_var
+    return pva, fit_time
     
 #Hyper parameter tunes using RandomizedSearchCV
 def hyperTune(model,model_name, train_features, train_target, grid, folds, iters, expt):

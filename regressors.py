@@ -33,16 +33,16 @@ def hyperTune(model, model_name, train_features, train_target, grid, folds, iter
     # Fit the random search model
     search_random.fit(train_features, train_target)
     tuned = search_random.best_params_
-    param_dict = {str(model_name) + '-' + expt: tuned}
+    # param_dict = {str(model_name) + '-' + expt: tuned}
 
     stop_tune = time()
-    time_par = {str(model_name) + '-' + expt: (stop_tune - start_tune)}
+    time_par = stop_tune - start_tune
     print('Best Parameter Found After ', (stop_tune - start_tune), "sec\n")
     print(tuned)
-    return tuned, param_dict, time_par
+    return tuned, time_par
 
 
-def regressor(model, tune=False):
+def regressor(model):
     """
     Run machine learning regression specific to learning algorithm.
     Returns dictionaries for r2, mse, rmse, and hyperparameters. Returns timing values as well.

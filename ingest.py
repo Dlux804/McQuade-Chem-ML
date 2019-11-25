@@ -13,7 +13,7 @@ def load_smiles(self, file, drop=True):
             pd.DataFrame(list(map(Chem.MolFromSmiles, csv[i])))
             smiles_col = csv[i]
         #                molob_col = pd.DataFrame(molob, columns = 'molobj')
-        except:# TypeError:
+        except: # TODO: suppress these SMILES Parse Error
             pass
     # rename the column with SMILES to 'smiles'
     csv = csv.rename(columns={smiles_col.name: "smiles"})
@@ -22,7 +22,3 @@ def load_smiles(self, file, drop=True):
 
     return csv, smiles_col
 
-def ingest_test(self, k):
-    print('Successfully imported ingest function.')
-
-    return k + 5

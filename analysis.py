@@ -1,14 +1,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from time import time
+import pandas as pd
+from sklearn.metrics import mean_squared_error, r2_score
+
 
 def predict(regressor, train_features, test_features, train_target, test_target):
     """Fit model and predict target values.  Return data frame of actual and predicted
     values as well as model fit time."""
-    fit_time = time()
+    start_time = time()
+
     regressor.fit(train_features, train_target)
     done_time = time()
-    fit_time = done_time - fit_time
-    print('Finished Training After ',(done_time-fit_time),"sec\n")
+    fit_time = done_time - start_time
+    print('Finished Training After ',(done_time-start_time),"sec\n")
     # Make predictions
     predictions = regressor.predict(test_features)  # Val predictions
 
@@ -78,6 +83,6 @@ def pva_graphs(pva,model_name):
     # plt.axis([-2,5,-2,5]) #[-2,5,-2,5]
     ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
 
-    plt.savefig(model_name+'-' +'.png')
+    # plt.savefig(model_name+'-' +'.png')
     plt.show()
     return fig  # Can I store a graph as an attribute to a model?

@@ -11,6 +11,7 @@ import ingest
 import features
 import grid
 import regressors
+import analysis
 
 class MlModel:
     def __init__(self, algorithm, dataset, target):
@@ -29,8 +30,8 @@ class MlModel:
 
     def run(self, tune=False):
         """ Runs model. Returns log of results and graphs."""
-        # Split data up
-        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data, self.target)
+        # Split data up. Set random seed here for graph comparison purposes.
+        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data, self.target, random=42)
 
         # set the model specific regressor function from sklearn
         self.regressor = regressors.regressor(self.algorithm)
@@ -52,6 +53,10 @@ class MlModel:
             # redefine regressor model with best parameters.
             self.regressor = self.regressor(**params)  # **dict will unpack a dictionary for use as keywrdargs
 
+        # Done tuning, time to fit and predict
+        pva, fit_time = analysis.predict(self.regressor(), train_features, test_features, train_target, test_target)
+        self.graph = analysis.pva_graphs(pva, self.algorithm)
+
 
 
 # Initiate Model
@@ -66,5 +71,9 @@ what = model1.data
 print(what)
 
 # Run the model with hyperparameter optimization
-model1.run(tune=True)
+model1.run(tune=False)
+
+# model1.graph
+
+
 

@@ -76,7 +76,10 @@ print(what)
 # Run the model with hyperparameter optimization
 model1.run(tune=False)
 
-# model1.graph
+# display PvA graph
+model1.graph.show()
+
+# model statistics
 print(model1.stats)
 
 

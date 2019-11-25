@@ -90,5 +90,5 @@ def pva_graphs(pva,model_name):
     ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
 
     # plt.savefig(model_name+'-' +'.png')
-    plt.show()
-    return fig  # Can I store a graph as an attribute to a model?
+    # plt.show()
+    return plt  # Can I store a graph as an attribute to a model?

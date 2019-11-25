@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+# TODO: Add featurization timer
 def featurize(df, model_name, num_feat=None):
     """ Caclulate molecular features.  Returns DataFrame and list of selected features (numeric values. i.e [0,4]).
 

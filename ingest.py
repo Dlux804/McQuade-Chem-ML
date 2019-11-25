@@ -12,8 +12,8 @@ def load_smiles(self, file, drop=True):
         try:
             pd.DataFrame(list(map(Chem.MolFromSmiles, csv[i])))
             smiles_col = csv[i]
-        #                molob_col = pd.DataFrame(molob, columns = 'molobj')
-        except: # TODO: suppress these SMILES Parse Error
+
+        except Exception:  # TODO: suppress these SMILES Parse Error
             pass
     # rename the column with SMILES to 'smiles'
     csv = csv.rename(columns={smiles_col.name: "smiles"})

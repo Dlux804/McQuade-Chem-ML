@@ -3,11 +3,12 @@ import numpy as np
 from time import time
 import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
-
+import features
 
 def predict(regressor, train_features, test_features, train_target, test_target):
     """Fit model and predict target values.  Return data frame of actual and predicted
-    values as well as model fit time."""
+    values as well as model fit time.
+    regressor needs to have the '()' with it.  i.e it should be function(), not function"""
     start_time = time()
 
     regressor.fit(train_features, train_target)
@@ -25,33 +26,38 @@ def predict(regressor, train_features, test_features, train_target, test_target)
 
     return pva, fit_time
 
-def replicate_model(df, params, n, title, feat):
-    """Run model n times.  Take average and standar deviation of resulting metrics. """
+
+def replicate_model(self, n):
+    """Run model n times.  Return dictionary of r2, mse and rmse average and standard deviation."""
 
     r2 = np.empty(n)
     mse = np.empty(n)
     rmse = np.empty(n)
+    t = np.empty(n)
     for i in range(0,n): # run model n times
-        train_features, test_features, train_target, test_target, feature_list = targets_features(df, random=None)
-        pva = gdb_train_predict(params, train_features, test_features, train_target,
-                                            test_target,
-                                            title, feat)
+        train_features, test_features, train_target, test_target, feature_list = features.targets_features(self.data, self.target, random=None)
+        pva , fit_time = predict(self.regressor(), train_features, test_features, train_target, test_target)
 
         r2[i] = r2_score(pva['actual'], pva['predicted'])
         mse[i] = mean_squared_error(pva['actual'], pva['predicted'])
         rmse[i] = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
+        t[i] = fit_time
 
-    # TODO: Should I store these results in a dictonary?
-    r2_avg = r2.mean()
-    r2_std = r2.std()
-    mse_avg = mse.mean()
-    mse_std = mse.std()
-    rmse_avg = rmse.mean()
-    rmse_std = rmse.std()
-    print('Average R^2 = %.3f' % r2_avg, '+- %.3f' % r2_std)
-    print('Average RMSE = %.3f' % rmse_avg, '+- %.3f' % rmse_std)
+    stats = {
+        'r2_avg': r2.mean(),
+        'r2_std': r2.std(),
+        'mse_avg': mse.mean(),
+        'mse_std': mse.std(),
+        'rmse_avg': rmse.mean(),
+        'rmse_std': rmse.std(),
+        'time_avg': t.mean(),
+        'time_std': t.std()
+    }
+
+    print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])
+    print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
     print()
-    return r2_avg, r2_std, mse_avg, mse_std, rmse_avg, rmse_std
+    return stats
 
 
 def pva_graphs(pva,model_name):

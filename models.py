@@ -57,6 +57,9 @@ class MlModel:
         pva, fit_time = analysis.predict(self.regressor(), train_features, test_features, train_target, test_target)
         self.graph = analysis.pva_graphs(pva, self.algorithm)
 
+        # run the model 5 times and collect the metric stats as dictionary
+        self.stats = analysis.replicate_model(self, 5)
+
 
 
 # Initiate Model
@@ -74,6 +77,7 @@ print(what)
 model1.run(tune=False)
 
 # model1.graph
+print(model1.stats)
 
 
 

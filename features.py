@@ -3,11 +3,11 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-def featurize(df, model_name, selected_feat=None):
+def featurize(df, model_name, num_feat=None):
     """ Caclulate molecular features.  Returns DataFrame and list of selected features (numeric values. i.e [0,4]).
 
     Keyword arguments:
-    selected_feat -- Features you want.  Default = None (require user input)
+    num_feat -- Features you want by their numerical value.  Default = None (require user input)
     """
 
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
@@ -17,24 +17,24 @@ def featurize(df, model_name, selected_feat=None):
     if model_name == 'nn' or model_name == 'knn':
         feat_sets.remove('rdkit2d')
         print(feat_sets)
-        if selected_feat == None:  # ask for features
+        if num_feat == None:  # ask for features
             print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
             [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
-            selected_feat = [int(x) for x in input(
+            num_feat = [int(x) for x in input(
                 'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
 
-        selected_feat = [feat_sets[i] for i in selected_feat]
+        selected_feat = [feat_sets[i] for i in num_feat]
         print("You have selected the following featurizations: ", end="   ", flush=True)
         print(*selected_feat, sep=', ')
 
     # un-normalized features are OK
     else:
-        if selected_feat == None:  # ask for features
+        if num_feat == None:  # ask for features
             print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
             [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
-            selected_feat = [int(x) for x in input(
+            num_feat = [int(x) for x in input(
                 'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
-        selected_feat = [feat_sets[i] for i in selected_feat]
+        selected_feat = [feat_sets[i] for i in num_feat]
         print("You have selected the following featurizations: ", end="   ", flush=True)
         print(*selected_feat, sep=', ')
 
@@ -59,7 +59,7 @@ def featurize(df, model_name, selected_feat=None):
     df = pd.concat([df, features], axis=1)
     df = df.dropna()
 
-    return df, selected_feat
+    return df, num_feat
 
 
 def targets_features(df, exp, train=0.8, random = None):

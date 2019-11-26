@@ -99,21 +99,48 @@ def pvaM_graphs(pvaM):
     mse = mean_squared_error(pvaM['actual'], pvaM['pred_avg'])
     rmse = np.sqrt(mean_squared_error(pvaM['actual'], pvaM['pred_avg']))
 
-    plt.rcParams['figure.figsize'] = [15, 9]
+    plt.rcParams['figure.figsize'] = [12, 9]
     plt.style.use('bmh')
     fig, ax = plt.subplots()
     norm = cm.colors.Normalize(vmax=pvaM['pred_std'].max(), vmin=pvaM['pred_std'].min())
-
-    plt.scatter(pvaM['actual'], pvaM['pred_avg'], c=pvaM['pred_std'], cmap='plasma', norm=norm, alpha=0.8)
+    x = pvaM['actual']
+    y = pvaM['pred_avg']
+    plt.scatter(x, y, c=pvaM['pred_std'], cmap='plasma', norm=norm, alpha=0.8)
     cbar = plt.colorbar()
     cbar.set_label("Uncertainty")
+
+    # set axis limits
+    lims = [np.min([ax.get_xlim(), ax.get_ylim()]),
+            np.max([ax.get_xlim(), ax.get_ylim()])
+            ]
+
+    # TODO: add histograms on axes
+    # # definitions for the axes
+    # left, width = 0.1, 0.65
+    # bottom, height = 0.1, 0.65
+    # spacing = 0.005
+    # rect_histx = [left, bottom + height + spacing, width, 0.2]
+    # rect_histy = [left + width + spacing, bottom, 0.2, height]
+    # ax_histx = plt.axes()
+    # ax_histx.tick_params(direction='in', labelbottom=False)
+    # ax_histy = plt.axes()
+    # ax_histy.tick_params(direction='in', labelleft=False)
+    # binwidth = 0.025
+    # lim = np.ceil(np.abs([x, y]).max() / binwidth) * binwidth
+    # bins = np.arange(-lim, lim + binwidth, binwidth)
+    # ax_histx.hist(x, bins=bins)
+    # ax_histy.hist(y, bins=bins, orientation='horizontal')
+
+    # ax_histx.set_xlim(ax_scatter.get_xlim())
+    # ax_histy.set_ylim(ax_scatter.get_ylim())
+    # ------------------------------------------------
+
+
     # ax = plt.axes()
     plt.xlabel('True', fontsize=14)
     plt.ylabel('Predicted', fontsize=14)
     plt.title('EXP: COLOR')  # TODO: Update naming scheme
-    lims = [np.min([ax.get_xlim(), ax.get_ylim()]),
-            np.max([ax.get_xlim(), ax.get_ylim()])
-            ]
+
     plt.plot(lims, lims, 'k-', label='y=x')
     plt.plot([], [], ' ', label='R^2 = %.3f' % r2)
     plt.plot([], [], ' ', label='RMSE = %.3f' % rmse)

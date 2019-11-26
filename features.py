@@ -2,15 +2,21 @@ from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
+from time import time
 
 # TODO: Add featurization timer
 def featurize(df, model_name, num_feat=None):
-    """ Caclulate molecular features.  Returns DataFrame and list of selected features (numeric values. i.e [0,4]).
+    """ Caclulate molecular features.  Returns DataFrame,
+     list of selected features (numeric values. i.e [0,4]), and
+      time to featurize
 
     Keyword arguments:
     num_feat -- Features you want by their numerical value.  Default = None (require user input)
     """
 
+
+
+    # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']
 
@@ -39,6 +45,8 @@ def featurize(df, model_name, num_feat=None):
         print("You have selected the following featurizations: ", end="   ", flush=True)
         print(*selected_feat, sep=', ')
 
+    # Start timer
+    start_feat = time()
     # Use descriptastorus generator
     generator = MakeGenerator(selected_feat)
     columns = []
@@ -54,13 +62,15 @@ def featurize(df, model_name, num_feat=None):
         desc = generator.process(mol)
         data.append(desc)
     print('Done.')
+    stop_feat = time()
+    feat_time = stop_feat - start_feat
 
     # make dataframe of all features and merge with lipo df
     features = pd.DataFrame(data, columns=columns)
     df = pd.concat([df, features], axis=1)
     df = df.dropna()
 
-    return df, num_feat
+    return df, num_feat, feat_time
 
 
 def targets_features(df, exp, train=0.8, random = None):
@@ -71,6 +81,7 @@ def targets_features(df, exp, train=0.8, random = None):
 
     Keyword Arguments
     random -- Integer. Set random seed using in data splitting.  Default = None"""
+
 
     # make array of target values
     target = np.array(df[exp])  # exp input should be target variable string

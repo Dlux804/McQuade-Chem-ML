@@ -150,6 +150,9 @@ def pvaM_graphs(pvaM):
     # plt.axis([-2,5,-2,5]) #[-2,5,-2,5]
     ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
 
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
+
     # plt.savefig(model_name+'-' +'.png')
     # plt.show()
     return plt
@@ -182,6 +185,9 @@ def pva_graphs(pva,model_name):
     ax.set_ylim(lims)
     # plt.axis([-2,5,-2,5]) #[-2,5,-2,5]
     ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
+
 
     # plt.savefig(model_name+'-' +'.png')
     # plt.show()

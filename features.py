@@ -21,7 +21,7 @@ def featurize(df, model_name, num_feat=None):
                  'morganchiral3counts', 'atompaircounts']
 
     # Remove un-normalized feature option depending on model type
-    if model_name == 'nn' or model_name == 'knn':
+    if model_name == 'mlp' or model_name == 'knn':
         feat_sets.remove('rdkit2d')
         print(feat_sets)
         if num_feat == None:  # ask for features

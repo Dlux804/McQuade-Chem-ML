@@ -67,6 +67,10 @@ class MlModel:
 
         # Done tuning, time to fit and predict
         pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
+
+        # test multipredict
+        self.pvaM, fits_time = analysis.multipredict(self.regressor,train_features, test_features, train_target, test_target)
+        self.graphM = analysis.pvaM_graphs(self.pvaM)
         self.graph = analysis.pva_graphs(pva, self.algorithm)
 
         # run the model 5 times and collect the metric stats as dictionary
@@ -110,19 +114,20 @@ class MlModel:
 
 
 # Initiate Model
-model1 = MlModel('rf', 'water-energy.csv', 'expt')
+model1 = MlModel('gdb', 'ESOL.csv', 'water-sol')
 
 # featurize data with rdkit2d
-model1.featurization([0,2])
+model1.featurization([1,4])
 print(model1.feat_meth)
 
 
 # Run the model with hyperparameter optimization
 model1.run(tune=False)
 # print('Tune Time:', model1.tuneTime)
+print(model1.pvaM)
 
 # display PvA graph
-model1.graph.show()
+model1.graphM.show()
 
 # model statistics
 print(model1.stats)

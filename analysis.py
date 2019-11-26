@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib import cm
 import numpy as np
 from time import time
 import pandas as pd
@@ -59,6 +60,72 @@ def replicate_model(self, n):
     print()
     return stats
 
+
+def multipredict(regressor, train_features, test_features, train_target, test_target, n=5):
+    """Predict each point multiple times to calculate uncertainty."""
+
+    start_time = time()
+    # create dataframe for predicted values
+    pva = pd.DataFrame([])
+
+
+    for i in range(0,n): # loop n times
+
+        regressor.fit(train_features, train_target)
+
+        # Make predictions
+        predictions = regressor.predict(test_features)
+
+        # store as enumerated column
+        pva['predicted'+str(i)] = predictions
+
+    # pva.to_csv(exp+expt+'-pva_data.csv')
+    done_time = time()
+    fit_time = done_time - start_time
+
+    pva['pred_avg'] = pva.mean(axis=1)
+    pva['pred_std'] = pva.std(axis=1)
+    pva['actual'] = test_target
+
+    return pva, fit_time
+
+
+def pvaM_graphs(pvaM):
+    """
+    Make Predicted vs. Actual graph with prediction uncertainty.
+    Pass dataframe from multipredict function. Return a graph.
+    """
+    r2 = r2_score(pvaM['actual'], pvaM['pred_avg'])
+    mse = mean_squared_error(pvaM['actual'], pvaM['pred_avg'])
+    rmse = np.sqrt(mean_squared_error(pvaM['actual'], pvaM['pred_avg']))
+
+    plt.rcParams['figure.figsize'] = [15, 9]
+    plt.style.use('bmh')
+    fig, ax = plt.subplots()
+    norm = cm.colors.Normalize(vmax=pvaM['pred_std'].max(), vmin=pvaM['pred_std'].min())
+
+    plt.scatter(pvaM['actual'], pvaM['pred_avg'], c=pvaM['pred_std'], cmap='plasma', norm=norm, alpha=0.8)
+    cbar = plt.colorbar()
+    cbar.set_label("Uncertainty")
+    # ax = plt.axes()
+    plt.xlabel('True', fontsize=14)
+    plt.ylabel('Predicted', fontsize=14)
+    plt.title('EXP: COLOR')  # TODO: Update naming scheme
+    lims = [np.min([ax.get_xlim(), ax.get_ylim()]),
+            np.max([ax.get_xlim(), ax.get_ylim()])
+            ]
+    plt.plot(lims, lims, 'k-', label='y=x')
+    plt.plot([], [], ' ', label='R^2 = %.3f' % r2)
+    plt.plot([], [], ' ', label='RMSE = %.3f' % rmse)
+    ax.set_aspect('equal')
+    ax.set_xlim(lims)
+    ax.set_ylim(lims)
+    # plt.axis([-2,5,-2,5]) #[-2,5,-2,5]
+    ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
+
+    # plt.savefig(model_name+'-' +'.png')
+    # plt.show()
+    return plt
 
 def pva_graphs(pva,model_name):
     """ Creates Predicted vs. Actual graph from predicted data. """

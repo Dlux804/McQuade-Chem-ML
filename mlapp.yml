@@ -1,17 +1,16 @@
 name: mlapp
 channels:
-  - anaconda-fusion
+  - https://conda.anaconda.org/openeye
   - defaults
-  - rdkit
 dependencies:
-  - numpy
-  - pandas
   - rdkit
-  - scikit-learn
-  - matplotlib
+  - numpy
+  - pip
   - pytest
-  - pip:
-      - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
-
-prefix: /opt/anaconda3/envs/mlapp
+  - matplotlib
+  - pandas
+  - scikit-learn
+  - pytest-mock
+  - mock
+prefix: C:\Users\quang\AppData\Local\Continuum\anaconda3\envs\mlapp
 

@@ -1,6 +1,18 @@
 # TODO: ADD DOC STRINGS!!!
 
 import numpy as np
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVR
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn import tree
+from sklearn.ensemble import AdaBoostRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.neighbors import KNeighborsRegressor
+
+
 def ada_paramgrid():
     base_estimator = [tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=3), GradientBoostingRegressor(), SVR(kernel = 'linear'),RandomForestRegressor(n_estimators=500)]
     n_estimators = [int(x) for x in np.linspace(start = 50, stop = 1000, num = 30)]

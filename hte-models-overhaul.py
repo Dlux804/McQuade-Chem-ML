@@ -11,62 +11,46 @@ def main():
     learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
 
     # list of available featurization methods
-    featurize = [[0], [0, 2]]#, [0, 3], [0, 4], [0, 6], [2], [3], [4], [6]]
+    featurize = [[0], [0, 2], [0, 3], [0, 4], [0,5], [0, 6], [2], [3], [4], [5], [6]]
 
     # features for models that require normalized data (nn, svm)
-    norm_featurize = [[1], [1,2]]#, [1,3], [1,4], [1,5], [1,6], [2], [3], [4], [5], [6]]
+    norm_featurize = [[1], [1,2], [1,3], [1,4], [1,5], [1,6], [2], [3], [4], [5], [6]]
 
     # data sets in dict. Key: Filename.csv , Value: Target column header
     sets = {
-        # 'Lipophilicity-ID.csv': 'exp',
+        'Lipophilicity-ID.csv': 'exp',
         'ESOL.csv': 'water-sol',
         'water-energy.csv': 'expt',
-        # 'logP14k.csv': 'Kow',
-        # 'jak2_pic50.csv': 'pIC50'
+        'logP14k.csv': 'Kow',
+        'jak2_pic50.csv': 'pIC50'
     }
     for alg in learner: # loop over all learning algorithms
 
         if alg == 'mlp' or alg == 'svr': # if the algorithm needs normalized data
+            feats = norm_featurize
+        else:
+            feats = featurize
 
-            for method in norm_featurize:  # loop over the normalized featurization methods
+        for method in feats:  # loop over the featurization methods
 
-                for data, target in sets.items():  # loop over dataset dictionary
+            for data, target in sets.items():  # loop over dataset dictionary
 
-                    # initiate model class with algorithm, dataset and target
-                    model = models.MlModel(alg, data, target)
+                # initiate model class with algorithm, dataset and target
+                model = models.MlModel(alg, data, target)
 
-                    print('Model Type:', alg)
-                    print('Featurization:', method)
-                    print('Dataset:', data)
-                    print()
-                    # featurize molecules
-                    model.featurization(method)
+                print('Model Type:', alg)
+                print('Featurization:', method)
+                print('Dataset:', data)
+                print()
+                # featurize molecules
+                model.featurization(method)
 
-                    # run model
-                    model.run(tune=False)
+                # run model
+                model.run(tune=True)
 
-                    # save results of model
-                    model.store()
-        else:  # model does not require normalized data
-            for method in featurize:  # loop over the not normalized featurization methods
+                # save results of model
+                model.store()
 
-                for data, target in sets.items():  # loop over dataset dictionary
-
-                    # initiate model class with algorithm, dataset and target
-                    model = models.MlModel(alg, data, target)
-                    print('Model Type:', alg)
-                    print('Featurization:', method)
-                    print('Dataset:', data)
-                    print()
-
-                    # featurize molecules
-                    model.featurization(method)
-
-                    # run model
-                    model.run(tune=False)
-
-                    # save results of model
-                    model.store()
 
 
 

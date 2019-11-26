@@ -14,7 +14,8 @@ import regressors
 import analysis
 import pandas as pd
 import csv
-
+import os
+import subprocess
 
 class MlModel:
     def __init__(self, algorithm, dataset, target, drop=True):
@@ -48,9 +49,14 @@ class MlModel:
         if tune:  # Do hyperparameter tuning
 
             # ask for tuning variables
-            folds = int(input('Please state the number of folds for hyperparameter searching: '))
-            iters = int(input('Please state the number of iterations for hyperparameter searching: '))
-            jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
+            # folds = int(input('Please state the number of folds for hyperparameter searching: '))
+            # iters = int(input('Please state the number of iterations for hyperparameter searching: '))
+            # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
+
+            # FIXME Unfortunate hard code deep in the program.
+            folds = 10
+            iters = 100
+            jobs = 30
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)
@@ -109,11 +115,20 @@ class MlModel:
             w = csv.DictWriter(f, att.keys())
             w.writeheader()
             w.writerow(att)
+            f.close()
 
         # save graphs
         self.graphM.savefig(name+'PvAM')
+        self.graphM.close()  # close to conserve memory when running many models.
         # self.graph.savefig(name+'PvA')
 
+        # make folders for each run
+        dirsp = 'mkdir ' + name  # str for bash command
+        subprocess.Popen(dirsp.split(), stdout=subprocess.PIPE)  # run bash command
+
+        # Move files to new folders
+        movesp = 'mv ./' + name + '* ' + name + '/'
+        subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
 
 

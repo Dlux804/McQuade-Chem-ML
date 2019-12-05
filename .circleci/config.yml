@@ -50,7 +50,7 @@ jobs:
           command: |
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
-            pytest test_tests.py
+            pytest -v
 
 
       - store_artifacts:

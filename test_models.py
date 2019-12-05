@@ -9,7 +9,7 @@ def test_models_run():
     Since models is the accumulation of every other models, I think the best way to tackle this for now and to run
     the script to see if it works or not. No assertion needed
     """
-    # Calling MlModel to get our class instances
+    # Calling MlModel to get our class instance
     model1 = MlModel('rf', 'water-energy.csv', 'expt')
     # Call featurization function
     model1.featurization([0])

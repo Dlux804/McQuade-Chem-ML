@@ -70,7 +70,7 @@ def featurize(df, model_name, num_feat=None):
     df = pd.concat([df, features], axis=1)
     df = df.dropna()
 
-    return df, num_feat, feat_time
+    return df, selected_feat, feat_time
 
 
 def targets_features(df, exp, train=0.8, random = None):

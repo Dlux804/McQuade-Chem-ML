@@ -1,21 +1,19 @@
-import pandas as pd
-import models
-import analysis
+from models import MlModel
 
 
-
-
-def test_models_run(mocker):
+# Test models.py
+def test_models_run():
     """
-
-    :param mocker:
-    :return:
+    I still need to find a better way to test models.py since it does not return any thing and it's the script that
+    runs everything.
+    Since models is the accumulation of every other models, I think the best way to tackle this for now and to run
+    the script to see if it works or not. No assertion needed
     """
-    mocker.patch('models.MlModel.run')
-    # Using mocker to replace the class method with a no-op object that can be called but does not do anything and typically has no side effects
-    # print(mock_analysis_predict)
-    model1 = models.MlModel('rf', 'water-energy.csv', 'expt')  # Calling MlModel to get our class instances
-    assert type(model1.data) == pd.DataFrame  # Testing to see if data is a dataframe
+    # Calling MlModel to get our class instances
+    model1 = MlModel('rf', 'water-energy.csv', 'expt')
+    # Call featurization function
     model1.featurization([0])
+    # Call run function
     model1.run(tune=False)
-    models.MlModel.run.assert_called_once_with(tune=False)
+    # Call store function
+    model1.store()

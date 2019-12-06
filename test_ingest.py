@@ -22,8 +22,6 @@ def test_ingest_Chem(mock_chem):
 def test_load_smiles_dropfalse():
     """
     Test if ingest.py is returning a dataframe and a SMILES column when drop=False
-    Using mocker (a pytest plug-in), we're able to to test for the necessary variable without having to make time intensive calls
-    https://tech.comtravo.com/testing/Testing_Machine_Learning_Models_with_Unittest/
     I'm still testing on how to use mock more efficiently
     """
     model_test = MlModel('rf', 'water-energy.csv', 'expt')  # Calling MlModel to get our class instances
@@ -34,8 +32,6 @@ def test_load_smiles_dropfalse():
 def test_load_smiles_droptrue():
     """
     Test if ingest.py is returning a dataframe and a SMILES column when drop=True
-    Using mocker (a pytest plug-in), we're able to to test for the necessary variable without having to make time intensive calls
-    https://tech.comtravo.com/testing/Testing_Machine_Learning_Models_with_Unittest/
     I'm still testing on how to use mock more efficiently
     """
     model_test = MlModel('gdb', 'water-energy.csv', 'expt', drop=False)  # Calling MlModel to get our class instances, drop=False in this case

@@ -8,6 +8,7 @@ from models import MlModel
 from sklearn.ensemble import RandomForestRegressor
 import numpy as np
 
+
 # Set up data
 @pytest.fixture
 def setup():
@@ -22,6 +23,7 @@ def setup():
     # Split the data
     train_features, test_features, train_target, test_target, feature_list = features.targets_features(df, 'expt')
     return train_features, test_features, train_target, test_target
+
 
 # Test analysis's "predict" function
 def test_analysis_predict(setup):
@@ -42,6 +44,7 @@ def test_analysis_predict(setup):
     assert np.array_equal(pva.actual, pva.actual.astype(float))
     # Assert that we have prediction time which is a float
     assert type(time_fit) == float
+
 
 # Test function replitcate_model
 def test_replicate_model():
@@ -67,6 +70,7 @@ def test_replicate_model():
     # Assert if 'time_std' (should be the last key) is in the dictionary.
     assert 'time_std' in stats
 
+
 # Test multi_predict
 def test_multi_predict(setup):
     """
@@ -77,7 +81,7 @@ def test_multi_predict(setup):
     train_features, test_features, train_target, test_target = setup
     # Call the function we want to test
     pva, fit_time = analysis.multipredict(RandomForestRegressor(), train_features, test_features, train_target,
-                                            test_target, n=5)
+                                          test_target, n=5)
     # Assert the pva is a dataframe
     assert type(pva) == pd.DataFrame
     # Assert the predicted column in pva are floats
@@ -86,6 +90,7 @@ def test_multi_predict(setup):
     assert np.array_equal(pva.pred_std, pva.pred_std.astype(float))
     # Assert that we have prediction time which is a float
     assert type(fit_time) == float
+
 
 # Test pvaM_graphs
 def test_pvaM_graphs(setup):
@@ -104,7 +109,8 @@ def test_pvaM_graphs(setup):
     # Call the function we want to test
     analysis.pvaM_graphs(pva)
 
-#Test pva_graphs
+
+# Test pva_graphs
 def test_pva_graphs(setup):
     """
     This function was designed to test analysis's "pva_graphs" function. We want to make sure that the function

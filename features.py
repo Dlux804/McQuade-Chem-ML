@@ -55,12 +55,13 @@ def featurize(df, model_name, num_feat=None):
     for name, numpy_type in generator.GetColumns():
         columns.append(name)
     smi = df['smiles']
-    data = []
+    # data = []
     print('Calculating features...', end=' ', flush=True)
-    for mol in smi:
-        # actually calculate the descriptors.  Function accepts a smiles
-        desc = generator.process(mol)
-        data.append(desc)
+    # for mol in smi:
+    # actually calculate the descriptors.  Function accepts a smiles
+    #     desc = generator.process(mol)
+    #     data.append(desc)
+    data = list(map(generator.process, smi))
     print('Done.')
     stop_feat = time()
     feat_time = stop_feat - start_feat

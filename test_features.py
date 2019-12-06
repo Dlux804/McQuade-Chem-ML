@@ -6,22 +6,40 @@ import mock
 # Expected features
 feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
              'morganchiral3counts', 'atompaircounts']
+# Expected models
 model_name = ['rf', 'svr', 'gdb', 'ada', 'nn', 'knn']
 
-# Mock the function MakeGenerator
+
+# Mock the function MakeGenerator since it takes a lot of time to generate and it's the thing we want to test
 @mock.patch('features.MakeGenerator')
 def test_features_makegenerator(mock_makegenerator):
     """
-    Since MakeGenerator is the main part of this function, we should test to see if it is called successfully
+    Since MakeGenerator is the main part of this function, we should test to see if it is called successfully. This will
+    help us narrow down the actual error if we ever run into one.
     """
     # Read csv into dataframe
     df = pd.read_csv("water-energy.csv")
     # Call function featurize
-    df, selected_feat, feat_time = features.featurize(df, 'rf', num_feat=[0])  # Call function featurize
+    df, num_feat, feat_time = features.featurize(df, 'rf', num_feat=[0])  # Call function featurize
     # Test to see if MakeGenerator is called
-    mock_makegenerator.assert_called_once()
-    # Test to see if MakeGenerator is called with the given parameter
-    mock_makegenerator.assert_called_once_with(selected_feat)
+    mock_makegenerator.assert_called()
+    # Stop mock
+    mock.patch.stopall()
+
+
+def test_featurize_remove():
+    """
+    We want to test if the first descriptor generated different between using ML models that need normalization and ones
+    that don't
+    """
+    # Read csv into dataframe
+    df = pd.read_csv("water-energy.csv")
+    # Call function featurize using nn
+    df1, num_feat1, feat_time1 = features.featurize(df, 'nn', num_feat=[0])
+    # Call function featurize using rf
+    df2, num_feat2, feat_time2 = features.featurize(df, 'rf', num_feat=[0])
+    # See if the two dataframes are the same
+    assert df1.equals(df2) == False
 
 def test_featurize():
     """
@@ -37,16 +55,12 @@ def test_featurize():
             df, selected_feat, feat_time = features.featurize(df, i, num_feat=[0])  # Call function featurize
             # Test to see if df is a dataframe
             assert type(df) == pd.DataFrame, 'Something is wrong, i can feel it'
-            # Test to see if 'rdkit2d' is still in the feature list
-            assert 'rdkit2d' not in selected_feat, 'Something is wrong, i can feel it'
             # Test to see if the variable time is a number
             assert type(feat_time) == float, 'Something is wrong, i can feel it'
         else:
             df, selected_feat, feat_time = features.featurize(df, i, num_feat=[0])
             # Test to see if df is a dataframe
             assert type(df) == pd.DataFrame, 'Something is wrong, i can feel it'
-            # Test to see if 'rdkit2d' is in the feature list
-            assert 'rdkit2d' in selected_feat, 'Something is wrong, i can feel it'
             # Test to see if the variable time is a number
             assert type(feat_time) == float, 'Something is wrong, i can feel it'
 

@@ -37,7 +37,7 @@ def test_regressors_hypertune_randomsearch(mock_rdsearchcv, setup):
                                             grid=grid.rf_paramgrid(), folds=2, iters=1, jobs=1)
     # See if RandomizedSearchCV is called
     mock_rdsearchcv.assert_called_once()
-
+    mock.patch.stopall()
 
 
 

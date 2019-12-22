@@ -54,8 +54,8 @@ class MlModel:
             # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
 
             # FIXME Unfortunate hard code deep in the program.
-            folds = 10
-            iters = 100
+            folds = 5
+            iters = 1
             jobs = 30
 
             # Make parameter grid
@@ -134,9 +134,9 @@ class MlModel:
 
 
 
-#
+
 # # Initiate Model
-# model1 = MlModel('gdb', 'ESOL.csv', 'water-sol')
+# model1 = MlModel('gdb', 'Lipophilicity-ID.csv', 'exp')
 #
 # # featurize data with rdkit2d
 # model1.featurization([0])
@@ -144,7 +144,7 @@ class MlModel:
 #
 #
 # # Run the model with hyperparameter optimization
-# model1.run(tune=True)
+# model1.run(tune=False)
 # # print('Tune Time:', model1.tuneTime)
 #
 #
@@ -157,4 +157,4 @@ class MlModel:
 # # if show() is called before save, the save will be blank
 # # display PvA graph
 # model1.graphM.show()
-#
+

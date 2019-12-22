@@ -54,8 +54,8 @@ class MlModel:
             # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
 
             # FIXME Unfortunate hard code deep in the program.
-            folds = 5
-            iters = 1
+            folds = 10
+            iters = 250
             jobs = 30
 
             # Make parameter grid

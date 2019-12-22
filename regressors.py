@@ -46,7 +46,6 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1):
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
     # search_random = RandomizedSearchCV(estimator=model, param_distributions=grid, n_iter=iters, cv=folds, verbose=2,
-    #                                    random_state=42, n_jobs=jobs)  # TODO change criteria to MSE instead of R2
 
     # set up Bayes Search
     bayes = BayesSearchCV(

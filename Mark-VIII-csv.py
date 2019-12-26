@@ -97,6 +97,8 @@ def feature_select(csv_file, model_name, selected_feat = None):
 
 
 class param:
+
+    @staticmethod
     def Adaparamgrid():
         base_estimator = [tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=3), GradientBoostingRegressor(), SVR(kernel = 'linear'),RandomForestRegressor(n_estimators=500)]
         n_estimators = [int(x) for x in np.linspace(start = 50, stop = 1000, num = 30)]
@@ -105,6 +107,8 @@ class param:
                       'n_estimators': n_estimators,
                       'learning_rate': learning_rate}
         return param_grid
+
+    @staticmethod
     def RFparamgrid():
         n_estimators = [int(x) for x in np.linspace(start = 200, stop = 2000, num = 20)] #Number of trees
         max_features = ['auto', 'sqrt']     # Number of features to consider at every split
@@ -120,6 +124,8 @@ class param:
                'min_samples_leaf': min_samples_leaf,
                'bootstrap': bootstrap}
         return param_grid
+
+    @staticmethod
     def SVRparamgrid():
     #Kernel functions
         kernel = ['rbf', 'poly', 'linear']
@@ -133,6 +139,8 @@ class param:
         degrees = [1,2,3,4,5]
         param_grid = {'kernel': kernel,'C': Cs, 'gamma' : gammas, 'epsilon': epsilon, 'degree' : degrees}
         return param_grid
+
+    @staticmethod
     def GDBparamgrid():
     #Number of trees
         n_estimators = [int(x) for x in np.linspace(start = 500, stop = 2000, num = 20)]
@@ -153,6 +161,8 @@ class param:
                'min_samples_leaf': min_samples_leaf,
                'learning_rate': learning_rate}
         return param_grid
+
+    @staticmethod
     def MLPparamgrid():
         #Number of hidden layers
         hidden_layer_sizes = [(100,), (100,50,100), (50,100,50), (np.random.randint(low = 50, high = 100, size = 10))]
@@ -172,6 +182,8 @@ class param:
                 'learning_rate': learning_rate,
                 }
         return param_grid
+
+    @staticmethod
     def KNNparamgrid():
         #Number of neighbors to use
         n_neighbors = [int(x) for x in np.linspace(start = 5, stop = 30, num = 20)]

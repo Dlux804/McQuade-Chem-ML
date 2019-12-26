@@ -21,4 +21,4 @@ that chemprops was properly installed
 '''
 
 barzilayPredict(target_label='logp', df_to_train=pd.read_csv('dataFiles/Lipophilicity-ID.csv'),
-                      df_to_predict=pd.read_csv('dataFiles/Lipophilicity-ID.csv'), dataset_type='regression')
+                      df_to_predict=pd.read_csv('dataFiles/Lipophilicity-ID.csv'), dataset_type='regression').results_df

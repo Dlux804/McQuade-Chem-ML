@@ -1,8 +1,6 @@
-from ingest import load_smiles
 # import unittest
 import pandas as pd
-import models
-
+from core import models
 
 
 class TestIngest:

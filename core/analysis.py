@@ -4,7 +4,8 @@ import numpy as np
 from time import time
 import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
-import features
+from core import features
+
 
 def predict(regressor, train_features, test_features, train_target, test_target):
     """Fit model and predict target values.  Return data frame of actual and predicted

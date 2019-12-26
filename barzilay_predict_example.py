@@ -18,6 +18,9 @@ as a package that can be interperted by python, follow the following steps.
 5) Delete/move chemprops
 This will make chemprops behave the same as any other package that is install via pip, then use this script to test
 that chemprops was properly installed
+
+Currently, work is being done to have the folder directly inside of this project, and pip should not be needed in the
+future for chemprops
 '''
 
 barzilayPredict(target_label='logp', df_to_train=pd.read_csv('dataFiles/Lipophilicity-ID.csv'),

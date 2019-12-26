@@ -1,0 +1,6003 @@
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.010870
+Epoch 1
+Validation rmse = 3.010870
+Epoch 2
+Validation rmse = 3.010870
+Epoch 3
+Validation rmse = 3.010870
+Epoch 4
+Validation rmse = 3.010870
+Epoch 5
+Validation rmse = 3.010870
+Epoch 6
+Validation rmse = 3.010870
+Epoch 7
+Validation rmse = 3.010870
+Epoch 8
+Validation rmse = 3.010870
+Epoch 9
+Validation rmse = 3.010870
+Epoch 10
+Validation rmse = 3.010870
+Epoch 11
+Validation rmse = 3.010870
+Epoch 12
+Validation rmse = 3.010870
+Epoch 13
+Validation rmse = 3.010870
+Epoch 14
+Validation rmse = 3.010870
+Epoch 15
+Validation rmse = 3.010870
+Epoch 16
+Validation rmse = 3.010870
+Epoch 17
+Validation rmse = 3.010870
+Epoch 18
+Validation rmse = 3.010870
+Epoch 19
+Validation rmse = 3.010870
+Epoch 20
+Validation rmse = 3.010870
+Epoch 21
+Validation rmse = 3.010870
+Epoch 22
+Validation rmse = 3.010870
+Epoch 23
+Validation rmse = 3.010870
+Epoch 24
+Validation rmse = 3.010870
+Epoch 25
+Validation rmse = 3.010870
+Epoch 26
+Validation rmse = 3.010870
+Epoch 27
+Validation rmse = 3.010870
+Epoch 28
+Validation rmse = 3.010870
+Epoch 29
+Validation rmse = 3.010870
+Model 0 best validation rmse = 3.010870 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.637835
+Ensemble test rmse = 2.637835
+1-fold cross validation
+Seed 0 ==> test rmse = 2.637835
+Overall test rmse = 2.637835 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.597879
+Epoch 1
+Validation rmse = 3.597879
+Epoch 2
+Validation rmse = 3.597879
+Epoch 3
+Validation rmse = 3.597879
+Epoch 4
+Validation rmse = 3.597879
+Epoch 5
+Validation rmse = 3.597879
+Epoch 6
+Validation rmse = 3.597879
+Epoch 7
+Validation rmse = 3.597879
+Epoch 8
+Validation rmse = 3.597879
+Epoch 9
+Validation rmse = 3.597879
+Epoch 10
+Validation rmse = 3.597879
+Epoch 11
+Validation rmse = 3.597879
+Epoch 12
+Validation rmse = 3.597879
+Epoch 13
+Validation rmse = 3.597879
+Epoch 14
+Validation rmse = 3.597879
+Epoch 15
+Validation rmse = 3.597879
+Epoch 16
+Validation rmse = 3.597879
+Epoch 17
+Validation rmse = 3.597879
+Epoch 18
+Validation rmse = 3.597879
+Epoch 19
+Validation rmse = 3.597879
+Epoch 20
+Validation rmse = 3.597879
+Epoch 21
+Validation rmse = 3.597879
+Epoch 22
+Validation rmse = 3.597879
+Epoch 23
+Validation rmse = 3.597879
+Epoch 24
+Validation rmse = 3.597879
+Epoch 25
+Validation rmse = 3.597879
+Epoch 26
+Validation rmse = 3.597879
+Epoch 27
+Validation rmse = 3.597879
+Epoch 28
+Validation rmse = 3.597879
+Epoch 29
+Validation rmse = 3.597879
+Model 0 best validation rmse = 3.597879 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.041888
+Ensemble test rmse = 2.041888
+1-fold cross validation
+Seed 0 ==> test rmse = 2.041888
+Overall test rmse = 2.041888 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.438543
+Epoch 1
+Validation rmse = 2.438543
+Epoch 2
+Validation rmse = 2.438543
+Epoch 3
+Validation rmse = 2.438543
+Epoch 4
+Validation rmse = 2.438543
+Epoch 5
+Validation rmse = 2.438543
+Epoch 6
+Validation rmse = 2.438543
+Epoch 7
+Validation rmse = 2.438543
+Epoch 8
+Validation rmse = 2.438543
+Epoch 9
+Validation rmse = 2.438543
+Epoch 10
+Validation rmse = 2.438543
+Epoch 11
+Validation rmse = 2.438543
+Epoch 12
+Validation rmse = 2.438543
+Epoch 13
+Validation rmse = 2.438543
+Epoch 14
+Validation rmse = 2.438543
+Epoch 15
+Validation rmse = 2.438543
+Epoch 16
+Validation rmse = 2.438543
+Epoch 17
+Validation rmse = 2.438543
+Epoch 18
+Validation rmse = 2.438543
+Epoch 19
+Validation rmse = 2.438543
+Epoch 20
+Validation rmse = 2.438543
+Epoch 21
+Validation rmse = 2.438543
+Epoch 22
+Validation rmse = 2.438543
+Epoch 23
+Validation rmse = 2.438543
+Epoch 24
+Validation rmse = 2.438543
+Epoch 25
+Validation rmse = 2.438543
+Epoch 26
+Validation rmse = 2.438543
+Epoch 27
+Validation rmse = 2.438543
+Epoch 28
+Validation rmse = 2.438543
+Epoch 29
+Validation rmse = 2.438543
+Model 0 best validation rmse = 2.438543 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 3.042391
+Ensemble test rmse = 3.042391
+1-fold cross validation
+Seed 0 ==> test rmse = 3.042391
+Overall test rmse = 3.042391 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.702417
+Epoch 1
+Validation rmse = 2.702417
+Epoch 2
+Validation rmse = 2.702417
+Epoch 3
+Validation rmse = 2.702417
+Epoch 4
+Validation rmse = 2.702417
+Epoch 5
+Validation rmse = 2.702417
+Epoch 6
+Validation rmse = 2.702417
+Epoch 7
+Validation rmse = 2.702417
+Epoch 8
+Validation rmse = 2.702417
+Epoch 9
+Validation rmse = 2.702417
+Epoch 10
+Validation rmse = 2.702417
+Epoch 11
+Validation rmse = 2.702417
+Epoch 12
+Validation rmse = 2.702417
+Epoch 13
+Validation rmse = 2.702417
+Epoch 14
+Validation rmse = 2.702417
+Epoch 15
+Validation rmse = 2.702417
+Epoch 16
+Validation rmse = 2.702417
+Epoch 17
+Validation rmse = 2.702417
+Epoch 18
+Validation rmse = 2.702417
+Epoch 19
+Validation rmse = 2.702417
+Epoch 20
+Validation rmse = 2.702417
+Epoch 21
+Validation rmse = 2.702417
+Epoch 22
+Validation rmse = 2.702417
+Epoch 23
+Validation rmse = 2.702417
+Epoch 24
+Validation rmse = 2.702417
+Epoch 25
+Validation rmse = 2.702417
+Epoch 26
+Validation rmse = 2.702417
+Epoch 27
+Validation rmse = 2.702417
+Epoch 28
+Validation rmse = 2.702417
+Epoch 29
+Validation rmse = 2.702417
+Model 0 best validation rmse = 2.702417 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.822858
+Ensemble test rmse = 2.822858
+1-fold cross validation
+Seed 0 ==> test rmse = 2.822858
+Overall test rmse = 2.822858 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.951837
+Epoch 1
+Validation rmse = 3.951837
+Epoch 2
+Validation rmse = 3.951837
+Epoch 3
+Validation rmse = 3.951837
+Epoch 4
+Validation rmse = 3.951837
+Epoch 5
+Validation rmse = 3.951837
+Epoch 6
+Validation rmse = 3.951837
+Epoch 7
+Validation rmse = 3.951837
+Epoch 8
+Validation rmse = 3.951837
+Epoch 9
+Validation rmse = 3.951837
+Epoch 10
+Validation rmse = 3.951837
+Epoch 11
+Validation rmse = 3.951837
+Epoch 12
+Validation rmse = 3.951837
+Epoch 13
+Validation rmse = 3.951837
+Epoch 14
+Validation rmse = 3.951837
+Epoch 15
+Validation rmse = 3.951837
+Epoch 16
+Validation rmse = 3.951837
+Epoch 17
+Validation rmse = 3.951837
+Epoch 18
+Validation rmse = 3.951837
+Epoch 19
+Validation rmse = 3.951837
+Epoch 20
+Validation rmse = 3.951837
+Epoch 21
+Validation rmse = 3.951837
+Epoch 22
+Validation rmse = 3.951837
+Epoch 23
+Validation rmse = 3.951837
+Epoch 24
+Validation rmse = 3.951837
+Epoch 25
+Validation rmse = 3.951837
+Epoch 26
+Validation rmse = 3.951837
+Epoch 27
+Validation rmse = 3.951837
+Epoch 28
+Validation rmse = 3.951837
+Epoch 29
+Validation rmse = 3.951837
+Model 0 best validation rmse = 3.951837 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 1.876617
+Ensemble test rmse = 1.876617
+1-fold cross validation
+Seed 0 ==> test rmse = 1.876617
+Overall test rmse = 1.876617 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.978996
+Epoch 1
+Validation rmse = 2.978996
+Epoch 2
+Validation rmse = 2.978996
+Epoch 3
+Validation rmse = 2.978996
+Epoch 4
+Validation rmse = 2.978996
+Epoch 5
+Validation rmse = 2.978996
+Epoch 6
+Validation rmse = 2.978996
+Epoch 7
+Validation rmse = 2.978996
+Epoch 8
+Validation rmse = 2.978996
+Epoch 9
+Validation rmse = 2.978996
+Epoch 10
+Validation rmse = 2.978996
+Epoch 11
+Validation rmse = 2.978996
+Epoch 12
+Validation rmse = 2.978996
+Epoch 13
+Validation rmse = 2.978996
+Epoch 14
+Validation rmse = 2.978996
+Epoch 15
+Validation rmse = 2.978996
+Epoch 16
+Validation rmse = 2.978996
+Epoch 17
+Validation rmse = 2.978996
+Epoch 18
+Validation rmse = 2.978996
+Epoch 19
+Validation rmse = 2.978996
+Epoch 20
+Validation rmse = 2.978996
+Epoch 21
+Validation rmse = 2.978996
+Epoch 22
+Validation rmse = 2.978996
+Epoch 23
+Validation rmse = 2.978996
+Epoch 24
+Validation rmse = 2.978996
+Epoch 25
+Validation rmse = 2.978996
+Epoch 26
+Validation rmse = 2.978996
+Epoch 27
+Validation rmse = 2.978996
+Epoch 28
+Validation rmse = 2.978996
+Epoch 29
+Validation rmse = 2.978996
+Model 0 best validation rmse = 2.978996 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.241398
+Ensemble test rmse = 2.241398
+1-fold cross validation
+Seed 0 ==> test rmse = 2.241398
+Overall test rmse = 2.241398 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.208484
+Epoch 1
+Validation rmse = 3.208484
+Epoch 2
+Validation rmse = 3.208484
+Epoch 3
+Validation rmse = 3.208484
+Epoch 4
+Validation rmse = 3.208484
+Epoch 5
+Validation rmse = 3.208484
+Epoch 6
+Validation rmse = 3.208484
+Epoch 7
+Validation rmse = 3.208484
+Epoch 8
+Validation rmse = 3.208484
+Epoch 9
+Validation rmse = 3.208484
+Epoch 10
+Validation rmse = 3.208484
+Epoch 11
+Validation rmse = 3.208484
+Epoch 12
+Validation rmse = 3.208484
+Epoch 13
+Validation rmse = 3.208484
+Epoch 14
+Validation rmse = 3.208484
+Epoch 15
+Validation rmse = 3.208484
+Epoch 16
+Validation rmse = 3.208484
+Epoch 17
+Validation rmse = 3.208484
+Epoch 18
+Validation rmse = 3.208484
+Epoch 19
+Validation rmse = 3.208484
+Epoch 20
+Validation rmse = 3.208484
+Epoch 21
+Validation rmse = 3.208484
+Epoch 22
+Validation rmse = 3.208484
+Epoch 23
+Validation rmse = 3.208484
+Epoch 24
+Validation rmse = 3.208484
+Epoch 25
+Validation rmse = 3.208484
+Epoch 26
+Validation rmse = 3.208484
+Epoch 27
+Validation rmse = 3.208484
+Epoch 28
+Validation rmse = 3.208484
+Epoch 29
+Validation rmse = 3.208484
+Model 0 best validation rmse = 3.208484 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.413307
+Ensemble test rmse = 2.413307
+1-fold cross validation
+Seed 0 ==> test rmse = 2.413307
+Overall test rmse = 2.413307 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.828393
+Epoch 1
+Validation rmse = 2.828393
+Epoch 2
+Validation rmse = 2.828393
+Epoch 3
+Validation rmse = 2.828393
+Epoch 4
+Validation rmse = 2.828393
+Epoch 5
+Validation rmse = 2.828393
+Epoch 6
+Validation rmse = 2.828393
+Epoch 7
+Validation rmse = 2.828393
+Epoch 8
+Validation rmse = 2.828393
+Epoch 9
+Validation rmse = 2.828393
+Epoch 10
+Validation rmse = 2.828393
+Epoch 11
+Validation rmse = 2.828393
+Epoch 12
+Validation rmse = 2.828393
+Epoch 13
+Validation rmse = 2.828393
+Epoch 14
+Validation rmse = 2.828393
+Epoch 15
+Validation rmse = 2.828393
+Epoch 16
+Validation rmse = 2.828393
+Epoch 17
+Validation rmse = 2.828393
+Epoch 18
+Validation rmse = 2.828393
+Epoch 19
+Validation rmse = 2.828393
+Epoch 20
+Validation rmse = 2.828393
+Epoch 21
+Validation rmse = 2.828393
+Epoch 22
+Validation rmse = 2.828393
+Epoch 23
+Validation rmse = 2.828393
+Epoch 24
+Validation rmse = 2.828393
+Epoch 25
+Validation rmse = 2.828393
+Epoch 26
+Validation rmse = 2.828393
+Epoch 27
+Validation rmse = 2.828393
+Epoch 28
+Validation rmse = 2.828393
+Epoch 29
+Validation rmse = 2.828393
+Model 0 best validation rmse = 2.828393 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.418472
+Ensemble test rmse = 2.418472
+1-fold cross validation
+Seed 0 ==> test rmse = 2.418472
+Overall test rmse = 2.418472 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.680624
+Epoch 1
+Validation rmse = 2.680624
+Epoch 2
+Validation rmse = 2.680624
+Epoch 3
+Validation rmse = 2.680624
+Epoch 4
+Validation rmse = 2.680624
+Epoch 5
+Validation rmse = 2.680624
+Epoch 6
+Validation rmse = 2.680624
+Epoch 7
+Validation rmse = 2.680624
+Epoch 8
+Validation rmse = 2.680624
+Epoch 9
+Validation rmse = 2.680624
+Epoch 10
+Validation rmse = 2.680624
+Epoch 11
+Validation rmse = 2.680624
+Epoch 12
+Validation rmse = 2.680624
+Epoch 13
+Validation rmse = 2.680624
+Epoch 14
+Validation rmse = 2.680624
+Epoch 15
+Validation rmse = 2.680624
+Epoch 16
+Validation rmse = 2.680624
+Epoch 17
+Validation rmse = 2.680624
+Epoch 18
+Validation rmse = 2.680624
+Epoch 19
+Validation rmse = 2.680624
+Epoch 20
+Validation rmse = 2.680624
+Epoch 21
+Validation rmse = 2.680624
+Epoch 22
+Validation rmse = 2.680624
+Epoch 23
+Validation rmse = 2.680624
+Epoch 24
+Validation rmse = 2.680624
+Epoch 25
+Validation rmse = 2.680624
+Epoch 26
+Validation rmse = 2.680624
+Epoch 27
+Validation rmse = 2.680624
+Epoch 28
+Validation rmse = 2.680624
+Epoch 29
+Validation rmse = 2.680624
+Model 0 best validation rmse = 2.680624 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.594328
+Ensemble test rmse = 2.594328
+1-fold cross validation
+Seed 0 ==> test rmse = 2.594328
+Overall test rmse = 2.594328 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.112161
+Epoch 1
+Validation rmse = 3.112161
+Epoch 2
+Validation rmse = 3.112161
+Epoch 3
+Validation rmse = 3.112161
+Epoch 4
+Validation rmse = 3.112161
+Epoch 5
+Validation rmse = 3.112161
+Epoch 6
+Validation rmse = 3.112161
+Epoch 7
+Validation rmse = 3.112161
+Epoch 8
+Validation rmse = 3.112161
+Epoch 9
+Validation rmse = 3.112161
+Epoch 10
+Validation rmse = 3.112161
+Epoch 11
+Validation rmse = 3.112161
+Epoch 12
+Validation rmse = 3.112161
+Epoch 13
+Validation rmse = 3.112161
+Epoch 14
+Validation rmse = 3.112161
+Epoch 15
+Validation rmse = 3.112161
+Epoch 16
+Validation rmse = 3.112161
+Epoch 17
+Validation rmse = 3.112161
+Epoch 18
+Validation rmse = 3.112161
+Epoch 19
+Validation rmse = 3.112161
+Epoch 20
+Validation rmse = 3.112161
+Epoch 21
+Validation rmse = 3.112161
+Epoch 22
+Validation rmse = 3.112161
+Epoch 23
+Validation rmse = 3.112161
+Epoch 24
+Validation rmse = 3.112161
+Epoch 25
+Validation rmse = 3.112161
+Epoch 26
+Validation rmse = 3.112161
+Epoch 27
+Validation rmse = 3.112161
+Epoch 28
+Validation rmse = 3.112161
+Epoch 29
+Validation rmse = 3.112161
+Model 0 best validation rmse = 3.112161 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.867011
+Ensemble test rmse = 2.867011
+1-fold cross validation
+Seed 0 ==> test rmse = 2.867011
+Overall test rmse = 2.867011 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.522661
+Epoch 1
+Validation rmse = 2.522661
+Epoch 2
+Validation rmse = 2.522661
+Epoch 3
+Validation rmse = 2.522661
+Epoch 4
+Validation rmse = 2.522661
+Epoch 5
+Validation rmse = 2.522661
+Epoch 6
+Validation rmse = 2.522661
+Epoch 7
+Validation rmse = 2.522661
+Epoch 8
+Validation rmse = 2.522661
+Epoch 9
+Validation rmse = 2.522661
+Epoch 10
+Validation rmse = 2.522661
+Epoch 11
+Validation rmse = 2.522661
+Epoch 12
+Validation rmse = 2.522661
+Epoch 13
+Validation rmse = 2.522661
+Epoch 14
+Validation rmse = 2.522661
+Epoch 15
+Validation rmse = 2.522661
+Epoch 16
+Validation rmse = 2.522661
+Epoch 17
+Validation rmse = 2.522661
+Epoch 18
+Validation rmse = 2.522661
+Epoch 19
+Validation rmse = 2.522661
+Epoch 20
+Validation rmse = 2.522661
+Epoch 21
+Validation rmse = 2.522661
+Epoch 22
+Validation rmse = 2.522661
+Epoch 23
+Validation rmse = 2.522661
+Epoch 24
+Validation rmse = 2.522661
+Epoch 25
+Validation rmse = 2.522661
+Epoch 26
+Validation rmse = 2.522661
+Epoch 27
+Validation rmse = 2.522661
+Epoch 28
+Validation rmse = 2.522661
+Epoch 29
+Validation rmse = 2.522661
+Model 0 best validation rmse = 2.522661 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 3.887460
+Ensemble test rmse = 3.887460
+1-fold cross validation
+Seed 0 ==> test rmse = 3.887460
+Overall test rmse = 3.887460 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.484906
+Epoch 1
+Validation rmse = 3.484906
+Epoch 2
+Validation rmse = 3.484906
+Epoch 3
+Validation rmse = 3.484906
+Epoch 4
+Validation rmse = 3.484906
+Epoch 5
+Validation rmse = 3.484906
+Epoch 6
+Validation rmse = 3.484906
+Epoch 7
+Validation rmse = 3.484906
+Epoch 8
+Validation rmse = 3.484906
+Epoch 9
+Validation rmse = 3.484906
+Epoch 10
+Validation rmse = 3.484906
+Epoch 11
+Validation rmse = 3.484906
+Epoch 12
+Validation rmse = 3.484906
+Epoch 13
+Validation rmse = 3.484906
+Epoch 14
+Validation rmse = 3.484906
+Epoch 15
+Validation rmse = 3.484906
+Epoch 16
+Validation rmse = 3.484906
+Epoch 17
+Validation rmse = 3.484906
+Epoch 18
+Validation rmse = 3.484906
+Epoch 19
+Validation rmse = 3.484906
+Epoch 20
+Validation rmse = 3.484906
+Epoch 21
+Validation rmse = 3.484906
+Epoch 22
+Validation rmse = 3.484906
+Epoch 23
+Validation rmse = 3.484906
+Epoch 24
+Validation rmse = 3.484906
+Epoch 25
+Validation rmse = 3.484906
+Epoch 26
+Validation rmse = 3.484906
+Epoch 27
+Validation rmse = 3.484906
+Epoch 28
+Validation rmse = 3.484906
+Epoch 29
+Validation rmse = 3.484906
+Model 0 best validation rmse = 3.484906 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.322090
+Ensemble test rmse = 2.322090
+1-fold cross validation
+Seed 0 ==> test rmse = 2.322090
+Overall test rmse = 2.322090 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.581397
+Epoch 1
+Validation rmse = 3.581397
+Epoch 2
+Validation rmse = 3.581397
+Epoch 3
+Validation rmse = 3.581397
+Epoch 4
+Validation rmse = 3.581397
+Epoch 5
+Validation rmse = 3.581397
+Epoch 6
+Validation rmse = 3.581397
+Epoch 7
+Validation rmse = 3.581397
+Epoch 8
+Validation rmse = 3.581397
+Epoch 9
+Validation rmse = 3.581397
+Epoch 10
+Validation rmse = 3.581397
+Epoch 11
+Validation rmse = 3.581397
+Epoch 12
+Validation rmse = 3.581397
+Epoch 13
+Validation rmse = 3.581397
+Epoch 14
+Validation rmse = 3.581397
+Epoch 15
+Validation rmse = 3.581397
+Epoch 16
+Validation rmse = 3.581397
+Epoch 17
+Validation rmse = 3.581397
+Epoch 18
+Validation rmse = 3.581397
+Epoch 19
+Validation rmse = 3.581397
+Epoch 20
+Validation rmse = 3.581397
+Epoch 21
+Validation rmse = 3.581397
+Epoch 22
+Validation rmse = 3.581397
+Epoch 23
+Validation rmse = 3.581397
+Epoch 24
+Validation rmse = 3.581397
+Epoch 25
+Validation rmse = 3.581397
+Epoch 26
+Validation rmse = 3.581397
+Epoch 27
+Validation rmse = 3.581397
+Epoch 28
+Validation rmse = 3.581397
+Epoch 29
+Validation rmse = 3.581397
+Model 0 best validation rmse = 3.581397 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 1.966085
+Ensemble test rmse = 1.966085
+1-fold cross validation
+Seed 0 ==> test rmse = 1.966085
+Overall test rmse = 1.966085 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 4.374728
+Epoch 1
+Validation rmse = 4.374728
+Epoch 2
+Validation rmse = 4.374728
+Epoch 3
+Validation rmse = 4.374728
+Epoch 4
+Validation rmse = 4.374728
+Epoch 5
+Validation rmse = 4.374728
+Epoch 6
+Validation rmse = 4.374728
+Epoch 7
+Validation rmse = 4.374728
+Epoch 8
+Validation rmse = 4.374728
+Epoch 9
+Validation rmse = 4.374728
+Epoch 10
+Validation rmse = 4.374728
+Epoch 11
+Validation rmse = 4.374728
+Epoch 12
+Validation rmse = 4.374728
+Epoch 13
+Validation rmse = 4.374728
+Epoch 14
+Validation rmse = 4.374728
+Epoch 15
+Validation rmse = 4.374728
+Epoch 16
+Validation rmse = 4.374728
+Epoch 17
+Validation rmse = 4.374728
+Epoch 18
+Validation rmse = 4.374728
+Epoch 19
+Validation rmse = 4.374728
+Epoch 20
+Validation rmse = 4.374728
+Epoch 21
+Validation rmse = 4.374728
+Epoch 22
+Validation rmse = 4.374728
+Epoch 23
+Validation rmse = 4.374728
+Epoch 24
+Validation rmse = 4.374728
+Epoch 25
+Validation rmse = 4.374728
+Epoch 26
+Validation rmse = 4.374728
+Epoch 27
+Validation rmse = 4.374728
+Epoch 28
+Validation rmse = 4.374728
+Epoch 29
+Validation rmse = 4.374728
+Model 0 best validation rmse = 4.374728 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 1.500063
+Ensemble test rmse = 1.500063
+1-fold cross validation
+Seed 0 ==> test rmse = 1.500063
+Overall test rmse = 1.500063 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.115959
+Epoch 1
+Validation rmse = 3.115959
+Epoch 2
+Validation rmse = 3.115959
+Epoch 3
+Validation rmse = 3.115959
+Epoch 4
+Validation rmse = 3.115959
+Epoch 5
+Validation rmse = 3.115959
+Epoch 6
+Validation rmse = 3.115959
+Epoch 7
+Validation rmse = 3.115959
+Epoch 8
+Validation rmse = 3.115959
+Epoch 9
+Validation rmse = 3.115959
+Epoch 10
+Validation rmse = 3.115959
+Epoch 11
+Validation rmse = 3.115959
+Epoch 12
+Validation rmse = 3.115959
+Epoch 13
+Validation rmse = 3.115959
+Epoch 14
+Validation rmse = 3.115959
+Epoch 15
+Validation rmse = 3.115959
+Epoch 16
+Validation rmse = 3.115959
+Epoch 17
+Validation rmse = 3.115959
+Epoch 18
+Validation rmse = 3.115959
+Epoch 19
+Validation rmse = 3.115959
+Epoch 20
+Validation rmse = 3.115959
+Epoch 21
+Validation rmse = 3.115959
+Epoch 22
+Validation rmse = 3.115959
+Epoch 23
+Validation rmse = 3.115959
+Epoch 24
+Validation rmse = 3.115959
+Epoch 25
+Validation rmse = 3.115959
+Epoch 26
+Validation rmse = 3.115959
+Epoch 27
+Validation rmse = 3.115959
+Epoch 28
+Validation rmse = 3.115959
+Epoch 29
+Validation rmse = 3.115959
+Model 0 best validation rmse = 3.115959 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.333065
+Ensemble test rmse = 2.333065
+1-fold cross validation
+Seed 0 ==> test rmse = 2.333065
+Overall test rmse = 2.333065 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.413080
+Epoch 1
+Validation rmse = 3.413080
+Epoch 2
+Validation rmse = 3.413080
+Epoch 3
+Validation rmse = 3.413080
+Epoch 4
+Validation rmse = 3.413080
+Epoch 5
+Validation rmse = 3.413080
+Epoch 6
+Validation rmse = 3.413080
+Epoch 7
+Validation rmse = 3.413080
+Epoch 8
+Validation rmse = 3.413080
+Epoch 9
+Validation rmse = 3.413080
+Epoch 10
+Validation rmse = 3.413080
+Epoch 11
+Validation rmse = 3.413080
+Epoch 12
+Validation rmse = 3.413080
+Epoch 13
+Validation rmse = 3.413080
+Epoch 14
+Validation rmse = 3.413080
+Epoch 15
+Validation rmse = 3.413080
+Epoch 16
+Validation rmse = 3.413080
+Epoch 17
+Validation rmse = 3.413080
+Epoch 18
+Validation rmse = 3.413080
+Epoch 19
+Validation rmse = 3.413080
+Epoch 20
+Validation rmse = 3.413080
+Epoch 21
+Validation rmse = 3.413080
+Epoch 22
+Validation rmse = 3.413080
+Epoch 23
+Validation rmse = 3.413080
+Epoch 24
+Validation rmse = 3.413080
+Epoch 25
+Validation rmse = 3.413080
+Epoch 26
+Validation rmse = 3.413080
+Epoch 27
+Validation rmse = 3.413080
+Epoch 28
+Validation rmse = 3.413080
+Epoch 29
+Validation rmse = 3.413080
+Model 0 best validation rmse = 3.413080 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.611864
+Ensemble test rmse = 2.611864
+1-fold cross validation
+Seed 0 ==> test rmse = 2.611864
+Overall test rmse = 2.611864 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.936614
+Epoch 1
+Validation rmse = 3.936614
+Epoch 2
+Validation rmse = 3.936614
+Epoch 3
+Validation rmse = 3.936614
+Epoch 4
+Validation rmse = 3.936614
+Epoch 5
+Validation rmse = 3.936614
+Epoch 6
+Validation rmse = 3.936614
+Epoch 7
+Validation rmse = 3.936614
+Epoch 8
+Validation rmse = 3.936614
+Epoch 9
+Validation rmse = 3.936614
+Epoch 10
+Validation rmse = 3.936614
+Epoch 11
+Validation rmse = 3.936614
+Epoch 12
+Validation rmse = 3.936614
+Epoch 13
+Validation rmse = 3.936614
+Epoch 14
+Validation rmse = 3.936614
+Epoch 15
+Validation rmse = 3.936614
+Epoch 16
+Validation rmse = 3.936614
+Epoch 17
+Validation rmse = 3.936614
+Epoch 18
+Validation rmse = 3.936614
+Epoch 19
+Validation rmse = 3.936614
+Epoch 20
+Validation rmse = 3.936614
+Epoch 21
+Validation rmse = 3.936614
+Epoch 22
+Validation rmse = 3.936614
+Epoch 23
+Validation rmse = 3.936614
+Epoch 24
+Validation rmse = 3.936614
+Epoch 25
+Validation rmse = 3.936614
+Epoch 26
+Validation rmse = 3.936614
+Epoch 27
+Validation rmse = 3.936614
+Epoch 28
+Validation rmse = 3.936614
+Epoch 29
+Validation rmse = 3.936614
+Model 0 best validation rmse = 3.936614 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 1.688712
+Ensemble test rmse = 1.688712
+1-fold cross validation
+Seed 0 ==> test rmse = 1.688712
+Overall test rmse = 1.688712 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.735872
+Epoch 1
+Validation rmse = 2.735872
+Epoch 2
+Validation rmse = 2.735872
+Epoch 3
+Validation rmse = 2.735872
+Epoch 4
+Validation rmse = 2.735872
+Epoch 5
+Validation rmse = 2.735872
+Epoch 6
+Validation rmse = 2.735872
+Epoch 7
+Validation rmse = 2.735872
+Epoch 8
+Validation rmse = 2.735872
+Epoch 9
+Validation rmse = 2.735872
+Epoch 10
+Validation rmse = 2.735872
+Epoch 11
+Validation rmse = 2.735872
+Epoch 12
+Validation rmse = 2.735872
+Epoch 13
+Validation rmse = 2.735872
+Epoch 14
+Validation rmse = 2.735872
+Epoch 15
+Validation rmse = 2.735872
+Epoch 16
+Validation rmse = 2.735872
+Epoch 17
+Validation rmse = 2.735872
+Epoch 18
+Validation rmse = 2.735872
+Epoch 19
+Validation rmse = 2.735872
+Epoch 20
+Validation rmse = 2.735872
+Epoch 21
+Validation rmse = 2.735872
+Epoch 22
+Validation rmse = 2.735872
+Epoch 23
+Validation rmse = 2.735872
+Epoch 24
+Validation rmse = 2.735872
+Epoch 25
+Validation rmse = 2.735872
+Epoch 26
+Validation rmse = 2.735872
+Epoch 27
+Validation rmse = 2.735872
+Epoch 28
+Validation rmse = 2.735872
+Epoch 29
+Validation rmse = 2.735872
+Model 0 best validation rmse = 2.735872 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.711764
+Ensemble test rmse = 2.711764
+1-fold cross validation
+Seed 0 ==> test rmse = 2.711764
+Overall test rmse = 2.711764 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.758073
+Epoch 1
+Validation rmse = 3.758073
+Epoch 2
+Validation rmse = 3.758073
+Epoch 3
+Validation rmse = 3.758073
+Epoch 4
+Validation rmse = 3.758073
+Epoch 5
+Validation rmse = 3.758073
+Epoch 6
+Validation rmse = 3.758073
+Epoch 7
+Validation rmse = 3.758073
+Epoch 8
+Validation rmse = 3.758073
+Epoch 9
+Validation rmse = 3.758073
+Epoch 10
+Validation rmse = 3.758073
+Epoch 11
+Validation rmse = 3.758073
+Epoch 12
+Validation rmse = 3.758073
+Epoch 13
+Validation rmse = 3.758073
+Epoch 14
+Validation rmse = 3.758073
+Epoch 15
+Validation rmse = 3.758073
+Epoch 16
+Validation rmse = 3.758073
+Epoch 17
+Validation rmse = 3.758073
+Epoch 18
+Validation rmse = 3.758073
+Epoch 19
+Validation rmse = 3.758073
+Epoch 20
+Validation rmse = 3.758073
+Epoch 21
+Validation rmse = 3.758073
+Epoch 22
+Validation rmse = 3.758073
+Epoch 23
+Validation rmse = 3.758073
+Epoch 24
+Validation rmse = 3.758073
+Epoch 25
+Validation rmse = 3.758073
+Epoch 26
+Validation rmse = 3.758073
+Epoch 27
+Validation rmse = 3.758073
+Epoch 28
+Validation rmse = 3.758073
+Epoch 29
+Validation rmse = 3.758073
+Model 0 best validation rmse = 3.758073 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 1.854200
+Ensemble test rmse = 1.854200
+1-fold cross validation
+Seed 0 ==> test rmse = 1.854200
+Overall test rmse = 1.854200 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.279929
+Epoch 1
+Validation rmse = 2.279929
+Epoch 2
+Validation rmse = 2.279929
+Epoch 3
+Validation rmse = 2.279929
+Epoch 4
+Validation rmse = 2.279929
+Epoch 5
+Validation rmse = 2.279929
+Epoch 6
+Validation rmse = 2.279929
+Epoch 7
+Validation rmse = 2.279929
+Epoch 8
+Validation rmse = 2.279929
+Epoch 9
+Validation rmse = 2.279929
+Epoch 10
+Validation rmse = 2.279929
+Epoch 11
+Validation rmse = 2.279929
+Epoch 12
+Validation rmse = 2.279929
+Epoch 13
+Validation rmse = 2.279929
+Epoch 14
+Validation rmse = 2.279929
+Epoch 15
+Validation rmse = 2.279929
+Epoch 16
+Validation rmse = 2.279929
+Epoch 17
+Validation rmse = 2.279929
+Epoch 18
+Validation rmse = 2.279929
+Epoch 19
+Validation rmse = 2.279929
+Epoch 20
+Validation rmse = 2.279929
+Epoch 21
+Validation rmse = 2.279929
+Epoch 22
+Validation rmse = 2.279929
+Epoch 23
+Validation rmse = 2.279929
+Epoch 24
+Validation rmse = 2.279929
+Epoch 25
+Validation rmse = 2.279929
+Epoch 26
+Validation rmse = 2.279929
+Epoch 27
+Validation rmse = 2.279929
+Epoch 28
+Validation rmse = 2.279929
+Epoch 29
+Validation rmse = 2.279929
+Model 0 best validation rmse = 2.279929 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 3.151335
+Ensemble test rmse = 3.151335
+1-fold cross validation
+Seed 0 ==> test rmse = 3.151335
+Overall test rmse = 3.151335 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.360381
+Epoch 1
+Validation rmse = 2.360381
+Epoch 2
+Validation rmse = 2.360381
+Epoch 3
+Validation rmse = 2.360381
+Epoch 4
+Validation rmse = 2.360381
+Epoch 5
+Validation rmse = 2.360381
+Epoch 6
+Validation rmse = 2.360381
+Epoch 7
+Validation rmse = 2.360381
+Epoch 8
+Validation rmse = 2.360381
+Epoch 9
+Validation rmse = 2.360381
+Epoch 10
+Validation rmse = 2.360381
+Epoch 11
+Validation rmse = 2.360381
+Epoch 12
+Validation rmse = 2.360381
+Epoch 13
+Validation rmse = 2.360381
+Epoch 14
+Validation rmse = 2.360381
+Epoch 15
+Validation rmse = 2.360381
+Epoch 16
+Validation rmse = 2.360381
+Epoch 17
+Validation rmse = 2.360381
+Epoch 18
+Validation rmse = 2.360381
+Epoch 19
+Validation rmse = 2.360381
+Epoch 20
+Validation rmse = 2.360381
+Epoch 21
+Validation rmse = 2.360381
+Epoch 22
+Validation rmse = 2.360381
+Epoch 23
+Validation rmse = 2.360381
+Epoch 24
+Validation rmse = 2.360381
+Epoch 25
+Validation rmse = 2.360381
+Epoch 26
+Validation rmse = 2.360381
+Epoch 27
+Validation rmse = 2.360381
+Epoch 28
+Validation rmse = 2.360381
+Epoch 29
+Validation rmse = 2.360381
+Model 0 best validation rmse = 2.360381 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 3.057382
+Ensemble test rmse = 3.057382
+1-fold cross validation
+Seed 0 ==> test rmse = 3.057382
+Overall test rmse = 3.057382 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.687539
+Epoch 1
+Validation rmse = 2.687539
+Epoch 2
+Validation rmse = 2.687539
+Epoch 3
+Validation rmse = 2.687539
+Epoch 4
+Validation rmse = 2.687539
+Epoch 5
+Validation rmse = 2.687539
+Epoch 6
+Validation rmse = 2.687539
+Epoch 7
+Validation rmse = 2.687539
+Epoch 8
+Validation rmse = 2.687539
+Epoch 9
+Validation rmse = 2.687539
+Epoch 10
+Validation rmse = 2.687539
+Epoch 11
+Validation rmse = 2.687539
+Epoch 12
+Validation rmse = 2.687539
+Epoch 13
+Validation rmse = 2.687539
+Epoch 14
+Validation rmse = 2.687539
+Epoch 15
+Validation rmse = 2.687539
+Epoch 16
+Validation rmse = 2.687539
+Epoch 17
+Validation rmse = 2.687539
+Epoch 18
+Validation rmse = 2.687539
+Epoch 19
+Validation rmse = 2.687539
+Epoch 20
+Validation rmse = 2.687539
+Epoch 21
+Validation rmse = 2.687539
+Epoch 22
+Validation rmse = 2.687539
+Epoch 23
+Validation rmse = 2.687539
+Epoch 24
+Validation rmse = 2.687539
+Epoch 25
+Validation rmse = 2.687539
+Epoch 26
+Validation rmse = 2.687539
+Epoch 27
+Validation rmse = 2.687539
+Epoch 28
+Validation rmse = 2.687539
+Epoch 29
+Validation rmse = 2.687539
+Model 0 best validation rmse = 2.687539 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.736598
+Ensemble test rmse = 2.736598
+1-fold cross validation
+Seed 0 ==> test rmse = 2.736598
+Overall test rmse = 2.736598 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.570640
+Epoch 1
+Validation rmse = 2.570640
+Epoch 2
+Validation rmse = 2.570640
+Epoch 3
+Validation rmse = 2.570640
+Epoch 4
+Validation rmse = 2.570640
+Epoch 5
+Validation rmse = 2.570640
+Epoch 6
+Validation rmse = 2.570640
+Epoch 7
+Validation rmse = 2.570640
+Epoch 8
+Validation rmse = 2.570640
+Epoch 9
+Validation rmse = 2.570640
+Epoch 10
+Validation rmse = 2.570640
+Epoch 11
+Validation rmse = 2.570640
+Epoch 12
+Validation rmse = 2.570640
+Epoch 13
+Validation rmse = 2.570640
+Epoch 14
+Validation rmse = 2.570640
+Epoch 15
+Validation rmse = 2.570640
+Epoch 16
+Validation rmse = 2.570640
+Epoch 17
+Validation rmse = 2.570640
+Epoch 18
+Validation rmse = 2.570640
+Epoch 19
+Validation rmse = 2.570640
+Epoch 20
+Validation rmse = 2.570640
+Epoch 21
+Validation rmse = 2.570640
+Epoch 22
+Validation rmse = 2.570640
+Epoch 23
+Validation rmse = 2.570640
+Epoch 24
+Validation rmse = 2.570640
+Epoch 25
+Validation rmse = 2.570640
+Epoch 26
+Validation rmse = 2.570640
+Epoch 27
+Validation rmse = 2.570640
+Epoch 28
+Validation rmse = 2.570640
+Epoch 29
+Validation rmse = 2.570640
+Model 0 best validation rmse = 2.570640 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 3.034106
+Ensemble test rmse = 3.034106
+1-fold cross validation
+Seed 0 ==> test rmse = 3.034106
+Overall test rmse = 3.034106 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.345020
+Epoch 1
+Validation rmse = 3.345020
+Epoch 2
+Validation rmse = 3.345020
+Epoch 3
+Validation rmse = 3.345020
+Epoch 4
+Validation rmse = 3.345020
+Epoch 5
+Validation rmse = 3.345020
+Epoch 6
+Validation rmse = 3.345020
+Epoch 7
+Validation rmse = 3.345020
+Epoch 8
+Validation rmse = 3.345020
+Epoch 9
+Validation rmse = 3.345020
+Epoch 10
+Validation rmse = 3.345020
+Epoch 11
+Validation rmse = 3.345020
+Epoch 12
+Validation rmse = 3.345020
+Epoch 13
+Validation rmse = 3.345020
+Epoch 14
+Validation rmse = 3.345020
+Epoch 15
+Validation rmse = 3.345020
+Epoch 16
+Validation rmse = 3.345020
+Epoch 17
+Validation rmse = 3.345020
+Epoch 18
+Validation rmse = 3.345020
+Epoch 19
+Validation rmse = 3.345020
+Epoch 20
+Validation rmse = 3.345020
+Epoch 21
+Validation rmse = 3.345020
+Epoch 22
+Validation rmse = 3.345020
+Epoch 23
+Validation rmse = 3.345020
+Epoch 24
+Validation rmse = 3.345020
+Epoch 25
+Validation rmse = 3.345020
+Epoch 26
+Validation rmse = 3.345020
+Epoch 27
+Validation rmse = 3.345020
+Epoch 28
+Validation rmse = 3.345020
+Epoch 29
+Validation rmse = 3.345020
+Model 0 best validation rmse = 3.345020 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.139655
+Ensemble test rmse = 2.139655
+1-fold cross validation
+Seed 0 ==> test rmse = 2.139655
+Overall test rmse = 2.139655 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'delaney_toy.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.644090
+Epoch 1
+Validation rmse = 3.644090
+Epoch 2
+Validation rmse = 3.644090
+Epoch 3
+Validation rmse = 3.644090
+Epoch 4
+Validation rmse = 3.644090
+Epoch 5
+Validation rmse = 3.644090
+Epoch 6
+Validation rmse = 3.644090
+Epoch 7
+Validation rmse = 3.644090
+Epoch 8
+Validation rmse = 3.644090
+Epoch 9
+Validation rmse = 3.644090
+Epoch 10
+Validation rmse = 3.644090
+Epoch 11
+Validation rmse = 3.644090
+Epoch 12
+Validation rmse = 3.644090
+Epoch 13
+Validation rmse = 3.644090
+Epoch 14
+Validation rmse = 3.644090
+Epoch 15
+Validation rmse = 3.644090
+Epoch 16
+Validation rmse = 3.644090
+Epoch 17
+Validation rmse = 3.644090
+Epoch 18
+Validation rmse = 3.644090
+Epoch 19
+Validation rmse = 3.644090
+Epoch 20
+Validation rmse = 3.644090
+Epoch 21
+Validation rmse = 3.644090
+Epoch 22
+Validation rmse = 3.644090
+Epoch 23
+Validation rmse = 3.644090
+Epoch 24
+Validation rmse = 3.644090
+Epoch 25
+Validation rmse = 3.644090
+Epoch 26
+Validation rmse = 3.644090
+Epoch 27
+Validation rmse = 3.644090
+Epoch 28
+Validation rmse = 3.644090
+Epoch 29
+Validation rmse = 3.644090
+Model 0 best validation rmse = 3.644090 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 1.924077
+Ensemble test rmse = 1.924077
+1-fold cross validation
+Seed 0 ==> test rmse = 1.924077
+Overall test rmse = 1.924077 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.685719
+Epoch 1
+Validation rmse = 2.685719
+Epoch 2
+Validation rmse = 2.685719
+Epoch 3
+Validation rmse = 2.685719
+Epoch 4
+Validation rmse = 2.685719
+Epoch 5
+Validation rmse = 2.685719
+Epoch 6
+Validation rmse = 2.685719
+Epoch 7
+Validation rmse = 2.685719
+Epoch 8
+Validation rmse = 2.685719
+Epoch 9
+Validation rmse = 2.685719
+Epoch 10
+Validation rmse = 2.685719
+Epoch 11
+Validation rmse = 2.685719
+Epoch 12
+Validation rmse = 2.685719
+Epoch 13
+Validation rmse = 2.685719
+Epoch 14
+Validation rmse = 2.685719
+Epoch 15
+Validation rmse = 2.685719
+Epoch 16
+Validation rmse = 2.685719
+Epoch 17
+Validation rmse = 2.685719
+Epoch 18
+Validation rmse = 2.685719
+Epoch 19
+Validation rmse = 2.685719
+Epoch 20
+Validation rmse = 2.685719
+Epoch 21
+Validation rmse = 2.685719
+Epoch 22
+Validation rmse = 2.685719
+Epoch 23
+Validation rmse = 2.685719
+Epoch 24
+Validation rmse = 2.685719
+Epoch 25
+Validation rmse = 2.685719
+Epoch 26
+Validation rmse = 2.685719
+Epoch 27
+Validation rmse = 2.685719
+Epoch 28
+Validation rmse = 2.685719
+Epoch 29
+Validation rmse = 2.685719
+Model 0 best validation rmse = 2.685719 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 3.156571
+Ensemble test rmse = 3.156571
+1-fold cross validation
+Seed 0 ==> test rmse = 3.156571
+Overall test rmse = 3.156571 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.581639
+Epoch 1
+Validation rmse = 3.581639
+Epoch 2
+Validation rmse = 3.581639
+Epoch 3
+Validation rmse = 3.581639
+Epoch 4
+Validation rmse = 3.581639
+Epoch 5
+Validation rmse = 3.581639
+Epoch 6
+Validation rmse = 3.581639
+Epoch 7
+Validation rmse = 3.581639
+Epoch 8
+Validation rmse = 3.581639
+Epoch 9
+Validation rmse = 3.581639
+Epoch 10
+Validation rmse = 3.581639
+Epoch 11
+Validation rmse = 3.581639
+Epoch 12
+Validation rmse = 3.581639
+Epoch 13
+Validation rmse = 3.581639
+Epoch 14
+Validation rmse = 3.581639
+Epoch 15
+Validation rmse = 3.581639
+Epoch 16
+Validation rmse = 3.581639
+Epoch 17
+Validation rmse = 3.581639
+Epoch 18
+Validation rmse = 3.581639
+Epoch 19
+Validation rmse = 3.581639
+Epoch 20
+Validation rmse = 3.581639
+Epoch 21
+Validation rmse = 3.581639
+Epoch 22
+Validation rmse = 3.581639
+Epoch 23
+Validation rmse = 3.581639
+Epoch 24
+Validation rmse = 3.581639
+Epoch 25
+Validation rmse = 3.581639
+Epoch 26
+Validation rmse = 3.581639
+Epoch 27
+Validation rmse = 3.581639
+Epoch 28
+Validation rmse = 3.581639
+Epoch 29
+Validation rmse = 3.581639
+Model 0 best validation rmse = 3.581639 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.188797
+Ensemble test rmse = 2.188797
+1-fold cross validation
+Seed 0 ==> test rmse = 2.188797
+Overall test rmse = 2.188797 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.739936
+Epoch 1
+Validation rmse = 3.739936
+Epoch 2
+Validation rmse = 3.739936
+Epoch 3
+Validation rmse = 3.739936
+Epoch 4
+Validation rmse = 3.739936
+Epoch 5
+Validation rmse = 3.739936
+Epoch 6
+Validation rmse = 3.739936
+Epoch 7
+Validation rmse = 3.739936
+Epoch 8
+Validation rmse = 3.739936
+Epoch 9
+Validation rmse = 3.739936
+Epoch 10
+Validation rmse = 3.739936
+Epoch 11
+Validation rmse = 3.739936
+Epoch 12
+Validation rmse = 3.739936
+Epoch 13
+Validation rmse = 3.739936
+Epoch 14
+Validation rmse = 3.739936
+Epoch 15
+Validation rmse = 3.739936
+Epoch 16
+Validation rmse = 3.739936
+Epoch 17
+Validation rmse = 3.739936
+Epoch 18
+Validation rmse = 3.739936
+Epoch 19
+Validation rmse = 3.739936
+Epoch 20
+Validation rmse = 3.739936
+Epoch 21
+Validation rmse = 3.739936
+Epoch 22
+Validation rmse = 3.739936
+Epoch 23
+Validation rmse = 3.739936
+Epoch 24
+Validation rmse = 3.739936
+Epoch 25
+Validation rmse = 3.739936
+Epoch 26
+Validation rmse = 3.739936
+Epoch 27
+Validation rmse = 3.739936
+Epoch 28
+Validation rmse = 3.739936
+Epoch 29
+Validation rmse = 3.739936
+Model 0 best validation rmse = 3.739936 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 1.510565
+Ensemble test rmse = 1.510565
+1-fold cross validation
+Seed 0 ==> test rmse = 1.510565
+Overall test rmse = 1.510565 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.838164
+Epoch 1
+Validation rmse = 2.838164
+Epoch 2
+Validation rmse = 2.838164
+Epoch 3
+Validation rmse = 2.838164
+Epoch 4
+Validation rmse = 2.838164
+Epoch 5
+Validation rmse = 2.838164
+Epoch 6
+Validation rmse = 2.838164
+Epoch 7
+Validation rmse = 2.838164
+Epoch 8
+Validation rmse = 2.838164
+Epoch 9
+Validation rmse = 2.838164
+Epoch 10
+Validation rmse = 2.838164
+Epoch 11
+Validation rmse = 2.838164
+Epoch 12
+Validation rmse = 2.838164
+Epoch 13
+Validation rmse = 2.838164
+Epoch 14
+Validation rmse = 2.838164
+Epoch 15
+Validation rmse = 2.838164
+Epoch 16
+Validation rmse = 2.838164
+Epoch 17
+Validation rmse = 2.838164
+Epoch 18
+Validation rmse = 2.838164
+Epoch 19
+Validation rmse = 2.838164
+Epoch 20
+Validation rmse = 2.838164
+Epoch 21
+Validation rmse = 2.838164
+Epoch 22
+Validation rmse = 2.838164
+Epoch 23
+Validation rmse = 2.838164
+Epoch 24
+Validation rmse = 2.838164
+Epoch 25
+Validation rmse = 2.838164
+Epoch 26
+Validation rmse = 2.838164
+Epoch 27
+Validation rmse = 2.838164
+Epoch 28
+Validation rmse = 2.838164
+Epoch 29
+Validation rmse = 2.838164
+Model 0 best validation rmse = 2.838164 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.572972
+Ensemble test rmse = 2.572972
+1-fold cross validation
+Seed 0 ==> test rmse = 2.572972
+Overall test rmse = 2.572972 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.650416
+Epoch 1
+Validation rmse = 2.650416
+Epoch 2
+Validation rmse = 2.650416
+Epoch 3
+Validation rmse = 2.650416
+Epoch 4
+Validation rmse = 2.650416
+Epoch 5
+Validation rmse = 2.650416
+Epoch 6
+Validation rmse = 2.650416
+Epoch 7
+Validation rmse = 2.650416
+Epoch 8
+Validation rmse = 2.650416
+Epoch 9
+Validation rmse = 2.650416
+Epoch 10
+Validation rmse = 2.650416
+Epoch 11
+Validation rmse = 2.650416
+Epoch 12
+Validation rmse = 2.650416
+Epoch 13
+Validation rmse = 2.650416
+Epoch 14
+Validation rmse = 2.650416
+Epoch 15
+Validation rmse = 2.650416
+Epoch 16
+Validation rmse = 2.650416
+Epoch 17
+Validation rmse = 2.650416
+Epoch 18
+Validation rmse = 2.650416
+Epoch 19
+Validation rmse = 2.650416
+Epoch 20
+Validation rmse = 2.650416
+Epoch 21
+Validation rmse = 2.650416
+Epoch 22
+Validation rmse = 2.650416
+Epoch 23
+Validation rmse = 2.650416
+Epoch 24
+Validation rmse = 2.650416
+Epoch 25
+Validation rmse = 2.650416
+Epoch 26
+Validation rmse = 2.650416
+Epoch 27
+Validation rmse = 2.650416
+Epoch 28
+Validation rmse = 2.650416
+Epoch 29
+Validation rmse = 2.650416
+Model 0 best validation rmse = 2.650416 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.594536
+Ensemble test rmse = 2.594536
+1-fold cross validation
+Seed 0 ==> test rmse = 2.594536
+Overall test rmse = 2.594536 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': '../bazley_predictions/logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': '../bazley_predictions/logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': 'logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': 'logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': '../bazley_predictions/logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': '../bazley_predictions/logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': '../bazley_predictions/logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': '../bazley_predictions/logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 3.013429
+Epoch 1
+Validation rmse = 3.013429
+Epoch 2
+Validation rmse = 3.013429
+Epoch 3
+Validation rmse = 3.013429
+Epoch 4
+Validation rmse = 3.013429
+Epoch 5
+Validation rmse = 3.013429
+Epoch 6
+Validation rmse = 3.013429
+Epoch 7
+Validation rmse = 3.013429
+Epoch 8
+Validation rmse = 3.013429
+Epoch 9
+Validation rmse = 3.013429
+Epoch 10
+Validation rmse = 3.013429
+Epoch 11
+Validation rmse = 3.013429
+Epoch 12
+Validation rmse = 3.013429
+Epoch 13
+Validation rmse = 3.013429
+Epoch 14
+Validation rmse = 3.013429
+Epoch 15
+Validation rmse = 3.013429
+Epoch 16
+Validation rmse = 3.013429
+Epoch 17
+Validation rmse = 3.013429
+Epoch 18
+Validation rmse = 3.013429
+Epoch 19
+Validation rmse = 3.013429
+Epoch 20
+Validation rmse = 3.013429
+Epoch 21
+Validation rmse = 3.013429
+Epoch 22
+Validation rmse = 3.013429
+Epoch 23
+Validation rmse = 3.013429
+Epoch 24
+Validation rmse = 3.013429
+Epoch 25
+Validation rmse = 3.013429
+Epoch 26
+Validation rmse = 3.013429
+Epoch 27
+Validation rmse = 3.013429
+Epoch 28
+Validation rmse = 3.013429
+Epoch 29
+Validation rmse = 3.013429
+Model 0 best validation rmse = 3.013429 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.624269
+Ensemble test rmse = 2.624269
+1-fold cross validation
+Seed 0 ==> test rmse = 2.624269
+Overall test rmse = 2.624269 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': '../barzilay_predictions/logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': '../barzilay_predictions/logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.706975
+Epoch 1
+Validation rmse = 2.706975
+Epoch 2
+Validation rmse = 2.706975
+Epoch 3
+Validation rmse = 2.706975
+Epoch 4
+Validation rmse = 2.706975
+Epoch 5
+Validation rmse = 2.706975
+Epoch 6
+Validation rmse = 2.706975
+Epoch 7
+Validation rmse = 2.706975
+Epoch 8
+Validation rmse = 2.706975
+Epoch 9
+Validation rmse = 2.706975
+Epoch 10
+Validation rmse = 2.706975
+Epoch 11
+Validation rmse = 2.706975
+Epoch 12
+Validation rmse = 2.706975
+Epoch 13
+Validation rmse = 2.706975
+Epoch 14
+Validation rmse = 2.706975
+Epoch 15
+Validation rmse = 2.706975
+Epoch 16
+Validation rmse = 2.706975
+Epoch 17
+Validation rmse = 2.706975
+Epoch 18
+Validation rmse = 2.706975
+Epoch 19
+Validation rmse = 2.706975
+Epoch 20
+Validation rmse = 2.706975
+Epoch 21
+Validation rmse = 2.706975
+Epoch 22
+Validation rmse = 2.706975
+Epoch 23
+Validation rmse = 2.706975
+Epoch 24
+Validation rmse = 2.706975
+Epoch 25
+Validation rmse = 2.706975
+Epoch 26
+Validation rmse = 2.706975
+Epoch 27
+Validation rmse = 2.706975
+Epoch 28
+Validation rmse = 2.706975
+Epoch 29
+Validation rmse = 2.706975
+Model 0 best validation rmse = 2.706975 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.821340
+Ensemble test rmse = 2.821340
+1-fold cross validation
+Seed 0 ==> test rmse = 2.821340
+Overall test rmse = 2.821340 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': '../barzilay_predictions/logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': '../barzilay_predictions/logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 4.093718
+Epoch 1
+Validation rmse = 4.093718
+Epoch 2
+Validation rmse = 4.093718
+Epoch 3
+Validation rmse = 4.093718
+Epoch 4
+Validation rmse = 4.093718
+Epoch 5
+Validation rmse = 4.093718
+Epoch 6
+Validation rmse = 4.093718
+Epoch 7
+Validation rmse = 4.093718
+Epoch 8
+Validation rmse = 4.093718
+Epoch 9
+Validation rmse = 4.093718
+Epoch 10
+Validation rmse = 4.093718
+Epoch 11
+Validation rmse = 4.093718
+Epoch 12
+Validation rmse = 4.093718
+Epoch 13
+Validation rmse = 4.093718
+Epoch 14
+Validation rmse = 4.093718
+Epoch 15
+Validation rmse = 4.093718
+Epoch 16
+Validation rmse = 4.093718
+Epoch 17
+Validation rmse = 4.093718
+Epoch 18
+Validation rmse = 4.093718
+Epoch 19
+Validation rmse = 4.093718
+Epoch 20
+Validation rmse = 4.093718
+Epoch 21
+Validation rmse = 4.093718
+Epoch 22
+Validation rmse = 4.093718
+Epoch 23
+Validation rmse = 4.093718
+Epoch 24
+Validation rmse = 4.093718
+Epoch 25
+Validation rmse = 4.093718
+Epoch 26
+Validation rmse = 4.093718
+Epoch 27
+Validation rmse = 4.093718
+Epoch 28
+Validation rmse = 4.093718
+Epoch 29
+Validation rmse = 4.093718
+Model 0 best validation rmse = 4.093718 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 1.658072
+Ensemble test rmse = 1.658072
+1-fold cross validation
+Seed 0 ==> test rmse = 1.658072
+Overall test rmse = 1.658072 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': '../barzilay_predictions/logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': '../barzilay_predictions/logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 11 | train size = 8 | val size = 1 | test size = 2
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Validation rmse = 2.568686
+Epoch 1
+Validation rmse = 2.568686
+Epoch 2
+Validation rmse = 2.568686
+Epoch 3
+Validation rmse = 2.568686
+Epoch 4
+Validation rmse = 2.568686
+Epoch 5
+Validation rmse = 2.568686
+Epoch 6
+Validation rmse = 2.568686
+Epoch 7
+Validation rmse = 2.568686
+Epoch 8
+Validation rmse = 2.568686
+Epoch 9
+Validation rmse = 2.568686
+Epoch 10
+Validation rmse = 2.568686
+Epoch 11
+Validation rmse = 2.568686
+Epoch 12
+Validation rmse = 2.568686
+Epoch 13
+Validation rmse = 2.568686
+Epoch 14
+Validation rmse = 2.568686
+Epoch 15
+Validation rmse = 2.568686
+Epoch 16
+Validation rmse = 2.568686
+Epoch 17
+Validation rmse = 2.568686
+Epoch 18
+Validation rmse = 2.568686
+Epoch 19
+Validation rmse = 2.568686
+Epoch 20
+Validation rmse = 2.568686
+Epoch 21
+Validation rmse = 2.568686
+Epoch 22
+Validation rmse = 2.568686
+Epoch 23
+Validation rmse = 2.568686
+Epoch 24
+Validation rmse = 2.568686
+Epoch 25
+Validation rmse = 2.568686
+Epoch 26
+Validation rmse = 2.568686
+Epoch 27
+Validation rmse = 2.568686
+Epoch 28
+Validation rmse = 2.568686
+Epoch 29
+Validation rmse = 2.568686
+Model 0 best validation rmse = 2.568686 on epoch 0
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 2.465281
+Ensemble test rmse = 2.465281
+1-fold cross validation
+Seed 0 ==> test rmse = 2.465281
+Overall test rmse = 2.465281 +/- 0.000000
+Fold 0
+{'activation': 'ReLU',
+ 'atom_messages': False,
+ 'batch_size': 50,
+ 'bias': False,
+ 'checkpoint_dir': None,
+ 'checkpoint_path': None,
+ 'checkpoint_paths': None,
+ 'config_path': None,
+ 'crossval_index_dir': None,
+ 'crossval_index_file': None,
+ 'cuda': False,
+ 'data_path': '../barzilay_predictions/logger_dir/temp_CCS_training_df.csv',
+ 'dataset_type': 'regression',
+ 'depth': 3,
+ 'dropout': 0.0,
+ 'ensemble_size': 1,
+ 'epochs': 30,
+ 'features_generator': None,
+ 'features_only': False,
+ 'features_path': None,
+ 'features_scaling': True,
+ 'ffn_hidden_size': 300,
+ 'ffn_num_layers': 2,
+ 'final_lr': 0.0001,
+ 'folds_file': None,
+ 'gpu': None,
+ 'hidden_size': 300,
+ 'init_lr': 0.0001,
+ 'log_frequency': 10,
+ 'max_data_size': None,
+ 'max_lr': 0.001,
+ 'metric': 'rmse',
+ 'minimize_score': True,
+ 'multiclass_num_classes': 3,
+ 'no_cache': False,
+ 'num_folds': 1,
+ 'num_lrs': 1,
+ 'quiet': True,
+ 'save_dir': '../barzilay_predictions/logger_dir\\fold_0',
+ 'save_smiles_splits': False,
+ 'seed': 0,
+ 'separate_test_features_path': None,
+ 'separate_test_path': None,
+ 'separate_val_features_path': None,
+ 'separate_val_path': None,
+ 'show_individual_scores': False,
+ 'split_sizes': [0.8, 0.1, 0.1],
+ 'split_type': 'random',
+ 'test': False,
+ 'test_fold_index': None,
+ 'undirected': False,
+ 'use_compound_names': False,
+ 'use_input_features': None,
+ 'val_fold_index': None,
+ 'warmup_epochs': 2.0}
+Loading data
+Number of tasks = 1
+Splitting data with seed 0
+Total size = 4,200 | train size = 3,360 | val size = 420 | test size = 420
+Fitting scaler
+Building model 0
+MoleculeModel(
+  (encoder): MPN(
+    (encoder): MPNEncoder(
+      (dropout_layer): Dropout(p=0.0, inplace=False)
+      (act_func): ReLU()
+      (W_i): Linear(in_features=147, out_features=300, bias=False)
+      (W_h): Linear(in_features=300, out_features=300, bias=False)
+      (W_o): Linear(in_features=433, out_features=300, bias=True)
+    )
+  )
+  (ffn): Sequential(
+    (0): Dropout(p=0.0, inplace=False)
+    (1): Linear(in_features=300, out_features=300, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.0, inplace=False)
+    (4): Linear(in_features=300, out_features=1, bias=True)
+  )
+)
+Number of parameters = 354,901
+Epoch 0
+Loss = 1.9635e-02, PNorm = 33.9986, GNorm = 2.1310, lr_0 = 1.6716e-04
+Loss = 1.9240e-02, PNorm = 34.0026, GNorm = 2.8844, lr_0 = 2.3433e-04
+Loss = 1.9044e-02, PNorm = 34.0091, GNorm = 1.7182, lr_0 = 3.0149e-04
+Loss = 1.9524e-02, PNorm = 34.0193, GNorm = 1.7624, lr_0 = 3.6866e-04
+Loss = 1.9318e-02, PNorm = 34.0329, GNorm = 0.9338, lr_0 = 4.3582e-04
+Loss = 1.9656e-02, PNorm = 34.0487, GNorm = 1.1645, lr_0 = 5.0299e-04
+Validation rmse = 1.095526
+Epoch 1
+Loss = 1.6044e-02, PNorm = 34.0701, GNorm = 0.9862, lr_0 = 5.7015e-04
+Loss = 1.7047e-02, PNorm = 34.1032, GNorm = 1.6607, lr_0 = 6.3731e-04
+Loss = 1.6668e-02, PNorm = 34.1483, GNorm = 7.8476, lr_0 = 7.0448e-04
+Loss = 1.9529e-02, PNorm = 34.2032, GNorm = 1.2675, lr_0 = 7.7164e-04
+Loss = 1.6175e-02, PNorm = 34.2580, GNorm = 1.7707, lr_0 = 8.3881e-04
+Loss = 1.5232e-02, PNorm = 34.3143, GNorm = 1.6356, lr_0 = 9.0597e-04
+Loss = 1.4442e-02, PNorm = 34.3795, GNorm = 3.1514, lr_0 = 9.7313e-04
+Validation rmse = 1.029643
+Epoch 2
+Loss = 1.4233e-02, PNorm = 34.4482, GNorm = 7.9219, lr_0 = 9.9266e-04
+Loss = 1.4764e-02, PNorm = 34.5148, GNorm = 4.6443, lr_0 = 9.8055e-04
+Loss = 1.5017e-02, PNorm = 34.5785, GNorm = 7.7074, lr_0 = 9.6859e-04
+Loss = 1.3021e-02, PNorm = 34.6348, GNorm = 4.5609, lr_0 = 9.5678e-04
+Loss = 1.3708e-02, PNorm = 34.6987, GNorm = 2.3397, lr_0 = 9.4510e-04
+Loss = 1.1839e-02, PNorm = 34.7677, GNorm = 1.7372, lr_0 = 9.3358e-04
+Loss = 1.2465e-02, PNorm = 34.8304, GNorm = 5.1364, lr_0 = 9.2219e-04
+Validation rmse = 0.950239
+Epoch 3
+Loss = 1.1824e-02, PNorm = 34.8897, GNorm = 0.9320, lr_0 = 9.1094e-04
+Loss = 1.2816e-02, PNorm = 34.9612, GNorm = 1.8658, lr_0 = 8.9982e-04
+Loss = 1.0779e-02, PNorm = 35.0367, GNorm = 7.2344, lr_0 = 8.8885e-04
+Loss = 1.1514e-02, PNorm = 35.0998, GNorm = 2.1037, lr_0 = 8.7800e-04
+Loss = 1.0074e-02, PNorm = 35.1768, GNorm = 2.8362, lr_0 = 8.6729e-04
+Loss = 1.0128e-02, PNorm = 35.2325, GNorm = 10.3264, lr_0 = 8.5671e-04
+Validation rmse = 0.846252
+Epoch 4
+Loss = 1.0805e-02, PNorm = 35.2887, GNorm = 1.5275, lr_0 = 8.4626e-04
+Loss = 1.0541e-02, PNorm = 35.3580, GNorm = 1.5353, lr_0 = 8.3594e-04
+Loss = 9.5189e-03, PNorm = 35.4198, GNorm = 5.7374, lr_0 = 8.2574e-04
+Loss = 9.2285e-03, PNorm = 35.4776, GNorm = 7.6870, lr_0 = 8.1567e-04
+Loss = 1.0676e-02, PNorm = 35.5325, GNorm = 4.5256, lr_0 = 8.0572e-04
+Loss = 1.1402e-02, PNorm = 35.5899, GNorm = 0.8381, lr_0 = 7.9589e-04
+Loss = 9.8085e-03, PNorm = 35.6430, GNorm = 0.8764, lr_0 = 7.8618e-04
+Validation rmse = 0.777617
+Epoch 5
+Loss = 6.4190e-03, PNorm = 35.6904, GNorm = 2.8859, lr_0 = 7.7659e-04
+Loss = 8.0051e-03, PNorm = 35.7453, GNorm = 2.7702, lr_0 = 7.6712e-04
+Loss = 7.7349e-03, PNorm = 35.8037, GNorm = 6.1730, lr_0 = 7.5776e-04
+Loss = 8.5634e-03, PNorm = 35.8543, GNorm = 2.7631, lr_0 = 7.4851e-04
+Loss = 9.2651e-03, PNorm = 35.8980, GNorm = 3.3167, lr_0 = 7.3938e-04
+Loss = 7.9233e-03, PNorm = 35.9421, GNorm = 1.9432, lr_0 = 7.3036e-04
+Loss = 8.6501e-03, PNorm = 35.9755, GNorm = 1.5888, lr_0 = 7.2145e-04
+Validation rmse = 0.716362
+Epoch 6
+Loss = 6.6289e-03, PNorm = 36.0088, GNorm = 3.8814, lr_0 = 7.1265e-04
+Loss = 7.2560e-03, PNorm = 36.0503, GNorm = 1.6963, lr_0 = 7.0396e-04
+Loss = 8.5494e-03, PNorm = 36.0922, GNorm = 2.2000, lr_0 = 6.9537e-04
+Loss = 7.9188e-03, PNorm = 36.1401, GNorm = 2.7192, lr_0 = 6.8689e-04
+Loss = 6.9564e-03, PNorm = 36.1852, GNorm = 2.1374, lr_0 = 6.7851e-04
+Loss = 7.0961e-03, PNorm = 36.2274, GNorm = 5.6835, lr_0 = 6.7023e-04
+Validation rmse = 0.681483
+Epoch 7
+Loss = 4.9227e-03, PNorm = 36.2613, GNorm = 1.2720, lr_0 = 6.6206e-04
+Loss = 7.6363e-03, PNorm = 36.2941, GNorm = 1.7070, lr_0 = 6.5398e-04
+Loss = 7.3297e-03, PNorm = 36.3282, GNorm = 2.6868, lr_0 = 6.4600e-04
+Loss = 5.9951e-03, PNorm = 36.3700, GNorm = 2.1641, lr_0 = 6.3812e-04
+Loss = 6.4864e-03, PNorm = 36.4097, GNorm = 3.9875, lr_0 = 6.3034e-04
+Loss = 6.6216e-03, PNorm = 36.4438, GNorm = 5.4106, lr_0 = 6.2265e-04
+Loss = 7.6402e-03, PNorm = 36.4830, GNorm = 11.0386, lr_0 = 6.1505e-04
+Validation rmse = 0.660948
+Epoch 8
+Loss = 6.7731e-03, PNorm = 36.5121, GNorm = 1.3113, lr_0 = 6.0755e-04
+Loss = 5.7406e-03, PNorm = 36.5516, GNorm = 2.8906, lr_0 = 6.0014e-04
+Loss = 6.3031e-03, PNorm = 36.5912, GNorm = 1.4041, lr_0 = 5.9282e-04
+Loss = 6.5100e-03, PNorm = 36.6124, GNorm = 2.2330, lr_0 = 5.8559e-04
+Loss = 5.8835e-03, PNorm = 36.6455, GNorm = 1.1399, lr_0 = 5.7844e-04
+Loss = 5.5183e-03, PNorm = 36.6756, GNorm = 2.5231, lr_0 = 5.7139e-04
+Loss = 6.4744e-03, PNorm = 36.6923, GNorm = 4.5361, lr_0 = 5.6442e-04
+Validation rmse = 0.673744
+Epoch 9
+Loss = 5.6547e-03, PNorm = 36.7265, GNorm = 1.3932, lr_0 = 5.5753e-04
+Loss = 5.7399e-03, PNorm = 36.7610, GNorm = 5.5116, lr_0 = 5.5073e-04
+Loss = 6.3788e-03, PNorm = 36.7931, GNorm = 7.7552, lr_0 = 5.4401e-04
+Loss = 5.0080e-03, PNorm = 36.8238, GNorm = 3.2221, lr_0 = 5.3737e-04
+Loss = 6.5154e-03, PNorm = 36.8530, GNorm = 2.1949, lr_0 = 5.3082e-04
+Loss = 5.3984e-03, PNorm = 36.8785, GNorm = 1.1273, lr_0 = 5.2434e-04
+Loss = 5.9605e-03, PNorm = 36.9015, GNorm = 2.1992, lr_0 = 5.1795e-04
+Validation rmse = 0.612470
+Epoch 10
+Loss = 4.1801e-03, PNorm = 36.9297, GNorm = 1.5980, lr_0 = 5.1163e-04
+Loss = 5.3338e-03, PNorm = 36.9519, GNorm = 5.5563, lr_0 = 5.0539e-04
+Loss = 5.3487e-03, PNorm = 36.9768, GNorm = 2.9012, lr_0 = 4.9922e-04
+Loss = 4.7721e-03, PNorm = 37.0032, GNorm = 6.2997, lr_0 = 4.9313e-04
+Loss = 5.3035e-03, PNorm = 37.0244, GNorm = 5.0070, lr_0 = 4.8712e-04
+Loss = 5.4475e-03, PNorm = 37.0452, GNorm = 1.3148, lr_0 = 4.8117e-04
+Validation rmse = 0.599152
+Epoch 11
+Loss = 4.6106e-03, PNorm = 37.0686, GNorm = 1.2948, lr_0 = 4.7530e-04
+Loss = 4.5494e-03, PNorm = 37.0973, GNorm = 2.9446, lr_0 = 4.6951e-04
+Loss = 4.5904e-03, PNorm = 37.1205, GNorm = 4.4674, lr_0 = 4.6378e-04
+Loss = 6.5441e-03, PNorm = 37.1449, GNorm = 4.1758, lr_0 = 4.5812e-04
+Loss = 5.2728e-03, PNorm = 37.1623, GNorm = 1.2148, lr_0 = 4.5253e-04
+Loss = 5.8128e-03, PNorm = 37.1879, GNorm = 3.4893, lr_0 = 4.4701e-04
+Loss = 6.1061e-03, PNorm = 37.2128, GNorm = 4.3911, lr_0 = 4.4156e-04
+Validation rmse = 0.601886
+Epoch 12
+Loss = 4.9635e-03, PNorm = 37.2358, GNorm = 3.5449, lr_0 = 4.3617e-04
+Loss = 5.3584e-03, PNorm = 37.2557, GNorm = 2.7497, lr_0 = 4.3085e-04
+Loss = 5.1249e-03, PNorm = 37.2756, GNorm = 1.3065, lr_0 = 4.2560e-04
+Loss = 5.3470e-03, PNorm = 37.2975, GNorm = 3.6193, lr_0 = 4.2040e-04
+Loss = 5.1561e-03, PNorm = 37.3210, GNorm = 2.4965, lr_0 = 4.1528e-04
+Loss = 4.9798e-03, PNorm = 37.3407, GNorm = 5.5098, lr_0 = 4.1021e-04
+Loss = 4.3126e-03, PNorm = 37.3599, GNorm = 1.4467, lr_0 = 4.0521e-04
+Validation rmse = 0.586711
+Epoch 13
+Loss = 4.5511e-03, PNorm = 37.3852, GNorm = 3.0332, lr_0 = 4.0026e-04
+Loss = 4.5924e-03, PNorm = 37.4029, GNorm = 1.8525, lr_0 = 3.9538e-04
+Loss = 4.2703e-03, PNorm = 37.4182, GNorm = 1.5502, lr_0 = 3.9056e-04
+Loss = 4.4100e-03, PNorm = 37.4361, GNorm = 1.6179, lr_0 = 3.8579e-04
+Loss = 5.4158e-03, PNorm = 37.4565, GNorm = 3.3711, lr_0 = 3.8109e-04
+Loss = 4.6872e-03, PNorm = 37.4727, GNorm = 4.4248, lr_0 = 3.7644e-04
+Validation rmse = 0.606866
+Epoch 14
+Loss = 5.1392e-03, PNorm = 37.4893, GNorm = 1.2645, lr_0 = 3.7185e-04
+Loss = 3.7369e-03, PNorm = 37.5064, GNorm = 1.2063, lr_0 = 3.6731e-04
+Loss = 4.4548e-03, PNorm = 37.5262, GNorm = 1.2384, lr_0 = 3.6283e-04
+Loss = 4.1758e-03, PNorm = 37.5435, GNorm = 3.2905, lr_0 = 3.5840e-04
+Loss = 4.2098e-03, PNorm = 37.5595, GNorm = 3.0112, lr_0 = 3.5403e-04
+Loss = 4.5514e-03, PNorm = 37.5756, GNorm = 1.1340, lr_0 = 3.4971e-04
+Loss = 5.0324e-03, PNorm = 37.5939, GNorm = 5.6657, lr_0 = 3.4545e-04
+Validation rmse = 0.598335
+Epoch 15
+Loss = 5.6946e-03, PNorm = 37.6053, GNorm = 6.0967, lr_0 = 3.4123e-04
+Loss = 3.9965e-03, PNorm = 37.6220, GNorm = 3.5777, lr_0 = 3.3707e-04
+Loss = 3.7355e-03, PNorm = 37.6402, GNorm = 2.0344, lr_0 = 3.3296e-04
+Loss = 4.0475e-03, PNorm = 37.6580, GNorm = 2.8410, lr_0 = 3.2890e-04
+Loss = 4.1408e-03, PNorm = 37.6771, GNorm = 4.5834, lr_0 = 3.2488e-04
+Loss = 4.5729e-03, PNorm = 37.6957, GNorm = 1.5447, lr_0 = 3.2092e-04
+Loss = 4.1455e-03, PNorm = 37.7043, GNorm = 1.5346, lr_0 = 3.1700e-04
+Validation rmse = 0.565701
+Epoch 16
+Loss = 4.1059e-03, PNorm = 37.7184, GNorm = 1.7130, lr_0 = 3.1314e-04
+Loss = 4.2016e-03, PNorm = 37.7344, GNorm = 3.5562, lr_0 = 3.0932e-04
+Loss = 3.2505e-03, PNorm = 37.7476, GNorm = 5.2061, lr_0 = 3.0554e-04
+Loss = 4.0497e-03, PNorm = 37.7603, GNorm = 1.4310, lr_0 = 3.0182e-04
+Loss = 3.6370e-03, PNorm = 37.7750, GNorm = 1.0919, lr_0 = 2.9814e-04
+Loss = 3.6589e-03, PNorm = 37.7924, GNorm = 1.3211, lr_0 = 2.9450e-04
+Validation rmse = 0.541609
+Epoch 17
+Loss = 3.0500e-03, PNorm = 37.8067, GNorm = 1.3624, lr_0 = 2.9091e-04
+Loss = 3.6296e-03, PNorm = 37.8223, GNorm = 1.4078, lr_0 = 2.8736e-04
+Loss = 3.9889e-03, PNorm = 37.8371, GNorm = 1.9305, lr_0 = 2.8385e-04
+Loss = 3.3339e-03, PNorm = 37.8508, GNorm = 3.5065, lr_0 = 2.8039e-04
+Loss = 3.7669e-03, PNorm = 37.8627, GNorm = 1.9477, lr_0 = 2.7697e-04
+Loss = 4.8995e-03, PNorm = 37.8760, GNorm = 4.6606, lr_0 = 2.7359e-04
+Loss = 3.6820e-03, PNorm = 37.8869, GNorm = 2.1990, lr_0 = 2.7025e-04
+Validation rmse = 0.543562
+Epoch 18
+Loss = 3.0512e-03, PNorm = 37.8991, GNorm = 1.0363, lr_0 = 2.6696e-04
+Loss = 3.3484e-03, PNorm = 37.9118, GNorm = 0.8725, lr_0 = 2.6370e-04
+Loss = 4.5987e-03, PNorm = 37.9248, GNorm = 1.4793, lr_0 = 2.6048e-04
+Loss = 3.3593e-03, PNorm = 37.9391, GNorm = 1.1897, lr_0 = 2.5730e-04
+Loss = 3.6747e-03, PNorm = 37.9526, GNorm = 3.6469, lr_0 = 2.5417e-04
+Loss = 3.2625e-03, PNorm = 37.9634, GNorm = 1.4566, lr_0 = 2.5107e-04
+Loss = 3.6711e-03, PNorm = 37.9750, GNorm = 0.9230, lr_0 = 2.4800e-04
+Validation rmse = 0.537183
+Epoch 19
+Loss = 3.3440e-03, PNorm = 37.9880, GNorm = 1.4766, lr_0 = 2.4498e-04
+Loss = 3.4332e-03, PNorm = 38.0002, GNorm = 1.5556, lr_0 = 2.4199e-04
+Loss = 2.9066e-03, PNorm = 38.0139, GNorm = 3.1226, lr_0 = 2.3904e-04
+Loss = 4.0602e-03, PNorm = 38.0262, GNorm = 2.2099, lr_0 = 2.3612e-04
+Loss = 3.7012e-03, PNorm = 38.0344, GNorm = 2.1436, lr_0 = 2.3324e-04
+Loss = 3.3536e-03, PNorm = 38.0425, GNorm = 1.9469, lr_0 = 2.3040e-04
+Loss = 3.0597e-03, PNorm = 38.0531, GNorm = 2.1156, lr_0 = 2.2758e-04
+Validation rmse = 0.531237
+Epoch 20
+Loss = 3.0151e-03, PNorm = 38.0641, GNorm = 1.0571, lr_0 = 2.2481e-04
+Loss = 3.5742e-03, PNorm = 38.0740, GNorm = 2.4846, lr_0 = 2.2207e-04
+Loss = 3.0753e-03, PNorm = 38.0815, GNorm = 1.1035, lr_0 = 2.1936e-04
+Loss = 3.3813e-03, PNorm = 38.0891, GNorm = 1.9528, lr_0 = 2.1668e-04
+Loss = 3.8942e-03, PNorm = 38.1001, GNorm = 2.1567, lr_0 = 2.1404e-04
+Loss = 3.4523e-03, PNorm = 38.1146, GNorm = 1.2984, lr_0 = 2.1143e-04
+Validation rmse = 0.525805
+Epoch 21
+Loss = 3.6819e-03, PNorm = 38.1292, GNorm = 2.7738, lr_0 = 2.0885e-04
+Loss = 2.9065e-03, PNorm = 38.1402, GNorm = 1.4524, lr_0 = 2.0630e-04
+Loss = 3.4467e-03, PNorm = 38.1520, GNorm = 4.8129, lr_0 = 2.0378e-04
+Loss = 3.4461e-03, PNorm = 38.1637, GNorm = 1.4634, lr_0 = 2.0130e-04
+Loss = 3.0484e-03, PNorm = 38.1729, GNorm = 1.8656, lr_0 = 1.9884e-04
+Loss = 3.2701e-03, PNorm = 38.1808, GNorm = 1.6662, lr_0 = 1.9642e-04
+Loss = 3.2014e-03, PNorm = 38.1874, GNorm = 2.1883, lr_0 = 1.9402e-04
+Validation rmse = 0.524640
+Epoch 22
+Loss = 3.5637e-03, PNorm = 38.1951, GNorm = 1.5870, lr_0 = 1.9165e-04
+Loss = 2.8577e-03, PNorm = 38.2039, GNorm = 3.0806, lr_0 = 1.8932e-04
+Loss = 3.3500e-03, PNorm = 38.2123, GNorm = 3.3143, lr_0 = 1.8701e-04
+Loss = 2.8640e-03, PNorm = 38.2211, GNorm = 1.4091, lr_0 = 1.8472e-04
+Loss = 3.0947e-03, PNorm = 38.2299, GNorm = 1.8447, lr_0 = 1.8247e-04
+Loss = 2.9902e-03, PNorm = 38.2387, GNorm = 3.2432, lr_0 = 1.8025e-04
+Loss = 3.2346e-03, PNorm = 38.2480, GNorm = 2.0456, lr_0 = 1.7805e-04
+Validation rmse = 0.530219
+Epoch 23
+Loss = 2.8087e-03, PNorm = 38.2575, GNorm = 1.2037, lr_0 = 1.7587e-04
+Loss = 2.8452e-03, PNorm = 38.2670, GNorm = 2.9396, lr_0 = 1.7373e-04
+Loss = 3.1016e-03, PNorm = 38.2747, GNorm = 4.2044, lr_0 = 1.7161e-04
+Loss = 2.7522e-03, PNorm = 38.2850, GNorm = 1.2059, lr_0 = 1.6952e-04
+Loss = 2.9767e-03, PNorm = 38.2926, GNorm = 2.3357, lr_0 = 1.6745e-04
+Loss = 3.6008e-03, PNorm = 38.3011, GNorm = 3.1109, lr_0 = 1.6541e-04
+Validation rmse = 0.517032
+Epoch 24
+Loss = 2.9599e-03, PNorm = 38.3086, GNorm = 1.4131, lr_0 = 1.6339e-04
+Loss = 2.6028e-03, PNorm = 38.3158, GNorm = 1.3346, lr_0 = 1.6139e-04
+Loss = 3.0420e-03, PNorm = 38.3250, GNorm = 4.3678, lr_0 = 1.5943e-04
+Loss = 2.7094e-03, PNorm = 38.3334, GNorm = 3.8561, lr_0 = 1.5748e-04
+Loss = 2.7347e-03, PNorm = 38.3391, GNorm = 2.9236, lr_0 = 1.5556e-04
+Loss = 3.0846e-03, PNorm = 38.3446, GNorm = 2.8234, lr_0 = 1.5366e-04
+Loss = 3.2909e-03, PNorm = 38.3514, GNorm = 2.3545, lr_0 = 1.5179e-04
+Validation rmse = 0.529135
+Epoch 25
+Loss = 3.5794e-03, PNorm = 38.3596, GNorm = 2.6789, lr_0 = 1.4994e-04
+Loss = 3.1947e-03, PNorm = 38.3677, GNorm = 2.0553, lr_0 = 1.4811e-04
+Loss = 2.8398e-03, PNorm = 38.3762, GNorm = 2.7322, lr_0 = 1.4630e-04
+Loss = 2.9100e-03, PNorm = 38.3822, GNorm = 1.0721, lr_0 = 1.4452e-04
+Loss = 2.7231e-03, PNorm = 38.3890, GNorm = 2.0353, lr_0 = 1.4275e-04
+Loss = 2.8082e-03, PNorm = 38.3958, GNorm = 0.6785, lr_0 = 1.4101e-04
+Loss = 2.5995e-03, PNorm = 38.4018, GNorm = 3.1732, lr_0 = 1.3929e-04
+Validation rmse = 0.510215
+Epoch 26
+Loss = 3.1875e-03, PNorm = 38.4089, GNorm = 2.3514, lr_0 = 1.3759e-04
+Loss = 2.9524e-03, PNorm = 38.4159, GNorm = 2.5945, lr_0 = 1.3591e-04
+Loss = 2.3868e-03, PNorm = 38.4224, GNorm = 2.0598, lr_0 = 1.3426e-04
+Loss = 2.7212e-03, PNorm = 38.4285, GNorm = 3.6998, lr_0 = 1.3262e-04
+Loss = 2.7205e-03, PNorm = 38.4347, GNorm = 3.2960, lr_0 = 1.3100e-04
+Loss = 2.6178e-03, PNorm = 38.4421, GNorm = 2.2159, lr_0 = 1.2940e-04
+Validation rmse = 0.514637
+Epoch 27
+Loss = 2.0818e-03, PNorm = 38.4485, GNorm = 1.0071, lr_0 = 1.2782e-04
+Loss = 2.3575e-03, PNorm = 38.4546, GNorm = 3.4831, lr_0 = 1.2626e-04
+Loss = 2.3104e-03, PNorm = 38.4597, GNorm = 1.5971, lr_0 = 1.2472e-04
+Loss = 3.0159e-03, PNorm = 38.4630, GNorm = 5.7555, lr_0 = 1.2320e-04
+Loss = 2.7325e-03, PNorm = 38.4693, GNorm = 1.7628, lr_0 = 1.2170e-04
+Loss = 2.9116e-03, PNorm = 38.4769, GNorm = 2.5739, lr_0 = 1.2021e-04
+Loss = 3.0264e-03, PNorm = 38.4825, GNorm = 1.0363, lr_0 = 1.1875e-04
+Validation rmse = 0.516597
+Epoch 28
+Loss = 2.0260e-03, PNorm = 38.4884, GNorm = 1.4459, lr_0 = 1.1730e-04
+Loss = 2.3834e-03, PNorm = 38.4951, GNorm = 2.2503, lr_0 = 1.1587e-04
+Loss = 2.8299e-03, PNorm = 38.4997, GNorm = 1.6589, lr_0 = 1.1446e-04
+Loss = 2.7989e-03, PNorm = 38.5039, GNorm = 0.9790, lr_0 = 1.1306e-04
+Loss = 2.5980e-03, PNorm = 38.5103, GNorm = 2.8744, lr_0 = 1.1168e-04
+Loss = 2.7048e-03, PNorm = 38.5163, GNorm = 1.5564, lr_0 = 1.1032e-04
+Loss = 2.3039e-03, PNorm = 38.5225, GNorm = 2.2567, lr_0 = 1.0897e-04
+Validation rmse = 0.511678
+Epoch 29
+Loss = 2.9617e-03, PNorm = 38.5269, GNorm = 3.0897, lr_0 = 1.0764e-04
+Loss = 2.2998e-03, PNorm = 38.5325, GNorm = 2.9167, lr_0 = 1.0633e-04
+Loss = 2.7842e-03, PNorm = 38.5377, GNorm = 3.7482, lr_0 = 1.0503e-04
+Loss = 2.4315e-03, PNorm = 38.5428, GNorm = 1.2837, lr_0 = 1.0375e-04
+Loss = 2.2847e-03, PNorm = 38.5479, GNorm = 1.8349, lr_0 = 1.0249e-04
+Loss = 2.5091e-03, PNorm = 38.5520, GNorm = 1.7072, lr_0 = 1.0123e-04
+Loss = 2.8803e-03, PNorm = 38.5554, GNorm = 6.1535, lr_0 = 1.0000e-04
+Validation rmse = 0.517539
+Model 0 best validation rmse = 0.510215 on epoch 25
+Loading pretrained parameter "encoder.encoder.cached_zero_vector".
+Loading pretrained parameter "encoder.encoder.W_i.weight".
+Loading pretrained parameter "encoder.encoder.W_h.weight".
+Loading pretrained parameter "encoder.encoder.W_o.weight".
+Loading pretrained parameter "encoder.encoder.W_o.bias".
+Loading pretrained parameter "ffn.1.weight".
+Loading pretrained parameter "ffn.1.bias".
+Loading pretrained parameter "ffn.4.weight".
+Loading pretrained parameter "ffn.4.bias".
+Model 0 test rmse = 0.556735
+Ensemble test rmse = 0.556735
+1-fold cross validation
+Seed 0 ==> test rmse = 0.556735
+Overall test rmse = 0.556735 +/- 0.000000

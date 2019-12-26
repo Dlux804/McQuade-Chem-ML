@@ -25,3 +25,8 @@ future for chemprops
 
 barzilayPredict(target_label='logp', df_to_train=pd.read_csv('dataFiles/Lipophilicity-ID.csv'),
                       df_to_predict=pd.read_csv('dataFiles/Lipophilicity-ID.csv'), dataset_type='regression').results_df
+
+'''
+This uses both the same file to train and predict, obviously not ideal. This is just an example of how to use 
+the barzilayPredict script. 
+'''

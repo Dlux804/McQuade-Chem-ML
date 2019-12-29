@@ -42,7 +42,7 @@ def impgraph(model_name, regressor, train_features, train_target, feature_list):
         # Sort the feature importances by most important first
         feature_importances = sorted(feature_importances, key=lambda x: x[1], reverse=True)
         # Print out the feature and importances
-        [print('Variable: {:20} Importance: {}'.format(*pair)) for pair in feature_importances];
+        [print('Variable: {:20} Importance: {}'.format(*pair)) for pair in feature_importances]
 
         # prepare importance data for export and graphing
         indicies = (-importances2).argsort()

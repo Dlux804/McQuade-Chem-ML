@@ -29,11 +29,11 @@ def predict(regressor, train_features, test_features, train_target, test_target)
 
 
 # Fearture importance class
-def impgraph(regressor, train_features, train_target, feature_list):
-    if regressor == 'rf' or regressor == 'gdb':
+def impgraph(model_name, regressor, train_features, train_target, feature_list):
+    if model_name == 'rf' or model_name == 'gdb':
         regressor.fit(train_features, train_target)
         # Get numerical feature importances
-        importances2 = rf.feature_importances_  # used later for graph
+        importances2 = regressor.feature_importances_  # used later for graph
 
         # List of tuples with variable and importance
         feature_importances = [(feature, round(importance, 2)) for feature, importance in
@@ -49,10 +49,10 @@ def impgraph(regressor, train_features, train_target, feature_list):
         varimp = pd.DataFrame([], columns=['variable', 'importance'])
         varimp['variable'] = [feature_list[i] for i in indicies]
         varimp['importance'] = importances2[indicies]
-        varimp.to_csv(exp + '-varimp.csv')
+        # varimp.to_csv(exp + '-varimp.csv')
         # Importance Bar Graph
         plt.rcParams['figure.figsize'] = [15, 9]
-
+        print(varimp)
         # Set the style
         plt.style.use('bmh')
 
@@ -61,21 +61,21 @@ def impgraph(regressor, train_features, train_target, feature_list):
 
         # intiate plot (mwahaha)
         fig, ax = plt.subplots()
-        plt.bar(imp.index, varimp['importance'], orientation='vertical')
+        plt.bar(varimp.index, varimp['importance'], orientation='vertical')
 
         # Tick labels for x axis
         # plt.xticks(x_values, feature_list, rotation='vertical')
-        plt.xticks(imp.index, varimp['variable'], rotation='vertical')
+        plt.xticks(varimp.index, varimp['variable'], rotation='vertical')
 
         # Axis labels and title
         plt.ylabel('Importance');
         plt.xlabel('Variable');
-        plt.title('EXP:' + exp + '  Variable Importances');
+        # plt.title('EXP:' + exp + '  Variable Importances');
 
         # ax = plt.axes()
         ax.xaxis.grid(False)  # remove just xaxis grid
 
-        plt.savefig(exp + '-logP-importance.png')
+        # plt.savefig(exp + '-importance.png')
         return plt
     else:
         pass

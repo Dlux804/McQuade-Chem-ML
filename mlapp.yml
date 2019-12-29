@@ -1,8 +1,7 @@
 name: mlapp
 channels:
-  - anaconda-fusion
+  - https://conda.anaconda.org/openeye
   - defaults
-  - rdkit
 dependencies:
   - rdkit
   - numpy
@@ -13,8 +12,6 @@ dependencies:
   - scikit-learn
   - pytest-mock
   - mock
-  - pip:
-      - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
-
-prefix: /opt/anaconda3/envs/mlapp
+  - elasticsearch
+prefix: C:\Users\quang\AppData\Local\Continuum\anaconda3\envs\mlapp
 

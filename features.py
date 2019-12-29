@@ -36,6 +36,7 @@ def featurize(df, model_name, num_feat=None):
 
     # un-normalized features are OK
     else:
+        feat_sets.remove('rdkit2dnormalized')
         if num_feat == None:  # ask for features
             print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
             [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];

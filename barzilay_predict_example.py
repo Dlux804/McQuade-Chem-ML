@@ -1,4 +1,5 @@
 from core.barzilay_predict import barzilayPredict
+from sklearn.utils import shuffle
 import pandas as pd
 
 '''
@@ -7,26 +8,26 @@ used. The original script they wrote was designed to be run from the command-lin
 was necessary to get this working. The core mechanics of the ML script are untouched and are exactly the same as in their
 github repo. This file serves as a test to make sure that everything is working properly.
 
-In order to get this script up and running, some steps need to be taken. The Barzilay team did not make their work into
-a proper package, meaning we can not install their package by pip or conda. In order to manually install their work
-as a package that can be interperted by python, follow the following steps.
-1) Download their github repo and extract the folder 'chemprops' https://github.com/swansonk14/chemprop
-2) Move extracted folder to root directory of project (same location where this file is located)
-3) Open terminal and cd to 'chemprops' (located in root directory of current project)
-4) Type the command 'pip install -e .' inside of current environment 
-    - Highly recommended to use a new virtual/conda environment
-5) Delete/move chemprops
-This will make chemprops behave the same as any other package that is install via pip, then use this script to test
-that chemprops was properly installed
-
-Currently, work is being done to have the folder directly inside of this project, and pip should not be needed in the
-future for chemprops
+In order to manually install their work as a package that can be interpreted by python, use the following command.
+- ' pip install git+https://github.com/swansonk14/chemprop.git '
+This will make chemprop behave the same as any other package that is install via pip, then use this script to test
+that chemprop was properly installed
 '''
 
-barzilayPredict(target_label='logp', df_to_train=pd.read_csv('dataFiles/Lipophilicity-ID.csv'),
-                      df_to_predict=pd.read_csv('dataFiles/Lipophilicity-ID.csv'), dataset_type='regression').results_df
+csv_file = 'dataFiles/logP14k.csv'
+raw_df = pd.read_csv(csv_file)
+raw_df = shuffle(raw_df)  # Get and Shuffle data
 
-'''
-This uses both the same file to train and predict, obviously not ideal. This is just an example of how to use 
-the barzilayPredict script. 
-'''
+split_index = int(len(raw_df)*0.9)
+training_df = raw_df[:split_index]
+testing_df = raw_df[split_index:]  # Split data into training and testing
+
+results = barzilayPredict(target_label='kow', df_to_train=training_df, df_to_predict=testing_df,
+                          dataset_type='regression')  # Create results object
+
+predicted_results_df = results.predicted_results_df
+training_time = results.training_time
+predicting_time = results.predicting_time  # Get information from results object
+
+print(predicted_results_df)
+print(training_time, predicting_time)

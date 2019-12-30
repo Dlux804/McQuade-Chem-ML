@@ -12,6 +12,8 @@ dependencies:
   - pytest
   - pip:
       - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
+      - "git+https://github.com/swansonk14/chemprop.git"
+
 
 prefix: /opt/anaconda3/envs/mlapp
 

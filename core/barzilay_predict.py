@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 import os
 import pandas as pd
+from datetime import datetime
 
 from chemprop.features import clear_cache
 from chemprop.parsing import add_train_args, modify_train_args, add_predict_args, modify_predict_args
@@ -37,7 +38,7 @@ class barzilayPredict:
 
     def __init__(self, target_label, df_to_train, df_to_predict, dataset_type):
         os.chdir('./barzilay_predictions')
-        self.target_label = target_label
+        self.target_label = target_label.lower()
         self.df_to_train = df_to_train
         self.df_to_predict = df_to_predict
         self.dataset_type = dataset_type
@@ -48,6 +49,7 @@ class barzilayPredict:
         self.testing_df = pd.read_csv(self.file_to_predict)
 
         # Train dataset
+        start_training_time = datetime.now()
         parser = ArgumentParser()
         add_train_args(parser)
         args = parser.parse_args([])
@@ -59,8 +61,10 @@ class barzilayPredict:
         modify_train_args(args)
         cross_validate(args, logger)
         clear_cache()
+        self.training_time = datetime.now() - start_training_time
 
         # Predict dataset
+        start_predicting_time = datetime.now()
         parser = ArgumentParser()
         add_predict_args(parser)
         args = parser.parse_args([])
@@ -70,5 +74,6 @@ class barzilayPredict:
         self.args = args
         modify_predict_args(self.args)
         make_predictions(self.args)
-        self.results_df = pd.read_csv('barzilay_predictions.csv')
+        self.predicted_results_df = pd.read_csv('barzilay_predictions.csv')
         clear_cache()
+        self.predicting_time = datetime.now() - start_predicting_time

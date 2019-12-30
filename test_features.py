@@ -14,7 +14,6 @@ class TestFetures(unittest.TestCase):
         """
         This script was designed to test the script features.py and its function "featurize"
         The next version will use mock.patch to speed up the testing process
-
         """
 
         # Next, test on every model. We know that the feats are different if the model is either nn or knn

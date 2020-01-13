@@ -38,5 +38,3 @@ Update it as you update the code.
 ![Alt text](dataFiles/hte-models-overview.png)
 
 
-## Testing from Adam
-Pushing to see if this changes what is in the merge request.  

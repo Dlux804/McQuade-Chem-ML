@@ -5,12 +5,11 @@ from core import models
 from core.misc import cd
 import os
 
+# Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
 def main():
-    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
-
-    os.chdir(ROOT_DIR)  # Code currently starts in /core/ so move up to main dir
+    os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of available learning algorithms

@@ -32,7 +32,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            conda env create -f mlapp.yml
+            conda env create -f env_init/mlapp.yml
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
 

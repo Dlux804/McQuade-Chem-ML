@@ -13,7 +13,7 @@ dependencies:
   - scikit-learn
   - matplotlib
   - pytest
-#For Barzilay MPNN
+# For Barzilay MPNN
   - tqdm
   - tensorflow
   - tensorboardX

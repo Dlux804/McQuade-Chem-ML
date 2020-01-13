@@ -39,17 +39,12 @@ def main():
 
                 # change active directory
                 with cd('/home/aluxon/scripts/git/McQuade-Chem-ML/dataFiles'):
-                    # model = models.MlModel(alg, data, target)
                     print('Now in:', os.getcwd())
                     print('Initializing model...', end=' ', flush=True)
+
+                    # initiate model class with algorithm, dataset and target
                     model = models.MlModel(alg, data, target)
                     print('done.')
-                    # raise Exception("There's no place like home.")
-                # Directory is now back to '/McQuade-Chem-ML/'.
-
-                # initiate model class with algorithm, dataset and target
-                # data = "dataFiles/" + data
-                # model = models.MlModel(alg, data, target)
 
                 print('Model Type:', alg)
                 print('Featurization:', method)

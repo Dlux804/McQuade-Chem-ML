@@ -10,6 +10,9 @@ model.results be the r2, rmse, time, etc.
 from core import grid, regressors, analysis, features, ingest
 import csv
 import subprocess
+from pathlib import Path
+import os
+from main import *
 
 class MlModel:
     def __init__(self, algorithm, dataset, target, drop=True):
@@ -49,7 +52,7 @@ class MlModel:
 
             # FIXME Unfortunate hard code deep in the program.
             folds = 10
-            iters = 100
+            iters = 5
             jobs = 30
 
             # Make parameter grid
@@ -79,6 +82,16 @@ class MlModel:
 
     def store(self):
         """  Organize and store model inputs and outputs.  """
+
+        # move to root
+        os.chdir(ROOT_DIR)
+
+        # Check if output folder exists, create if not
+        Path("./output").mkdir(parents=True, exist_ok=True)
+        # move into output dir
+        os.chdir('./output')
+
+
 
         # Check if model was tuned, store a string
         if self.tuned:
@@ -117,8 +130,9 @@ class MlModel:
         # self.graph.savefig(name+'PvA')
 
         # make folders for each run
-        dirsp = 'mkdir ' + name  # str for bash command
-        subprocess.Popen(dirsp.split(), stdout=subprocess.PIPE)  # run bash command
+        # dirsp = 'mkdir ' + name  # str for bash command
+        os.mkdir(name)
+        # subprocess.Popen(dirsp.split(), stdout=subprocess.PIPE)  # run bash command
 
         # Move files to new folders
         movesp = 'mv ./' + name + '* ' + name + '/'
@@ -127,10 +141,11 @@ class MlModel:
 
 
 
-
+# # go home
+# os.chdir(hte.ROOT_DIR)
 #
 # # Initiate Model
-# model1 = MlModel('gdb', 'ESOL.csv', 'water-sol')
+# model1 = MlModel('gdb', 'dataFiles/ESOL.csv', 'water-sol')
 #
 # # featurize data with rdkit2d
 # model1.featurization([0])
@@ -138,7 +153,7 @@ class MlModel:
 #
 #
 # # Run the model with hyperparameter optimization
-# model1.run(tune=True)
+# model1.run(tune=False)
 # # print('Tune Time:', model1.tuneTime)
 #
 #

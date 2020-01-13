@@ -7,6 +7,8 @@ import os
 
 
 def main():
+    os.chdir("..")  # Code currently starts in /core/ so move up to main dir
+    print('Current Working Directory:', os.getcwd())
 
     # list of available learning algorithms
     learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
@@ -37,8 +39,9 @@ def main():
             for data, target in sets.items():  # loop over dataset dictionary
 
                 # change active directory
-                with cd('/home/aluxon/scripts/git/McQuade-Chem-ML/dataFiles'):  # FIXME Hard coding the path
-                # with cd('/dataFiles'):
+                with cd('dataFiles'):
+
+                # with cd('/home/aluxon/scripts/git/McQuade-Chem-ML/dataFiles'):  # FIXME Hard coding the path
                     print('Now in:', os.getcwd())
                     print('Initializing model...', end=' ', flush=True)
 

@@ -15,6 +15,8 @@ class TestFetures(unittest.TestCase):
         This script was designed to test the script features.py and its function "featurize"
         The next version will use mock.patch to speed up the testing process
         """
+        # os.chdir("..")  # Code currently starts in /core/ so move up to main dir
+        print('Current Working Directory:', os.getcwd())
 
         # Next, test on every model. We know that the feats are different if the model is either nn or knn
         df = pd.read_csv("dataFiles/water-energy.csv")

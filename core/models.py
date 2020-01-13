@@ -7,14 +7,8 @@ Results of the model will be stored in the class instance,
 for example you could have a model.pva be the pva graph and
 model.results be the r2, rmse, time, etc.
 '''
-import ingest
-import features
-import grid
-import regressors
-import analysis
-import pandas as pd
+from core import grid, regressors, analysis, features, ingest
 import csv
-import os
 import subprocess
 
 class MlModel:
@@ -23,7 +17,7 @@ class MlModel:
         self.algorithm = algorithm
         self.dataset = dataset
         self.target = target
-        self.data, self.smiles = ingest.load_smiles(self,dataset, drop)
+        self.data, self.smiles = ingest.load_smiles(self, dataset, drop)
 
     def featurization(self, feats=None):
         """ Featurizes molecules in dataset.
@@ -63,7 +57,7 @@ class MlModel:
 
             # Run Hyper Tuning
             params,  self.tuneTime = regressors.hyperTune(self.regressor(), train_features,
-                                                                train_target, param_grid, folds, iters, jobs=jobs)
+                                                          train_target, param_grid, folds, iters, jobs=jobs)
 
             # redefine regressor model with best parameters.
             self.regressor = self.regressor(**params)  # **dict will unpack a dictionary for use as keywrdargs
@@ -76,7 +70,7 @@ class MlModel:
         pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
 
         # test multipredict
-        self.pvaM, fits_time = analysis.multipredict(self.regressor,train_features, test_features, train_target, test_target)
+        self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
         self.graphM = analysis.pvaM_graphs(self.pvaM)
         # self.graph = analysis.pva_graphs(pva, self.algorithm)
 

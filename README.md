@@ -35,4 +35,8 @@ environment on our repo (mlapp.yml).
 ## MLModel Class
 This is the overview of our MLModels Python class functions.  Obviously, it is incomplete just like our code. 
 Update it as you update the code.
-![Alt text](./hte-models-overview.png)
+![Alt text](dataFiles/hte-models-overview.png)
+
+
+## Testing from Adam
+Pushing to see if this changes what is in the merge request.  

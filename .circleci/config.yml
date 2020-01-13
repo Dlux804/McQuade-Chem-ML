@@ -46,13 +46,12 @@ jobs:
       # https://pytest.org
       # https://nose.readthedocs.io
       - run:
-          name: run tests
+          name: Run tests
           command: |
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
-            pytest test_test.py
-            pytest test_ingest.py
-            pytest test_features.py
+            pytest unit_tests/test_ingest.py
+            pytest unit_tests/test_features.py
 
 
       - store_artifacts:

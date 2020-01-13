@@ -5,10 +5,13 @@ from core import models
 from core.misc import cd
 import os
 
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
 def main():
-    os.chdir("..")  # Code currently starts in /core/ so move up to main dir
-    print('Current Working Directory:', os.getcwd())
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
+
+    os.chdir(ROOT_DIR)  # Code currently starts in /core/ so move up to main dir
+    print('ROOT Working Directory:', ROOT_DIR)
 
     # list of available learning algorithms
     learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']

@@ -1,4 +1,4 @@
-# import unittest
+import unittest
 import pandas as pd
 import os
 from core import models, misc
@@ -14,7 +14,7 @@ class TestIngest:
         """
         # change working directory to
         os.chdir(ROOT_DIR)
-        with cd('dataFiles'):
+        with misc.cd('dataFiles'):
             print('Now in:', os.getcwd())
             print('Initializing model...', end=' ', flush=True)
 
@@ -33,7 +33,16 @@ class TestIngest:
         Test if ingest.py is returning a dataframe and a SMILES column when drop=True
 
         """
-        model_test = models.MlModel('gdb', 'water-energy.csv', 'expt', drop=False)
+        # change working directory to
+        os.chdir(ROOT_DIR)
+        with misc.cd('dataFiles'):
+            print('Now in:', os.getcwd())
+            print('Initializing model...', end=' ', flush=True)
+
+            # initiate model class with algorithm, dataset and target
+            model_test = models.MlModel('gdb', 'water-energy.csv', 'expt', drop=False)
+            print('done.')
+
         # csv, smiles_col = load_smiles(self, "water-energy.csv", drop=True)
         assert type(model_test.data) == pd.DataFrame
         assert type(model_test.smiles) == pd.Series

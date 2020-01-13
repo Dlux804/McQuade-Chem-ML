@@ -1,9 +1,8 @@
 
 # TODO: Make main function that asks user what models they would like to initiate
-# TODO: Loop through all requested models and run
-# TODO: Save all output from a single model to a directory.  One directory per model.
+
 from core import models
-from misc import cd
+from core.misc import cd
 import os
 
 
@@ -38,7 +37,8 @@ def main():
             for data, target in sets.items():  # loop over dataset dictionary
 
                 # change active directory
-                with cd('/home/aluxon/scripts/git/McQuade-Chem-ML/dataFiles'):
+                with cd('/home/aluxon/scripts/git/McQuade-Chem-ML/dataFiles'):  # FIXME Hard coding the path
+                # with cd('/dataFiles'):
                     print('Now in:', os.getcwd())
                     print('Initializing model...', end=' ', flush=True)
 

@@ -264,3 +264,10 @@ Ensemble test rmse = 0.436482
 1-fold cross validation
 Seed 0 ==> test rmse = 0.436482
 Overall test rmse = 0.436482 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 0.435060 on epoch 29
+Model 0 test rmse = 0.456570
+Ensemble test rmse = 0.456570
+1-fold cross validation
+Seed 0 ==> test rmse = 0.456570
+Overall test rmse = 0.456570 +/- 0.000000

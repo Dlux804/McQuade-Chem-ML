@@ -3,6 +3,8 @@
 # TODO: Loop through all requested models and run
 # TODO: Save all output from a single model to a directory.  One directory per model.
 from core import models
+from misc import cd
+import os
 
 
 def main():
@@ -35,8 +37,19 @@ def main():
 
             for data, target in sets.items():  # loop over dataset dictionary
 
+                # change active directory
+                with cd('/home/aluxon/scripts/git/McQuade-Chem-ML/dataFiles'):
+                    # model = models.MlModel(alg, data, target)
+                    print('Now in:', os.getcwd())
+                    print('Initializing model...', end=' ', flush=True)
+                    model = models.MlModel(alg, data, target)
+                    print('done.')
+                    # raise Exception("There's no place like home.")
+                # Directory is now back to '/McQuade-Chem-ML/'.
+
                 # initiate model class with algorithm, dataset and target
-                model = models.MlModel(alg, data, target)
+                # data = "dataFiles/" + data
+                # model = models.MlModel(alg, data, target)
 
                 print('Model Type:', alg)
                 print('Featurization:', method)

@@ -37,6 +37,117 @@ This is the overview of our MLModels Python class functions.  Obviously, it is i
 Update it as you update the code.
 ![Alt text](graphics/hte-models-overview.png)
 
+### File Tree
+ ```bash
+.
+├── barzilay_predictions
+│   ├── barzilay_predictions.csv
+│   ├── delaney_toy.csv
+│   ├── delaney_toy_smiles.csv
+│   └── logger_dir
+├── core
+│   ├── analysis.py
+│   ├── barzilay_predict.py
+│   ├── features.py
+│   ├── grid.py
+│   ├── hte-models.py
+│   ├── ingest.py
+│   ├── misc.py
+│   ├── models.py
+│   ├── __pycache__
+│   └── regressors.py
+├── dataFiles
+│   ├── ESOL.csv
+│   ├── jak2_pic50.csv
+│   ├── Lipophilicity-ID.csv
+│   ├── logP14k.csv
+│   └── water-energy.csv
+├── env_init
+│   └── mlapp.yml
+├── examples_scripts
+│   ├── barzilay_predict_example.py
+│   └── descriptastorus-example.py
+├── filetree.md
+├── graphics
+│   ├── hte-models-overview
+│   ├── hte-models-overview.drawio
+│   ├── hte-models-overview.png
+│   └── hte-models-overview.svg
+├── main.py
+├── output
+│   ├── ESOL-ada-0-tuned
+│   ├── ESOL-gdb-0-notune
+│   ├── jak2_pic50-ada-0-tuned
+│   ├── Lipophilicity-ID-ada-0-tuned
+│   ├── Lipophilicity-ID-gdb-0-notune
+│   ├── Lipophilicity-ID-gdb-0-tuned
+│   ├── logP14k-ada-0-tuned
+│   ├── logP14k-gdb-0-notune
+│   └── water-energy-ada-0-tuned
+├── __pycache__
+│   ├── analysis.cpython-37.pyc
+│   ├── descriptastorus.cpython-37.pyc
+│   ├── features.cpython-37.pyc
+│   ├── grid.cpython-37.pyc
+│   ├── ingest.cpython-37.pyc
+│   ├── models.cpython-37.pyc
+│   ├── regressors.cpython-37.pyc
+│   └── test_tests.cpython-37-pytest-5.2.2.pyc
+├── README.md
+├── tests
+│   ├── test_features.py
+│   └── test_ingest.py
+└── tree.sh
+```
 
-## Testing from Adam
-Pushing to see if this changes what is in the merge request.  
+# Project tree
+
+ * [barzilay_predictions](./barzilay_predictions)
+   * [delaney_toy.csv](./barzilay_predictions/delaney_toy.csv)
+   * [delaney_toy_smiles.csv](./barzilay_predictions/delaney_toy_smiles.csv)
+   * [logger_dir](./barzilay_predictions/logger_dir)
+   * [barzilay_predictions.csv](./barzilay_predictions/barzilay_predictions.csv)
+ * [env_init](./env_init)
+   * [mlapp.yml](./env_init/mlapp.yml)
+ * [main.py](./main.py)
+ * [core](./core)
+   * [barzilay_predict.py](./core/barzilay_predict.py)
+   * [features.py](./core/features.py)
+   * [grid.py](./core/grid.py)
+   * [hte-models.py](./core/hte-models.py)
+   * [ingest.py](./core/ingest.py)
+   * [regressors.py](./core/regressors.py)
+   * [misc.py](./core/misc.py)
+   * [analysis.py](./core/analysis.py)
+   * [models.py](./core/models.py)
+ * [tests](./tests)
+   * [test_ingest.py](./tests/test_ingest.py)
+   * [test_features.py](./tests/test_features.py)
+ * [output](./output)
+   * [logP14k-gdb-0-notune](./output/logP14k-gdb-0-notune)
+   * [Lipophilicity-ID-gdb-0-notune](./output/Lipophilicity-ID-gdb-0-notune)
+   * [Lipophilicity-ID-ada-0-tuned](./output/Lipophilicity-ID-ada-0-tuned)
+   * [ESOL-ada-0-tuned](./output/ESOL-ada-0-tuned)
+   * [water-energy-ada-0-tuned](./output/water-energy-ada-0-tuned)
+   * [logP14k-ada-0-tuned](./output/logP14k-ada-0-tuned)
+   * [jak2_pic50-ada-0-tuned](./output/jak2_pic50-ada-0-tuned)
+   * [Lipophilicity-ID-gdb-0-tuned](./output/Lipophilicity-ID-gdb-0-tuned)
+   * [ESOL-gdb-0-notune](./output/ESOL-gdb-0-notune)
+ * [examples_scripts](./examples_scripts)
+   * [descriptastorus-example.py](./examples_scripts/descriptastorus-example.py)
+   * [barzilay_predict_example.py](./examples_scripts/barzilay_predict_example.py)
+ * [dataFiles](./dataFiles)
+   * [ESOL.csv](./dataFiles/ESOL.csv)
+   * [jak2_pic50.csv](./dataFiles/jak2_pic50.csv)
+   * [Lipophilicity-ID.csv](./dataFiles/Lipophilicity-ID.csv)
+   * [logP14k.csv](./dataFiles/logP14k.csv)
+   * [water-energy.csv](./dataFiles/water-energy.csv)
+ * [graphics](./graphics)
+   * [hte-models-overview](./graphics/hte-models-overview)
+   * [hte-models-overview.drawio](./graphics/hte-models-overview.drawio)
+   * [hte-models-overview.png](./graphics/hte-models-overview.png)
+   * [hte-models-overview.svg](./graphics/hte-models-overview.svg)
+ * [tree.md](./tree.md)
+ * [README.md](./README.md)
+ * [toc.md](./toc.md)
+ * [toc.sh](./toc.sh)

@@ -151,3 +151,84 @@ Update it as you update the code.
  * [README.md](./README.md)
  * [toc.md](./toc.md)
  * [toc.sh](./toc.sh)
+ 
+ 
+ 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<tree>
+  <directory name=".">
+    <directory name="barzilay_predictions">
+      <file name="barzilay_predictions.csv"></file>
+      <file name="delaney_toy.csv"></file>
+      <file name="delaney_toy_smiles.csv"></file>
+      <directory name="logger_dir">
+      </directory>
+    </directory>
+    <directory name="core">
+      <file name="analysis.py"></file>
+      <file name="barzilay_predict.py"></file>
+      <file name="features.py"></file>
+      <file name="grid.py"></file>
+      <file name="hte-models.py"></file>
+      <file name="ingest.py"></file>
+      <file name="misc.py"></file>
+      <file name="models.py"></file>
+      <file name="regressors.py"></file>
+    </directory>
+    <directory name="dataFiles">
+      <file name="ESOL.csv"></file>
+      <file name="jak2_pic50.csv"></file>
+      <file name="Lipophilicity-ID.csv"></file>
+      <file name="logP14k.csv"></file>
+      <file name="water-energy.csv"></file>
+    </directory>
+    <directory name="env_init">
+      <file name="mlapp.yml"></file>
+    </directory>
+    <directory name="examples_scripts">
+      <file name="barzilay_predict_example.py"></file>
+      <file name="descriptastorus-example.py"></file>
+    </directory>
+    <directory name="graphics">
+      <file name="hte-models-overview"></file>
+      <file name="hte-models-overview.drawio"></file>
+      <file name="hte-models-overview.png"></file>
+      <file name="hte-models-overview.svg"></file>
+    </directory>
+    <file name="main.py"></file>
+    <directory name="output">
+      <directory name="ESOL-ada-0-tuned">
+      </directory>
+      <directory name="ESOL-gdb-0-notune">
+      </directory>
+      <directory name="jak2_pic50-ada-0-tuned">
+      </directory>
+      <directory name="Lipophilicity-ID-ada-0-tuned">
+      </directory>
+      <directory name="Lipophilicity-ID-gdb-0-notune">
+      </directory>
+      <directory name="Lipophilicity-ID-gdb-0-tuned">
+      </directory>
+      <directory name="logP14k-ada-0-tuned">
+      </directory>
+      <directory name="logP14k-gdb-0-notune">
+      </directory>
+      <directory name="water-energy-ada-0-tuned">
+      </directory>
+    </directory>
+    <file name="README.md"></file>
+    <directory name="tests">
+      <file name="test_features.py"></file>
+      <file name="test_ingest.py"></file>
+    </directory>
+    <file name="toc.md"></file>
+    <file name="toc.sh"></file>
+    <file name="tree.md"></file>
+  </directory>
+  <report>
+    <directories>18</directories>
+    <files>31</files>
+  </report>
+</tree>
+```

@@ -1,6 +1,10 @@
 import unittest
 import pandas as pd
-import os
+import os, sys
+
+myPath = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, myPath + '/../')
+
 from core import models, misc
 from main import ROOT_DIR
 

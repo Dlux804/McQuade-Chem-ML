@@ -51,7 +51,7 @@ jobs:
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
             python -m pytest tests/
-            cd tests
+#            cd tests
             pytest -v
 
 

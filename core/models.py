@@ -52,15 +52,15 @@ class MlModel:
 
             # FIXME Unfortunate hard code deep in the program.
             folds = 10
-            iters = 5
-            jobs = 30
+            iters = 100
+            jobs = 30  # for bayes, max jobs = #folds.
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)
 
             # Run Hyper Tuning
             params,  self.tuneTime = regressors.hyperTune(self.regressor(), train_features,
-                                                                train_target, param_grid, folds, iters, jobs=jobs)
+                                                                train_target, param_grid, folds, iters, jobs=folds)
 
             # redefine regressor model with best parameters.
             self.regressor = self.regressor(**params)  # **dict will unpack a dictionary for use as keywrdargs
@@ -127,7 +127,10 @@ class MlModel:
         subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
         # Move folder to output/
-        movesp = 'mv ./' + name + '/ ../output/' + name
+        # when testing using code below, need ../output/ because it will run from core.
+        # when running from main.py at root, no ../ needed.
+        movesp = 'mv ./' + name + '/ output/'
+
         subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
 

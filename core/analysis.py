@@ -1,0 +1,194 @@
+import matplotlib.pyplot as plt
+from matplotlib import cm
+import numpy as np
+from time import time
+import pandas as pd
+from sklearn.metrics import mean_squared_error, r2_score
+from core import features
+
+
+def predict(regressor, train_features, test_features, train_target, test_target):
+    """Fit model and predict target values.  Return data frame of actual and predicted
+    values as well as model fit time.
+    regressor needs to have the '()' with it.  i.e it should be function(), not function"""
+    start_time = time()
+
+    regressor.fit(train_features, train_target)
+    done_time = time()
+    fit_time = done_time - start_time
+    print('Finished Training After ',(done_time-start_time),"sec\n")
+    # Make predictions
+    predictions = regressor.predict(test_features)  # Val predictions
+
+    true = test_target
+    pva = pd.DataFrame([], columns=['actual', 'predicted'])
+    pva['actual'] = true
+    pva['predicted'] = predictions
+#    pva.to_csv(exp+expt+'-pva_data.csv')
+
+    return pva, fit_time
+
+
+def replicate_model(self, n):
+    """Run model n times.  Return dictionary of r2, mse and rmse average and standard deviation."""
+
+    r2 = np.empty(n)
+    mse = np.empty(n)
+    rmse = np.empty(n)
+    t = np.empty(n)
+    for i in range(0,n): # run model n times
+        train_features, test_features, train_target, test_target, feature_list = features.targets_features(self.data, self.target, random=None)
+        pva , fit_time = predict(self.regressor, train_features, test_features, train_target, test_target)
+
+        r2[i] = r2_score(pva['actual'], pva['predicted'])
+        mse[i] = mean_squared_error(pva['actual'], pva['predicted'])
+        rmse[i] = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
+        t[i] = fit_time
+
+    stats = {
+        'r2_avg': r2.mean(),
+        'r2_std': r2.std(),
+        'mse_avg': mse.mean(),
+        'mse_std': mse.std(),
+        'rmse_avg': rmse.mean(),
+        'rmse_std': rmse.std(),
+        'time_avg': t.mean(),
+        'time_std': t.std()
+    }
+
+    print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])
+    print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
+    print()
+    return stats
+
+
+def multipredict(regressor, train_features, test_features, train_target, test_target, n=5):
+    """Predict each point multiple times to calculate uncertainty."""
+
+    start_time = time()
+    # create dataframe for predicted values
+    pva = pd.DataFrame([])
+
+
+    for i in range(0,n): # loop n times
+
+        regressor.fit(train_features, train_target)
+
+        # Make predictions
+        predictions = regressor.predict(test_features)
+
+        # store as enumerated column
+        pva['predicted'+str(i)] = predictions
+
+    # pva.to_csv(exp+expt+'-pva_data.csv')
+    done_time = time()
+    fit_time = done_time - start_time
+
+    pva['pred_avg'] = pva.mean(axis=1)
+    pva['pred_std'] = pva.std(axis=1)
+    pva['actual'] = test_target
+
+    return pva, fit_time
+
+
+def pvaM_graphs(pvaM):
+    """
+    Make Predicted vs. Actual graph with prediction uncertainty.
+    Pass dataframe from multipredict function. Return a graph.
+    """
+    r2 = r2_score(pvaM['actual'], pvaM['pred_avg'])
+    mse = mean_squared_error(pvaM['actual'], pvaM['pred_avg'])
+    rmse = np.sqrt(mean_squared_error(pvaM['actual'], pvaM['pred_avg']))
+
+    plt.rcParams['figure.figsize'] = [12, 9]
+    plt.style.use('bmh')
+    fig, ax = plt.subplots()
+    norm = cm.colors.Normalize(vmax=pvaM['pred_std'].max(), vmin=pvaM['pred_std'].min())
+    x = pvaM['actual']
+    y = pvaM['pred_avg']
+    plt.scatter(x, y, c=pvaM['pred_std'], cmap='plasma', norm=norm, alpha=0.8)
+    cbar = plt.colorbar()
+    cbar.set_label("Uncertainty")
+
+    # set axis limits
+    lims = [np.min([ax.get_xlim(), ax.get_ylim()]),
+            np.max([ax.get_xlim(), ax.get_ylim()])
+            ]
+
+    # TODO: add histograms on axes
+    # # definitions for the axes
+    # left, width = 0.1, 0.65
+    # bottom, height = 0.1, 0.65
+    # spacing = 0.005
+    # rect_histx = [left, bottom + height + spacing, width, 0.2]
+    # rect_histy = [left + width + spacing, bottom, 0.2, height]
+    # ax_histx = plt.axes()
+    # ax_histx.tick_params(direction='in', labelbottom=False)
+    # ax_histy = plt.axes()
+    # ax_histy.tick_params(direction='in', labelleft=False)
+    # binwidth = 0.025
+    # lim = np.ceil(np.abs([x, y]).max() / binwidth) * binwidth
+    # bins = np.arange(-lim, lim + binwidth, binwidth)
+    # ax_histx.hist(x, bins=bins)
+    # ax_histy.hist(y, bins=bins, orientation='horizontal')
+
+    # ax_histx.set_xlim(ax_scatter.get_xlim())
+    # ax_histy.set_ylim(ax_scatter.get_ylim())
+    # ------------------------------------------------
+
+    # ax = plt.axes()
+    plt.xlabel('True', fontsize=14)
+    plt.ylabel('Predicted', fontsize=14)
+    plt.title('EXP: COLOR')  # TODO: Update naming scheme
+
+    plt.plot(lims, lims, 'k-', label='y=x')
+    plt.plot([], [], ' ', label='R^2 = %.3f' % r2)
+    plt.plot([], [], ' ', label='RMSE = %.3f' % rmse)
+    ax.set_aspect('equal')
+    ax.set_xlim(lims)
+    ax.set_ylim(lims)
+    # plt.axis([-2,5,-2,5]) #[-2,5,-2,5]
+    ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
+
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
+
+    # plt.savefig(model_name+'-' +'.png')
+    # plt.show()
+    return plt
+
+
+def pva_graphs(pva, model_name):
+    """ Creates Predicted vs. Actual graph from predicted data. """
+    r2 = r2_score(pva['actual'], pva['predicted'])
+    mse = mean_squared_error(pva['actual'], pva['predicted'])
+    rmse = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
+    print('R^2 = %.3f' % r2)
+    print('MSE = %.3f' % mse)
+    print('RMSE = %.3f' % rmse)
+
+    plt.rcParams['figure.figsize'] = [15, 9]
+    plt.style.use('bmh')
+    fig, ax = plt.subplots()
+    plt.plot(pva['actual'], pva['predicted'], 'o')
+    # ax = plt.axes()
+    plt.xlabel('True', fontsize=14)
+    plt.ylabel('Predicted', fontsize=14)
+    plt.title('EXP:')  # TODO: Update naming scheme
+    lims = [np.min([ax.get_xlim(), ax.get_ylim()]),
+            np.max([ax.get_xlim(), ax.get_ylim()])
+            ]
+    plt.plot(lims, lims, 'k-', label='y=x')
+    plt.plot([], [], ' ', label='R^2 = %.3f' % r2)
+    plt.plot([], [], ' ', label='RMSE = %.3f' % rmse)
+    ax.set_aspect('equal')
+    ax.set_xlim(lims)
+    ax.set_ylim(lims)
+    # plt.axis([-2,5,-2,5]) #[-2,5,-2,5]
+    ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
+
+    # plt.savefig(model_name+'-' +'.png')
+    # plt.show()
+    return plt  # Can I store a graph as an attribute to a model?

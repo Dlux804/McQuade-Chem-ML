@@ -1,0 +1,273 @@
+Fold 0
+Model 0 best validation rmse = 3.010870 on epoch 0
+Model 0 test rmse = 2.637835
+Ensemble test rmse = 2.637835
+1-fold cross validation
+Seed 0 ==> test rmse = 2.637835
+Overall test rmse = 2.637835 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.597879 on epoch 0
+Model 0 test rmse = 2.041888
+Ensemble test rmse = 2.041888
+1-fold cross validation
+Seed 0 ==> test rmse = 2.041888
+Overall test rmse = 2.041888 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.438543 on epoch 0
+Model 0 test rmse = 3.042391
+Ensemble test rmse = 3.042391
+1-fold cross validation
+Seed 0 ==> test rmse = 3.042391
+Overall test rmse = 3.042391 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.702417 on epoch 0
+Model 0 test rmse = 2.822858
+Ensemble test rmse = 2.822858
+1-fold cross validation
+Seed 0 ==> test rmse = 2.822858
+Overall test rmse = 2.822858 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.951837 on epoch 0
+Model 0 test rmse = 1.876617
+Ensemble test rmse = 1.876617
+1-fold cross validation
+Seed 0 ==> test rmse = 1.876617
+Overall test rmse = 1.876617 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.978996 on epoch 0
+Model 0 test rmse = 2.241398
+Ensemble test rmse = 2.241398
+1-fold cross validation
+Seed 0 ==> test rmse = 2.241398
+Overall test rmse = 2.241398 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.208484 on epoch 0
+Model 0 test rmse = 2.413307
+Ensemble test rmse = 2.413307
+1-fold cross validation
+Seed 0 ==> test rmse = 2.413307
+Overall test rmse = 2.413307 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.828393 on epoch 0
+Model 0 test rmse = 2.418472
+Ensemble test rmse = 2.418472
+1-fold cross validation
+Seed 0 ==> test rmse = 2.418472
+Overall test rmse = 2.418472 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.680624 on epoch 0
+Model 0 test rmse = 2.594328
+Ensemble test rmse = 2.594328
+1-fold cross validation
+Seed 0 ==> test rmse = 2.594328
+Overall test rmse = 2.594328 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.112161 on epoch 0
+Model 0 test rmse = 2.867011
+Ensemble test rmse = 2.867011
+1-fold cross validation
+Seed 0 ==> test rmse = 2.867011
+Overall test rmse = 2.867011 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.522661 on epoch 0
+Model 0 test rmse = 3.887460
+Ensemble test rmse = 3.887460
+1-fold cross validation
+Seed 0 ==> test rmse = 3.887460
+Overall test rmse = 3.887460 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.484906 on epoch 0
+Model 0 test rmse = 2.322090
+Ensemble test rmse = 2.322090
+1-fold cross validation
+Seed 0 ==> test rmse = 2.322090
+Overall test rmse = 2.322090 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.581397 on epoch 0
+Model 0 test rmse = 1.966085
+Ensemble test rmse = 1.966085
+1-fold cross validation
+Seed 0 ==> test rmse = 1.966085
+Overall test rmse = 1.966085 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 4.374728 on epoch 0
+Model 0 test rmse = 1.500063
+Ensemble test rmse = 1.500063
+1-fold cross validation
+Seed 0 ==> test rmse = 1.500063
+Overall test rmse = 1.500063 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.115959 on epoch 0
+Model 0 test rmse = 2.333065
+Ensemble test rmse = 2.333065
+1-fold cross validation
+Seed 0 ==> test rmse = 2.333065
+Overall test rmse = 2.333065 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.413080 on epoch 0
+Model 0 test rmse = 2.611864
+Ensemble test rmse = 2.611864
+1-fold cross validation
+Seed 0 ==> test rmse = 2.611864
+Overall test rmse = 2.611864 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.936614 on epoch 0
+Model 0 test rmse = 1.688712
+Ensemble test rmse = 1.688712
+1-fold cross validation
+Seed 0 ==> test rmse = 1.688712
+Overall test rmse = 1.688712 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.735872 on epoch 0
+Model 0 test rmse = 2.711764
+Ensemble test rmse = 2.711764
+1-fold cross validation
+Seed 0 ==> test rmse = 2.711764
+Overall test rmse = 2.711764 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.758073 on epoch 0
+Model 0 test rmse = 1.854200
+Ensemble test rmse = 1.854200
+1-fold cross validation
+Seed 0 ==> test rmse = 1.854200
+Overall test rmse = 1.854200 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.279929 on epoch 0
+Model 0 test rmse = 3.151335
+Ensemble test rmse = 3.151335
+1-fold cross validation
+Seed 0 ==> test rmse = 3.151335
+Overall test rmse = 3.151335 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.360381 on epoch 0
+Model 0 test rmse = 3.057382
+Ensemble test rmse = 3.057382
+1-fold cross validation
+Seed 0 ==> test rmse = 3.057382
+Overall test rmse = 3.057382 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.687539 on epoch 0
+Model 0 test rmse = 2.736598
+Ensemble test rmse = 2.736598
+1-fold cross validation
+Seed 0 ==> test rmse = 2.736598
+Overall test rmse = 2.736598 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.570640 on epoch 0
+Model 0 test rmse = 3.034106
+Ensemble test rmse = 3.034106
+1-fold cross validation
+Seed 0 ==> test rmse = 3.034106
+Overall test rmse = 3.034106 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.345020 on epoch 0
+Model 0 test rmse = 2.139655
+Ensemble test rmse = 2.139655
+1-fold cross validation
+Seed 0 ==> test rmse = 2.139655
+Overall test rmse = 2.139655 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.644090 on epoch 0
+Model 0 test rmse = 1.924077
+Ensemble test rmse = 1.924077
+1-fold cross validation
+Seed 0 ==> test rmse = 1.924077
+Overall test rmse = 1.924077 +/- 0.000000
+Fold 0
+Fold 0
+Model 0 best validation rmse = 2.685719 on epoch 0
+Model 0 test rmse = 3.156571
+Ensemble test rmse = 3.156571
+1-fold cross validation
+Seed 0 ==> test rmse = 3.156571
+Overall test rmse = 3.156571 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.581639 on epoch 0
+Model 0 test rmse = 2.188797
+Ensemble test rmse = 2.188797
+1-fold cross validation
+Seed 0 ==> test rmse = 2.188797
+Overall test rmse = 2.188797 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 3.739936 on epoch 0
+Model 0 test rmse = 1.510565
+Ensemble test rmse = 1.510565
+1-fold cross validation
+Seed 0 ==> test rmse = 1.510565
+Overall test rmse = 1.510565 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.838164 on epoch 0
+Model 0 test rmse = 2.572972
+Ensemble test rmse = 2.572972
+1-fold cross validation
+Seed 0 ==> test rmse = 2.572972
+Overall test rmse = 2.572972 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.650416 on epoch 0
+Model 0 test rmse = 2.594536
+Ensemble test rmse = 2.594536
+1-fold cross validation
+Seed 0 ==> test rmse = 2.594536
+Overall test rmse = 2.594536 +/- 0.000000
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Fold 0
+Model 0 best validation rmse = 3.013429 on epoch 0
+Model 0 test rmse = 2.624269
+Ensemble test rmse = 2.624269
+1-fold cross validation
+Seed 0 ==> test rmse = 2.624269
+Overall test rmse = 2.624269 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.706975 on epoch 0
+Model 0 test rmse = 2.821340
+Ensemble test rmse = 2.821340
+1-fold cross validation
+Seed 0 ==> test rmse = 2.821340
+Overall test rmse = 2.821340 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 4.093718 on epoch 0
+Model 0 test rmse = 1.658072
+Ensemble test rmse = 1.658072
+1-fold cross validation
+Seed 0 ==> test rmse = 1.658072
+Overall test rmse = 1.658072 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 2.568686 on epoch 0
+Model 0 test rmse = 2.465281
+Ensemble test rmse = 2.465281
+1-fold cross validation
+Seed 0 ==> test rmse = 2.465281
+Overall test rmse = 2.465281 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 0.510215 on epoch 25
+Model 0 test rmse = 0.556735
+Ensemble test rmse = 0.556735
+1-fold cross validation
+Seed 0 ==> test rmse = 0.556735
+Overall test rmse = 0.556735 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 0.430835 on epoch 29
+Model 0 test rmse = 0.412861
+Ensemble test rmse = 0.412861
+1-fold cross validation
+Seed 0 ==> test rmse = 0.412861
+Overall test rmse = 0.412861 +/- 0.000000
+Fold 0
+Fold 0
+Model 0 best validation rmse = 0.450690 on epoch 28
+Model 0 test rmse = 0.436482
+Ensemble test rmse = 0.436482
+1-fold cross validation
+Seed 0 ==> test rmse = 0.436482
+Overall test rmse = 0.436482 +/- 0.000000
+Fold 0
+Model 0 best validation rmse = 0.435060 on epoch 29
+Model 0 test rmse = 0.456570
+Ensemble test rmse = 0.456570
+1-fold cross validation
+Seed 0 ==> test rmse = 0.456570
+Overall test rmse = 0.456570 +/- 0.000000

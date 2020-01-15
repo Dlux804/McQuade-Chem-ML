@@ -49,7 +49,6 @@ def main():
                 # change active directory
                 with cd('dataFiles'):
 
-                # with cd('/home/aluxon/scripts/git/McQuade-Chem-ML/dataFiles'):  # FIXME Hard coding the path
                     print('Now in:', os.getcwd())
                     print('Initializing model...', end=' ', flush=True)
 

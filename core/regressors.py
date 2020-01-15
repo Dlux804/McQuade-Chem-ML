@@ -55,7 +55,7 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1):
         random_state=42,  # random seed
         verbose=3,  # output print level
         scoring='neg_mean_squared_error',  # scoring function to use (RMSE)
-        n_jobs=30,  # number of parallel jobs
+        n_jobs=folds,  # number of parallel jobs (max = folds)
         cv=folds  # number of cross-val folds to use
     )
 

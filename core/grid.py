@@ -1,17 +1,23 @@
 # TODO: ADD DOC STRINGS!!!
 
 import numpy as np
-from sklearn.model_selection import RandomizedSearchCV
+# from sklearn.model_selection import RandomizedSearchCV
 from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor
-from sklearn.model_selection import train_test_split
+# from sklearn.model_selection import train_test_split
 from sklearn.svm import SVR
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, r2_score
+# from sklearn.metrics import mean_squared_error, r2_score
 from sklearn import tree
-from sklearn.ensemble import AdaBoostRegressor
-from sklearn.neural_network import MLPRegressor
-from sklearn.neighbors import KNeighborsRegressor
+# from sklearn.ensemble import AdaBoostRegressor
+# from sklearn.neural_network import MLPRegressor
+# from sklearn.neighbors import KNeighborsRegressor
+from skopt.space import Real, Integer, Categorical
 
+
+
+
+# the hyper parameter grid needs to be a bit differetn for skopt
+# See https://scikit-optimize.github.io/notebooks/hyperparameter-optimization.html for some help
 
 def ada_paramgrid():
     """ Defines hyper parameters for adaboost """
@@ -24,7 +30,14 @@ def ada_paramgrid():
         'n_estimators': n_estimators,
         'learning_rate': learning_rate
     }
-    return param_grid
+
+    bayes_grid = {
+        # How to convert base_estimator?  # TODO Convert base_estimator to bayes compatible
+        'n_estimators': Integer(50, 1000),
+        'learning_rate': Real(0.001, 1, 'log-uniform')
+    }
+
+    return bayes_grid
 
 
 def rf_paramgrid():
@@ -44,7 +57,16 @@ def rf_paramgrid():
         'min_samples_leaf': min_samples_leaf
         # 'bootstrap': bootstrap
     }
-    return param_grid
+
+    bayes_grid = {
+        'n_estimators': Integer(200, 2000),
+        'max_features': Categorical(['auto', 'sqrt']),
+        'max_depth': Integer(1, 30),
+        'min_samples_split': Integer(2, 30),
+        'min_samples_leaf': Integer(2, 30),
+        'bootstrap': Categorical([True, False])
+    }
+    return bayes_grid
 
 
 def svr_paramgrid():
@@ -66,7 +88,14 @@ def svr_paramgrid():
         'epsilon': epsilon,
         'degree' : degrees
     }
-    return param_grid
+    bayes_grid = {
+        'kernel': Categorical(['rbf', 'poly', 'linear']),
+        'C': Real(10 ** -3, 10 ** 2, 'log-uniform'),
+        'gamma': Real(10 ** -3, 10 ** 0, 'log-uniform'),
+        'epsilon': Real(0.1, 0.6),
+        'degree': Integer(1, 5)
+    }
+    return bayes_grid
 
 
 def gdb_paramgrid():
@@ -92,7 +121,26 @@ def gdb_paramgrid():
         'min_samples_leaf': min_samples_leaf,
         'learning_rate': learning_rate
     }
-    return param_grid
+
+    bayes_grid = {
+        'n_estimators': Integer(500, 2000),
+        'max_features': Categorical(['auto', 'sqrt']),
+        'max_depth': Integer(1, 25),
+        'min_samples_split': Integer(2, 30),
+        'min_samples_leaf': Integer(2, 30),
+        'learning_rate': Real(0.001, 1, 'log-uniform')
+    }
+
+    # Some skopt optimization methods use lists like the one below instead of dict
+    # space = [
+    #     Integer(500, 2000, name='n_estimators'),
+    #     Categorical(['auto', 'sqrt'], name='max_features'),
+    #     Integer(1, 25, name='max_depth'),
+    #     Integer(2, 100, name='min_samples_split'),
+    #     Integer(1, 100, name='min_samples_leaf'),
+    #     Real(10 ** -5, 10 ** 0, "log-uniform", name='learning_rate')
+    # ]
+    return bayes_grid #param_grid
 
 
 def mlp_paramgrid():
@@ -120,9 +168,9 @@ def knn_paramgrid():
     #Number of neighbors to use
     n_neighbors = [int(x) for x in np.linspace(start = 5, stop = 30, num = 20)]
     #weight function used in prediction
-    # weights = ['uniform', 'distance']
+    weights = ['uniform', 'distance']
     #Algorithm used to compute the nearest neighbors:
-    # algorithm = ['auto', 'ball_tree', 'kd_tree']
+    algorithm = ['auto', 'ball_tree', 'kd_tree']
     #Leaf size passed to BallTree or KDTree
     leaf_size = [int(x) for x in np.linspace(start = 20, stop = 50, num = 15)]
     #Power parameter for the Minkowski metric
@@ -135,7 +183,15 @@ def knn_paramgrid():
         'leaf_size': leaf_size,
         'p': p
     }
-    return param_grid
+
+    bayes_grid = {
+        'n_neighbors': Integer(5, 30),
+        'weights': Categorical(['uniform', 'distance']),
+        'algorithm': Categorical(algorithm),
+        'leaf_size': Integer(20, 50),
+        'p': Integer(1, 5)
+    }
+    return bayes_grid
 
 # Dictionary containing all the grid functions
 # Can call specific function based off of dict key.
@@ -155,4 +211,6 @@ def make_grid(method):
         'knn': knn_paramgrid
     }
     return grids[method]()
+
+
 

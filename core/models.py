@@ -7,15 +7,12 @@ Results of the model will be stored in the class instance,
 for example you could have a model.pva be the pva graph and
 model.results be the r2, rmse, time, etc.
 '''
-import ingest
-import features
-import grid
-import regressors
-import analysis
-import pandas as pd
+from core import ingest, features, grid, regressors, analysis, misc
+# from main import ROOT_DIR
 import csv
 import os
 import subprocess
+
 
 class MlModel:
     def __init__(self, algorithm, dataset, target, drop=True):
@@ -55,7 +52,7 @@ class MlModel:
 
             # FIXME Unfortunate hard code deep in the program.
             folds = 10
-            iters = 100
+            iters = 5
             jobs = 30
 
             # Make parameter grid
@@ -73,9 +70,9 @@ class MlModel:
             self.tuneTime = None
 
         # Done tuning, time to fit and predict
-        pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
+        # pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
 
-        # test multipredict
+        # multipredict
         self.pvaM, fits_time = analysis.multipredict(self.regressor,train_features, test_features, train_target, test_target)
         self.graphM = analysis.pvaM_graphs(self.pvaM)
         # self.graph = analysis.pva_graphs(pva, self.algorithm)
@@ -123,38 +120,46 @@ class MlModel:
         # self.graph.savefig(name+'PvA')
 
         # make folders for each run
-        dirsp = 'mkdir ' + name  # str for bash command
-        subprocess.Popen(dirsp.split(), stdout=subprocess.PIPE)  # run bash command
+        os.mkdir(name)
 
-        # Move files to new folders
-        movesp = 'mv ./' + name + '* ' + name + '/'
+        # put output files into new folder
+        filesp = 'mv ./' + name + '* ' + name +'/'
+        subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
+
+        # Move folder to output/
+        movesp = 'mv ./' + name + '/ ../output/' + name
         subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
 
 
+# This section is for testing and should be commented out when finished testing
+
+# change active directory
+with misc.cd('../dataFiles/'):
+    print('Now in:', os.getcwd())
+    print('Initializing model...', end=' ', flush=True)
+    # initiate model class with algorithm, dataset and target
+    model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
+    print('done.')
 
 
-#
-# # Initiate Model
-# model1 = MlModel('gdb', 'ESOL.csv', 'water-sol')
-#
-# # featurize data with rdkit2d
-# model1.featurization([0])
-# print(model1.feat_meth)
-#
-#
-# # Run the model with hyperparameter optimization
-# model1.run(tune=True)
-# # print('Tune Time:', model1.tuneTime)
-#
-#
-#
-# # Save results
-# model1.store()
-#
-#
-# # Must show() graph AFTER it has been saved.
-# # if show() is called before save, the save will be blank
-# # display PvA graph
-# model1.graphM.show()
-#
+# featurize data with rdkit2d
+model1.featurization([0])
+print(model1.feat_meth)
+
+
+# Run the model with hyperparameter optimization
+model1.run(tune=True)
+# print('Tune Time:', model1.tuneTime)
+
+
+
+# Save results
+model1.store()
+
+
+# Must show() graph AFTER it has been saved.
+# if show() is called before save, the save will be blank
+# display PvA graph
+model1.graphM.show()
+

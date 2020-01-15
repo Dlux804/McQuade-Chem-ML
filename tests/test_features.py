@@ -1,8 +1,15 @@
 import unittest
-import os
+import os, sys
 import pandas as pd
-from core import features
-from core import models, misc
+
+# before importing local modules, must add root dir to system path
+# capture location of current file (/root/tests/)
+myPath = os.path.dirname(os.path.abspath(__file__))
+# add to system path the root dir with relative notation: /../ (go up one dir)
+sys.path.insert(0, myPath + '/../')
+
+# now can import local modules without issue.
+from core import features, misc
 from main import ROOT_DIR
 
 # Expected features

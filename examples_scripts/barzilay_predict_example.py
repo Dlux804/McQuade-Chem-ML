@@ -19,7 +19,7 @@ This will make chemprop behave the same as any other package that is install via
 then use this script to test that chemprop was properly installed
 '''
 
-csv_file = 'dataFiles/logP14k.csv'
+csv_file = '../dataFiles/logP14k.csv'
 raw_df = pd.read_csv(csv_file)
 raw_df = shuffle(raw_df)  # Get and Shuffle data
 

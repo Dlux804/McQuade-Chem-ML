@@ -7,14 +7,12 @@ Results of the model will be stored in the class instance,
 for example you could have a model.pva be the pva graph and
 model.results be the r2, rmse, time, etc.
 '''
-import ingest
-import features
-import grid
-import regressors
-import analysis
-import pandas as pd
+from core import grid, regressors, analysis, features, ingest
 import csv
-
+import subprocess
+from pathlib import Path
+import os
+from main import *
 
 class MlModel:
     def __init__(self, algorithm, dataset, target, drop=True):
@@ -22,7 +20,7 @@ class MlModel:
         self.algorithm = algorithm
         self.dataset = dataset
         self.target = target
-        self.data, self.smiles = ingest.load_smiles(self,dataset, drop)
+        self.data, self.smiles = ingest.load_smiles(self, dataset, drop)
 
     def featurization(self, feats=None):
         """ Featurizes molecules in dataset.
@@ -48,16 +46,21 @@ class MlModel:
         if tune:  # Do hyperparameter tuning
 
             # ask for tuning variables
-            folds = int(input('Please state the number of folds for hyperparameter searching: '))
-            iters = int(input('Please state the number of iterations for hyperparameter searching: '))
-            jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
+            # folds = int(input('Please state the number of folds for hyperparameter searching: '))
+            # iters = int(input('Please state the number of iterations for hyperparameter searching: '))
+            # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
+
+            # FIXME Unfortunate hard code deep in the program.
+            folds = 10
+            iters = 5
+            jobs = 30
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)
 
             # Run Hyper Tuning
             params,  self.tuneTime = regressors.hyperTune(self.regressor(), train_features,
-                                                                train_target, param_grid, folds, iters, jobs=jobs)
+                                                          train_target, param_grid, folds, iters, jobs=jobs)
 
             # redefine regressor model with best parameters.
             self.regressor = self.regressor(**params)  # **dict will unpack a dictionary for use as keywrdargs
@@ -72,7 +75,7 @@ class MlModel:
         #Variable importance for rf and gdb
         analysis.impgraph(self.regressor, train_features, train_target, self.feature_list)
         # test multipredict
-        self.pvaM, fits_time = analysis.multipredict(self.regressor,train_features, test_features, train_target, test_target)
+        self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
         self.graphM = analysis.pvaM_graphs(self.pvaM)
         # self.graph = analysis.pva_graphs(pva, self.algorithm)
 
@@ -81,6 +84,16 @@ class MlModel:
 
     def store(self):
         """  Organize and store model inputs and outputs.  """
+
+        # move to root
+        os.chdir(ROOT_DIR)
+
+        # Check if output folder exists, create if not
+        Path("./output").mkdir(parents=True, exist_ok=True)
+        # move into output dir
+        os.chdir('./output')
+
+
 
         # Check if model was tuned, store a string
         if self.tuned:
@@ -111,16 +124,30 @@ class MlModel:
             w = csv.DictWriter(f, att.keys())
             w.writeheader()
             w.writerow(att)
+            f.close()
 
         # save graphs
         self.graphM.savefig(name+'PvAM')
+        self.graphM.close()  # close to conserve memory when running many models.
         # self.graph.savefig(name+'PvA')
 
+<<<<<<< HEAD:models.py
+
+=======
+        # make folders for each run
+        # dirsp = 'mkdir ' + name  # str for bash command
+        os.mkdir(name)
+        # subprocess.Popen(dirsp.split(), stdout=subprocess.PIPE)  # run bash command
+
+        # Move files to new folders
+        movesp = 'mv ./' + name + '* ' + name + '/'
+        subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
+>>>>>>> 4f4f25b627ae79ba5f7fb0fbb82402a5ce886164:core/models.py
 
 
 
 
-
+<<<<<<< HEAD:models.py
 # Initiate Model
 model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
 
@@ -144,3 +171,31 @@ model1.store()
 # display PvA graph
 model1.graphM.show()
 
+=======
+# # go home
+# os.chdir(hte.ROOT_DIR)
+#
+# # Initiate Model
+# model1 = MlModel('gdb', 'dataFiles/ESOL.csv', 'water-sol')
+#
+# # featurize data with rdkit2d
+# model1.featurization([0])
+# print(model1.feat_meth)
+#
+#
+# # Run the model with hyperparameter optimization
+# model1.run(tune=False)
+# # print('Tune Time:', model1.tuneTime)
+#
+#
+#
+# # Save results
+# model1.store()
+#
+#
+# # Must show() graph AFTER it has been saved.
+# # if show() is called before save, the save will be blank
+# # display PvA graph
+# model1.graphM.show()
+#
+>>>>>>> 4f4f25b627ae79ba5f7fb0fbb82402a5ce886164:core/models.py

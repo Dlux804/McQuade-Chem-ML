@@ -1,7 +1,20 @@
 # TODO: ADD DOC STRINGS!!!
 
 import numpy as np
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVR
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn import tree
+from sklearn.ensemble import AdaBoostRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.neighbors import KNeighborsRegressor
+
+
 def ada_paramgrid():
+    """ Defines hyper parameters for adaboost """
     base_estimator = [tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=3), GradientBoostingRegressor(), SVR(kernel = 'linear'),RandomForestRegressor(n_estimators=500)]
     n_estimators = [int(x) for x in np.linspace(start = 50, stop = 1000, num = 30)]
     learning_rate = [0.001,0.005,0.01,0.05,0.1,0.5,1]
@@ -15,6 +28,7 @@ def ada_paramgrid():
 
 
 def rf_paramgrid():
+    """ Defines hyper parameters for random forest """
     n_estimators = [int(x) for x in np.linspace(start = 200, stop = 2000, num = 20)] #Number of trees
     max_features = ['auto', 'sqrt']     # Number of features to consider at every split
     max_depth = [int(x) for x in np.linspace(1, 30, num = 11)] # Maximum number of levels in tree
@@ -34,6 +48,7 @@ def rf_paramgrid():
 
 
 def svr_paramgrid():
+    """ Defines hyper parameters for supoort vector regression """
 # Kernel functions
     kernel = ['rbf', 'poly', 'linear']
 # Penalty parameter C of the error term.
@@ -49,6 +64,7 @@ def svr_paramgrid():
 
 
 def gdb_paramgrid():
+    """ Defines hyper parameters for gradient decent boost """
 # Number of trees
     n_estimators = [int(x) for x in np.linspace(start = 500, stop = 2000, num = 20)]
 # Number of features to consider at every split

@@ -4,7 +4,8 @@ import numpy as np
 from time import time
 import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
-import features
+from core import features
+
 
 def predict(regressor, train_features, test_features, train_target, test_target):
     """Fit model and predict target values.  Return data frame of actual and predicted
@@ -189,7 +190,6 @@ def pvaM_graphs(pvaM):
     # ax_histy.set_ylim(ax_scatter.get_ylim())
     # ------------------------------------------------
 
-
     # ax = plt.axes()
     plt.xlabel('True', fontsize=14)
     plt.ylabel('Predicted', fontsize=14)
@@ -204,11 +204,15 @@ def pvaM_graphs(pvaM):
     # plt.axis([-2,5,-2,5]) #[-2,5,-2,5]
     ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
 
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
+
     # plt.savefig(model_name+'-' +'.png')
     # plt.show()
     return plt
 
-def pva_graphs(pva,model_name):
+
+def pva_graphs(pva, model_name):
     """ Creates Predicted vs. Actual graph from predicted data. """
     r2 = r2_score(pva['actual'], pva['predicted'])
     mse = mean_squared_error(pva['actual'], pva['predicted'])
@@ -217,7 +221,7 @@ def pva_graphs(pva,model_name):
     print('MSE = %.3f' % mse)
     print('RMSE = %.3f' % rmse)
 
-    plt.rcParams['figure.figsize']= [15,9]
+    plt.rcParams['figure.figsize'] = [15, 9]
     plt.style.use('bmh')
     fig, ax = plt.subplots()
     plt.plot(pva['actual'], pva['predicted'], 'o')
@@ -236,6 +240,8 @@ def pva_graphs(pva,model_name):
     ax.set_ylim(lims)
     # plt.axis([-2,5,-2,5]) #[-2,5,-2,5]
     ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
 
     # plt.savefig(model_name+'-' +'.png')
     # plt.show()

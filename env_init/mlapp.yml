@@ -1,0 +1,31 @@
+name: mlapp
+channels:
+  - anaconda-fusion
+  - defaults
+  - rdkit
+  - pytorch
+  - conda-forge
+dependencies:
+  - pip
+  - numpy
+  - pandas
+  - rdkit
+  - scikit-learn
+  - matplotlib
+  - pytest
+# For Barzilay MPNN
+  - tqdm
+  - tensorflow
+  - tensorboardX
+  - gunicorn
+  - pytorch
+  - torchvision
+  - flask
+  - hyperopt
+  - scipy
+  - pip:
+      - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
+      - "git+https://github.com/swansonk14/chemprop.git"
+
+
+prefix: /opt/anaconda3/envs/mlapp

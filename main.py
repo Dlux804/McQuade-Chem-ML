@@ -18,11 +18,11 @@ def main():
 
     # list of available featurization methods
     # featurize = [[0], [0, 2], [0, 3], [0, 4], [0,5], [0, 6], [2], [3], [4], [5], [6]]
-    featurize = [[0], [0, 2], [2]]
+    featurize = [[0], [2], [3], [4], [0, 2], [0, 3], [0, 4]]
 
     # features for models that require normalized data (nn, svm)
     # norm_featurize = [[1], [1,2], [1,3], [1,4], [1,5], [1,6], [2], [3], [4], [5], [6]]
-    norm_featurize = [[1], [1, 2], [2]]
+    norm_featurize = [[1], [2], [3], [4], [1, 2], [1, 3], [1, 4]]
 
     # data sets in dict. Key: Filename.csv , Value: Target column header
     # sets = {
@@ -33,9 +33,7 @@ def main():
     #     'jak2_pic50.csv': 'pIC50'
     # }
     sets = {
-        'ESOL.csv': 'water-sol',
-        'Lipophilicity-ID.csv': 'exp',
-        'water-energy.csv': 'expt'
+        'logP14k.csv': 'Kow'
     }
     for alg in learner:  # loop over all learning algorithms
 

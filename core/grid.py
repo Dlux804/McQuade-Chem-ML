@@ -21,7 +21,12 @@ from skopt.space import Real, Integer, Categorical
 
 def ada_paramgrid():
     """ Defines hyper parameters for adaboost """
-    base_estimator = [tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=3), GradientBoostingRegressor(), SVR(kernel = 'linear'),RandomForestRegressor(n_estimators=500)]
+    base_estimator = [
+        tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=3),
+        tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=4),
+        tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=5),
+        tree.DecisionTreeRegressor(max_features='auto', splitter='best', max_depth=3),
+        tree.DecisionTreeRegressor(max_features='auto', splitter='best', max_depth=5)]
     n_estimators = [int(x) for x in np.linspace(start = 50, stop = 1000, num = 30)]
     learning_rate = [0.001,0.005,0.01,0.05,0.1,0.5,1]
 

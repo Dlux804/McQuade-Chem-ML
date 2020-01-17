@@ -53,7 +53,7 @@ class MlModel:
             # FIXME Unfortunate hard code deep in the program.
             folds = 10
             iters = 100
-            jobs = 30  # for bayes, max jobs = #folds.
+            jobs = 30  # for bayes, max jobs = folds.
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)

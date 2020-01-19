@@ -35,6 +35,48 @@ environment on our repo (mlapp.yml).
 ## MLModel Class
 This is the overview of our MLModels Python class functions.  Obviously, it is incomplete just like our code. 
 Update it as you update the code.
-![Alt text](dataFiles/hte-models-overview.png)
+![Alt text](graphics/hte-models-overview.png)
+
+### File Tree
 
 
+ * [barzilay_predictions](./barzilay_predictions)
+   * [delaney_toy.csv](./barzilay_predictions/delaney_toy.csv)
+   * [delaney_toy_smiles.csv](./barzilay_predictions/delaney_toy_smiles.csv)
+   * [logger_dir](./barzilay_predictions/logger_dir)
+   * [barzilay_predictions.csv](./barzilay_predictions/barzilay_predictions.csv)
+ * [env_init](./env_init)
+   * [mlapp.yml](./env_init/mlapp.yml)
+ * [main.py](./main.py)
+ * [core](./core)
+   * [barzilay_predict.py](./core/barzilay_predict.py)
+   * [features.py](./core/features.py)
+   * [grid.py](./core/grid.py)
+   * [hte-models.py](./core/hte-models.py)
+   * [ingest.py](./core/ingest.py)
+   * [regressors.py](./core/regressors.py)
+   * [misc.py](./core/misc.py)
+   * [analysis.py](./core/analysis.py)
+   * [models.py](./core/models.py)
+ * [tests](./tests)
+   * [test_ingest.py](./tests/test_ingest.py)
+   * [test_features.py](./tests/test_features.py)
+ * [output](./output)
+ * [examples_scripts](./examples_scripts)
+   * [descriptastorus-example.py](./examples_scripts/descriptastorus-example.py)
+   * [barzilay_predict_example.py](./examples_scripts/barzilay_predict_example.py)
+ * [dataFiles](./dataFiles)
+   * [ESOL.csv](./dataFiles/ESOL.csv)
+   * [jak2_pic50.csv](./dataFiles/jak2_pic50.csv)
+   * [Lipophilicity-ID.csv](./dataFiles/Lipophilicity-ID.csv)
+   * [logP14k.csv](./dataFiles/logP14k.csv)
+   * [water-energy.csv](./dataFiles/water-energy.csv)
+ * [graphics](./graphics)
+   * [hte-models-overview](./graphics/hte-models-overview)
+   * [hte-models-overview.drawio](./graphics/hte-models-overview.drawio)
+   * [hte-models-overview.png](./graphics/hte-models-overview.png)
+   * [hte-models-overview.svg](./graphics/hte-models-overview.svg)
+ * [README.md](./README.md)
+ * [toc.sh](./toc.sh)
+ 
+ 

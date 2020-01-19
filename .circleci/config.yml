@@ -35,7 +35,6 @@ jobs:
             conda env create -f env_init/mlapp.yml
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
-
       - save_cache:
           paths:
             - /root/repo/dependencies/envs/mlapp
@@ -46,15 +45,12 @@ jobs:
       # https://pytest.org
       # https://nose.readthedocs.io
       - run:
-          name: run tests
+          name: Run tests
           command: |
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
-            pytest test_test.py
-            pytest test_ingest.py
-            pytest test_features.py
-
-
+            python -m pytest tests/
+            pytest -v
       - store_artifacts:
           path: test-reports
           destination: test-reports

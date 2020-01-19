@@ -10,6 +10,9 @@ model.results be the r2, rmse, time, etc.
 from core import grid, regressors, analysis, features, ingest
 import csv
 import subprocess
+from pathlib import Path
+import os
+from main import *
 
 class MlModel:
     def __init__(self, algorithm, dataset, target, drop=True):
@@ -49,7 +52,7 @@ class MlModel:
 
             # FIXME Unfortunate hard code deep in the program.
             folds = 10
-            iters = 100
+            iters = 5
             jobs = 30
 
             # Make parameter grid
@@ -69,6 +72,8 @@ class MlModel:
         # Done tuning, time to fit and predict
         pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
 
+        #Variable importance for rf and gdb
+        # analysis.impgraph(self.regressor, train_features, train_target, self.feature_list)
         # test multipredict
         self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
         self.graphM = analysis.pvaM_graphs(self.pvaM)
@@ -79,6 +84,16 @@ class MlModel:
 
     def store(self):
         """  Organize and store model inputs and outputs.  """
+
+        # move to root
+        os.chdir(ROOT_DIR)
+
+        # Check if output folder exists, create if not
+        Path("./output").mkdir(parents=True, exist_ok=True)
+        # move into output dir
+        os.chdir('./output')
+
+
 
         # Check if model was tuned, store a string
         if self.tuned:
@@ -117,8 +132,9 @@ class MlModel:
         # self.graph.savefig(name+'PvA')
 
         # make folders for each run
-        dirsp = 'mkdir ' + name  # str for bash command
-        subprocess.Popen(dirsp.split(), stdout=subprocess.PIPE)  # run bash command
+        # dirsp = 'mkdir ' + name  # str for bash command
+        os.mkdir(name)
+        # subprocess.Popen(dirsp.split(), stdout=subprocess.PIPE)  # run bash command
 
         # Move files to new folders
         movesp = 'mv ./' + name + '* ' + name + '/'
@@ -127,10 +143,34 @@ class MlModel:
 
 
 
-
+# # Initiate Model
+# model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
+#
+# # featurize data with rdkit2d
+# model1.featurization([0])
+# # print(model1.feat_meth)
+#
+#
+# # Run the model with hyperparameter optimization
+# model1.run(tune=False)
+# # print('Tune Time:', model1.tuneTime)
+#
+#
+#
+# # Save results
+# model1.store()
+#
+#
+# # Must show() graph AFTER it has been saved.
+# # if show() is called before save, the save will be blank
+# # display PvA graph
+# model1.graphM.show()
+#
+# # go home
+# os.chdir(hte.ROOT_DIR)
 #
 # # Initiate Model
-# model1 = MlModel('gdb', 'ESOL.csv', 'water-sol')
+# model1 = MlModel('rf', 'dataFiles/ESOL.csv', 'water-sol')
 #
 # # featurize data with rdkit2d
 # model1.featurization([0])
@@ -138,8 +178,8 @@ class MlModel:
 #
 #
 # # Run the model with hyperparameter optimization
-# model1.run(tune=True)
-# # print('Tune Time:', model1.tuneTime)
+# model1.run(tune=False)
+# print('Tune Time:', model1.tuneTime)
 #
 #
 #

@@ -67,7 +67,7 @@ def test_replicate_model():
     """
 
     # Load in data
-    model1 = MlModel('gdb', 'water-energy.csv', 'expt')
+    model1 = models.MlModel('gdb', 'water-energy.csv', 'expt')
     # Generate Features
     model1.featurization([0])
     # Make a class instance called regressor

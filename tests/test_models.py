@@ -31,5 +31,3 @@ def test_models_run():
         model1.featurization([0])
         # Call run function
         model1.run(tune=False)
-        # Call store function
-        model1.store()

@@ -65,21 +65,25 @@ def test_replicate_model():
     This function uses a lot of class instance (self.something) so I have to generate data again instead of using setup.
     But since they pay me the big bucks, I can make it work.
     """
-
-    # Load in data
-    model1 = models.MlModel('gdb', 'water-energy.csv', 'expt')
-    # Generate Features
-    model1.featurization([0])
-    # Make a class instance called regressor
-    model1.regressor = RandomForestRegressor()
-    # Call the function we want to test
-    stats = analysis.replicate_model(model1, 3)
-    # Assert if this variable is a dictionary
-    assert type(stats) == dict
-    # Assert if r2_avg (should be the first key) is in the dictionary.
-    assert 'r2_avg' in stats
-    # Assert if 'time_std' (should be the last key) is in the dictionary.
-    assert 'time_std' in stats
+    # change working directory to
+    os.chdir(ROOT_DIR)
+    # move to dataFiles
+    with misc.cd('dataFiles'):
+        print('Now in:', os.getcwd())
+        # Load in data
+        model1 = models.MlModel('gdb', 'water-energy.csv', 'expt')
+        # Generate Features
+        model1.featurization([0])
+        # Make a class instance called regressor
+        model1.regressor = RandomForestRegressor()
+        # Call the function we want to test
+        stats = analysis.replicate_model(model1, 3)
+        # Assert if this variable is a dictionary
+        assert type(stats) == dict
+        # Assert if r2_avg (should be the first key) is in the dictionary.
+        assert 'r2_avg' in stats
+        # Assert if 'time_std' (should be the last key) is in the dictionary.
+        assert 'time_std' in stats
 
 
 # Test multi_predict

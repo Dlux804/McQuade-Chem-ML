@@ -1,24 +1,16 @@
 name: mlapp
 channels:
-  - https://conda.anaconda.org/openeye
+  - anaconda-fusion
   - defaults
-dependencies:
-  - rdkit
   - rdkit
   - pytorch
   - conda-forge
 dependencies:
   - pip
   - numpy
-  - pip
-  - pytest
-  - matplotlib
   - pandas
+  - rdkit
   - scikit-learn
-  - pytest-mock
-  - mock
-  - elasticsearch
-prefix: C:\Users\quang\AppData\Local\Continuum\anaconda3\envs\mlapp
   - matplotlib
   - pytest
 # For Barzilay MPNN
@@ -34,5 +26,6 @@ prefix: C:\Users\quang\AppData\Local\Continuum\anaconda3\envs\mlapp
   - pip:
       - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
       - "git+https://github.com/swansonk14/chemprop.git"
+
 
 prefix: /opt/anaconda3/envs/mlapp

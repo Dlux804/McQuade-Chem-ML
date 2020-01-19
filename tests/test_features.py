@@ -1,9 +1,7 @@
 import pandas as pd
-from core import features, misc
 import numpy as np
 import mock
 import os, sys
-from main import ROOT_DIR
 
 
 # before importing local modules, must add root dir to system path
@@ -11,6 +9,9 @@ from main import ROOT_DIR
 myPath = os.path.dirname(os.path.abspath(__file__))
 # add to system path the root dir with relative notation: /../ (go up one dir)
 sys.path.insert(0, myPath + '/../')
+
+from core import features, misc
+from main import ROOT_DIR
 
 # Expected features
 feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
@@ -20,7 +21,7 @@ model_name = ['rf', 'svr', 'gdb', 'ada', 'nn', 'knn']
 
 
 # Mock the function MakeGenerator since it takes a lot of time to generate and it's the thing we want to test
-@mock.patch('features.MakeGenerator')
+@mock.patch('core.features.MakeGenerator')
 def test_features_makegenerator(mock_makegenerator):
     """
     Since MakeGenerator is the main part of this function, we should test to see if it is called successfully. This will

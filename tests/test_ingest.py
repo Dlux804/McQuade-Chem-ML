@@ -40,7 +40,6 @@ def test_load_smiles_dropfalse():
     with misc.cd('dataFiles'):
         print('Now in:', os.getcwd())
         model_test = models.MlModel('rf', 'water-energy.csv', 'expt')  # Calling MlModel to get our class instances
-        # csv, smiles_col = load_smiles(model_test.data, "water-energy.csv", drop=False)
         assert type(model_test.data) == pd.DataFrame  # Testing to see if data is a dataframe
         assert type(model_test.smiles) == pd.Series  # Testing to see if we get a SMILES column
 
@@ -55,7 +54,6 @@ def test_load_smiles_droptrue():
     with misc.cd('dataFiles'):
         print('Now in:', os.getcwd())
         model_test = models.MlModel('gdb', 'water-energy.csv', 'expt', drop=False)  # Calling MlModel to get our class instances, drop=False in this case
-        # csv, smiles_col = load_smiles(self, "water-energy.csv", drop=True)
         assert type(model_test.data) == pd.DataFrame  # Testing to see if data is a dataframe
         assert type(model_test.smiles) == pd.Series  # Testing to see if we get a SMILES column
 

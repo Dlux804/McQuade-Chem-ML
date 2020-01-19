@@ -50,7 +50,6 @@ jobs:
           command: |
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
-<<<<<<< HEAD
             pytest -v
 =======
             python -m pytest tests/

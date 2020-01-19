@@ -1,13 +1,18 @@
 import pandas as pd
-import analysis
-import features
+from core import analysis, features, regressors, misc, models
+import os, sys
 import mock
 import pytest
-import regressors
-from models import MlModel
 from sklearn.ensemble import RandomForestRegressor
 import numpy as np
+from main import ROOT_DIR
 
+
+# before importing local modules, must add root dir to system path
+# capture location of current file (/root/tests/)
+myPath = os.path.dirname(os.path.abspath(__file__))
+# add to system path the root dir with relative notation: /../ (go up one dir)
+sys.path.insert(0, myPath + '/../')
 
 # Set up data
 @pytest.fixture
@@ -16,13 +21,18 @@ def setup():
     A few functions in analysis.py require setting up the same data (dataframe, target column, feature columns)
     Using pytest.fixture, we only need to set up data once for every test that need it.
     """
-    # Load in data
-    model_test = MlModel('rf', 'water-energy.csv', 'expt')
-    # Get feature. I use rdkit2d as it is fast to generate
-    df, num_feat, feat_time = features.featurize(model_test.data, model_test.algorithm, [0])
-    # Split the data
-    train_features, test_features, train_target, test_target, feature_list = features.targets_features(df, 'expt')
-    return train_features, test_features, train_target, test_target
+    # change working directory to
+    os.chdir(ROOT_DIR)
+    # move to dataFiles
+    with misc.cd('dataFiles'):
+        print('Now in:', os.getcwd())
+        # Load in data
+        model_test = models.MlModel('rf', 'water-energy.csv', 'expt')
+        # Get feature. I use rdkit2d as it is fast to generate
+        df, num_feat, feat_time = features.featurize(model_test.data, model_test.algorithm, [0])
+        # Split the data
+        train_features, test_features, train_target, test_target, feature_list = features.targets_features(df, 'expt')
+        return train_features, test_features, train_target, test_target
 
 
 # Test analysis's "predict" function
@@ -32,6 +42,7 @@ def test_analysis_predict(setup):
     This function was designed to test analysis's "predict" function. We want to make sure that we're getting a dataframe
     that contains predict(float) and actual(float) results and a number for prediction time.
     """
+
     # Use the fixture to set up necessary data
     train_features, test_features, train_target, test_target = setup
     # Call the function we want to test

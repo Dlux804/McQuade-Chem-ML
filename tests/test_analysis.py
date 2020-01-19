@@ -1,11 +1,10 @@
 import pandas as pd
-from core import analysis, features, regressors, misc, models
+# from core import analysis, features, regressors, misc, models
 import os, sys
 import mock
 import pytest
 from sklearn.ensemble import RandomForestRegressor
 import numpy as np
-from main import ROOT_DIR
 
 
 # before importing local modules, must add root dir to system path
@@ -14,6 +13,9 @@ myPath = os.path.dirname(os.path.abspath(__file__))
 # add to system path the root dir with relative notation: /../ (go up one dir)
 sys.path.insert(0, myPath + '/../')
 
+from main import ROOT_DIR
+
+from core import analysis, features, regressors, misc, models
 # Set up data
 @pytest.fixture
 def setup():

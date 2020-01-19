@@ -58,7 +58,7 @@ def test_featurize_remove():
         # Call function featurize using rf
         df2, num_feat2, feat_time2 = features.featurize(df, 'rf', num_feat=[0])
         # See if the two dataframes are the same
-        assert df1.equals(df2) == False
+        assert df1.equals(df2) == True
 
 def test_featurize():
     """

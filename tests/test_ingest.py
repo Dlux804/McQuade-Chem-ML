@@ -23,7 +23,6 @@ def test_ingest_Chem(mock_chem):
     # move to dataFiles
     with misc.cd('dataFiles'):
         print('Now in:', os.getcwd())
-        df = pd.read_csv('water-energy.csv')
         model_test = models.MlModel('rf', 'water-energy.csv', 'expt')  # Calling MlModel to get our class instances
         mock_chem.MolFromSmiles.assert_called()
         mock.patch.stopall()

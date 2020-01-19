@@ -1,16 +1,19 @@
 import pandas as pd
-from core import features, regressors, models, grid, misc
 import mock
 from sklearn.ensemble import RandomForestRegressor
 import pytest
 import os, sys
-from main import ROOT_DIR
 
 # before importing local modules, must add root dir to system path
 # capture location of current file (/root/tests/)
 myPath = os.path.dirname(os.path.abspath(__file__))
 # add to system path the root dir with relative notation: /../ (go up one dir)
 sys.path.insert(0, myPath + '/../')
+
+# Now we can import modules from other directory
+from core import features, regressors, models, grid, misc
+from main import ROOT_DIR
+
 
 
 # Set up data
@@ -34,7 +37,7 @@ def setup():
         return train_features, test_features, train_target, test_target
 
 # Mock the call that we want to test, which is RandomizedSearchCV
-@mock.patch('regressors.RandomizedSearchCV')
+@mock.patch('core.regressors.RandomizedSearchCV')
 def test_regressors_hypertune_randomsearch(mock_rdsearchcv, setup):
     """
     In hypertune, RandomizedSearchCV plays a major part since is the call that does the actual tuning.

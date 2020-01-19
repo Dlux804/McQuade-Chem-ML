@@ -73,7 +73,7 @@ class MlModel:
         pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
 
         #Variable importance for rf and gdb
-        analysis.impgraph(self.regressor, train_features, train_target, self.feature_list)
+        # analysis.impgraph(self.regressor, train_features, train_target, self.feature_list)
         # test multipredict
         self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
         self.graphM = analysis.pvaM_graphs(self.pvaM)

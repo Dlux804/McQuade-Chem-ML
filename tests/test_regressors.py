@@ -1,5 +1,5 @@
 import pandas as pd
-from core import features, regressors, models, grid
+from core import features, regressors, models, grid, misc
 import mock
 from sklearn.ensemble import RandomForestRegressor
 import pytest

@@ -1,5 +1,5 @@
 import pandas as pd
-from core import features
+from core import features, misc
 import numpy as np
 import mock
 import os, sys

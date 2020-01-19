@@ -1,4 +1,4 @@
-from core import models
+from core import models, misc
 import os, sys
 from main import ROOT_DIR
 

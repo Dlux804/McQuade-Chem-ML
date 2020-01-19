@@ -1,8 +1,7 @@
-from core import ingest, models, misc
 import mock
 import pandas as pd
 import os, sys
-from main import ROOT_DIR
+
 
 # before importing local modules, must add root dir to system path
 # capture location of current file (/root/tests/)
@@ -10,8 +9,13 @@ myPath = os.path.dirname(os.path.abspath(__file__))
 # add to system path the root dir with relative notation: /../ (go up one dir)
 sys.path.insert(0, myPath + '/../')
 
+# Now we can import modules from other directory
+from core import ingest, models, misc
+from main import ROOT_DIR
+
+
 # Mock the module Chem since it's the thing we want to test
-@mock.patch('ingest.Chem')
+@mock.patch('core.ingest.Chem')
 def test_ingest_Chem(mock_chem):
     """
     Chem.MolFromSmiles is the core function used to make the function load_smiles in ingest.py. Therefore, we would like

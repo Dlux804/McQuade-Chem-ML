@@ -1,6 +1,4 @@
-from core import models, misc
 import os, sys
-from main import ROOT_DIR
 
 
 # before importing local modules, must add root dir to system path
@@ -8,6 +6,11 @@ from main import ROOT_DIR
 myPath = os.path.dirname(os.path.abspath(__file__))
 # add to system path the root dir with relative notation: /../ (go up one dir)
 sys.path.insert(0, myPath + '/../')
+
+# Now we can import modules from other directory
+from core import models, misc
+from main import ROOT_DIR
+
 
 # Test models.py
 def test_models_run():

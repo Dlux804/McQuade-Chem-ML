@@ -131,9 +131,6 @@ class MlModel:
         self.graphM.close()  # close to conserve memory when running many models.
         # self.graph.savefig(name+'PvA')
 
-<<<<<<< HEAD:models.py
-
-=======
         # make folders for each run
         # dirsp = 'mkdir ' + name  # str for bash command
         os.mkdir(name)
@@ -142,36 +139,33 @@ class MlModel:
         # Move files to new folders
         movesp = 'mv ./' + name + '* ' + name + '/'
         subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
->>>>>>> 4f4f25b627ae79ba5f7fb0fbb82402a5ce886164:core/models.py
 
 
 
 
-<<<<<<< HEAD:models.py
-# Initiate Model
-model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
+# # Initiate Model
+# model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
+#
+# # featurize data with rdkit2d
+# model1.featurization([0])
+# # print(model1.feat_meth)
+#
+#
+# # Run the model with hyperparameter optimization
+# model1.run(tune=False)
+# # print('Tune Time:', model1.tuneTime)
+#
+#
+#
+# # Save results
+# model1.store()
+#
+#
+# # Must show() graph AFTER it has been saved.
+# # if show() is called before save, the save will be blank
+# # display PvA graph
+# model1.graphM.show()
 
-# featurize data with rdkit2d
-model1.featurization([0])
-# print(model1.feat_meth)
-
-
-# Run the model with hyperparameter optimization
-model1.run(tune=False)
-# print('Tune Time:', model1.tuneTime)
-
-
-
-# Save results
-model1.store()
-
-
-# Must show() graph AFTER it has been saved.
-# if show() is called before save, the save will be blank
-# display PvA graph
-model1.graphM.show()
-
-=======
 # # go home
 # os.chdir(hte.ROOT_DIR)
 #
@@ -198,4 +192,3 @@ model1.graphM.show()
 # # display PvA graph
 # model1.graphM.show()
 #
->>>>>>> 4f4f25b627ae79ba5f7fb0fbb82402a5ce886164:core/models.py

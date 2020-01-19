@@ -1,5 +1,13 @@
-from models import MlModel
+from core import models
+import os, sys
+from main import ROOT_DIR
 
+
+# before importing local modules, must add root dir to system path
+# capture location of current file (/root/tests/)
+myPath = os.path.dirname(os.path.abspath(__file__))
+# add to system path the root dir with relative notation: /../ (go up one dir)
+sys.path.insert(0, myPath + '/../')
 
 # Test models.py
 def test_models_run():
@@ -9,11 +17,16 @@ def test_models_run():
     Since models is the accumulation of every other models, I think the best way to tackle this for now and to run
     the script to see if it works or not. No assertion needed
     """
-    # Calling MlModel to get our class instance
-    model1 = MlModel('rf', 'water-energy.csv', 'expt')
-    # Call featurization function
-    model1.featurization([0])
-    # Call run function
-    model1.run(tune=False)
-    # Call store function
-    model1.store()
+    # change working directory to
+    os.chdir(ROOT_DIR)
+    # move to dataFiles
+    with misc.cd('dataFiles'):
+        print('Now in:', os.getcwd())
+        # Calling MlModel to get our class instance
+        model1 = models.MlModel('rf', 'water-energy.csv', 'expt')
+        # Call featurization function
+        model1.featurization([0])
+        # Call run function
+        model1.run(tune=False)
+        # Call store function
+        model1.store()

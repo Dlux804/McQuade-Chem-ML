@@ -160,7 +160,7 @@ def pvaM_graphs(pvaM):
     norm = cm.colors.Normalize(vmax=pvaM['pred_std'].max(), vmin=pvaM['pred_std'].min())
     x = pvaM['actual']
     y = pvaM['pred_avg']
-    plt.scatter(x, y, c=pvaM['pred_std'], cmap='plasma', norm=norm, alpha=0.8)
+    plt.scatter(x, y, c=pvaM['pred_std'], cmap='plasma', norm=norm, alpha=0.7)
     cbar = plt.colorbar()
     cbar.set_label("Uncertainty")
 

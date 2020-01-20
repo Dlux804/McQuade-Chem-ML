@@ -72,8 +72,13 @@ class MlModel:
         # Done tuning, time to fit and predict
         # pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
 
+
+        #Variable importance for rf and gdb
+        # analysis.impgraph(self.regressor, train_features, train_target, self.feature_list)
+    
         # multipredict
-        self.pvaM, fits_time = analysis.multipredict(self.regressor,train_features, test_features, train_target, test_target)
+        self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
+
         self.graphM = analysis.pvaM_graphs(self.pvaM)
         # self.graph = analysis.pva_graphs(pva, self.algorithm)
 
@@ -135,7 +140,7 @@ class MlModel:
 
 
 
-# This section is for testing and should be commented out when finished testing
+# This section is for troubleshooting and should be commented out when finished testing
 
 # change active directory
 # with misc.cd('../dataFiles/'):
@@ -144,8 +149,7 @@ class MlModel:
 #     # initiate model class with algorithm, dataset and target
 #     model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
 #     print('done.')
-#
-#
+
 # # featurize data with rdkit2d
 # model1.featurization([0])
 # print(model1.feat_meth)
@@ -153,7 +157,9 @@ class MlModel:
 #
 # # Run the model with hyperparameter optimization
 # model1.run(tune=True)
-# # print('Tune Time:', model1.tuneTime)
+
+# print('Tune Time:', model1.tuneTime)
+
 #
 #
 #

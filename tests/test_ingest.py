@@ -1,6 +1,7 @@
-import unittest
+import mock
 import pandas as pd
 import os, sys
+
 
 # before importing local modules, must add root dir to system path
 # capture location of current file (/root/tests/)
@@ -8,49 +9,54 @@ myPath = os.path.dirname(os.path.abspath(__file__))
 # add to system path the root dir with relative notation: /../ (go up one dir)
 sys.path.insert(0, myPath + '/../')
 
-# now can import local modules without issue.
-from core import models, misc
+# Now we can import modules from other directory
+from core import ingest, models, misc
 from main import ROOT_DIR
 
 
-class TestIngest:
+# Mock the module Chem since it's the thing we want to test
+@mock.patch('core.ingest.Chem')
+def test_ingest_Chem(mock_chem):
+    """
+    Chem.MolFromSmiles is the core function used to make the function load_smiles in ingest.py. Therefore, we would like
+    to test if there's any error in using this function. This will help us narrow down the actual error if we ever run
+    into one.
+    """
+    # change working directory to
+    os.chdir(ROOT_DIR)
+    # move to dataFiles
+    with misc.cd('dataFiles'):
+        print('Now in:', os.getcwd())
+        model_test = models.MlModel('rf', 'water-energy.csv', 'expt')  # Calling MlModel to get our class instances
+        mock_chem.MolFromSmiles.assert_called()
+        mock.patch.stopall()
 
-    def test_load_smiles_dropfalse(self):
-        """
-        Test if ingest.py is returning a dataframe and a SMILES column when drop=False
+# Test load_smiles when drop = False
+def test_load_smiles_dropfalse():
+    """
+    Test if ingest.py is returning a dataframe and a SMILES column when drop=False
+    I'm still testing on how to use mock more efficiently
+    """
+    # change working directory to
+    os.chdir(ROOT_DIR)
+    # move to dataFiles
+    with misc.cd('dataFiles'):
+        print('Now in:', os.getcwd())
+        model_test = models.MlModel('rf', 'water-energy.csv', 'expt')  # Calling MlModel to get our class instances
+        assert type(model_test.data) == pd.DataFrame  # Testing to see if data is a dataframe
+        assert type(model_test.smiles) == pd.Series  # Testing to see if we get a SMILES column
 
-        """
-        # change working directory to
-        os.chdir(ROOT_DIR)
-        with misc.cd('dataFiles'):
-            print('Now in:', os.getcwd())
-            print('Initializing model...', end=' ', flush=True)
+def test_load_smiles_droptrue():
+    """
+    Test if ingest.py is returning a dataframe and a SMILES column when drop=True
+    I'm still testing on how to use mock more efficiently
+    """
+    # change working directory to
+    os.chdir(ROOT_DIR)
+    # move to dataFiles
+    with misc.cd('dataFiles'):
+        print('Now in:', os.getcwd())
+        model_test = models.MlModel('gdb', 'water-energy.csv', 'expt', drop=False)  # Calling MlModel to get our class instances, drop=False in this case
+        assert type(model_test.data) == pd.DataFrame  # Testing to see if data is a dataframe
+        assert type(model_test.smiles) == pd.Series  # Testing to see if we get a SMILES column
 
-            # initiate model class with algorithm, dataset and target
-            model_test = models.MlModel('gdb', 'water-energy.csv', 'expt')
-            print('done.')
-
-        # csv, smiles_col = load_smiles(model_test.data, "water-energy.csv", drop=False)
-        # self.assertEqual(type(model_test.data), pd.DataFrame, 'Something is wrong, i can feel it')
-        # self.assertEqual(type(model_test.smiles), pd.Series, 'Something is wrong, i can feel it')
-        assert type(model_test.data) == pd.DataFrame
-        assert type(model_test.smiles) == pd.Series
-
-    def test_load_smiles_droptrue(self):
-        """
-        Test if ingest.py is returning a dataframe and a SMILES column when drop=True
-
-        """
-        # change working directory to
-        os.chdir(ROOT_DIR)
-        with misc.cd('dataFiles'):
-            print('Now in:', os.getcwd())
-            print('Initializing model...', end=' ', flush=True)
-
-            # initiate model class with algorithm, dataset and target
-            model_test = models.MlModel('gdb', 'water-energy.csv', 'expt', drop=False)
-            print('done.')
-
-        # csv, smiles_col = load_smiles(self, "water-energy.csv", drop=True)
-        assert type(model_test.data) == pd.DataFrame
-        assert type(model_test.smiles) == pd.Series

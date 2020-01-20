@@ -47,7 +47,7 @@ def test_regressors_hypertune_randomsearch(mock_rdsearchcv, setup):
     # Load in data
     train_features, test_features, train_target, test_target = setup
     # Call the function that we would like to test
-    tuned, tune_time = regressors.hyperTune(RandomForestRegressor(), train_features, train_target,
+    regressors.hyperTune(RandomForestRegressor(), train_features, train_target,
                                             grid=grid.rf_paramgrid(), folds=2, iters=1, jobs=1)
     # See if RandomizedSearchCV is called
     mock_rdsearchcv.assert_called_once()

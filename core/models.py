@@ -169,26 +169,26 @@ class MlModel:
 # # go home
 # os.chdir(hte.ROOT_DIR)
 #
-# Initiate Model
-model1 = MlModel('rf', 'dataFiles/ESOL.csv', 'water-sol')
-
-# featurize data with rdkit2d
-model1.featurization([0])
-print(model1.feat_meth)
-
-
-# Run the model with hyperparameter optimization
-model1.run(tune=True)
-print('Tune Time:', model1.tuneTime)
-
-
-
-# Save results
-model1.store()
-
-
-# Must show() graph AFTER it has been saved.
-# if show() is called before save, the save will be blank
-# display PvA graph
-model1.graphM.show()
+# # Initiate Model
+# model1 = MlModel('rf', 'dataFiles/ESOL.csv', 'water-sol')
 #
+# # featurize data with rdkit2d
+# model1.featurization([0])
+# print(model1.feat_meth)
+#
+#
+# # Run the model with hyperparameter optimization
+# model1.run(tune=True)
+# print('Tune Time:', model1.tuneTime)
+#
+#
+#
+# # Save results
+# model1.store()
+#
+#
+# # Must show() graph AFTER it has been saved.
+# # if show() is called before save, the save will be blank
+# # display PvA graph
+# model1.graphM.show()
+# #

@@ -14,15 +14,15 @@ def main():
 
     # list of available learning algorithms
     # learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
-    learner = ['gdb']
+    learner = ['gdb', 'rf', 'ada', 'knn']
 
     # list of available featurization methods
     # featurize = [[0], [0, 2], [0, 3], [0, 4], [0,5], [0, 6], [2], [3], [4], [5], [6]]
-    featurize = [[0]]
+    featurize = [[0], [2], [3], [4], [0, 2], [0, 3], [0, 4]]
 
     # features for models that require normalized data (nn, svm)
     # norm_featurize = [[1], [1,2], [1,3], [1,4], [1,5], [1,6], [2], [3], [4], [5], [6]]
-    norm_featurize = [[1], [1,2], [1,3], [1,4], [1,5], [1,6], [2], [3], [4], [5], [6]]
+    norm_featurize = [[1], [2], [3], [4], [1, 2], [1, 3], [1, 4]]
 
     # data sets in dict. Key: Filename.csv , Value: Target column header
     # sets = {
@@ -33,9 +33,9 @@ def main():
     #     'jak2_pic50.csv': 'pIC50'
     # }
     sets = {
-        'ESOL.csv': 'water-sol',
+        'logP14k.csv': 'Kow'
     }
-    for alg in learner: # loop over all learning algorithms
+    for alg in learner:  # loop over all learning algorithms
 
         if alg == 'mlp' or alg == 'svr': # if the algorithm needs normalized data
             feats = norm_featurize
@@ -49,7 +49,6 @@ def main():
                 # change active directory
                 with cd('dataFiles'):
 
-                # with cd('/home/aluxon/scripts/git/McQuade-Chem-ML/dataFiles'):  # FIXME Hard coding the path
                     print('Now in:', os.getcwd())
                     print('Initializing model...', end=' ', flush=True)
 
@@ -65,7 +64,7 @@ def main():
                 model.featurization(method)
 
                 # run model
-                model.run(tune=False)
+                model.run(tune=True) # Bayes Opt
 
                 # save results of model
                 model.store()

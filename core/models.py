@@ -51,9 +51,9 @@ class MlModel:
             # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
 
             # FIXME Unfortunate hard code deep in the program.
-            folds = 10
-            iters = 100
-            jobs = 30  # for bayes, max jobs = folds.
+            folds = 2
+            iters = 5
+            jobs = -1  # for bayes, max jobs = folds.
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)
@@ -77,13 +77,14 @@ class MlModel:
         # analysis.impgraph(self.regressor, train_features, train_target, self.feature_list)
     
         # multipredict
-        self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
+        # self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
+        self.stats, self.pvaM, fits_time = analysis.replicate_multi(self.regressor, train_features, test_features, train_target, test_target)
 
         self.graphM = analysis.pvaM_graphs(self.pvaM)
         # self.graph = analysis.pva_graphs(pva, self.algorithm)
 
         # run the model 5 times and collect the metric stats as dictionary
-        self.stats = analysis.replicate_model(self, 5)
+        # self.stats = analysis.replicate_model(self, 5)
 
     def store(self):
         """  Organize and store model inputs and outputs.  """

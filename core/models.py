@@ -7,12 +7,12 @@ Results of the model will be stored in the class instance,
 for example you could have a model.pva be the pva graph and
 model.results be the r2, rmse, time, etc.
 '''
-from core import grid, regressors, analysis, features, ingest
+from core import ingest, features, grid, regressors, analysis, misc
+# from main import ROOT_DIR
 import csv
-import subprocess
-from pathlib import Path
 import os
-from main import *
+import subprocess
+
 
 class MlModel:
     def __init__(self, algorithm, dataset, target, drop=True):
@@ -20,7 +20,7 @@ class MlModel:
         self.algorithm = algorithm
         self.dataset = dataset
         self.target = target
-        self.data, self.smiles = ingest.load_smiles(self, dataset, drop)
+        self.data, self.smiles = ingest.load_smiles(self,dataset, drop)
 
     def featurization(self, feats=None):
         """ Featurizes molecules in dataset.
@@ -52,15 +52,15 @@ class MlModel:
 
             # FIXME Unfortunate hard code deep in the program.
             folds = 10
-            iters = 5
-            jobs = 30
+            iters = 100
+            jobs = 30  # for bayes, max jobs = folds.
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)
 
             # Run Hyper Tuning
             params,  self.tuneTime = regressors.hyperTune(self.regressor(), train_features,
-                                                          train_target, param_grid, folds, iters, jobs=jobs)
+                                                                train_target, param_grid, folds, iters, jobs=folds)
 
             # redefine regressor model with best parameters.
             self.regressor = self.regressor(**params)  # **dict will unpack a dictionary for use as keywrdargs
@@ -70,12 +70,15 @@ class MlModel:
             self.tuneTime = None
 
         # Done tuning, time to fit and predict
-        pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
+        # pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
+
 
         #Variable importance for rf and gdb
         # analysis.impgraph(self.regressor, train_features, train_target, self.feature_list)
-        # test multipredict
+    
+        # multipredict
         self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
+
         self.graphM = analysis.pvaM_graphs(self.pvaM)
         # self.graph = analysis.pva_graphs(pva, self.algorithm)
 
@@ -84,16 +87,6 @@ class MlModel:
 
     def store(self):
         """  Organize and store model inputs and outputs.  """
-
-        # move to root
-        os.chdir(ROOT_DIR)
-
-        # Check if output folder exists, create if not
-        Path("./output").mkdir(parents=True, exist_ok=True)
-        # move into output dir
-        os.chdir('./output')
-
-
 
         # Check if model was tuned, store a string
         if self.tuned:
@@ -132,54 +125,41 @@ class MlModel:
         # self.graph.savefig(name+'PvA')
 
         # make folders for each run
-        # dirsp = 'mkdir ' + name  # str for bash command
         os.mkdir(name)
-        # subprocess.Popen(dirsp.split(), stdout=subprocess.PIPE)  # run bash command
 
-        # Move files to new folders
-        movesp = 'mv ./' + name + '* ' + name + '/'
+        # put output files into new folder
+        filesp = 'mv ./' + name + '* ' + name +'/'
+        subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
+
+        # Move folder to output/
+        # when testing using code below, need ../output/ because it will run from core.
+        # when running from main.py at root, no ../ needed.
+        movesp = 'mv ./' + name + '/ output/'
+
         subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
 
 
+# This section is for troubleshooting and should be commented out when finished testing
 
-# # Initiate Model
-# model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
-#
-# # featurize data with rdkit2d
-# model1.featurization([0])
-# # print(model1.feat_meth)
-#
-#
-# # Run the model with hyperparameter optimization
-# model1.run(tune=False)
-# # print('Tune Time:', model1.tuneTime)
-#
-#
-#
-# # Save results
-# model1.store()
-#
-#
-# # Must show() graph AFTER it has been saved.
-# # if show() is called before save, the save will be blank
-# # display PvA graph
-# model1.graphM.show()
-#
-# # go home
-# os.chdir(hte.ROOT_DIR)
-#
-# # Initiate Model
-# model1 = MlModel('rf', 'dataFiles/ESOL.csv', 'water-sol')
-#
+# change active directory
+# with misc.cd('../dataFiles/'):
+#     print('Now in:', os.getcwd())
+#     print('Initializing model...', end=' ', flush=True)
+#     # initiate model class with algorithm, dataset and target
+#     model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
+#     print('done.')
+
 # # featurize data with rdkit2d
 # model1.featurization([0])
 # print(model1.feat_meth)
 #
 #
 # # Run the model with hyperparameter optimization
-# model1.run(tune=False)
+# model1.run(tune=True)
+
 # print('Tune Time:', model1.tuneTime)
+
 #
 #
 #
@@ -191,4 +171,4 @@ class MlModel:
 # # if show() is called before save, the save will be blank
 # # display PvA graph
 # model1.graphM.show()
-#
+

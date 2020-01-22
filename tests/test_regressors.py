@@ -36,22 +36,22 @@ def setup():
         train_features, test_features, train_target, test_target, feature_list = features.targets_features(df, 'expt')
         return train_features, test_features, train_target, test_target
 
-# Mock the call that we want to test, which is RandomizedSearchCV
-@mock.patch('core.regressors.RandomizedSearchCV')
-def test_regressors_hypertune_randomsearch(mock_rdsearchcv, setup):
-    """
-    In hypertune, RandomizedSearchCV plays a major part since is the call that does the actual tuning.
-    This function was designed to test whether RandomizedSearchCV is called successfully if the function hypertune is
-    being used.
-    """
-    # Load in data
-    train_features, test_features, train_target, test_target = setup
-    # Call the function that we would like to test
-    tuned, tune_time = regressors.hyperTune(RandomForestRegressor(), train_features, train_target,
-                                            grid=grid.rf_paramgrid(), folds=2, iters=1, jobs=1)
-    # See if RandomizedSearchCV is called
-    mock_rdsearchcv.assert_called_once()
-    mock.patch.stopall()
+# # Mock the call that we want to test, which is RandomizedSearchCV
+# @mock.patch('core.regressors.RandomizedSearchCV')
+# def test_regressors_hypertune_randomsearch(mock_rdsearchcv, setup):
+#     """
+#     In hypertune, RandomizedSearchCV plays a major part since is the call that does the actual tuning.
+#     This function was designed to test whether RandomizedSearchCV is called successfully if the function hypertune is
+#     being used.
+#     """
+#     # Load in data
+#     train_features, test_features, train_target, test_target = setup
+#     # Call the function that we would like to test
+#     regressors.hyperTune(RandomForestRegressor(), train_features, train_target,
+#                                             grid=grid.rf_paramgrid(), folds=2, iters=1, jobs=1)
+#     # See if RandomizedSearchCV is called
+#     mock_rdsearchcv.assert_called_once()
+#     mock.patch.stopall()
 
 
 

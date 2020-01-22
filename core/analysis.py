@@ -81,7 +81,63 @@ def predict(regressor, train_features, test_features, train_target, test_target)
 #     else:
 #         pass
 
+def replicate_multi(regressor, train_features, test_features, train_target, test_target, n=5):
+    """
+    Objective: Run model n times. Return dictionary of r2, mse and rmse average and standard deviation and predict each
+    point multiple times to calculate uncertainty. I know, not my proudest copy and paste.
 
+    :param regressor: Regression model
+    :param n: Number of times the model is run
+    :return:
+    """
+    r2 = np.empty(n)
+    mse = np.empty(n)
+    rmse = np.empty(n)
+    t = np.empty(n)
+    start_time = time()
+    # create dataframe for multipredict
+    pva_multi = pd.DataFrame([])
+    for i in range(0, n):  # run model n times
+        regressor.fit(train_features, train_target)
+
+        # Make predictions
+        predictions = regressor.predict(test_features)
+        done_time = time()
+        fit_time = done_time - start_time
+        # Target data
+        true = test_target
+        # Dataframe for replicate_model
+        pva = pd.DataFrame([], columns=['actual', 'predicted'])
+        pva['actual'] = true
+        pva['predicted'] = predictions
+        r2[i] = r2_score(pva['actual'], pva['predicted'])
+        mse[i] = mean_squared_error(pva['actual'], pva['predicted'])
+        rmse[i] = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
+        t[i] = fit_time
+        # store as enumerated column for multipredict
+        pva_multi['predicted' + str(i)] = predictions
+
+    # done_time = time()
+    # fit_time = done_time - start_time
+    # t = fit_time
+    pva_multi['pred_avg'] = pva.mean(axis=1)
+    pva_multi['pred_std'] = pva.std(axis=1)
+    pva_multi['actual'] = test_target
+    stats = {
+        'r2_avg': r2.mean(),
+        'r2_std': r2.std(),
+        'mse_avg': mse.mean(),
+        'mse_std': mse.std(),
+        'rmse_avg': rmse.mean(),
+        'rmse_std': rmse.std(),
+        'time_avg': t.mean(),
+        'time_std': t.std()
+    }
+    print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])
+    print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
+    print()
+
+    return stats, pva_multi, fit_time
 
 def replicate_model(self, n):
     """Run model n times.  Return dictionary of r2, mse and rmse average and standard deviation."""

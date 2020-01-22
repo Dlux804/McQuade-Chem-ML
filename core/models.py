@@ -52,7 +52,7 @@ class MlModel:
 
             # FIXME Unfortunate hard code deep in the program.
             folds = 2
-            iters = 5
+            iters = 3
             jobs = -1  # for bayes, max jobs = folds.
 
             # Make parameter grid
@@ -74,7 +74,7 @@ class MlModel:
 
 
         #Variable importance for rf and gdb
-        # analysis.impgraph(self.regressor, train_features, train_target, self.feature_list)
+        self.impgraph = analysis.impgraph(self.algorithm, self.regressor, train_features, train_target, self.feature_list)
     
         # multipredict
         # self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
@@ -111,6 +111,7 @@ class MlModel:
         del att['smiles']  # do not want series in dict
         del att['graphM']  # do not want graph object
         del att['stats']  # will unpack and add on
+        del att['impgraph']
         att.update(self.stats)
 
         # Write contents of attributes dictionary to a CSV
@@ -122,6 +123,7 @@ class MlModel:
 
         # save graphs
         self.graphM.savefig(name+'PvAM')
+        # self.impgraph.savefig(name+'impgraph')
         self.graphM.close()  # close to conserve memory when running many models.
         # self.graph.savefig(name+'PvA')
 

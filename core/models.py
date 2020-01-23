@@ -74,8 +74,10 @@ class MlModel:
 
 
         #Variable importance for rf and gdb
-        self.impgraph = analysis.impgraph(self.algorithm, self.regressor, train_features, train_target, self.feature_list)
-    
+        if self.algorithm in ['rf', 'gdb'] and self.feature_list == [0]:
+            self.impgraph, self.varimp = analysis.impgraph(self.algorithm, self.regressor, train_features, train_target, self.feature_list)
+        else:
+            pass
         # multipredict
         # self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
         self.stats, self.pvaM, fits_time = analysis.replicate_multi(self.regressor, train_features, test_features, train_target, test_target)
@@ -111,9 +113,9 @@ class MlModel:
         del att['smiles']  # do not want series in dict
         del att['graphM']  # do not want graph object
         del att['stats']  # will unpack and add on
-        del att['impgraph']
+        # del att['impgraph']
         att.update(self.stats)
-
+        att.update(self.varimp)
         # Write contents of attributes dictionary to a CSV
         with open(csvfile, 'w') as f:  # Just use 'w' mode in 3.x
             w = csv.DictWriter(f, att.keys())
@@ -123,7 +125,11 @@ class MlModel:
 
         # save graphs
         self.graphM.savefig(name+'PvAM')
-        # self.impgraph.savefig(name+'impgraph')
+        if self.algorithm in ['rf', 'gdb'] and self.feature_list == [0]:
+            self.impgraph.savefig(name+'impgraph')
+            self.impgraph.close()
+        else:
+            pass
         self.graphM.close()  # close to conserve memory when running many models.
         # self.graph.savefig(name+'PvA')
 

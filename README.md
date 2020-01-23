@@ -2,10 +2,10 @@
 Development of easy to use and reproducible ML scripts for chemistry.  
 
 ## Data Sets
-Currently we are using three datasets from MoleculeNet.ai: Lipophilicity, FreeSOLV and ESOL.
+Currently we are using three datasets from MoleculeNet.ai: Lipophilicity, FreeSOLV and ESOL and two datasets retreived from tutorials: LogP14k and jak2-pIC50.
 
 ## Available Models
-Our program supports random forest (RF), gradient decent boost (GDB), support vector machines (SVM).  
+Our program supports random forest (RF), gradient decent boost (GDB), support vector machines (SVM), Adaboost, and k-nearest neightbors (KNN).   
 
 
 ### Dependencies

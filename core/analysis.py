@@ -37,67 +37,66 @@ def impgraph(model_name, regressor, train_features, train_target, feature_list):
     and 1s
     """
 
-    if model_name == 'rf' or model_name == 'gdb':
-        if feature_list == [0]:
-            regressor.fit(train_features, train_target)
-            # Get numerical feature importances
-            importances2 = regressor.feature_importances_  # used later for graph
+    if model_name in ['rf', 'gdb'] and feature_list == [0]:
+        regressor.fit(train_features, train_target)
+        # Get numerical feature importances
+        importances2 = regressor.feature_importances_  # used later for graph
 
-            # List of tuples with variable and importance
-            feature_importances = [(feature, round(importance, 2)) for feature, importance in
+        # List of tuples with variable and importance
+        feature_importances = [(feature, round(importance, 2)) for feature, importance in
                                    zip(feature_list, list(importances2))]
 
-            # Sort the feature importances by most important first
-            feature_importances = sorted(feature_importances, key=lambda x: x[1], reverse=True)
-            # Print out the feature and importances
-            [print('Variable: {:20} Importance: {}'.format(*pair)) for pair in feature_importances]
+        # Sort the feature importances by most important first
+        feature_importances = sorted(feature_importances, key=lambda x: x[1], reverse=True)
+        # Print out the feature and importances
+        [print('Variable: {:20} Importance: {}'.format(*pair)) for pair in feature_importances]
 
-            # prepare importance data for export and graphing
-            indicies = (-importances2).argsort()
-            varimp = pd.DataFrame([], columns=['variable', 'importance'])
-            varimp['variable'] = [feature_list[i] for i in indicies]
-            varimp['importance'] = importances2[indicies]
-            # varimp.to_csv(exp + '-varimp.csv')
-            # Importance Bar Graph
-            plt.rcParams['figure.figsize'] = [15, 9]
-            print(varimp)
-            # Set the style
-            plt.style.use('bmh')
+        # prepare importance data for export and graphing
+        indicies = (-importances2).argsort()
+        varimp = pd.DataFrame([], columns=['variable', 'importance'])
+        varimp['variable'] = [feature_list[i] for i in indicies]
+        varimp['importance'] = importances2[indicies]
+        # varimp.to_csv(exp + '-varimp.csv')
+        # Importance Bar Graph
+        plt.rcParams['figure.figsize'] = [15, 9]
+        print(varimp)
+        # Set the style
+        plt.style.use('bmh')
 
-            #     # list of x locations for plotting
-            #     x_values = list(range(importances.shape[0]))
+        #     # list of x locations for plotting
+        #     x_values = list(range(importances.shape[0]))
 
-            # intiate plot (mwahaha)
-            fig, ax = plt.subplots()
-            plt.bar(varimp.index, varimp['importance'], orientation='vertical')
+        # intiate plot (mwahaha)
+        fig, ax = plt.subplots()
+        plt.bar(varimp.index, varimp['importance'], orientation='vertical')
 
-            # Tick labels for x axis
-            # plt.xticks(x_values, feature_list, rotation='vertical')
-            plt.xticks(varimp.index, varimp['variable'], rotation='vertical')
+        # Tick labels for x axis
+        # plt.xticks(x_values, feature_list, rotation='vertical')
+        plt.xticks(varimp.index, varimp['variable'], rotation='vertical')
 
-            # Axis labels and title
-            plt.ylabel('Importance');
-            plt.xlabel('Variable');
-            # plt.title('EXP:' + exp + '  Variable Importances');
+        # Axis labels and title
+        plt.ylabel('Importance');
+        plt.xlabel('Variable');
+        # plt.title('EXP:' + exp + '  Variable Importances');
 
-            # ax = plt.axes()
-            ax.xaxis.grid(False)  # remove just xaxis grid
+        # ax = plt.axes()
+        ax.xaxis.grid(False)  # remove just xaxis grid
 
-            plt.savefig(model_name + '-importance.png')
-            return plt
-        else:
-            pass
+        plt.savefig(model_name + '-importance.png')
+        return plt, varimp
     else:
         pass
+
 
 def replicate_multi(regressor, train_features, test_features, train_target, test_target, n=5):
     """
     Objective: Run model n times. Return dictionary of r2, mse and rmse average and standard deviation and predict each
-    point multiple times to calculate uncertainty. I know, not my proudest copy and paste.
+    point multiple times to calculate uncertainty.
 
     :param regressor: Regression model
     :param n: Number of times the model is run
-    :return:
+    :return: stats: Dictionary of valuable values, pva_multi: dataframe of predicted vs actual recorded 5 times,
+            t: Array that contains running time.
     """
     r2 = np.empty(n)
     mse = np.empty(n)
@@ -146,7 +145,7 @@ def replicate_multi(regressor, train_features, test_features, train_target, test
     print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
     print()
 
-    return stats, pva_multi, fit_time
+    return stats, pva_multi, t
 
 def replicate_model(self, n):
     """Run model n times.  Return dictionary of r2, mse and rmse average and standard deviation."""

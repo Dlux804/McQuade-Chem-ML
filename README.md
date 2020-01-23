@@ -33,9 +33,8 @@ environment on our repo (mlapp.yml).
 # Workflow
 
 ## MLModel Class
-This is the overview of our MLModels Python class functions.  Obviously, it is incomplete just like our code. 
-Update it as you update the code.
-![Alt text](graphics/hte-models-overview.png)
+This is the overview of our MLModels Python class functions.  ```main.py``` essentially just iteratively runs this workflow with different input algorithms, data sets and featurization methods.   
+![Alt text](graphics/hte-models-overview-Page-2.png)
 
 ### File Tree
 

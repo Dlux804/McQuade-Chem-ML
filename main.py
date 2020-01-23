@@ -19,8 +19,8 @@ def main():
 
     # list of available featurization methods
     # featurize = [[0], [0, 2], [0, 3], [0, 4], [0,5], [0, 6], [2], [3], [4], [5], [6]]
-    featurize = [[0], [2], [3], [4], [0, 2], [0, 3], [0, 4]]
-    featurize = [[0]]
+    # featurize = [[0], [2], [3], [4], [0, 2], [0, 3], [0, 4]]
+    featurize = [[1]]
     # features for models that require normalized data (nn, svm)
     # norm_featurize = [[1], [1,2], [1,3], [1,4], [1,5], [1,6], [2], [3], [4], [5], [6]]
     norm_featurize = [[1], [2], [3], [4], [1, 2], [1, 3], [1, 4]]

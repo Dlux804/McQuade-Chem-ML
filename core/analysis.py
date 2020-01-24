@@ -29,59 +29,122 @@ def predict(regressor, train_features, test_features, train_target, test_target)
     return pva, fit_time
 
 
-# # Fearture importance class
-# def impgraph(model_name, regressor, train_features, train_target, feature_list):
-#     if model_name == 'rf' or model_name == 'gdb':
-#         regressor.fit(train_features, train_target)
-#         # Get numerical feature importances
-#         importances2 = regressor.feature_importances_  # used later for graph
-#
-#         # List of tuples with variable and importance
-#         feature_importances = [(feature, round(importance, 2)) for feature, importance in
-#                                zip(feature_list, list(importances2))]
-#
-#         # Sort the feature importances by most important first
-#         feature_importances = sorted(feature_importances, key=lambda x: x[1], reverse=True)
-#         # Print out the feature and importances
-#         [print('Variable: {:20} Importance: {}'.format(*pair)) for pair in feature_importances]
-#
-#         # prepare importance data for export and graphing
-#         indicies = (-importances2).argsort()
-#         varimp = pd.DataFrame([], columns=['variable', 'importance'])
-#         varimp['variable'] = [feature_list[i] for i in indicies]
-#         varimp['importance'] = importances2[indicies]
-#         # varimp.to_csv(exp + '-varimp.csv')
-#         # Importance Bar Graph
-#         plt.rcParams['figure.figsize'] = [15, 9]
-#         print(varimp)
-#         # Set the style
-#         plt.style.use('bmh')
-#
-#         #     # list of x locations for plotting
-#         #     x_values = list(range(importances.shape[0]))
-#
-#         # intiate plot (mwahaha)
-#         fig, ax = plt.subplots()
-#         plt.bar(varimp.index, varimp['importance'], orientation='vertical')
-#
-#         # Tick labels for x axis
-#         # plt.xticks(x_values, feature_list, rotation='vertical')
-#         plt.xticks(varimp.index, varimp['variable'], rotation='vertical')
-#
-#         # Axis labels and title
-#         plt.ylabel('Importance');
-#         plt.xlabel('Variable');
-#         # plt.title('EXP:' + exp + '  Variable Importances');
-#
-#         # ax = plt.axes()
-#         ax.xaxis.grid(False)  # remove just xaxis grid
-#
-#         # plt.savefig(exp + '-importance.png')
-#         return plt
-#     else:
-#         pass
+# Fearture importance class
+def impgraph(model_name, regressor, train_features, train_target, feature_list):
+    """
+    Objective: Make a feature importance graph. I'm limiting this to only rf and gdb since only they have feature
+    importance (I might need to double check on that). I'm also limiting this to only rdkit2d since the rest are only 0s
+    and 1s
+    """
+
+    regressor.fit(train_features, train_target)
+    # Get numerical feature importances
+    importances2 = regressor.feature_importances_  # used later for graph
+
+    # List of tuples with variable and importance
+    feature_importances = [(feature, round(importance, 2)) for feature, importance in
+                               zip(feature_list, list(importances2))]
+
+    # Sort the feature importances by most important first
+    feature_importances = sorted(feature_importances, key=lambda x: x[1], reverse=True)
+    # Print out the feature and importances
+    [print('Variable: {:20} Importance: {}'.format(*pair)) for pair in feature_importances]
+
+    # prepare importance data for export and graphing
+    indicies = (-importances2).argsort()
+    varimp = pd.DataFrame([], columns=['variable', 'importance'])
+    varimp['variable'] = [feature_list[i] for i in indicies]
+    varimp['importance'] = importances2[indicies]
+    # varimp.to_csv(exp + '-varimp.csv')
+    # Importance Bar Graph
+    plt.rcParams['figure.figsize'] = [15, 9]
+    print(varimp)
+    # Set the style
+    plt.style.use('bmh')
+
+    #     # list of x locations for plotting
+    #     x_values = list(range(importances.shape[0]))
+
+    # intiate plot (mwahaha)
+    fig, ax = plt.subplots()
+    plt.bar(varimp.index, varimp['importance'], orientation='vertical')
+
+    # Tick labels for x axis
+    # plt.xticks(x_values, feature_list, rotation='vertical')
+    plt.xticks(varimp.index, varimp['variable'], rotation='vertical')
+
+    # Axis labels and title
+    plt.ylabel('Importance');
+    plt.xlabel('Variable');
+    # plt.title('EXP:' + exp + '  Variable Importances');
+
+    # ax = plt.axes()
+    ax.xaxis.grid(False)  # remove just xaxis grid
+
+    plt.savefig(model_name + '-importance.png')
+    return plt, varimp
+    # else:
+    #     pass
 
 
+def replicate_multi(regressor, train_features, test_features, train_target, test_target, n=5):
+    """
+    Objective: Run model n times. Return dictionary of r2, mse and rmse average and standard deviation and predict each
+    point multiple times to calculate uncertainty.
+
+    :param regressor: Regression model
+    :param n: Number of times the model is run
+    :return: stats: Dictionary of valuable values, pva_multi: dataframe of predicted vs actual recorded 5 times,
+            t: Array that contains running time.
+    """
+    r2 = np.empty(n)
+    mse = np.empty(n)
+    rmse = np.empty(n)
+    t = np.empty(n)
+    start_time = time()
+    # create dataframe for multipredict
+    pva_multi = pd.DataFrame([])
+    for i in range(0, n):  # run model n times
+        regressor.fit(train_features, train_target)
+
+        # Make predictions
+        predictions = regressor.predict(test_features)
+        done_time = time()
+        fit_time = done_time - start_time
+        # Target data
+        true = test_target
+        # Dataframe for replicate_model
+        pva = pd.DataFrame([], columns=['actual', 'predicted'])
+        pva['actual'] = true
+        pva['predicted'] = predictions
+        r2[i] = r2_score(pva['actual'], pva['predicted'])
+        mse[i] = mean_squared_error(pva['actual'], pva['predicted'])
+        rmse[i] = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
+        t[i] = fit_time
+        # store as enumerated column for multipredict
+        pva_multi['predicted' + str(i)] = predictions
+
+    # done_time = time()
+    # fit_time = done_time - start_time
+    # t = fit_time
+    pva_multi['pred_avg'] = pva.mean(axis=1)
+    pva_multi['pred_std'] = pva.std(axis=1)
+    pva_multi['actual'] = test_target
+    stats = {
+        'r2_avg': r2.mean(),
+        'r2_std': r2.std(),
+        'mse_avg': mse.mean(),
+        'mse_std': mse.std(),
+        'rmse_avg': rmse.mean(),
+        'rmse_std': rmse.std(),
+        'time_avg': t.mean(),
+        'time_std': t.std()
+    }
+    print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])
+    print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
+    print()
+
+    return stats, pva_multi, t
 
 def replicate_model(self, n):
     """Run model n times.  Return dictionary of r2, mse and rmse average and standard deviation."""

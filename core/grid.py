@@ -61,7 +61,7 @@ def rf_paramgrid():
         'max_features': max_features,
         'max_depth': max_depth,
         'min_samples_split': min_samples_split,
-        'min_samples_leaf': min_samples_leaf
+        'min_samples_leaf': min_samples_leaf,
         'bootstrap': bootstrap
     }
     # Define parameter grid for skopt BayesSearchCV
@@ -166,7 +166,7 @@ def mlp_paramgrid():
             'hidden_layer_sizes': hidden_layer_sizes,
             'activation': activation,
             'solver': solver,
-            'alpha': alpha
+            'alpha': alpha,
             'learning_rate': learning_rate,
             }
 
@@ -174,8 +174,8 @@ def mlp_paramgrid():
     bayes_grid = {
             'activation': Categorical(activation),
             'solver': Categorical(solver),
-            'alpha': Real(0.001, 1, 'log-uniform')
-            'learning_rate': Categorical(learning_rate),
+            'alpha': Real(0.001, 1, 'log-uniform'),
+            'learning_rate': Categorical(learning_rate)
     }
     return bayes_grid
 

@@ -49,9 +49,9 @@ class MlModel:
             # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
 
             # FIXME Unfortunate hard code deep in the program.
-            folds = 10
-            iters = 100
-            jobs = 30  # for bayes, max jobs = folds.
+            folds = 2
+            iters = 3
+            jobs = -1  # for bayes, max jobs = folds.
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)
@@ -70,15 +70,18 @@ class MlModel:
         # Done tuning, time to fit and predict
 
         #Variable importance for rf and gdb
-        # analysis.impgraph(self.regressor, train_features, train_target, self.feature_list)
-    
+        if self.algorithm in ['rf', 'gdb'] and self.feature_list == [0]:
+            self.impgraph, self.varimp = analysis.impgraph(self.algorithm, self.regressor, train_features, train_target, self.feature_list)
+        else:
+            pass
         # multipredict
-        self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
+        # self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
+        self.stats, self.pvaM, fits_time = analysis.replicate_multi(self.regressor, train_features, test_features, train_target, test_target)
 
         self.graphM = analysis.pvaM_graphs(self.pvaM)
 
         # run the model 5 times and collect the metric stats as dictionary
-        self.stats = analysis.replicate_model(self, 5)
+        # self.stats = analysis.replicate_model(self, 5)
 
     def store(self):
         """  Organize and store model inputs and outputs.  """
@@ -104,8 +107,9 @@ class MlModel:
         del att['smiles']  # do not want series in dict
         del att['graphM']  # do not want graph object
         del att['stats']  # will unpack and add on
+        # del att['impgraph']
         att.update(self.stats)
-
+        att.update(self.varimp)
         # Write contents of attributes dictionary to a CSV
         with open(csvfile, 'w') as f:  # Just use 'w' mode in Python 3.x
             w = csv.DictWriter(f, att.keys())
@@ -119,6 +123,11 @@ class MlModel:
 
         # save graphs
         self.graphM.savefig(name+'PvAM')
+        if self.algorithm in ['rf', 'gdb'] and self.feature_list == [0]:
+            self.impgraph.savefig(name+'impgraph')
+            self.impgraph.close()
+        else:
+            pass
         self.graphM.close()  # close to conserve memory when running many models.
         # self.graph.savefig(name+'PvA')
 

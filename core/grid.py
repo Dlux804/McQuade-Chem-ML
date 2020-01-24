@@ -37,6 +37,11 @@ def ada_paramgrid():
     # Define parameter grid for skopt BayesSearchCV
     bayes_grid = {
         # How to convert base_estimator?  # TODO Convert base_estimator to bayes compatible
+        'base_estimator': Categorical([tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=3),
+                                       tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=4),
+                                       tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=5),
+                                       tree.DecisionTreeRegressor(max_features='auto', splitter='best', max_depth=3),
+                                       tree.DecisionTreeRegressor(max_features='auto', splitter='best', max_depth=5)]),
         'n_estimators': Integer(50, 1000),
         'learning_rate': Real(0.001, 1, 'log-uniform')
     }

@@ -14,11 +14,11 @@ def main():
 
     # list of available learning algorithms
     # learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
-    learner = ['gdb', 'rf', 'ada', 'knn']
+    # learner = ['gdb', 'rf', 'ada', 'knn']
+    learner = ['gdb']
 
     # list of available featurization methods
     featurize = [[0], [0, 2], [0, 3], [0, 4], [0,5], [0, 6], [2], [3], [4], [5], [6]]
-
 
     # features for models that require normalized data (nn, svm)
     norm_featurize = [[1], [1,2], [1,3], [1,4], [1,5], [1,6], [2], [3], [4], [5], [6]]
@@ -67,6 +67,7 @@ def main():
                 # save results of model
                 model.store()
 
+                
 if __name__ == "__main__":
     main()
 

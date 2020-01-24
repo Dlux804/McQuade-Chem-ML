@@ -1,29 +1,27 @@
 '''
-One way to handle the OOP of this code base is to handle each model as the instance of a class.
-Required attributes will be what type of model and what data it uses.
-Defaults will handle the splitting type, tuning etc.
-
-Results of the model will be stored in the class instance,
-for example you could have a model.pva be the pva graph and
-model.results be the r2, rmse, time, etc.
+This code was written by Adam Luxon and team as part of the McQuade research group.
 '''
 from core import ingest, features, grid, regressors, analysis, misc
 # from main import ROOT_DIR
 import csv
 import os
+import pandas as pd
 import subprocess
 
 
 class MlModel:
+    """
+    Class to set up and run machine learning algorithm.
+    """
     def __init__(self, algorithm, dataset, target, drop=True):
-        """Learning algorithm, dataset and target property's column name."""
+        """Requires: learning algorithm, dataset and target property's column name."""
         self.algorithm = algorithm
         self.dataset = dataset
         self.target = target
         self.data, self.smiles = ingest.load_smiles(self,dataset, drop)
 
     def featurization(self, feats=None):
-        """ Featurizes molecules in dataset.
+        """ Featurize molecules in dataset and stores results as attribute in class instance.
             Keyword arguments:
             feats -- Features you want.  Default = None (requires user input)
         """
@@ -32,7 +30,7 @@ class MlModel:
 
 
     def run(self, tune=False):
-        """ Runs model. Returns log of results and graphs."""
+        """ Runs machine learning model. Stores results as class attributes."""
 
         # store tune as attribute for cataloguing
         self.tuned = tune
@@ -45,7 +43,7 @@ class MlModel:
 
         if tune:  # Do hyperparameter tuning
 
-            # ask for tuning variables
+            # ask for tuning variables (not recommended for high throughput)
             # folds = int(input('Please state the number of folds for hyperparameter searching: '))
             # iters = int(input('Please state the number of iterations for hyperparameter searching: '))
             # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
@@ -70,8 +68,6 @@ class MlModel:
             self.tuneTime = None
 
         # Done tuning, time to fit and predict
-        # pva, fit_time = analysis.predict(self.regressor, train_features, test_features, train_target, test_target)
-
 
         #Variable importance for rf and gdb
         if self.algorithm in ['rf', 'gdb'] and self.feature_list == [0]:
@@ -83,7 +79,6 @@ class MlModel:
         self.stats, self.pvaM, fits_time = analysis.replicate_multi(self.regressor, train_features, test_features, train_target, test_target)
 
         self.graphM = analysis.pvaM_graphs(self.pvaM)
-        # self.graph = analysis.pva_graphs(pva, self.algorithm)
 
         # run the model 5 times and collect the metric stats as dictionary
         # self.stats = analysis.replicate_model(self, 5)
@@ -101,7 +96,6 @@ class MlModel:
         feats = ''
         for meth in self.feat_meth:
             feats = feats + '-' + str(meth)
-        # str(self.feat_meth)[1:-1]
 
         # create model file name
         name = self.dataset[:-4] + '-' + self.algorithm + feats + '-' + tuned
@@ -117,11 +111,15 @@ class MlModel:
         att.update(self.stats)
         att.update(self.varimp)
         # Write contents of attributes dictionary to a CSV
-        with open(csvfile, 'w') as f:  # Just use 'w' mode in 3.x
+        with open(csvfile, 'w') as f:  # Just use 'w' mode in Python 3.x
             w = csv.DictWriter(f, att.keys())
             w.writeheader()
             w.writerow(att)
             f.close()
+
+        # save data frames
+        self.data.to_csv(name+'data.csv')
+        self.pvaM.to_csv(name+'predictions.csv')
 
         # save graphs
         self.graphM.savefig(name+'PvAM')

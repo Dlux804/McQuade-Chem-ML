@@ -29,23 +29,22 @@ def regressor(model, tune=False):
     return regressors[model]
 
 
-def runRegress(model, model_name,train_features, test_features, train_target, test_target, expt):
-    # TODO: Add doc string
-    start_reg = time()
-    print("Starting " + model_name + expt +'\n')
-    pva, time_var = defaultML(model,model_name, train_features, test_features, train_target, test_target, expt)
-    r2_dict, mse_dict, rmse_dict = pva_graphs(pva,model_name, expt)
-    stop_reg = time()
-    print(model_name + expt+ ' Finished after ',(stop_reg-start_reg),"sec\n")
-    return r2_dict, mse_dict, rmse_dict, time_var
 
-
-# Hyper parameter tunes using RandomizedSearchCV
 def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1): # WHAT is expt? WHY use it?
-    # TODO: Add doc string
+    """
+    Tunes hyper parameters of specified model.
+
+    Inputs:
+    algorithm, training features, training targets, hyper-param grid,
+    number of cross validation folds to use, number of optimization iterations,
+
+   Keyword arguments
+   jobs: number of parallel processes to run.  (Default = -1 --> use all available cores)
+   NOTE: jobs has been depreciated since max processes in parallel for Bayes is the number of CV folds
+
+    """
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
-    # search_random = RandomizedSearchCV(estimator=model, param_distributions=grid, n_iter=iters, cv=folds, verbose=2,
 
     # set up Bayes Search
     bayes = BayesSearchCV(
@@ -59,10 +58,6 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1):
         cv=folds  # number of cross-val folds to use
     )
 
-    # Fit the random search model
-    # search_random.fit(train_features, train_target)
-    # tuned = search_random.best_params_
-
     # Fit the Bayes search model
     bayes.fit(train_features, train_target)
     tuned = bayes.best_params_
@@ -75,9 +70,3 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1):
     print('Best params achieve a test score of', tune_score, ':')
     print(tuned)
     return tuned, tune_time
-
-
-
-
-
-

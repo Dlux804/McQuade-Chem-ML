@@ -18,24 +18,21 @@ def main():
     learner = ['gdb']
 
     # list of available featurization methods
-    # featurize = [[0], [0, 2], [0, 3], [0, 4], [0,5], [0, 6], [2], [3], [4], [5], [6]]
-    # featurize = [[0], [2], [3], [4], [0, 2], [0, 3], [0, 4]]
-    featurize = [[0]]
+    featurize = [[0], [0, 2], [0, 3], [0, 4], [0,5], [0, 6], [2], [3], [4], [5], [6]]
+
     # features for models that require normalized data (nn, svm)
-    # norm_featurize = [[1], [1,2], [1,3], [1,4], [1,5], [1,6], [2], [3], [4], [5], [6]]
-    norm_featurize = [[1], [2], [3], [4], [1, 2], [1, 3], [1, 4]]
+    norm_featurize = [[1], [1,2], [1,3], [1,4], [1,5], [1,6], [2], [3], [4], [5], [6]]
+
 
     # data sets in dict. Key: Filename.csv , Value: Target column header
-    # sets = {
-    #     'Lipophilicity-ID.csv': 'exp',
-    #     'ESOL.csv': 'water-sol',
-    #     'water-energy.csv': 'expt',
-    #     'logP14k.csv': 'Kow',
-    #     'jak2_pic50.csv': 'pIC50'
-    # }
     sets = {
-        'water-energy.csv': 'expt'
+        'Lipophilicity-ID.csv': 'exp',
+        'ESOL.csv': 'water-sol',
+        'water-energy.csv': 'expt',
+        'logP14k.csv': 'Kow',
+        'jak2_pic50.csv': 'pIC50'
     }
+
     for alg in learner:  # loop over all learning algorithms
 
         if alg == 'mlp' or alg == 'svr': # if the algorithm needs normalized data
@@ -70,23 +67,7 @@ def main():
                 # save results of model
                 model.store()
 
-
-
-
-    # # Initiate Model
-    # model1 = MlModel('ada', 'ESOL.csv', 'water-sol')
-    #
-    # # featurize data with rdkit2d
-    # model1.featurization([0])
-    # print(model1.feat_meth)
-    #
-    # # Run the model with hyperparameter optimization
-    # model1.run(tune=True)
-    # # print('Tune Time:', model1.tuneTime)
-    #
-    # # Save results
-    # model1.store()
-
+                
 if __name__ == "__main__":
     main()
 

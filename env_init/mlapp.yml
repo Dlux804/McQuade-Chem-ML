@@ -24,6 +24,8 @@ dependencies:
   - hyperopt
   - scipy
   - mock
+# For Neo4j
+  - py2neo
   - pip:
       - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
       - "git+https://github.com/swansonk14/chemprop.git"

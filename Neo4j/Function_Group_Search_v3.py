@@ -51,13 +51,9 @@ class Search_Fragments:
         return results_string
 
     def __init__(self, smiles):
-        self.smiles = smiles
+        self.smiles = Chem.MolFromSmiles(smiles)
         self.con_smiles = Chem.MolToSmiles(Chem.MolFromSmiles(smiles))
         self.mol = Chem.MolFromSmiles(smiles)
         self.all_fragments = self.__gen_fragments_dict__()
         self.results = self.search_fragments()
         self.results_string = self.results_to_string()
-
-
-print(Search_Fragments('CCO[P](=S)(OCC)Oc1ccc(cc1)[N+]([O-])=O').results)
-print(Search_Fragments('CCO[P](=S)(OCC)Oc1ccc(cc1)[N+]([O-])=O').results_string)

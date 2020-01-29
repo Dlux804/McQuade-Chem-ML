@@ -31,7 +31,7 @@ def insert_bulk_chem_molecules(file):
                                 num_of_carbons=str(bulk_dict['Num of Carbons']),
                                 chiral_center=bulk_dict['Chiral Center'],
                                 molecular_weight=str(bulk_dict['Molecular Weight (g/mol)']))
-        graph.merge(bulkChemMolecule, 'bulkChemMolecule', 'canonical_smiles')
+        graph.merge(bulkChemMolecule, 'bulkChemMolecule', 'chemical_name')
 
 
 #  This function will add a column for canonical smiles if it does not already exist
@@ -59,7 +59,7 @@ class create_relationships_B:
 
     '''
     This is an rdkit comparision. Rdkit has a function to give a score for similarity. The range for the given score
-    is 0-1. Lets relate molecules that have a similarity score of 0.8 or higher.
+    is 0-1. Lets relate molecules that have a similarity score of 0.95 or higher.
     '''
 
     def compare_molecules(self): # The main loop, comparing all molecules to one another
@@ -74,12 +74,16 @@ class create_relationships_B:
 
     def compare_rdkit_score(self, testing_mol, current_mol):
         graph = self.graph
-        sim_score = DataStructs.FingerprintSimilarity(testing_mol, current_mol)
-        if sim_score >= 0.8:
-            testing_node = Node("bulkChemMolecule", canonical_smiles=Chem.MolToSmiles(testing_mol))  # Fetch node
-            current_node = Node("bulkChemMolecule", canonical_smiles=Chem.MolToSmiles(current_mol))  # Fetch node
-            graph.merge(testing_node, "bulkChemMolecule", "canonical_smiles")  # Merge if needed
-            graph.merge(current_node, "bulkChemMolecule", "canonical_smiles")  # Merge if needed
+        testing_fingerprint = Chem.RDKFingerprint(testing_mol)
+        current_fingerprint = Chem.RDKFingerprint(current_mol)
+        sim_score = DataStructs.FingerprintSimilarity(testing_fingerprint, current_fingerprint)
+        if sim_score >= 0.95:
+            testing_query = "match (n:bulkChemMolecule {canonical_smiles:'"+\
+                            Chem.MolToSmiles(testing_mol)+"'}) RETURN n"
+            testing_node = graph.evaluate(testing_query)  # Fetch node
+            current_query = "match (n:bulkChemMolecule {canonical_smiles:'" + \
+                            Chem.MolToSmiles(current_mol) + "'}) RETURN n"
+            current_node = graph.evaluate(current_query)
             Rdkit_sim_score = Relationship(testing_node, "Rdkit_sim_score", current_node)  # Create rel
             graph.merge(Rdkit_sim_score)  # Merge relationship
 
@@ -132,10 +136,12 @@ class create_relationships_A:
             if frag in current_fragments and frag != 'Arene':
                 num_of_frags += 1
             if num_of_frags == 2:
-                testing_node = Node("bulkChemMolecule", canonical_smiles=Chem.MolToSmiles(testing_mol)) # Fetch node
-                current_node = Node("bulkChemMolecule", canonical_smiles=Chem.MolToSmiles(current_mol)) # Fetch node
-                graph.merge(testing_node, "bulkChemMolecule", "canonical_smiles") # Merge if needed
-                graph.merge(current_node, "bulkChemMolecule", "canonical_smiles") # Merge if needed
+                testing_query = "match (n:bulkChemMolecule {canonical_smiles:'" + \
+                                Chem.MolToSmiles(testing_mol) + "'}) RETURN n" # Cypher query to retrive node
+                testing_node = graph.evaluate(testing_query)  # Fetch node
+                current_query = "match (n:bulkChemMolecule {canonical_smiles:'" + \
+                                Chem.MolToSmiles(current_mol) + "'}) RETURN n"
+                current_node = graph.evaluate(current_query)
                 MolWt_HAS_FRAGMENT = Relationship(testing_node, "MolWt_HAS_FRAGMENT", current_node) # Create rel
                 graph.merge(MolWt_HAS_FRAGMENT) # Merge relationship
                 break # End loop, since relationship already established
@@ -145,10 +151,12 @@ class create_relationships_A:
         num_of_carbons_in_testing = len(testing_mol.GetSubstructMatches(Chem.MolFromSmiles('C')))
         num_of_carbons_in_current = len(current_mol.GetSubstructMatches(Chem.MolFromSmiles('C')))
         if num_of_carbons_in_current == num_of_carbons_in_testing:
-            testing_node = Node("bulkChemMolecule", canonical_smiles=Chem.MolToSmiles(testing_mol))
-            current_node = Node("bulkChemMolecule", canonical_smiles=Chem.MolToSmiles(current_mol))
-            graph.merge(testing_node, "bulkChemMolecule", "canonical_smiles")
-            graph.merge(current_node, "bulkChemMolecule", "canonical_smiles")
+            testing_query = "match (n:bulkChemMolecule {canonical_smiles:'" + \
+                            Chem.MolToSmiles(testing_mol) + "'}) RETURN n"
+            testing_node = graph.evaluate(testing_query)  # Fetch node
+            current_query = "match (n:bulkChemMolecule {canonical_smiles:'" + \
+                            Chem.MolToSmiles(current_mol) + "'}) RETURN n"
+            current_node = graph.evaluate(current_query)
             MolWt_Same_Num_Of_Carbons = Relationship(testing_node, "MolWt_Same_Num_Of_Carbons", current_node)
             graph.merge(MolWt_Same_Num_Of_Carbons)
 

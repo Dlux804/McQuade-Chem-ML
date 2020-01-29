@@ -78,11 +78,11 @@ class create_relationships_B:
         current_fingerprint = Chem.RDKFingerprint(current_mol)
         sim_score = DataStructs.FingerprintSimilarity(testing_fingerprint, current_fingerprint)
         if sim_score >= 0.95:
-            testing_query = "match (n:bulkChemMolecule {canonical_smiles:'"+\
-                            Chem.MolToSmiles(testing_mol)+"'}) RETURN n"
+            testing_query = """match (n:bulkChemMolecule {canonical_smiles:'""" + \
+                            Chem.MolToSmiles(testing_mol) + """'}) RETURN n"""
             testing_node = graph.evaluate(testing_query)  # Fetch node
-            current_query = "match (n:bulkChemMolecule {canonical_smiles:'" + \
-                            Chem.MolToSmiles(current_mol) + "'}) RETURN n"
+            current_query = """match (n:bulkChemMolecule {canonical_smiles:'""" + \
+                            Chem.MolToSmiles(current_mol) + """'}) RETURN n"""
             current_node = graph.evaluate(current_query)
             Rdkit_sim_score = Relationship(testing_node, "Rdkit_sim_score", current_node)  # Create rel
             graph.merge(Rdkit_sim_score)  # Merge relationship
@@ -136,11 +136,11 @@ class create_relationships_A:
             if frag in current_fragments and frag != 'Arene':
                 num_of_frags += 1
             if num_of_frags == 2:
-                testing_query = "match (n:bulkChemMolecule {canonical_smiles:'" + \
-                                Chem.MolToSmiles(testing_mol) + "'}) RETURN n" # Cypher query to retrive node
+                testing_query = """match (n:bulkChemMolecule {canonical_smiles:'""" + \
+                                Chem.MolToSmiles(testing_mol) + """'}) RETURN n"""
                 testing_node = graph.evaluate(testing_query)  # Fetch node
-                current_query = "match (n:bulkChemMolecule {canonical_smiles:'" + \
-                                Chem.MolToSmiles(current_mol) + "'}) RETURN n"
+                current_query = """match (n:bulkChemMolecule {canonical_smiles:'""" + \
+                                Chem.MolToSmiles(current_mol) + """'}) RETURN n"""
                 current_node = graph.evaluate(current_query)
                 MolWt_HAS_FRAGMENT = Relationship(testing_node, "MolWt_HAS_FRAGMENT", current_node) # Create rel
                 graph.merge(MolWt_HAS_FRAGMENT) # Merge relationship
@@ -151,11 +151,11 @@ class create_relationships_A:
         num_of_carbons_in_testing = len(testing_mol.GetSubstructMatches(Chem.MolFromSmiles('C')))
         num_of_carbons_in_current = len(current_mol.GetSubstructMatches(Chem.MolFromSmiles('C')))
         if num_of_carbons_in_current == num_of_carbons_in_testing:
-            testing_query = "match (n:bulkChemMolecule {canonical_smiles:'" + \
-                            Chem.MolToSmiles(testing_mol) + "'}) RETURN n"
+            testing_query = """match (n:bulkChemMolecule {canonical_smiles:""" + \
+                            Chem.MolToSmiles(testing_mol) + """'}) RETURN n"""
             testing_node = graph.evaluate(testing_query)  # Fetch node
-            current_query = "match (n:bulkChemMolecule {canonical_smiles:'" + \
-                            Chem.MolToSmiles(current_mol) + "'}) RETURN n"
+            current_query = """match (n:bulkChemMolecule {canonical_smiles:""" + \
+                            Chem.MolToSmiles(current_mol) + """'}) RETURN n"""
             current_node = graph.evaluate(current_query)
             MolWt_Same_Num_Of_Carbons = Relationship(testing_node, "MolWt_Same_Num_Of_Carbons", current_node)
             graph.merge(MolWt_Same_Num_Of_Carbons)
@@ -177,9 +177,9 @@ ASSERT r.canonical_smiles IS UNIQUE
 print('Inserting Bulk Chem Data') # Insert the bulk chem molecules
 insert_bulk_chem_molecules("BulkChemData.csv")
 
-# print('Comparing Bulk Chem Data with relationship A') # Compare using relationship A
-# create_relationships_A('BulkChemData.csv')
+print('Comparing Bulk Chem Data with relationship A') # Compare using relationship A
+create_relationships_A('BulkChemData.csv')
 
-print('Comparing Bulk Chem Data with relationship B') # Compare using relationship B
-create_relationships_B('BulkChemData.csv')
+# print('Comparing Bulk Chem Data with relationship B') # Compare using relationship B
+# create_relationships_B('BulkChemData.csv')
 

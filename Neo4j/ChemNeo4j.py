@@ -133,16 +133,18 @@ class create_relationships:
         if retrieve_data_from_neo4j is True:
             raise Exception('Neo4j retrieval not supported yet')
 
+        if file is not None:
+            self.file = file
+            self.protocol = protocol
+            self.bulk_data = pd.read_csv(file)
+            self.bulk_dicts = self.bulk_data.to_dict('records')
+
         protocols = ['A', 'B', 'C']
         if protocol not in protocols:
             raise Exception('Protocol not found, try using: "A", "B", or "C"')
 
         print('Comparing Bulk Chem Data with relationship {0}'.format(protocol))
 
-        self.file = file
-        self.protocol = protocol
-        self.bulk_data = pd.read_csv(file)
-        self.bulk_dicts = self.bulk_data.to_dict('records')
         self.graph = Graph()
         self.compare_molecules()
 

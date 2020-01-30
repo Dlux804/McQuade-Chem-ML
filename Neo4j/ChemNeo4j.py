@@ -127,6 +127,7 @@ class create_relationships:
 
         # TODO allow to take data from neo4j
 
+
         if file is None and retrieve_data_from_neo4j is False:
             raise Exception('Must either give a file name or state "retrieve_data_from_neo4j=True"')
 

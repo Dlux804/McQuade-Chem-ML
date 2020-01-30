@@ -37,7 +37,6 @@ Instructions:
     Run the code. 
     Open database information in neo4j desktop
     Type in neo4j Desktop: Match (n) Return n
-    
 """
 
 graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")

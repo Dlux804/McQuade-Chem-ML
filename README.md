@@ -2,10 +2,10 @@
 Development of easy to use and reproducible ML scripts for chemistry.  
 
 ## Data Sets
-Currently we are using three datasets from MoleculeNet.ai: Lipophilicity, FreeSOLV and ESOL.
+Currently we are using three datasets from MoleculeNet.ai: Lipophilicity, FreeSOLV and ESOL and two datasets retreived from tutorials: LogP14k and jak2-pIC50.
 
 ## Available Models
-Our program supports random forest (RF), gradient decent boost (GDB), support vector machines (SVM).  
+Our program supports random forest (RF), gradient decent boost (GDB), support vector machines (SVM), Adaboost, and k-nearest neightbors (KNN).   
 
 
 ### Dependencies
@@ -33,9 +33,8 @@ environment on our repo (mlapp.yml).
 # Workflow
 
 ## MLModel Class
-This is the overview of our MLModels Python class functions.  Obviously, it is incomplete just like our code. 
-Update it as you update the code.
-![Alt text](graphics/hte-models-overview.png)
+This is the overview of our MLModels Python class functions.  ```main.py``` essentially just iteratively runs this workflow with different input algorithms, data sets and featurization methods.   
+![Alt text](graphics/hte-models-overview-Page-2.png)
 
 ### File Tree
 

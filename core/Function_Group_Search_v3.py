@@ -8,7 +8,8 @@ class Search_Fragments:
 
     @staticmethod
     def __gen_fragments_dict__():
-        test_data = StringIO("""Fragment,SMARTS,Sub-Fragment,Sub-SMARTS,
+
+        raw_frag_csv = StringIO("""Fragment,SMARTS,Sub-Fragment,Sub-SMARTS,
 Aldehyde,[CX3H1](=O)[#6],,,
 Ester,[#6][CX3](=O)[OX2H0][#6],Ether,[OD2]([#6])[#6],
 Amide,[NX3][CX3](=[OX1])[#6],,,
@@ -32,7 +33,7 @@ Nitro,"[$([NX3](=O)=O),$([NX3+](=O)[O-])][!#8]",,,
 Phosphoric Acid,"[$(P(=[OX1])([$([OX2H]),$([OX1-]),$([OX2]P)])([$([OX2H]),$([OX1-]),$([OX2]P)])[$([OX2H]),$([OX1-]),$([OX2]P)]),$([P+]([OX1-])([$([OX2H]),$([OX1-]),$([OX2]P)])([$([OX2H]),$([OX1-]),$([OX2]P)])[$([OX2H]),$([OX1-]),$([OX2]P)])]",Phosphoric Ester,"[$(P(=[OX1])([OX2][#6])([$([OX2H]),$([OX1-]),$([OX2][#6])])[$([OX2H]),$([OX1-]),$([OX2][#6]),$([OX2]P)]),$([P+]([OX1-])([OX2][#6])([$([OX2H]),$([OX1-]),$([OX2][#6])])[$([OX2H]),$([OX1-]),$([OX2][#6]),$([OX2]P)])]",
         """)
 
-        smarts = pd.read_csv(test_data)
+        smarts = pd.read_csv(raw_frag_csv)
         smarts = smarts.to_dict('record')
         rdkit_smarts = []
         for i in range(len(smarts)):  # For all the functional groups

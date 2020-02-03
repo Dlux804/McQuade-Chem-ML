@@ -1,6 +1,5 @@
 import pandas as pd
 from rdkit import Chem
-import ast
 from io import StringIO
 
 
@@ -38,7 +37,7 @@ Phosphoric Acid,"[$(P(=[OX1])([$([OX2H]),$([OX1-]),$([OX2]P)])([$([OX2H]),$([OX1
         rdkit_smarts = []
         for i in range(len(smarts)):  # For all the functional groups
             working_pair = smarts[i]
-            del working_pair['Unnamed: 4']
+            del working_pair['Unnamed: 4']  # Odd bug, delete random column that is produced
             working_pair['mol'] = Chem.MolFromSmarts(
                 working_pair['SMARTS'])  # Make a new column, and add in the data Rdkit can interpet
             if str(working_pair['Sub-SMARTS']) != 'nan':
@@ -65,7 +64,6 @@ Phosphoric Acid,"[$(P(=[OX1])([$([OX2H]),$([OX1-]),$([OX2]P)])([$([OX2H]),$([OX1
         print(rdkit_smarts)
         return rdkit_smarts
     '''
-
 
     def search_fragments(self):
         results = []

@@ -13,13 +13,14 @@ class ML_kg:
     def __init__(self, file):
         self.file = file
         self.data = pd.read_csv(self.file)
+
     @classmethod
     def nodes_relationships(cls, final_df):
         """
         This classmethod will create nodes and relationships based on the available data after different
         functions have been run based on the questions asked
 
-        :param df: final dataframe
+        :param final_df: final dataframe
         :return: Nodes and Relationships in Neo4j Desktop
         :prerequisite: have Neo4j Desktop opened
         """
@@ -130,13 +131,13 @@ class ML_kg:
 
     def avg_r2avg(self):
         """
-
+        Objective: Return dataframe with runs that have r2 avg lower than the mean
         :return:
         """
         df = self.data
         col_mean = df['r2_avg'].mean()
         print('The mean of this column is ' + str(col_mean))
-        final = df[df.r2_avg > col_mean]
+        final = df[df.r2_avg < col_mean]
         ML_kg.nodes_relationships(final)
 
     def avg_mseavg(self):
@@ -148,6 +149,7 @@ class ML_kg:
         col_mean = df['mse_avg'].mean()
         print('The mean of this column is ' + str(col_mean))
         final = df[df.mse_avg > col_mean]
+        print(final)
         ML_kg.nodes_relationships(final)
 
     def avg_rmseavg(self):
@@ -159,7 +161,68 @@ class ML_kg:
         col_mean = df['rmse_avg'].mean()
         print('The mean of this column is ' + str(col_mean))
         final = df[df.rmse_avg > col_mean]
+        print(final)
+        ML_kg.nodes_relationships(final)
+
+    def high_r2std(self):
+        """
+
+        :return:
+        """
+        df = self.data
+        col_mean = df['r2_std'].mean()
+        print('The mean of this column is ' + str(col_mean))
+        final = df[df.r2_std > col_mean]
+        print(final)
+        ML_kg.nodes_relationships(final)
+
+    def high_msestd(self):
+        """
+
+        :return:
+        """
+        df = self.data
+        col_mean = df['mse_std'].mean()
+        print('The mean of this column is ' + str(col_mean))
+        final = df[df.mse_std > col_mean]
+        print(final)
+        ML_kg.nodes_relationships(final)
+
+    def high_rmsestd(self):
+        """
+
+        :return:
+        """
+        df = self.data
+        col_mean = df['rmse_std'].mean()
+        print('The mean of this column is ' + str(col_mean))
+        final = df[df.rmse_std > col_mean]
+        print(final)
+        ML_kg.nodes_relationships(final)
+
+    def high_tunetime(self):
+        """
+
+        :return:
+        """
+        df = self.data
+        col_mean = df['tuneTime'].mean()
+        print('The mean of this column is ' + str(col_mean))
+        final = df[df.tuneTime > col_mean]
+        print(final)
+        ML_kg.nodes_relationships(final)
+
+    def high_fittimeavg(self):
+        """
+
+        :return:
+        """
+        df = self.data
+        col_mean = df['time_avg'].mean()
+        print('The mean of this column is ' + str(col_mean))
+        final = df[df.time_avg > col_mean]
+        print(final)
         ML_kg.nodes_relationships(final)
 
 
-ML_kg('merged_MLoutput.csv').avg_rmseavg()
+ML_kg('merged_MLoutput.csv').high_rmsestd()

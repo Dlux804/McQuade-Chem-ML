@@ -1,49 +1,16 @@
 import pandas as pd
 from py2neo import Graph, Node, Relationship, NodeMatcher
+import numpy as np
 
 
-# class ML_kg:
-#     """
-#
-#     """
-#     def __init__(self, file):
-#         self.file = file
-#
-#     def insert_ml_runs(self):
-#         self.graph = Graph("bolt://localhost:7687", user="neo4j", password="123")
-#         ml_data = pd.read_csv(self.file)
-#         ml_dicts = ml_data.to_dict('records')
-#         for i in range(len(ml_dicts)):
-#             ml_dict = ml_dicts[i]
-#             ml_model = Node("model", algorithm=ml_dict['algorithm'], data=ml_dict['dataset'], target=ml_dict['target'],
-#                         feat_meth=ml_dict['feat_meth'], feat_time=ml_dict['feat_time'], tuned=ml_dict['tuned'],
-#                         feature_list=ml_dict['feature_list'], regressor=ml_dict['regressor'],
-#                         tunetime=ml_dict['tuneTime'], r2_avg=ml_dict['r2_avg'], r2_std=ml_dict['r2_std'],
-#                         mse_avg=ml_dict['mse_avg'], mse_std=ml_dict['mse_std'], rmse_avg=ml_dict['rmse_avg'],
-#                         rmse_std=ml_dict['rmse_std'], time_avg=ml_dict['time_avg'], time_std=ml_dict['time_std'])
-#             algo = Node("model", algorithm=ml_dict['algorithm'])
-#             data = Node("model", data=ml_dict['dataset'])
-#             target =
-#             graph.create(ml_model)
-#
-#
-#     @classmethod
-#     def get_relationship(cls):
-#         cls.insert_ml_runs(cls.file)
 
-"""
-Instructions: 
-    Open neo4j desktop. Set password to 1234 (or anything you want but you need to change the password in the code).
-    Run the code. 
-    Open database information in neo4j desktop
-    Type in neo4j Desktop: Match (n) Return n
-"""
-
-graph = Graph("bolt://localhost:7687", user="neo4j", password="12345")
+# "MATCH (a:algo {algorithm: "gdb"}), MATCH (b:algo) WHERE apoc.text.jaroWinklerDistance(a.algorithm, b.algorithm) >= 0.1 AND b.algorithm = a.algorithm WITH head(collect([a,b])) as nodes CALL apoc.refactor.mergeNodes(nodes,{properties:"combine", mergeRels:true}) yield node MATCH (a)-[:uses]->(b) RETURN a, b;"
+graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 ml_data = pd.read_csv('merged_MLoutput.csv')
 ml_dicts = ml_data.to_dict('records')
 for i in range(len(ml_dicts)):
     ml_dict = ml_dicts[i]
+    print(ml_dict['algorithm'])
     tx = graph.begin()
     algo = Node("algo", algorithm=ml_dict['algorithm'])
     tx.create(algo)
@@ -112,3 +79,8 @@ for i in range(len(ml_dicts)):
     aq = Relationship(data, "time_avg", time_avg)
     tx.merge(aq)
     tx.commit()
+
+# tx.run("MATCH (n:algo) WHERE n.algorithm = 'gdb' WITH COLLECT (n) AS ns CALL apoc.refactor.mergeNodes(ns) YIELD node RETURN node;")
+# tx.commit()
+
+

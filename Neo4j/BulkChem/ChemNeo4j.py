@@ -1,7 +1,7 @@
 import pandas as pd
 from rdkit import Chem, DataStructs
 from py2neo import Graph, Node, Relationship, NodeMatcher
-from core.Function_Group_Search_v3 import Search_Fragments  # Import function to search for fragments
+from core.fragments import Search_Fragments  # Import function to search for fragments
 from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
 
@@ -65,6 +65,8 @@ class create_relationships:  # Class to generate the different relationship prot
 
     @staticmethod
     def compare_fragments(testing_mol, current_mol, num_of_matching_frags):  # Will compare fragments
+        if num_of_matching_frags <= 0:
+            raise Exception('The Number of matching fragments must be greater than 0')
         testing_fragments = Search_Fragments(Chem.MolToSmiles(testing_mol)).results
         current_fragments = Search_Fragments(Chem.MolToSmiles(current_mol)).results
         num_of_frags = 0
@@ -90,8 +92,8 @@ class create_relationships:  # Class to generate the different relationship prot
         testing_node = graph.evaluate(testing_query)  # Fetch node
         current_query = generate_search_query(label, 'canonical_smiles', Chem.MolToSmiles(current_mol))
         current_node = graph.evaluate(current_query)
-        MolWt_Same_Num_Of_Carbons = Relationship(testing_node, relationship, current_node)
-        graph.merge(MolWt_Same_Num_Of_Carbons)
+        Rel = Relationship(testing_node, relationship, current_node)  # Gen Relationship
+        graph.merge(Rel)  # Merge relationship
 
     def protocol_A(self, testing_mol, current_mol):
         if self.compare_molwt(testing_mol, current_mol, 0.01):  # Check if molecules have similar molwt
@@ -128,7 +130,7 @@ class create_relationships:  # Class to generate the different relationship prot
             relationship = '_'.join(results_list)
             self.insert_relationship(testing_mol, current_mol, 'bulkChemMolecule', relationship)
 
-    def protocol_F(self, testing_mol, current_mol):  # This is by far the best protocol, please use this
+    def protocol_F(self, testing_mol, current_mol):  # This is by far the best protocol, please use this one
         if self.compare_molwt(testing_mol, current_mol, 0.05):
             self.insert_relationship(testing_mol, current_mol, 'bulkChemMolecule', 'Similar_Molecular_Weight')
         if self.compare_rdkit_score(testing_mol, current_mol, 0.95):
@@ -138,8 +140,13 @@ class create_relationships:  # Class to generate the different relationship prot
         if self.compare_number_of_carbons(testing_mol, current_mol):
             self.insert_relationship(testing_mol, current_mol, 'bulkChemMolecule', 'Same_Number_Of_Carbons')
 
+    def protocol_TESTING(self, testing_mol, current_mol):
+        pass
+
     def compare_molecules(self):  # The main loop, comparing all molecules to each other
+        counter = 0
         for i in range(len(self.bulk_dicts)):
+            print("Counter = {0}".format(str(counter)))
             print("{0} molecules left to compare".format(str(len(self.bulk_dicts) - i)))  # Let user know amount left
             current_molecule = self.bulk_dicts[i]
             current_mol = Chem.MolFromSmiles(current_molecule['Canonical-Smiles'])
@@ -147,6 +154,7 @@ class create_relationships:  # Class to generate the different relationship prot
                 testing_molecule = self.bulk_dicts[x]
                 testing_mol = Chem.MolFromSmiles(testing_molecule['Canonical-Smiles'])
                 self.protocol_dict[self.protocol](testing_mol, current_mol)
+                counter = counter + 1
 
     def __init__(self, protocol, file=None, retrieve_data_from_neo4j=False):
 
@@ -159,7 +167,8 @@ class create_relationships:  # Class to generate the different relationship prot
             "C": self.protocol_C,
             "D": self.protocol_D,
             "E": self.protocol_E,
-            "F": self.protocol_F
+            "F": self.protocol_F,
+            "TESTING" : self.protocol_TESTING
         }
 
         if self.protocol not in list(self.protocol_dict.keys()):  # Make sure protocol user gave exists
@@ -188,4 +197,4 @@ class create_relationships:  # Class to generate the different relationship prot
 
 
 insert_bulk_chem_molecules('BulkChemData.csv')
-create_relationships('F', retrieve_data_from_neo4j=True)
+create_relationships('TESTING', retrieve_data_from_neo4j=True)

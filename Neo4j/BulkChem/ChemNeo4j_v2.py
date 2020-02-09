@@ -1,9 +1,9 @@
 import pandas as pd
+from py2neo import Graph, Relationship, NodeMatcher
 from rdkit import Chem, DataStructs
-from py2neo import Graph, Node, Relationship, NodeMatcher
+
+from Neo4j.BulkChem.backends import generate_search_query
 from core.fragments import Search_Fragments  # Import function to search for fragments
-from Neo4j.BulkChem.backends import init_neo_bulkchem, generate_search_query
-from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
 
 class create_relationships:  # Class to generate the different relationship protocols
@@ -42,13 +42,15 @@ class create_relationships:  # Class to generate the different relationship prot
         if num_of_carbons_in_current == num_of_carbons_in_testing:
             self.rel_bulkChem_to_bulkChem(testing_mol, current_mol, 'bulkChemMolecule', 'Same_Number_Of_Carbons')
 
+
+
     def rel_bulkChem_to_bulkChem(self, testing_mol, current_mol, label, relationship, rdkit_sim_score=None):  # Relate Bulkchem Molecules
         testing_query = generate_search_query(label, 'canonical_smiles', Chem.MolToSmiles(testing_mol))
         testing_node = self.graph.evaluate(testing_query)  # Fetch node
         current_query = generate_search_query(label, 'canonical_smiles', Chem.MolToSmiles(current_mol))
         current_node = self.graph.evaluate(current_query)
         if rdkit_sim_score is not None:
-            Rel = Relationship(testing_node, relationship, current_node, rdkit_sim_score=rdkit_sim_score)  # Gen Relationship
+            Rel = Relationship(testing_node, relationship, current_node, rdkit_sim_score=rdkit_sim_score)
         else:
             Rel = Relationship(testing_node, relationship, current_node)  # Gen Relationship
         self.graph.merge(Rel)  # Merge relationship
@@ -87,7 +89,7 @@ class create_relationships:  # Class to generate the different relationship prot
         self.protocol = protocol  # Define protocol
         self.protocol_dict = {
             "A": self.protocol_A,
-            "B" : self.protocol_B
+            "B": self.protocol_B
         }
 
         if self.protocol not in list(self.protocol_dict.keys()):  # Make sure protocol user gave exists

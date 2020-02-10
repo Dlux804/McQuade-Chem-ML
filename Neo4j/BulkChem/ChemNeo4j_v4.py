@@ -13,7 +13,7 @@ class create_relationships:  # Class to generate the different relationship prot
         if self.average_time is None:
             self.average_time = time_for_batch
         else:
-            self.average_time = (self.average_time * self.counter + time_for_batch)/self.counter
+            self.average_time = (self.average_time + time_for_batch)/2
         return self.average_time * (len(self.raw_nodes)-self.counter)
 
     def bulk_to_bulk(self, testing_df, testing_smiles, current_node, relationship):  #Insert relationships
@@ -67,6 +67,7 @@ class create_relationships:  # Class to generate the different relationship prot
                 else:
                     testing_df = self.__get_testing_df__(i)
                     self.protocol_dict[self.protocol](node, node_dict, testing_df)
+            time_for_batch = clock() - time_for_batch
             time_left_minutes = round(self.timer(time_for_batch) / 60, 2)
             time_left_hours = round(time_left_minutes / 60, 2)
             self.time_df = self.time_df.append({'Molecules Remaining': molecules_remaining, 'Time needed (s)': time_for_batch,
@@ -74,7 +75,7 @@ class create_relationships:  # Class to generate the different relationship prot
             print("\nTime Remaining: {0} minutes ({1} hours)".format(time_left_minutes, time_left_hours))
         self.time_df.to_csv('Time_vs_molecules.csv', index=False)
 
-    def __init__(self, protocol, max_nodes_in_ram=3162):
+    def __init__(self, protocol, max_nodes_in_ram=1000):
 
         self.run_time = clock()  # Declare variables for timer
         self.average_time = None

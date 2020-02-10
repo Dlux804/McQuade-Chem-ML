@@ -9,14 +9,14 @@ pd.options.mode.chained_assignment = None
 
 class create_relationships:  # Class to generate the different relationship protocols
 
-    def timer(self, time_for_batch):
+    def timer(self, time_for_batch):  # Keep track of long it will take to finish
         if self.average_time is None:
             self.average_time = time_for_batch
         else:
-            self.average_time = (self.average_time + time_for_batch)/self.counter
+            self.average_time = (self.average_time * self.counter + time_for_batch)/self.counter
         return self.average_time * (len(self.raw_nodes)-self.counter)
 
-    def bulk_to_bulk(self, testing_df, testing_smiles, current_node, relationship):
+    def bulk_to_bulk(self, testing_df, testing_smiles, current_node, relationship):  #Insert relationships
         testing_molecule = testing_df.loc[testing_df['canonical_smiles'] == testing_smiles].to_dict('records')[0]
         Rel = Relationship(testing_molecule['Node'], relationship, current_node,
                            rdkit_sim_score=testing_molecule['rdkit_sim_score'])
@@ -30,7 +30,7 @@ class create_relationships:  # Class to generate the different relationship prot
         sim_score = DataStructs.FingerprintSimilarity(testing_fingerprint, current_fingerprint)
         return sim_score
 
-    def protocol_Default(self, node, node_dict, testing_df):
+    def protocol_Default(self, node, node_dict, testing_df):  # Relate only using rdkit score
         self.tx = self.graph.begin()
         testing_df['rdkit_sim_score'] = testing_df['canonical_smiles'].map(
             lambda x: self.compare_rdkit_score(x, Chem.MolFromSmiles(node_dict['canonical_smiles'])))
@@ -38,7 +38,7 @@ class create_relationships:  # Class to generate the different relationship prot
             lambda x: self.bulk_to_bulk(testing_df, x, node, 'Rdkit_Sim_Score'))
         self.tx.commit()
 
-    def __get_testing_df__(self, i):
+    def __get_testing_df__(self, i):  # Get dataframe to compare molecule to
         lower_limit = i * self.max_nodes_in_ram + self.counter
         upper_limit = lower_limit + self.max_nodes_in_ram
         bulk_dicts = []
@@ -52,7 +52,7 @@ class create_relationships:  # Class to generate the different relationship prot
             counter = counter + 1
         return pd.DataFrame(bulk_dicts)
 
-    def __main__(self):
+    def __main__(self):  # Main loop, compare all molecules to each other
         for node in self.raw_nodes:
             time_for_batch = clock()
             molecules_remaining = len(self.raw_nodes) - self.counter

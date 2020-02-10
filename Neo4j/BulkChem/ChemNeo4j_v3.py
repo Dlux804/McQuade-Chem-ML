@@ -18,13 +18,15 @@ class create_relationships:  # Class to generate the different relationship prot
         testing_molecule = testing_df.loc[testing_df['Canonical-Smiles'] == testing_smiles].to_dict('records')[0]
         Rel = Relationship(testing_molecule['Node'], relationship, current_node,
                            rdkit_sim_score=testing_molecule['rdkit_sim_score'])
-        self.graph.merge(Rel)  # Merge relationship
+        self.tx.create(Rel)  # Merge relationship
 
     def protocol_Default(self, testing_df, current_mol, current_node):
+        self.tx = self.graph.begin()
         testing_df['rdkit_sim_score'] = testing_df['Canonical-Smiles'].map(
             lambda x: self.compare_rdkit_score(x, current_mol))
         testing_df['Canonical-Smiles'].map(
             lambda x: self.bulk_to_bulk(testing_df, x, current_node,'bulkChemMolecule', 'Rdkit_Sim_Score'))
+        self.tx.commit()
 
     def compare_molecules(self):  # The main loop, comparing all molecules to each other
         time_df = pd.DataFrame(columns=['Molecules Remaining', 'Time needed (s)', 'Total Time passed (min)'])
@@ -44,7 +46,7 @@ class create_relationships:  # Class to generate the different relationship prot
                                      'Total Time passed (min)': total_time_passed}, ignore_index=True)
             print("{0} seconds needed for batch".format(round(time_needed, 2)))
             print("{0} minutes have passed\n".format(round(total_time_passed, 2)))
-        time_df.to_csv('Time_vs_molecules.csv', index=False)
+            time_df.to_csv('Time_vs_molecules.csv', index=False)
 
     def __init__(self, protocol, file=None, retrieve_data_from_neo4j=False):
 
@@ -58,25 +60,17 @@ class create_relationships:  # Class to generate the different relationship prot
         if self.protocol not in list(self.protocol_dict.keys()):  # Make sure protocol user gave exists
             raise Exception('Protocol not found')
 
-        if file is None and retrieve_data_from_neo4j is False:  # Make sure user pointed to where data is
-            raise Exception('Must either give a file name or state "retrieve_data_from_neo4j=True"')
-
-        if retrieve_data_from_neo4j:  # Get the data from neo4j
-            matcher = NodeMatcher(self.graph)
-            self.raw_nodes = matcher.match("bulkChemMolecule")
-            bulk_dicts = []
-            for node in self.raw_nodes:
-                molecule = (dict(node))
-                molecule['Canonical-Smiles'] = molecule['canonical_smiles']
-                del molecule['canonical_smiles']
-                molecule['Node'] = node
-                bulk_dicts.append(molecule)
-            self.bulk_dicts = bulk_dicts
-            self.bulk_data = pd.DataFrame(bulk_dicts)
-
-        if file is not None:  # Get data from bulkchem csv
-            bulk_data = pd.read_csv(file)
-            self.bulk_dicts = bulk_data.to_dict('records')
+        matcher = NodeMatcher(self.graph)
+        self.raw_nodes = matcher.match("bulkChemMolecule")
+        bulk_dicts = []
+        for node in self.raw_nodes:
+            molecule = (dict(node))
+            molecule['Canonical-Smiles'] = molecule['canonical_smiles']
+            del molecule['canonical_smiles']
+            molecule['Node'] = node
+            bulk_dicts.append(molecule)
+        self.bulk_dicts = bulk_dicts
+        self.bulk_data = pd.DataFrame(bulk_dicts)
 
         print('Comparing Bulk Chem Data with rule set "{0}"'.format(self.protocol))
         self.compare_molecules()

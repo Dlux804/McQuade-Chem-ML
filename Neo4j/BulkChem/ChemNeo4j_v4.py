@@ -53,7 +53,6 @@ class create_relationships:  # Class to generate the different relationship prot
         return pd.DataFrame(bulk_dicts)
 
     def __main__(self):
-        time_df = pd.DataFrame(columns=['Molecules Remaining', 'Time needed (s)', 'Total Time passed (min)'])
         for node in self.raw_nodes:
             time_for_batch = clock()
             molecules_remaining = len(self.raw_nodes) - self.counter
@@ -70,12 +69,12 @@ class create_relationships:  # Class to generate the different relationship prot
                     self.protocol_dict[self.protocol](node, node_dict, testing_df)
             time_left_minutes = round(self.timer(time_for_batch) / 60, 2)
             time_left_hours = round(time_left_minutes / 60, 2)
-            time_df = time_df.append({'Molecules Remaining': molecules_remaining, 'Time needed (s)': time_for_batch,
+            self.time_df = self.time_df.append({'Molecules Remaining': molecules_remaining, 'Time needed (s)': time_for_batch,
                                       'Total Time passed (min)': self.run_time}, ignore_index=True)
             print("\nTime Remaining: {0} minutes ({1} hours)".format(time_left_minutes, time_left_hours))
-            time_df.to_csv('Time_vs_molecules.csv', index=False)
+        self.time_df.to_csv('Time_vs_molecules.csv', index=False)
 
-    def __init__(self, protocol, max_nodes_in_ram=3000):
+    def __init__(self, protocol, max_nodes_in_ram=3162):
 
         self.run_time = clock()  # Declare variables for timer
         self.average_time = None

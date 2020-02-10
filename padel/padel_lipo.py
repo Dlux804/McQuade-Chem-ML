@@ -28,6 +28,7 @@ sets = {
 
     }
 
+
 for data, target in sets.items():  # loop over dataset dictionary
     # change working directory to
     os.chdir(ROOT_DIR)
@@ -37,10 +38,19 @@ for data, target in sets.items():  # loop over dataset dictionary
         # print(model.smiles)
         # Start timer
         start_feat = time()
-        features = list(map(from_smiles, model.smiles))
-        print(features)
+        feat = []
+        col = []
+        for i in model.smiles:
+            features = list(map(from_smiles, i))
+            print(features)
+            col.append(features.keys())
+            print(col)
+            feat.append(features)
+
         stop_feat = time()
         feat_time = stop_feat - start_feat
         print('It took '+ feat_time + 'to create features from '+ str(data))
 
+df = pd.DataFrame(feat, columns=col, index=[0])
 
+df.to_csv('test.csv')

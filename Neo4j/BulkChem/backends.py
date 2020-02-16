@@ -18,7 +18,7 @@ class init_neo_bulkchem:
         self.fragments_as_nodes = fragments_as_nodes
         self.graph = Graph()
         self.bulk_chem_data = pd.read_csv(bulk_chem_data)
-        self.add_con_smiles()
+        self.add_con_smiles()  # Almost all functions in ChemNeo4j rely on con smiles, make sure nodes have them
         self.bulk_dicts = self.bulk_chem_data.to_dict('records')
         if self.fragments_as_nodes:
             self.insert_fragments()
@@ -40,7 +40,8 @@ class init_neo_bulkchem:
                                     canonical_smiles=molecule['Canonical-Smiles'], fragements=molecule['Fragments'],
                                     num_of_carbons=str(molecule['Num of Carbons']),
                                     chiral_center=molecule['Chiral Center'],
-                                    molecular_weight=str(molecule['Molecular Weight (g/mol)']))
+                                    molecular_weight=str(molecule['Molecular Weight (g/mol)']),
+                                    pka=str(molecule['pka']))
             self.graph.merge(bulkChemMolecule, 'bulkChemMolecule', 'chemical_name')
             if self.fragments_as_nodes and str(molecule['Fragments']) != 'nan':
                 mol = molecule['Canonical-Smiles']

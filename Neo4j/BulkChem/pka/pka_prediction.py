@@ -32,7 +32,7 @@ def predict_pka(file):
                     matches.append('({})={}'.format(pka_predictor_dict['Conjugate Acid'], pka))
                 if mol.HasSubstructMatch(conj_base_mol):
                     matches.append('({})={}'.format(pka_predictor_dict['Conjugate Base'], pka))
-        all_matches.append(matches)
+        all_matches.append(','.join(matches))
     raw_data['pka'] = all_matches
     raw_data.to_csv(file, index=False)
 

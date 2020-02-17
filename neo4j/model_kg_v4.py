@@ -12,8 +12,8 @@ class ML_kg:
     """
     Objective: Make different graphs that enable users to answer different questions based on the data presented.
     Run these 2 commands on Cypher to merge algorithms
-        MATCH (n:algo) WHERE n.algorithm = 'gdb' WITH COLLECT (n) AS ns CALL apoc.refactor.mergeNodes(ns) YIELD node RETURN node;
-        MATCH (n:algo) WHERE n.algorithm = 'rf' WITH COLLECT (n) AS ns CALL apoc.refactor.mergeNodes(ns) YIELD node RETURN node;
+    MATCH (n:algo) WHERE n.algorithm = 'gdb' WITH COLLECT (n) AS ns CALL apoc.refactor.mergeNodes(ns) YIELD node RETURN node;
+    MATCH (n:algo) WHERE n.algorithm = 'rf' WITH COLLECT (n) AS ns CALL apoc.refactor.mergeNodes(ns) YIELD node RETURN node;
     """
 
     def __init__(self, file):
@@ -23,11 +23,11 @@ class ML_kg:
     @classmethod
     def get_unique(cls, df, col, num_data=None):
         """
-
+        Objective: Get unique elements in a csv column so we can use them as the main nodes.
         :param df:
         :param col:
         :param num_data:
-        :return:
+        :return: unique elements in a pandas series (csv column)
         """
 
         data_lst = df[col].tolist()
@@ -36,9 +36,9 @@ class ML_kg:
             if i not in unique:
                 unique.append(i)
         print(unique)
-        if num_data == None:
+        if num_data is None:
             print('   {:5}    {:>15}'.format("Selection", "Options"))
-            [print('{:^15} {}'.format(*data)) for data in enumerate(unique)];
+            [print('{:^15} {}'.format(*data)) for data in enumerate(unique)]
             num_data = [int(x) for x in input(
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
         selected = [unique[i] for i in num_data]
@@ -48,26 +48,30 @@ class ML_kg:
 
     @staticmethod
     def query(col):
+        """
+
+        :param col: csv column name
+        :return: nodes' labels and names
+        """
         label_grid = {
             "algorithm": ['algo', 'algorithm'],
             "dataset": ['data_ml', 'data'],
-            "feat_meth": ['featmeth', 'feat_meth']
+            "feat_meth": ['featmeth', 'feat_meth'],
+            "target": ['targets', 'target'],
+            "tuned": ['tuned', 'tuned']
         }
         return label_grid[col]
 
-
-    def nodes_relationships(self, query):
+    def nodes_relationships(self):
         """
         This staticmethod will create nodes and relationships based on the available data after different
         functions have been run based on the questions asked
 
-        :param final_df: final dataframe
         :return: Nodes and Relationships in Neo4j Desktop
         :prerequisite: have Neo4j Desktop opened
         """
         df = self.data
         graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
-        tx = graph.begin()
         model_dicts = df.to_dict('records')
         for i in range(len(model_dicts)):
             ml_dict = model_dicts[i]
@@ -87,7 +91,7 @@ class ML_kg:
             tx.create(feat_time)
             tuned = Node("tuned", tuned=ml_dict['tuned'])
             tx.create(tuned)
-            feature_list = Node("featurelist", feature_list=ml_dict['feature_list'])
+            feature_list = Node("featurelist", feature_lists=ml_dict['feature_list'])
             tx.create(feature_list)
             regressor = Node("regress", regressor=ml_dict['regressor'])
             tx.create(regressor)
@@ -158,12 +162,17 @@ class ML_kg:
             tx.merge(az)
             bb = Relationship(feat_meth, "contributes to", final_results)
             tx.merge(bb)
-            for i in query:
-                tx.evaluate(i)
             tx.commit()
 
-def get_query(df, col, num_data=[0,1, 2, 3, 4]):
-    graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+
+def get_query(df, col, num_data=None):
+    """
+    Objective: Return a list of cypher commands to run them on Neo4j Desktop.
+    :param df: pandas dataframe
+    :param col: csv column name
+    :param num_data: list of wanted elements in terms of numbers
+    :return: a list of cypher commands
+    """
     select = ML_kg.get_unique(df, col, num_data)
     # print(select)
     unique = ML_kg.query(col)
@@ -174,10 +183,30 @@ def get_query(df, col, num_data=[0,1, 2, 3, 4]):
     return query_lst
 
 
-# def run_query
+def run_cypher_command(file, col):
+    """
+    Objective: Automate the task of running Cypher commands in Neo4j Desktop
+    :param file: csv file
+    :param col: csv column name
+    :return: Run cypher commands in Neo4j Desktop
+    """
+    graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+    t = ML_kg(file)
+    queries = get_query(t.data, col)
+    for queue in queries:
+        graph.evaluate(queue)
+
 
 t = ML_kg('ml_results2.csv')
-t.nodes_relationships(get_query(t.data, "dataset"))
+# t.nodes_relationships()
+# run_cypher_command(t.file, "target")
+run_cypher_command(t.file, "algorithm")
+# run_cypher_command(t.file, "dataset")
+# run_cypher_command(t.file, "algorithm")
+# run_cypher_command(t.file, "tuned")
+# queries = get_query(t.data, "feat_meth")
+# for queue in queries:
+#     graph.evaluate(queue)
 
 
 # a = t.query("dataset")
@@ -185,5 +214,3 @@ t.nodes_relationships(get_query(t.data, "dataset"))
 #     query = test_apoc(a[0], a[1], i)
 # print(a[0])
 # print(query)
-
-

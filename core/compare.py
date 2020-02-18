@@ -5,6 +5,11 @@ from time import time
 import pandas as pd
 import shutil
 import glob
+import cirpy
+from rdkit import Chem
+from rdkit.Chem import Draw
+from rdkit.Chem import PandasTools
+
 """
 Goal is to compare the output of many models in a systematic, automatic manner.
 """
@@ -43,3 +48,13 @@ def datasize(dataset):
 
 string = '../dataFiles/ESOL.csv'
 datasize(string)
+
+def moloverlap(datasets):
+    """
+    Identifies molecules conserved across datasets.
+    Accepts list of datasets to be compared.
+    Returns dataframe of conserved molecules.
+    """
+
+
+

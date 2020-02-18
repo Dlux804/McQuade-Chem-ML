@@ -1,6 +1,6 @@
 import pandas as pd
 from py2neo import Graph, Node, Relationship, NodeMatcher
-
+import re
 
 def query_line(label, name, target):
     query = r'''match (n:{0}) where n.{1} = '{2}' with collect (n) 
@@ -197,20 +197,43 @@ def run_cypher_command(file, col):
         graph.evaluate(queue)
 
 
-t = ML_kg('ml_results2.csv')
+# t = ML_kg('ml_results2.csv')
 # t.nodes_relationships()
 # run_cypher_command(t.file, "target")
-run_cypher_command(t.file, "algorithm")
+# run_cypher_command(t.file, "algorithm")
 # run_cypher_command(t.file, "dataset")
 # run_cypher_command(t.file, "algorithm")
-# run_cypher_command(t.file, "tuned")
 # queries = get_query(t.data, "feat_meth")
 # for queue in queries:
 #     graph.evaluate(queue)
 
 
-# a = t.query("dataset")
-# for i in selected:
-#     query = test_apoc(a[0], a[1], i)
-# print(a[0])
-# print(query)
+df = pd.read_csv('ml_results2.csv')
+df = df[df.tuneTime != 0]
+dct = df.to_dict('records')
+gdbparam_lst = []
+for i in range(len(dct)):
+    row_dict = dct[i]
+    if row_dict['algorithm'] == "gdb":
+        params = row_dict['regressor']
+        # print(params)
+        reg = params[params.find("(")+1:params.find(")")]
+        new_reg = " ".join(reg.split())
+        print(new_reg)
+        element = new_reg.split(",")
+        gdbparam_lst.append(element)
+# print(gdbparam_lst)
+
+col = ['alpha', 'ccp_alpha', 'criterion', 'init', 'learning_rate', 'loss', 'max_depth', 'max_features', 'max_leaf_nodes',
+       'min_impurity_decrease', 'min_impurity_split', 'min_samples_leaf', 'min_samples_split',
+       'min_weight_fraction_leaf', 'n_estimators', 'n_iter_no_change', 'presort', 'random_state', 'subsample', 'tol',
+       'validation_fraction', 'verbose', 'warm_start']
+df_results = df[df.algorithm == "gdb"]
+gdbparam_df = pd.DataFrame.from_records(gdbparam_lst, index=df_results["Run#"], columns=col)
+new_df = gdbparam_df.loc[:, ~(gdbparam_df == gdbparam_df.iloc[0]).all()]
+# print(gdbparam_df)
+# print(new_df)
+gdbparam_df.to_csv("gdb_param.csv")
+
+
+

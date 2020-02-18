@@ -14,19 +14,19 @@ dependencies:
   - matplotlib
   - pytest
 # For Barzilay MPNN
-  - tqdm
-  - tensorflow
-  - tensorboardX
-  - gunicorn
-  - pytorch
-  - torchvision
-  - flask
-  - hyperopt
-  - scipy
-  - mock
+#  - tqdm
+#  - tensorflow
+#  - tensorboardX
+#  - gunicorn  # not available for Windows OS.
+#  - pytorch
+#  - torchvision
+#  - flask
+#  - hyperopt
+#  - scipy
+#  - mock
   - pip:
       - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
-      - "git+https://github.com/swansonk14/chemprop.git"
+#      - "git+https://github.com/swansonk14/chemprop.git"
       - "git+https://github.com/darenr/scikit-optimize.git#egg=scikit-optimize"
 
 

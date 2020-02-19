@@ -73,6 +73,7 @@ class ML_kg:
         df = self.data
         graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
         model_dicts = df.to_dict('records')
+        regressor_lst = []
         for i in range(len(model_dicts)):
             ml_dict = model_dicts[i]
             print('Creating Nodes Number ' + str(i))
@@ -163,6 +164,8 @@ class ML_kg:
             bb = Relationship(feat_meth, "contributes to", final_results)
             tx.merge(bb)
             tx.commit()
+            regressor_lst.append(regressor)
+        return regressor_lst
 
 
 def get_query(df, col, num_data=None):

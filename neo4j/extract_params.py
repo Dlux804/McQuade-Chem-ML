@@ -19,13 +19,14 @@ col_ada = ['base_estimator', ' learning_rate', " loss", ' n_estimators', ' rando
 
 
 def param_dict(algo):
-    param_dict = {
+    params_dict = {
         "gdb": col_gdb,
         "rf": col_rf,
         "knn": col_knn,
         "ada": col_ada
     }
-    return param_dict[algo]
+    return params_dict[algo]
+
 
 def rotated(array_2d):
     """
@@ -41,7 +42,7 @@ def get_param(file, algorithm):
     """
     Extract parameters and put them into a list
     :param file:
-    :param algo:
+    :param algorithm:
     :return:
     """
     df = pd.read_csv(file)
@@ -85,6 +86,12 @@ def param_lst(csv, algo):
 
 
 def param_df(csv, algo):
+    """
+
+    :param csv:
+    :param algo:
+    :return:
+    """
     df, runs_idx, main_lst = param_lst(csv, algo)
     rotate_lst = list(rotated(main_lst))
     array_rotate = np.array(rotate_lst)
@@ -93,32 +100,6 @@ def param_df(csv, algo):
     return final_df
 
 
-algo = ['rf', 'gdb', 'knn', 'ada']
-for i in algo:
-    param_df('ml_results2.csv', i)
-
-# print(df)
-# df_results = df[df.algorithm == "gdb"]
-# gdbparam_df = pd.DataFrame.from_records(param_lst, index=df_results["Run#"], columns=col_gdb)
-# finalgdb_df = gdbparam_df.loc[:, ~(gdbparam_df == gdbparam_df.iloc[0]).all()]
-
-
-# main_lst = []
-# for col in finalgdb_df.columns.tolist():
-#     col_lst = []
-#     for i in finalgdb_df[col]:
-#         t = re.sub('.*=', '', i)
-#         # print(t)
-#         col_lst.append(t)
-#     # print(col_lst)
-#     main_lst.append(col_lst)
-#
-
-#
-# rotate = list(rotated(main_lst))
-#
-# new_rotate = np.array(rotate)# print(main_lst)
-# finalgdb_df = pd.DataFrame.from_records(new_rotate, index=df_results["Run#"], columns=finalgdb_df.columns.tolist())
-#
-# finalgdb_df.to_csv("gdb_param.csv")
-# print(finalgdb_df)
+# algo = ['rf', 'gdb', 'knn', 'ada']
+# for i in algo:
+#     param_df('ml_results2.csv', i)

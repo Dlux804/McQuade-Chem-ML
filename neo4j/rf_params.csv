@@ -1,0 +1,20 @@
+Run#,bootstrap, max_depth, max_features, n_estimators
+Run #18,True,30,'auto',200
+Run #19,True,14,'auto',477
+Run #20,False,23,'sqrt',2000
+Run #21,True,28,'auto',2000
+Run #22,True,30,'auto',2000
+Run #29,False,30,'sqrt',2000
+Run #30,False,30,'sqrt',2000
+Run #46,True,26,'auto',2000
+Run #47,True,29,'auto',2000
+Run #48,True,30,'auto',2000
+Run #49,True,30,'auto',2000
+Run #50,True,30,'auto',2000
+Run #58,False,27,'sqrt',2000
+Run #59,True,30,'auto',2000
+Run #75,True,13,'auto',200
+Run #76,True,28,'auto',2000
+Run #77,False,21,'sqrt',2000
+Run #78,True,29,'auto',2000
+Run #79,True,27,'auto',2000

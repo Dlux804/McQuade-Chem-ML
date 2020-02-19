@@ -85,7 +85,7 @@ def param_lst(csv, algo):
     return final_df, runs_idx, main_lst
 
 
-def param_df(csv, algo):
+def param_finaldf(csv, algo):
     """
 
     :param csv:

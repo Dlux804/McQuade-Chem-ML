@@ -62,16 +62,17 @@ def get_param(file, algorithm):
     return df, gdbparam_lst
 
 
-def param_lst(csv, algorithm):
+def param_lst(csv, algo):
     """
 
     :param csv:
-    :param algorithm:
+    :param algo:
     :return:
     """
-    df, param_lst = get_param(csv, algorithm)
-    df_results = df[df.algorithm == algorithm]
-    param_df = pd.DataFrame.from_records(param_lst, index=df_results["Run#"], columns=param_dict(algorithm))
+    df, param_lst = get_param(csv, algo)
+    df_results = df[df.algorithm == algo]
+    runs_idx = df_results["Run#"]
+    param_df = pd.DataFrame.from_records(param_lst, index=runs_idx, columns=param_dict(algo))
     final_df = param_df.loc[:, ~(param_df == param_df.iloc[0]).all()]
     main_lst = []
     for col in final_df.columns.tolist():
@@ -80,11 +81,23 @@ def param_lst(csv, algorithm):
             t = re.sub('.*=', '', i)
             col_lst.append(t)
         main_lst.append(col_lst)
-    return main_lst
+    return final_df, runs_idx, main_lst
 
-main_lst = get_param('ml_results2.csv', 'gdb')
-print(main_lst)
 
+def param_df(csv, algo):
+    df, runs_idx, main_lst = param_lst(csv, algo)
+    rotate_lst = list(rotated(main_lst))
+    array_rotate = np.array(rotate_lst)
+    final_df = pd.DataFrame.from_records(array_rotate, index=runs_idx, columns=df.columns.tolist())
+    final_df.to_csv(algo + "_params.csv")
+    return final_df
+
+
+algo = ['rf', 'gdb', 'knn', 'ada']
+for i in algo:
+    param_df('ml_results2.csv', i)
+
+# print(df)
 # df_results = df[df.algorithm == "gdb"]
 # gdbparam_df = pd.DataFrame.from_records(param_lst, index=df_results["Run#"], columns=col_gdb)
 # finalgdb_df = gdbparam_df.loc[:, ~(gdbparam_df == gdbparam_df.iloc[0]).all()]

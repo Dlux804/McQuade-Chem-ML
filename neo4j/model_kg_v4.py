@@ -62,7 +62,8 @@ class ML_kg:
         }
         return label_grid[col]
 
-    def nodes_relationships(self):
+    @staticmethod
+    def nodes_relationships(df):
         """
         This staticmethod will create nodes and relationships based on the available data after different
         functions have been run based on the questions asked
@@ -70,7 +71,6 @@ class ML_kg:
         :return: Nodes and Relationships in Neo4j Desktop
         :prerequisite: have Neo4j Desktop opened
         """
-        df = self.data
         graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
         model_dicts = df.to_dict('records')
         regressor_lst = []
@@ -164,8 +164,7 @@ class ML_kg:
             bb = Relationship(feat_meth, "contributes to", final_results)
             tx.merge(bb)
             tx.commit()
-            regressor_lst.append(regressor)
-        return regressor_lst
+
 
 
 def get_query(df, col, num_data=None):
@@ -186,7 +185,7 @@ def get_query(df, col, num_data=None):
     return query_lst
 
 
-def run_cypher_command(file, col):
+def run_cypher_command(df, col):
     """
     Objective: Automate the task of running Cypher commands in Neo4j Desktop
     :param file: csv file
@@ -194,17 +193,16 @@ def run_cypher_command(file, col):
     :return: Run cypher commands in Neo4j Desktop
     """
     graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
-    t = ML_kg(file)
-    queries = get_query(t.data, col)
+    queries = get_query(df, col)
     for queue in queries:
         graph.evaluate(queue)
 
 
-t = ML_kg('ml_results2.csv')
+# t = ML_kg('ml_results2.csv')
 # t.nodes_relationships()
 # run_cypher_command(t.file, "target")
-run_cypher_command(t.file, "algorithm")
-# run_cypher_command(t.file, "dataset")
+# run_cypher_command(t.file, "algorithm")
+# run_cypher_command(pd.read_csv('ml_results2.csv'), "dataset")
 # run_cypher_command(t.file, "algorithm")
 # run_cypher_command(t.file, "tuned")
 # queries = get_query(t.data, "feat_meth")

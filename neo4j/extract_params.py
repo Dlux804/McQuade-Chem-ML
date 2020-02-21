@@ -73,7 +73,7 @@ def param_lst(csv, algo):
     df, param_lst = get_param(csv, algo)
     df_results = df[df.algorithm == algo]
     runs_idx = df_results["algorithm"]
-    param_df = pd.DataFrame.from_records(param_lst, index=runs_idx, columns=param_dict(algo))
+    param_df = pd.DataFrame.from_records(param_lst, columns=param_dict(algo))
     final_df = param_df.loc[:, ~(param_df == param_df.iloc[0]).all()]
     main_lst = []
     for col in final_df.columns.tolist():
@@ -93,14 +93,17 @@ def param_finaldf(csv, algo):
     :return:
     """
     df, runs_idx, main_lst = param_lst(csv, algo)
+    # print(runs_idx)
     rotate_lst = list(rotated(main_lst))
     array_rotate = np.array(rotate_lst)
-    final_df = pd.DataFrame.from_records(array_rotate, index=runs_idx, columns=df.columns.tolist())
+    final_df = pd.DataFrame.from_records(array_rotate, columns=df.columns.tolist())
+    final_df["algorithm"] = runs_idx.tolist()
     print("Parameter Dataframe\n")
     print(final_df)
     # final_df.to_csv(algo + "_params.csv")
     return final_df
 
+# param_lst('ml_results2.csv', "rf")
 # param_finaldf('ml_results2.csv', "rf")
 # algo = ['rf', 'gdb', 'knn', 'ada']
 # for i in algo:

@@ -75,6 +75,7 @@ def param_lst(csv, algo):
     runs_idx = df_results["algorithm"]
     param_df = pd.DataFrame.from_records(param_lst, columns=param_dict(algo))
     final_df = param_df.loc[:, ~(param_df == param_df.iloc[0]).all()]
+    final_df["algorithm"] = runs_idx.tolist()
     main_lst = []
     for col in final_df.columns.tolist():
         col_lst = []
@@ -82,7 +83,7 @@ def param_lst(csv, algo):
             t = re.sub('.*=', '', i)
             col_lst.append(t)
         main_lst.append(col_lst)
-    return final_df, runs_idx, main_lst
+    return final_df, main_lst
 
 
 def param_finaldf(csv, algo):
@@ -92,14 +93,13 @@ def param_finaldf(csv, algo):
     :param algo:
     :return:
     """
-    df, runs_idx, main_lst = param_lst(csv, algo)
+    df, main_lst = param_lst(csv, algo)
     # print(runs_idx)
     rotate_lst = list(rotated(main_lst))
     array_rotate = np.array(rotate_lst)
     final_df = pd.DataFrame.from_records(array_rotate, columns=df.columns.tolist())
-    final_df["algorithm"] = runs_idx.tolist()
-    print("Parameter Dataframe\n")
-    print(final_df)
+    # print("Parameter Dataframe\n")
+    # print(final_df)
     # final_df.to_csv(algo + "_params.csv")
     return final_df
 

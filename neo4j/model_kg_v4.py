@@ -12,8 +12,7 @@ class ML_kg:
     """
     Objective: Make different graphs that enable users to answer different questions based on the data presented.
     Run these 2 commands on Cypher to merge algorithms
-    MATCH (n:algo) WHERE n.algorithm = 'gdb' WITH COLLECT (n) AS ns CALL apoc.refactor.mergeNodes(ns) YIELD node RETURN node;
-    MATCH (n:algo) WHERE n.algorithm = 'rf' WITH COLLECT (n) AS ns CALL apoc.refactor.mergeNodes(ns) YIELD node RETURN node;
+
     """
 
     def __init__(self, file):
@@ -58,7 +57,7 @@ class ML_kg:
             "dataset": ['data_ml', 'data'],
             "feat_meth": ['featmeth', 'feat_meth'],
             "target": ['targets', 'target'],
-            "tuned": ['tuned', 'tuned']
+            "tuned": ['tuned', 'tune']
         }
         return label_grid[col]
 
@@ -90,7 +89,7 @@ class ML_kg:
             tx.create(feat_meth)
             feat_time = Node("feattime", feat_time=ml_dict['feat_time'])
             tx.create(feat_time)
-            tuned = Node("tuned", tuned=ml_dict['tuned'])
+            tuned = Node("tuned", tune=ml_dict['tuned'])
             tx.create(tuned)
             feature_list = Node("featurelist", feature_lists=ml_dict['feature_list'])
             tx.create(feature_list)

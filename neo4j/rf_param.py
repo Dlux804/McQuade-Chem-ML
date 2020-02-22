@@ -3,7 +3,6 @@ from py2neo import Graph, Node, Relationship
 import cypher  # Run cypher commands
 import extract_params as ep  # Extract parameters from ml results
 import make_labels as ml  # Make label dataframes
-import gdb_param
 
 
 def graph_rfparam(model_csv, algor="rf"):

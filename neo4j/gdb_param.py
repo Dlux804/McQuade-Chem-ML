@@ -4,6 +4,7 @@ import cypher  # Run cypher commands
 import extract_params as ep  # Extract parameters from ml results
 import make_labels as ml  # Make label dataframes
 
+
 def graph_gdbparam(model_csv, algor="gdb"):
     """
 
@@ -11,24 +12,22 @@ def graph_gdbparam(model_csv, algor="gdb"):
     :param algor:
     :return:
     """
+#
     graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
-    model_df = pd.read_csv(model_csv) # csv file with all ml results
+    model_df = pd.read_csv(model_csv)  # csv file with all ml results
     label_modeldf = ml.label_model_todf(model_csv)
     full_modeldf = pd.concat([model_df, label_modeldf], axis=1)
-    # print("Full model dataframe\n")
-    # print(full_modeldf)
+    algo_modeldf = full_modeldf[full_modeldf.algorithm == algor]  # dataframe with specific algorithms
+    model_dicts = algo_modeldf.to_dict('records')
+    print("Full model dataframe\n")
+    print(algo_modeldf)
     param_df = ep.param_finaldf(model_csv, algor)
     label_paramdf = ml.label_param_todf(model_csv, algor)
     full_labeldf = pd.concat([param_df, label_paramdf], axis=1)
-    # print("Full param dataframe\n")
-    # print(full_labeldf)
-    algo_modeldf = full_modeldf[full_modeldf.algorithm == algor]  # dataframe with specific algorithms
-    # algo_modeldf.to_csv('algo_modeldf.csv')
-    model_dicts = algo_modeldf.to_dict('records')
-    print(model_dicts)
     algo_paramdf = full_labeldf[full_labeldf.algorithm == algor]
+    print("Full param datafrmae\n")
+    print(algo_paramdf)
     param_dct = algo_paramdf.to_dict('records')  # Dict of dataframe for ml parameters
-    print(param_dct)
     for i in range(len(param_dct)):
         ml_dict = model_dicts[i]
         tx = graph.begin()
@@ -140,7 +139,7 @@ def graph_gdbparam(model_csv, algor="gdb"):
         tx.merge(be)
         # graph params
         loop_param = param_dct[i]
-        learning_rate_label = Node("learningrate_label", learningrate_labels=param_dct["learning_rateRun#"])
+        learning_rate_label = Node("learningrate_label", learningrate_labels=loop_param["learning_rateRun#"])
         tx.create(learning_rate_label)
         learning_rate = Node("learning_rate", learn_rates=loop_param['learning_rate'])
         tx.create(learning_rate)
@@ -178,9 +177,8 @@ def graph_gdbparam(model_csv, algor="gdb"):
         tx.merge(bk)
         bl = Relationship(regressor, "has", min_samples_leaf_label)
         tx.merge(bl)
-
         tx.commit()
-    return algo_modeldf
+    return algo_paramdf
 
 
 # df = graph_gdbparam('ml_results3.csv')

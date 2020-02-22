@@ -8,7 +8,7 @@ def query_line(label, name, target):
     return query
 
 
-class ML_kg:
+class Cypher:
     """
     Objective: Make different graphs that enable users to answer different questions based on the data presented.
     Run these 2 commands on Cypher to merge algorithms
@@ -57,7 +57,8 @@ class ML_kg:
             "dataset": ['data_ml', 'data'],
             "feat_meth": ['featmeth', 'feat_meth'],
             "target": ['targets', 'target'],
-            "tuned": ['tuned', 'tune']
+            "tuned": ['tuned', 'tune'],
+            "regressor": ['regress', 'regressor']
         }
         return label_grid[col]
 
@@ -71,9 +72,9 @@ def get_query(df, col, num_data=None):
     :param num_data: list of wanted elements in terms of numbers
     :return: a list of cypher commands
     """
-    select = ML_kg.get_unique(df, col, num_data)
+    select = Cypher.get_unique(df, col, num_data)
     # print(select)
-    unique = ML_kg.query(col)
+    unique = Cypher.query(col)
     query_lst = []
     for i in select:
         query = query_line(unique[0], unique[1], i)
@@ -94,8 +95,7 @@ def run_cypher_command(df, col):
         graph.evaluate(queue)
 
 
-# t = ML_kg('ml_results2.csv')
-# t.nodes_relationships()
+
 # run_cypher_command(t.file, "target")
 # run_cypher_command(t.file, "algorithm")
 # run_cypher_command(pd.read_csv('ml_results2.csv'), "dataset")

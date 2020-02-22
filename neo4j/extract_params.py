@@ -8,14 +8,14 @@ col_gdb = ['alpha', 'ccp_alpha', 'criterion', 'init', 'learning_rate', 'loss', '
            'min_weight_fraction_leaf', 'n_estimators', 'n_iter_no_change', 'presort', 'random_state', 'subsample',
            'tol', 'validation_fraction', 'verbose', 'warm_start']
 
-col_rf = ['bootstrap', ' ccp_alpha', "criterion", ' max_depth', " max_features",
-          'max_leaf_nodes', ' max_samples', ' min_impurity_decrease', ' min_impurity_split',
-          'min_samples_leaf', ' min_samples_split', ' min_weight_fraction_leaf', ' n_estimators',
-          'n_jobs', ' oob_score', ' random_state', ' verbose', ' warm_start']
+col_rf = ['bootstrap', 'ccp_alpha', "criterion", 'max_depth', "max_features",
+          'max_leaf_nodes', 'max_samples', 'min_impurity_decrease', 'min_impurity_split',
+          'min_samples_leaf', 'min_samples_split', 'min_weight_fraction_leaf', 'n_estimators',
+          'n_jobs', 'oob_score', 'random_state', 'verbose', 'warm_start']
 
-col_knn = ["algorithm", ' leaf_size', " metric", ' metric_params', ' n_jobs', ' n_neighbors', ' p', " weights"]
+col_knn = ["algorithm", 'leaf_size', " metric", ' metric_params', ' n_jobs', 'n_neighbors', 'p', "weights"]
 
-col_ada = ['base_estimator', ' learning_rate', " loss", ' n_estimators', ' random_state']
+col_ada = ['base_estimator', 'learning_rate', "loss", 'n_estimators', 'random_state']
 
 
 def param_dict(algo):
@@ -78,7 +78,7 @@ def param_lst(csv, algo):
     # final_df["algorithm"] = runs_idx.tolist()
     runs_lst = runs_idx.tolist()
     final_df = unique_df.assign(algorithm=runs_lst)
-    print(final_df)
+    # print(final_df)
     main_lst = []
     for col in final_df.columns.tolist():
         col_lst = []

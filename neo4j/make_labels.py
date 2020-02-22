@@ -40,7 +40,7 @@ class Labels:
         new_df["algorithm"] = algo_sries.tolist()
         # print(new_df)
         header = new_df.columns.tolist()  # List of all columns in dataframe
-        # print(header)
+        print(header)
         label_lst = []  # List of lists of all the labels
         for i in header:
             series = new_df[i]
@@ -63,7 +63,7 @@ class Labels:
         """
         df = ep.param_finaldf(csv, algo)
         header = df.columns.tolist()  # List of all columns in dataframe
-        # print(header)
+        print(header)
         label_lst = []  # List of lists of all the labels
         for i in header:
             series = df[i]
@@ -152,7 +152,7 @@ def label_param_todf(csv, algo):
 
 
 # header, label_lst = Labels.model_label_tolist('ml_results3.csv')
-# label_param_todf('ml_results3.csv', "rf")
+label_param_todf('ml_results3.csv', "ada")
 
 
 

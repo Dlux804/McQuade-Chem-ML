@@ -152,7 +152,7 @@ def label_param_todf(csv, algo):
 
 
 # header, label_lst = Labels.model_label_tolist('ml_results3.csv')
-label_param_todf('ml_results3.csv', "ada")
+# label_param_todf('ml_results3.csv', "knn")
 
 
 

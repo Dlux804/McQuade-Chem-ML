@@ -74,8 +74,11 @@ def param_lst(csv, algo):
     df_results = df[df.algorithm == algo]
     runs_idx = df_results["algorithm"]
     param_df = pd.DataFrame.from_records(param_lst, columns=param_dict(algo))
-    final_df = param_df.loc[:, ~(param_df == param_df.iloc[0]).all()]
-    final_df["algorithm"] = runs_idx.tolist()
+    unique_df = param_df.loc[:, ~(param_df == param_df.iloc[0]).all()]
+    # final_df["algorithm"] = runs_idx.tolist()
+    runs_lst = runs_idx.tolist()
+    final_df = unique_df.assign(algorithm=runs_lst)
+    print(final_df)
     main_lst = []
     for col in final_df.columns.tolist():
         col_lst = []

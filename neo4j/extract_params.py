@@ -13,7 +13,7 @@ col_rf = ['bootstrap', 'ccp_alpha', "criterion", 'max_depth', "max_features",
           'min_samples_leaf', 'min_samples_split', 'min_weight_fraction_leaf', 'n_estimators',
           'n_jobs', 'oob_score', 'random_state', 'verbose', 'warm_start']
 
-col_knn = ["algorithm", 'leaf_size', " metric", ' metric_params', ' n_jobs', 'n_neighbors', 'p', "weights"]
+col_knn = ["algorithm", 'leaf_size', "metric", 'metric_params', 'n_jobs', 'n_neighbors', 'p', "weights"]
 
 col_ada = ['base_estimator', 'learning_rate', "loss", 'n_estimators', 'random_state']
 

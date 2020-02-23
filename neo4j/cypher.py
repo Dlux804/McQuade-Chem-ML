@@ -36,11 +36,8 @@ class Cypher:
                 unique.append(i)
         print(unique)
         if num_data is None:
-            print('   {:5}    {:>15}'.format("Selection", "Options"))
-            [print('{:^15} {}'.format(*data)) for data in enumerate(unique)]
-            num_data = [int(x) for x in input(
-            'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
-        selected = [unique[i] for i in num_data]
+            selected = unique
+        # selected = [unique[i] for i in num_data]
         print("You have selected the following: ", end="   ", flush=True)
         print(*selected, sep=', ')
         return selected
@@ -61,7 +58,6 @@ class Cypher:
             "regressor": ['regress', 'regressor']
         }
         return label_grid[col]
-
 
 
 def get_query(df, col, num_data=None):
@@ -85,7 +81,7 @@ def get_query(df, col, num_data=None):
 def run_cypher_command(df, col):
     """
     Objective: Automate the task of running Cypher commands in Neo4j Desktop
-    :param file: csv file
+    :param df: csv file
     :param col: csv column name
     :return: Run cypher commands in Neo4j Desktop
     """

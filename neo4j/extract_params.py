@@ -47,20 +47,31 @@ def get_param(file, algorithm):
     """
     df = pd.read_csv(file)
     df = df[df.tuneTime != 0]
-    dct = df.to_dict('records')
+    new_df = df[df.algorithm == algorithm]
+    dct = new_df.to_dict('records')
     gdbparam_lst = []
+    new_param = []
+    # if df[df.algorithm == algorithm]:
     for i in range(len(dct)):
         row_dict = dct[i]
-        if row_dict['algorithm'] == algorithm:
-            params = row_dict['regressor']
-            # print(params)
-            reg = params[params.find("(")+1:params.find(")")]
-            new_reg = " ".join(reg.split())
-            # print(new_reg)
-            element = new_reg.split(",")
+        params = row_dict['regressor']
+        # print(params)
+        reg = params[params.find("(")+1:params.find(")")]
+        new_reg = " ".join(reg.split())
+        join_str = " ".join(params.split())
+        element = new_reg.split(",")
             # print(element)
-            gdbparam_lst.append(element)
-    return df, gdbparam_lst
+        gdbparam_lst.append(element)
+    # new_param.append(join_str)
+    # print(gdbparam_lst)
+    df_drop = new_df.drop('regressor', axis=1)
+    final_df = df_drop.assign(regressor=gdbparam_lst)
+    final_df.to_csv('test.csv')
+    print(final_df['regressor'])
+    return final_df, gdbparam_lst
+
+
+# get_param('ml_results3.csv', "gdb")
 
 
 def param_lst(csv, algo):
@@ -83,8 +94,12 @@ def param_lst(csv, algo):
     for col in final_df.columns.tolist():
         col_lst = []
         for i in final_df[col]:
-            t = re.sub('.*=', '', i)
-            col_lst.append(t)
+            if i != None:
+                t = re.sub('.*=', '', i)
+                col_lst.append(t)
+            else:
+                continue
+
         main_lst.append(col_lst)
     return final_df, main_lst
 
@@ -101,13 +116,13 @@ def param_finaldf(csv, algo):
     rotate_lst = list(rotated(main_lst))
     array_rotate = np.array(rotate_lst)
     final_df = pd.DataFrame.from_records(array_rotate, columns=df.columns.tolist())
-    # print("Parameter Dataframe\n")
-    # print(final_df)
+    print("Parameter Dataframe\n")
+    print(final_df)
     # final_df.to_csv(algo + "_params.csv")
     return final_df
 
 # param_lst('ml_results2.csv', "rf")
-# param_finaldf('ml_results2.csv', "rf")
+# param_finaldf('ml_results2.csv', "gdb")
 # algo = ['rf', 'gdb', 'knn', 'ada']
 # for i in algo:
 #     param_df('ml_results2.csv', i)

@@ -31,8 +31,9 @@ class Labels:
         :param csv:
         :return:
         """
-        df = pd.read_csv(csv, index_col=0)
-        df = df[df.columns.dropna()]
+        pre_df = pd.read_csv(csv, index_col=0)
+        df = pre_df[pre_df.tuneTime != 0]
+        # df = df[df.columns.dropna()]
         algo_sries = df["algorithm"]
         col_lst = df.columns.tolist()
         col = col_lst[0:10]
@@ -148,11 +149,12 @@ def label_param_todf(csv, algo):
     add_df = pd.DataFrame(array_rotate, columns=add_col)
     results_df = pd.concat([df, add_df], axis=1)
     # print(results_df)
+    results_df.to_csv('test_gdb.csv')
     return results_df
 
 
 # header, label_lst = Labels.model_label_tolist('ml_results3.csv')
-# label_param_todf('ml_results3.csv', "knn")
+# label_param_todf('ml_results3.csv', "gdb")
 
 
 

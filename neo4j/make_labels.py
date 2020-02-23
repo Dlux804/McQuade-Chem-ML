@@ -149,7 +149,7 @@ def label_param_todf(csv, algo):
     add_df = pd.DataFrame(array_rotate, columns=add_col)
     results_df = pd.concat([df, add_df], axis=1)
     # print(results_df)
-    results_df.to_csv('test_gdb.csv')
+    # results_df.to_csv('test_gdb.csv')
     return results_df
 
 

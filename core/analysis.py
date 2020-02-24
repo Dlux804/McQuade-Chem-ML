@@ -309,3 +309,35 @@ def pva_graphs(pva, model_name):
     # plt.savefig(model_name+'-' +'.png')
     # plt.show()
     return plt  # Can I store a graph as an attribute to a model?
+
+
+def plotter(X, Y, filename=None, xlabel='', ylabel=''):
+    """
+    General plotting function for creating an XY scatter plot.
+    Accepts x-axis data and y-axis data as (numpy or pd.Series or lists?)
+    Returns graph object.  If filename keyword is given, will save to file (PNG)
+    ____________________________
+    Keyword Arguments
+    filename:  None or string. Default = None.  Specify filename for saving to PNG file.  Do not include extension.
+    xlabel: string. Default = ''.  X-axis label.
+    ylabel: string. Default = ''.  Y-axis label.
+
+    """
+
+    plt.rcParams['figure.figsize'] = [12, 9]
+    plt.style.use('bmh')
+    fig, ax = plt.subplots()
+    plt.plot(X, Y, 'o')
+    # ax = plt.axes()
+    plt.xlabel(xlabel, fontsize=14)
+    plt.ylabel(ylabel, fontsize=14)
+    plt.title(filename)
+    # ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
+
+    if filename is not None:
+        plt.savefig(filename + '.png')
+
+    plt.show()
+

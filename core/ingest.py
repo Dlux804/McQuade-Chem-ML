@@ -2,7 +2,7 @@ import pandas as pd
 from rdkit import Chem
 import cirpy
 
-def load_smiles(self, file, drop=True):
+def load_smiles(file, drop=True):
     """ Find SMILES in CSV.  Return DataFrame and Series of SMILES.
 
     Keyword Arguments
@@ -66,6 +66,6 @@ def resolveID(file,column):
     print(df3.head(5))
     return df3
 
-
-new = resolveID('../dataFiles/CAS_samples_pyridine_short.csv', 'CAS')
-
+#
+# new = resolveID('../dataFiles/pyridine_cas.csv', 'CAS')
+#

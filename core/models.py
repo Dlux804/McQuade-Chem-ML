@@ -18,7 +18,7 @@ class MlModel:
         self.algorithm = algorithm
         self.dataset = dataset
         self.target = target
-        self.data, self.smiles = ingest.load_smiles(self,dataset, drop)
+        self.data, self.smiles = ingest.load_smiles(dataset, drop)
 
     def featurization(self, feats=None):
         """ Featurize molecules in dataset and stores results as attribute in class instance.

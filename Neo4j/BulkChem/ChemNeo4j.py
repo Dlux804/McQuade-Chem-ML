@@ -85,6 +85,7 @@ class create_relationships:  # Class to generate the different relationship prot
         self.tx.commit()  # Commit relationships
 
     """
+    This is a strict relationship protocol which only relates molecules that have the exact some functional groups
     """
 
     def compare_fragments(self, testing_fragments, testing_node, current_fragments, current_node):

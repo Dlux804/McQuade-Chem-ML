@@ -79,19 +79,19 @@ class create_relationships:  # Class to generate the different relationship prot
     """
 
     def timer(self, time_for_batch):  # Keep track of long it will take to finish
-        if not self.o:
+        if not self.o:  # Please refer to excel spreadsheet to understand how this function was derived
             n = self.len_nodes
             self.o = n * (n + 1) / 2
-        ni = self.molecules_remaining  # Please refer to excel spreadsheet to understand how this function was found
+        ni = self.molecules_remaining
         oi = ni * (ni + 1) / 2
         delta_o = self.o - oi
-        time_needed = (time_for_batch / delta_o) * self.molecules_remaining
-        if self.average_time is None:
-            self.average_time = time_needed
-        else:
-            self.average_time = (self.average_time + time_needed) / 2
+        m = (time_for_batch / delta_o)
+        if not self.m:
+            self.m = m
+        self.m = ((self.counter - 1) * self.m + m) / self.counter
         self.o = oi
-        return self.average_time * (len(self.raw_nodes) - self.counter)
+        time_needed = self.m * self.o
+        return time_needed
 
     def __get_testing_df__(self, i):  # Get DataFrame to compare molecule to
         lower_limit = i * self.max_nodes_in_ram + self.counter
@@ -130,13 +130,14 @@ class create_relationships:  # Class to generate the different relationship prot
                                                 'Total Time passed (min)': self.run_time,
                                                 'Predicted Time Left (min)': time_left_minutes}, ignore_index=True)
             print("\nTime Remaining: {0} minutes ({1} hours)".format(time_left_minutes, time_left_hours))
-        self.time_df.to_csv('Time_vs_molecules.csv', index=False)
+        self.time_df.to_csv('bulkchem_datafiles/Time_vs_molecules.csv', index=False)
 
     def __init__(self, protocol, max_nodes_in_ram=3000):
 
         self.run_time = clock()  # Declare variables for timer
         self.average_time = None
         self.o = None
+        self.m = None
         self.time_df = pd.DataFrame(columns=['Molecules Remaining', 'Time needed (s)', 'Total Time passed (min)',
                                              'Predicted Time Left (min)'])
 

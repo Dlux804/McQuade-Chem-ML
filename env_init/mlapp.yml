@@ -27,10 +27,13 @@ dependencies:
 # For Neo4j
   - py2neo
   - xlrd
+# For McQuade_Tabula
+  - tabula-py
   - pip:
       - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
       - "git+https://github.com/swansonk14/chemprop.git"
       - "git+https://github.com/darenr/scikit-optimize.git#egg=scikit-optimize"
+      - "git+https://github.com/pdftables/python-pdftables-api.git"
 
 
 

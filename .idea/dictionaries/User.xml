@@ -3,6 +3,12 @@
     <words>
       <w>barzilay</w>
       <w>bazley</w>
+      <w>bulkchem</w>
+      <w>bulkchemdata</w>
+      <w>molwt</w>
+      <w>pkas</w>
+      <w>rdkit</w>
+      <w>tabula</w>
     </words>
   </dictionary>
 </component>

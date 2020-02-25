@@ -1,7 +1,12 @@
 import pandas as pd
-from rdkit import Chem, DataStructs
-from py2neo import Graph, Node, Relationship, NodeMatcher
+from rdkit import Chem
+from py2neo import Graph, Node, Relationship
 from io import StringIO
+
+'''
+The point of this file to initialize the Neo4j graph database. This script is designed mainly for the bulkchemdata, but
+will at some in the future add to allow for other data sources (such as pubchem, NIST, etc.)
+'''
 
 
 def generate_search_query(label, index, index_value):  # Weird bug with smiles, this function fixes the bug
@@ -13,7 +18,14 @@ def generate_search_query(label, index, index_value):  # Weird bug with smiles, 
 
 class init_neo_bulkchem:
 
-    def __init__(self, fragments_as_nodes=True, bulk_chem_data='BulkChemData.csv'):
+    """
+    The init takes all the data from the bulkchem data, add con smiles if they do not already exist, and insert
+    each of the molecule as nodes. The properties of the nodes are the other pieces of information inside of the
+    bulkchem data. Also, the user has the option to insert the fragments (or functional groups) as nodes. Whether or
+    not the user uses this options depends on the relationships planned for the GB.
+    """
+
+    def __init__(self, fragments_as_nodes=True, bulk_chem_data='bulkchem_datafiles/BulkChemData.csv'):
         print("Initializing Bulk Chem Data...")
         self.fragments_as_nodes = fragments_as_nodes
         self.graph = Graph()
@@ -37,7 +49,7 @@ class init_neo_bulkchem:
         for molecule in self.bulk_dicts:
             bulkChemMolecule = Node("bulkChemMolecule", chemical_name=molecule['Product'], cas=molecule['CAS'],
                                     smiles=molecule['Smiles'],
-                                    canonical_smiles=molecule['Canonical-Smiles'], fragements=molecule['Fragments'],
+                                    canonical_smiles=molecule['Canonical-Smiles'], fragments=molecule['Fragments'],
                                     num_of_carbons=str(molecule['Num of Carbons']),
                                     chiral_center=molecule['Chiral Center'],
                                     molecular_weight=str(molecule['Molecular Weight (g/mol)']),
@@ -49,6 +61,11 @@ class init_neo_bulkchem:
                     self.rel_bulkChem_to_fragment(mol, fragment)
 
     def insert_fragments(self):
+
+        """
+        The fragments csv is saved directly into this script to save space and memory. And the string is read as if
+        it is a file.
+        """
 
         fragment_csv = StringIO("""Fragment,SMARTS,Sub-Fragment,Sub-SMARTS,
 Aldehyde,[CX3H1](=O)[#6],,,

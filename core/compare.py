@@ -129,17 +129,17 @@ def moloverlap(datasets):
             cross = list(df_cross.index.values)
             print("Verifying unique entries via canonical smiles:", len(cross) == len(set(cross)))
             print('There are {} overlapping molecules in the {} datasets.'.format(len(cross), combo))
-            # print(cross,"\n")
+            print(cross,"\n")
             #
             # xdf = pd.DataFrame({'canon_smiles': cross})
             # PandasTools.AddMoleculeColumnToFrame(xdf, 'canon_smiles', 'Molecule', includeFingerprints=True)
             # print("xdf:", xdf)
-            # ximage = PandasTools.FrameToGridImage(
-            #     df_cross, column='Molecule',
-            #     molsPerRow=6, subImgSize=(400,200),
-            #     legends=[str(i+1) for i in range(len(cross))]
-            # )
-            # ximage.save('cross.png')
+            ximage = PandasTools.FrameToGridImage(
+                df_cross, column='Molecule',
+                molsPerRow=6, subImgSize=(400,200),
+                legends=[str(i+1) for i in range(len(cross))]
+            )
+            ximage.save('cross.png')
 
             """ So I have the molecules that overlap, but I also want the properties that are measured for them.
             How do I get the intersections, but also keep their measurements?  Pandas merge, i believe"""
@@ -158,8 +158,10 @@ data = {
     # "pyridine_cas.csv": "CAS",
     # "pyridine_smi_1.csv": "smiles",
     # "pyridine_smi_2.csv": "smiles",
-    "logP14k.csv": "SMILES",
-    "ESOL.csv": "smiles",
+    "cmc_noadd.csv": "canon_smiles",
+    "logP14k.csv": "SMILES"
+    # "ESOL.csv": "smiles",
+
     # "Lipophilicity-ID.csv": "smiles",
     # # "jak2_pic50.csv": "SMILES",
     # "water-energy.csv" : "smiles"
@@ -168,7 +170,7 @@ data = {
 
 xdf = moloverlap(data)
 
-analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
+# analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
 
 
 

@@ -20,6 +20,7 @@ Goal is to compare the output of many models in a systematic, automatic manner.
 """
 
 def merger():
+    """ Function to combine all results csv  into a single file. """
 
     #import csv files from folders
     path = r'C:/Users/luxon/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207'  # will vary by OS, computer
@@ -52,8 +53,35 @@ def datasize(dataset):
             return size
 
 
-# string = '../dataFiles/ESOL.csv'
+
+# string = 'ESOL.csv'
 # datasize(string)
+
+def model_compare(master_csv):
+    """
+    Specific function for analyzing and comparing the outputs of ML models.
+    Accepts a csv of the compiled model results [output of merger()]
+    """
+    # import
+    mdf = pd.read_csv(master_csv)
+
+    # grab unique datasets into a set
+    dsets = set(mdf['dataset'])
+
+    # create dictionary of datasets and their size
+    sizes = {}
+    for data in dsets:
+        sizes.update({data : datasize(data)})
+
+    # map the dictionary to create a new column of dataset size
+    mdf['data_size'] = mdf['dataset'].map(sizes)
+    print(mdf.head(3))
+
+
+model_compare('hte-models-Master-Results.csv')
+
+
+
 
 def moloverlap(datasets):
     """
@@ -95,7 +123,7 @@ def moloverlap(datasets):
         for combo in itertools.combinations(d.keys(), 2):
             print("\nCombo:", combo)
             # create set of canon_smiles of dataframes from each data set using comprehension
-            ddf = [set(d[x]["canon_smiles"]) for x in combo] # for explanation of this uncomment for loop below
+            # ddf = [set(d[x]["canon_smiles"]) for x in combo] # for explanation of this uncomment for loop below
             df_list = [d[x] for x in combo]
 
             # for explanation purposes, loop prints components
@@ -105,54 +133,42 @@ def moloverlap(datasets):
             #     print("d[x]['canon_smiles']", d[x]["canon_smiles"])
 
 
-            # df_list = [df.loc[~df.index.duplicated(keep='first')] for df in df_list]
-
-            # drop duplicated smiles in each data frame?
+            # drop duplicated smiles in each data frame just in case
             df_list = [df.drop_duplicates(subset='canon_smiles') for df in df_list]
+
+            # Set index of df to 'canon_smiles' before concat
             df_list = [df.set_index('canon_smiles') for df in df_list]
 
-
-            # df3.loc[~df3.index.duplicated(keep='first')]
-            # print("df_list: ",df_list)
-            # df.drop_duplicates(inplace=True)
-            # df_cross = pd.concat(df_list, join='outer', axis=1)
+            # concat with 'inner' will keep only overlapping index.
             df_cross = pd.concat(df_list, axis=1, join='inner')  # combine the dataframes of interest
-            df_cross = df_cross.loc[:, ~df_cross.columns.duplicated()]
+
             # need to drop repeated column keys such as "Molecule" and 'canon_smiles', 'smiles'
+            df_cross = df_cross.loc[:, ~df_cross.columns.duplicated()]
+
 
             # print("df_cross: ", df_cross)
             # print("df_list is:", df_list)
-
-
             # cross = list(set.intersection(*map(set, ddf))) # do the comparison via intersection
             # cross = df_cross['canon_smiles'].to_list()
+
             cross = list(df_cross.index.values)
             print("Verifying unique entries via canonical smiles:", len(cross) == len(set(cross)))
             print('There are {} overlapping molecules in the {} datasets.'.format(len(cross), combo))
             print(cross,"\n")
-            #
-            # xdf = pd.DataFrame({'canon_smiles': cross})
-            # PandasTools.AddMoleculeColumnToFrame(xdf, 'canon_smiles', 'Molecule', includeFingerprints=True)
-            # print("xdf:", xdf)
+
+            # create images of molecules that overlap
             ximage = PandasTools.FrameToGridImage(
                 df_cross, column='Molecule',
                 molsPerRow=6, subImgSize=(400,200),
                 legends=[str(i+1) for i in range(len(cross))]
             )
-            ximage.save('cross.png')
+            ximage.save('cross.png') # shold use a better naming scheme to avoid overwrites.
 
-            """ So I have the molecules that overlap, but I also want the properties that are measured for them.
-            How do I get the intersections, but also keep their measurements?  Pandas merge, i believe"""
 
             return df_cross
 
 
 
-
-
-
-# likely will be useful for visualizing conserved molecules.
-# rdkit.Chem.PandasTools.FrameToGridImage(frame, column='ROMol', legendsCol=None, **kwargs)
 
 data = {
     # "pyridine_cas.csv": "CAS",
@@ -168,8 +184,7 @@ data = {
     # "pyridine_smi_3.csv" : "smiles"
 }
 
-xdf = moloverlap(data)
-
+# xdf = moloverlap(data)
 # analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
 
 

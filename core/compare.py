@@ -39,8 +39,8 @@ def merger():
     """ Function to combine all results csv  into a single file. """
 
     #import csv files from folders
-    # path = r'C:/Users/luxon/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207'  # Adam's tablet. will vary by OS, computer
-    path = r'C:/Users/Adam/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207' # Adam's desktop
+    path = r'C:/Users/luxon/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207'  # Adam's tablet. will vary by OS, computer
+    # path = r'C:/Users/Adam/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207' # Adam's desktop
     allFiles = glob.glob(path + "/*/*.csv")
     with open('hte-models-Master-Results.csv', 'wb+') as outfile:
         for i, fname in enumerate(allFiles):
@@ -114,13 +114,13 @@ def alg_vs_acc(df):
     datasets = list(set(df['dataset']))
     print("\nThe imported dataframe contains entries for the following {} datasets: {}".format(len(datasets), datasets))
 
-    print(df)
+    # print(df)
 
     for data in datasets:  # loop through each dataset
         print('\nUsing:', data)
         # filter df ML runs that used particular dataset
         df_new = df[df['dataset'] == data]
-        print(df_new)
+        # print(df_new)
 
         # grab featurization methods used
         feats = list(set(list(df_new['feat_meth'])))
@@ -136,13 +136,13 @@ def alg_vs_acc(df):
         di = {}
 
         for feat in feats: # for every featurization method used on this dataset...
-            print("Featurizations:", feats)
+            # print("Featurizations:", feats)
             # get the RMSE value and put in a list
             # use .query to filter df for feat, then grab rmse column
             rmse = list(df_new.query('feat_meth == @feat')['rmse_avg'])  # use @ to ref a variable
             std = list(df_new.query('feat_meth == @feat')['rmse_std'])
             alg =  list(df_new.query('feat_meth == @feat')['algorithm'])
-            print("algs:", alg)
+            meth = list(df_new.query('feat_meth == @feat')['feat_meth'])
             # print("rmse values: ", rmse)
             d = dict(zip(algs, rmse))
             """
@@ -156,14 +156,16 @@ def alg_vs_acc(df):
             for each series or bars directly from the dataframe instead of pulling it out of the data frame and 
             restructuring it?  
             """
-            print('RMSE for data set {} using featurization {} is: {}'.format(data, feat, rmse))
+            # print('RMSE for data set {} using featurization {} is: {}'.format(data, feat, rmse))
 
+            # make a list of lists containing rmse and std
+            info = [rmse, std, meth]
             # add RMSE data to the rmse errmat
-            errmat.append(rmse)
-            stdmat.append(std)
+            errmat.append(info)
+
 
             di.update({feat:d})
-            print("RMSE errmat:", errmat)
+            # print("RMSE errmat:", errmat)
             # print("RMSE Dictonary after adding data for {}: ".format(feat), di)
             print()
 
@@ -187,10 +189,14 @@ def alg_vs_acc(df):
             # Get y-axis height to calculate label position from.
             (y_bottom, y_top) = ax.get_ylim()
             y_height = y_top - y_bottom
-
+            i = 0
             for rect in rects:
+                # print("Rect: ", rect)
                 height = rect.get_height()
-                label_position = height + (y_height * 0.01)
+                err = rects.errorbar.lines[1][1].get_data()[1][i]
+                i += 1
+                # print("upper bound of error: ", err)
+                label_position = err + (y_height * 0.01)
                 ax.annotate('{:.2f}'.format(height),
                             xy=(rect.get_x() + rect.get_width() / 2, label_position),
                             xytext=(0, 3),  # 3 points vertical offset
@@ -199,17 +205,24 @@ def alg_vs_acc(df):
                             size=12)
 
         for i, row in enumerate(errmat):
-            print(alg, i)
-            X = np.arange(len(row))
+            # print(row)
+            # print("rmse list", row[0])
+            # print(alg, i)
+            X = np.arange(len(row[0]))
             pos = [x - (1 - space) / 2. + i * width for x in X]
-            print(pos)
+            # print(pos)
             # from http://emptypipes.org/2013/11/09/matplotlib-multicategory-barchart/
 
             # rects = plt.bar(X + i * gap, row,
             #         width=gap, label=feats[i-1], align='center')  #,
             #         # color=color_list[i % len(color_list)])
-            rects = plt.bar(pos, row,
-                            width=width, label=feats[i - 1])  # ,
+            rects = plt.bar(pos, row[0], yerr=row[1],
+                            width=width, capsize=10, label=row[2][1])  # ,
+            # print("Rects created: ", rects)
+            # for rect in rects:
+                # err = rect.errorbar.lines[1][1].get_data()[1]
+                # print("Did I get the error?", err)
+            # print("Error bar lines ydata for upper bound:", rects.errorbar.lines[1][1].get_data()[1])
             # color=color_list[i % len(color_list)])
             autolabel(rects)
             # rects1 = ax.bar(x - width / 2, men_means, width, label='Men')

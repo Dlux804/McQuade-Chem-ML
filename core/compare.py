@@ -39,7 +39,8 @@ def merger():
     """ Function to combine all results csv  into a single file. """
 
     #import csv files from folders
-    path = r'C:/Users/luxon/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207'  # will vary by OS, computer
+    # path = r'C:/Users/luxon/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207'  # Adam's tablet. will vary by OS, computer
+    path = r'C:/Users/Adam/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207' # Adam's desktop
     allFiles = glob.glob(path + "/*/*.csv")
     with open('hte-models-Master-Results.csv', 'wb+') as outfile:
         for i, fname in enumerate(allFiles):
@@ -70,7 +71,7 @@ def merger():
 
     return mdf
 
-# mdf = merger()
+mdf = merger()
 
 
 
@@ -167,6 +168,8 @@ def alg_vs_acc(df):
 
         # start graphing
         # https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781849513265/1/ch01lvl1sec16/plotting-multiple-bar-charts
+        plt.rcParams['figure.figsize'] = [12, 9]
+        plt.style.use('bmh')
         fig, ax = plt.subplots()
         labels = alg
         gap = 1 / len(matrix)
@@ -176,14 +179,21 @@ def alg_vs_acc(df):
         # indeces = range(1, len(alg) + 1)
 
         def autolabel(rects):
-            "Attach a text label above each bar in *rects*, displaying its height."
+            """Attach a text label above each bar in *rects*, displaying its height."""
+
+            # Get y-axis height to calculate label position from.
+            (y_bottom, y_top) = ax.get_ylim()
+            y_height = y_top - y_bottom
+
             for rect in rects:
                 height = rect.get_height()
+                label_position = height + (y_height * 0.01)
                 ax.annotate('{:.2f}'.format(height),
-                            xy=(rect.get_x() + rect.get_width() / 2, height),
+                            xy=(rect.get_x() + rect.get_width() / 2, label_position),
                             xytext=(0, 3),  # 3 points vertical offset
                             textcoords="offset points",
-                            ha='center', va='bottom')
+                            ha='center', va='bottom',
+                            size=12)
 
         for i, row in enumerate(matrix):
             print(alg, i)
@@ -203,12 +213,14 @@ def alg_vs_acc(df):
             # rects2 = ax.bar(x + width / 2, women_means, width, label='Women')
 
         x = np.arange(len(labels))  # the label locations
-        ax.set_ylabel('RMSE')
-        ax.set_title('{}: Algorithm vs RMSE'.format(data))
+        ax.set_title('{}: Algorithm vs RMSE'.format(data), fontsize=20)
         ax.set_xticks(x)
+        ax.tick_params(axis='both', which='major', labelsize=18)
         # ax.set_xticks(indeces)
         ax.set_xticklabels(labels)
-        ax.legend()
+        plt.xlabel('Learning Algorithm', fontsize=18)
+        plt.ylabel('RMSE', fontsize=18)
+        ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
 
 
 
@@ -263,7 +275,7 @@ def alg_vs_acc(df):
     plt.show()
     """
 
-# alg_vs_acc(mdf)
+alg_vs_acc(mdf)
 
 
 'Code for stacked 3D bar plot'
@@ -404,7 +416,7 @@ data = {
     # "pyridine_smi_3.csv" : "smiles"
 }
 
-xdf = moloverlap(data,3)
+# xdf = moloverlap(data,3)
 # analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
 
 

@@ -131,7 +131,8 @@ def alg_vs_acc(df):
         # data for graph will be an len(feats) by len(algs) array.
         # data[0] will be a 1D array containing the rmse values for a featurization method across alg types
 
-        matrix = []  # empty list that we will append arrays to for each feat method
+        errmat = []  # empty list that we will append rmse arrays to for each feat method
+        stdmat = []  # matrix for std of rmse
         di = {}
 
         for feat in feats: # for every featurization method used on this dataset...
@@ -139,6 +140,7 @@ def alg_vs_acc(df):
             # get the RMSE value and put in a list
             # use .query to filter df for feat, then grab rmse column
             rmse = list(df_new.query('feat_meth == @feat')['rmse_avg'])  # use @ to ref a variable
+            std = list(df_new.query('feat_meth == @feat')['rmse_std'])
             alg =  list(df_new.query('feat_meth == @feat')['algorithm'])
             print("algs:", alg)
             # print("rmse values: ", rmse)
@@ -156,11 +158,12 @@ def alg_vs_acc(df):
             """
             print('RMSE for data set {} using featurization {} is: {}'.format(data, feat, rmse))
 
-            # add RMSE data to the rmse matrix
-            matrix.append(rmse)
+            # add RMSE data to the rmse errmat
+            errmat.append(rmse)
+            stdmat.append(std)
 
             di.update({feat:d})
-            print("RMSE matrix:", matrix)
+            print("RMSE errmat:", errmat)
             # print("RMSE Dictonary after adding data for {}: ".format(feat), di)
             print()
 
@@ -172,10 +175,10 @@ def alg_vs_acc(df):
         plt.style.use('bmh')
         fig, ax = plt.subplots()
         labels = alg
-        gap = 1 / len(matrix)
-        space = 0.5 / len(matrix)
+        gap = 1 / len(errmat)
+        space = 0.5 / len(errmat)
         # gap = 0.3
-        width = (1 - space) / (len(matrix))  # from http://emptypipes.org/2013/11/09/matplotlib-multicategory-barchart/
+        width = (1 - space) / (len(errmat))  # from http://emptypipes.org/2013/11/09/matplotlib-multicategory-barchart/
         # indeces = range(1, len(alg) + 1)
 
         def autolabel(rects):
@@ -195,7 +198,7 @@ def alg_vs_acc(df):
                             ha='center', va='bottom',
                             size=12)
 
-        for i, row in enumerate(matrix):
+        for i, row in enumerate(errmat):
             print(alg, i)
             X = np.arange(len(row))
             pos = [x - (1 - space) / 2. + i * width for x in X]

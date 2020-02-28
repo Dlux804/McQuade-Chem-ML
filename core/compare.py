@@ -70,7 +70,7 @@ def merger():
 
     return mdf
 
-mdf = merger()
+# mdf = merger()
 
 
 
@@ -263,7 +263,9 @@ def alg_vs_acc(df):
     plt.show()
     """
 
-alg_vs_acc(mdf)
+# alg_vs_acc(mdf)
+
+
 'Code for stacked 3D bar plot'
 # fig = plt.figure()
 # ax = fig.add_subplot(111, projection = "3d")
@@ -294,11 +296,17 @@ alg_vs_acc(mdf)
 # plt.gca().invert_xaxis()
 # plt.show()
 
-def moloverlap(datasets):
+def moloverlap(datasets, n, image=False):
     """
     Identifies molecules conserved across datasets.
     Accepts dictionary of datasets to be compared.  Keys are dataset file, values are chemicalID column.
+    Accepts number of datasets to overlap at a time.
     Returns dataframe of conserved molecules.
+
+    Keyword Arguments:
+    ______________________
+    image=False,  Whether to create a grid image of the overlapping molecules.
+
     """
     with misc.cd('../dataFiles/'):  # move to dataset directory
 
@@ -331,42 +339,42 @@ def moloverlap(datasets):
 
             d.update({dataset: df})
 
-        for combo in itertools.combinations(d.keys(), 2):
-            print("\nCombo:", combo)
-            # create set of canon_smiles of dataframes from each data set using comprehension
-            # ddf = [set(d[x]["canon_smiles"]) for x in combo] # for explanation of this uncomment for loop below
-            df_list = [d[x] for x in combo]
+    for combo in itertools.combinations(d.keys(), n):
+        print("\nCombo:", combo)
+        # create set of canon_smiles of dataframes from each data set using comprehension
+        # ddf = [set(d[x]["canon_smiles"]) for x in combo] # for explanation of this uncomment for loop below
+        df_list = [d[x] for x in combo]
 
-            # for explanation purposes, loop prints components
-            # for x in combo:
-            #     print("x: " ,x)
-            #     print("d[x]:", d[x])
-            #     print("d[x]['canon_smiles']", d[x]["canon_smiles"])
-
-
-            # drop duplicated smiles in each data frame just in case
-            df_list = [df.drop_duplicates(subset='canon_smiles') for df in df_list]
-
-            # Set index of df to 'canon_smiles' before concat
-            df_list = [df.set_index('canon_smiles') for df in df_list]
-
-            # concat with 'inner' will keep only overlapping index.
-            df_cross = pd.concat(df_list, axis=1, join='inner')  # combine the dataframes of interest
-
-            # need to drop repeated column keys such as "Molecule" and 'canon_smiles', 'smiles'
-            df_cross = df_cross.loc[:, ~df_cross.columns.duplicated()]
+        # for explanation purposes, loop prints components
+        # for x in combo:
+        #     print("x: " ,x)
+        #     print("d[x]:", d[x])
+        #     print("d[x]['canon_smiles']", d[x]["canon_smiles"])
 
 
-            # print("df_cross: ", df_cross)
-            # print("df_list is:", df_list)
-            # cross = list(set.intersection(*map(set, ddf))) # do the comparison via intersection
-            # cross = df_cross['canon_smiles'].to_list()
+        # drop duplicated smiles in each data frame just in case
+        df_list = [df.drop_duplicates(subset='canon_smiles') for df in df_list]
 
-            cross = list(df_cross.index.values)
-            print("Verifying unique entries via canonical smiles:", len(cross) == len(set(cross)))
-            print('There are {} overlapping molecules in the {} datasets.'.format(len(cross), combo))
-            print(cross,"\n")
+        # Set index of df to 'canon_smiles' before concat
+        df_list = [df.set_index('canon_smiles') for df in df_list]
 
+        # concat with 'inner' will keep only overlapping index.
+        df_cross = pd.concat(df_list, axis=1, join='inner')  # combine the dataframes of interest
+
+        # need to drop repeated column keys such as "Molecule" and 'canon_smiles', 'smiles'
+        df_cross = df_cross.loc[:, ~df_cross.columns.duplicated()]
+
+
+        # print("df_cross: ", df_cross)
+        # print("df_list is:", df_list)
+        # cross = list(set.intersection(*map(set, ddf))) # do the comparison via intersection
+        # cross = df_cross['canon_smiles'].to_list()
+
+        cross = list(df_cross.index.values)
+        print("Verifying unique entries via canonical smiles:", len(cross) == len(set(cross)))
+        print('There are {} overlapping molecules in the {} datasets.'.format(len(cross), combo))
+        print(cross,"\n")
+        if image:
             # create images of molecules that overlap
             ximage = PandasTools.FrameToGridImage(
                 df_cross, column='Molecule',
@@ -376,7 +384,7 @@ def moloverlap(datasets):
             ximage.save('cross.png') # shold use a better naming scheme to avoid overwrites.
 
 
-            return df_cross
+    return df_cross
 
 
 
@@ -385,17 +393,18 @@ data = {
     # "pyridine_cas.csv": "CAS",
     # "pyridine_smi_1.csv": "smiles",
     # "pyridine_smi_2.csv": "smiles",
-    "cmc_noadd.csv": "canon_smiles",
-    "logP14k.csv": "SMILES"
-    # "ESOL.csv": "smiles",
-
+    # "cmc_noadd.csv": "canon_smiles",
+    # "logP14k.csv": "SMILES",
+    "18k-logP.csv": "smiles",
+    "ESOL.csv": "smiles",
+    "flashpoint.csv": "smiles",
     # "Lipophilicity-ID.csv": "smiles",
     # # "jak2_pic50.csv": "SMILES",
-    # "water-energy.csv" : "smiles"
+    "water-energy.csv" : "smiles"
     # "pyridine_smi_3.csv" : "smiles"
 }
 
-# xdf = moloverlap(data)
+xdf = moloverlap(data,3)
 # analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
 
 

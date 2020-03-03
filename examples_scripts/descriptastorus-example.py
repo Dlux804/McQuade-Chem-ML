@@ -7,15 +7,15 @@ from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
 
 
-datasets = ['water-energy.csv', 'Lipophilicity-ID.csv', 'ESOL.csv']
+datasets = ['water-energy.csv', 'log_p.csv', 'log_s.csv']
 
 
 # get the data, locate smiles and exp and drop everything else
 def getData(name):
     df = pd.read_csv(name)
-    if name == 'Lipophilicity-ID.csv':
+    if name == 'log_p.csv':
         df = df.drop(['CMPD_CHEMBLID', 'ID'], axis=1)
-    elif name == 'ESOL.csv':
+    elif name == 'log_s.csv':
         df = df.drop(
             ['Compound ID', 'ESOL predicted log solubility in mols per litre', 'Minimum Degree', 'Molecular Weight',
              'Number of H-Bond Donors', 'Number of Rings', 'Number of Rotatable Bonds', 'Polar Surface Area'], axis=1)

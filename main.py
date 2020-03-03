@@ -26,11 +26,11 @@ def main():
 
     # data sets in dict. Key: Filename.csv , Value: Target column header
     sets = {
-        'Lipophilicity-ID.csv': 'exp',
-        'ESOL.csv': 'water-sol',
+        'log_p.csv': 'exp',
+        'log_s.csv': 'water-sol',
         'water-energy.csv': 'expt',
-        'logP14k.csv': 'Kow',
-        'jak2_pic50.csv': 'pIC50'
+        'kow.csv': 'Kow',
+        'pic50.csv': 'pIC50'
     }
 
     for alg in learner:  # loop over all learning algorithms

@@ -154,7 +154,7 @@ class MlModel:
 #     print('Now in:', os.getcwd())
 #     print('Initializing model...', end=' ', flush=True)
 #     # initiate model class with algorithm, dataset and target
-#     model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
+#     model1 = MlModel('rf', 'log_s.csv', 'water-sol')
 #     print('done.')
 
 # # featurize data with rdkit2d

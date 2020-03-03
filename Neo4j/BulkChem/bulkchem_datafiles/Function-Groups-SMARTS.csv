@@ -1,0 +1,22 @@
+﻿Fragment,SMARTS,Sub-Fragment,Sub-SMARTS
+Ester,[#6][CX3](=O)[OX2H0][#6],Ether,[OD2]([#6])[#6]
+Acyl Halide,"[CX3](=[OX1])[F,Cl,Br,I]",Alkyl Halide,"[#6][F,Cl,Br,I] "
+Carboxylic Acid,[CX3](=O)[OX2H1],Alcohol,[OX2H]
+Phosphoric Acid,"[$(P(=[OX1])([$([OX2H]),$([OX1-]),$([OX2]P)])([$([OX2H]),$([OX1-]),$([OX2]P)])[$([OX2H]),$([OX1-]),$([OX2]P)]),$([P+]([OX1-])([$([OX2H]),$([OX1-]),$([OX2]P)])([$([OX2H]),$([OX1-]),$([OX2]P)])[$([OX2H]),$([OX1-]),$([OX2]P)])]",Phosphoric Ester,"[$(P(=[OX1])([OX2][#6])([$([OX2H]),$([OX1-]),$([OX2][#6])])[$([OX2H]),$([OX1-]),$([OX2][#6]),$([OX2]P)]),$([P+]([OX1-])([OX2][#6])([$([OX2H]),$([OX1-]),$([OX2][#6])])[$([OX2H]),$([OX1-]),$([OX2][#6]),$([OX2]P)])]"
+Peroxide,"[OX2,OX1-][OX2,OX1-]",,
+Aldehyde,[CX3H1](=O)[#6],,
+Amide,[NX3][CX3](=[OX1])[#6],,
+Carbamate,"[NX3,NX4+][CX3](=[OX1])[OX2,OX1-]",,
+Amine,"[NX3;H2,H1;!$(NC=O)]",,
+Imine,"[$([CX3]([#6])[#6]),$([CX3H][#6])]=[$([NX2][#6]),$([NX2H])]",,
+Arene,c,,
+Thiol,[#16X2H],,
+Allenic Carbon,[$([CX2](=C)=C)],,
+Vinylic Carbon,[$([CX3]=[CX3])],,
+Ketone,[#6][CX3](=O)[#6],,
+Thioamide,[NX3][CX3]=[SX1],,
+Nitrate,"[$([NX3](=[OX1])(=[OX1])O),$([NX3+]([OX1-])(=[OX1])O)]",,
+Nitrile,[NX1]#[CX2],,
+Phenol,[OX2H][cX3]:[c],,
+Sulfide,[#16X2H0],,
+Nitro,"[$([NX3](=O)=O),$([NX3+](=O)[O-])][!#8]",,

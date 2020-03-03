@@ -28,7 +28,7 @@ training_df = raw_df[:split_index]
 testing_df = raw_df[split_index:]  # Split data into training and testing
 
 results = barzilayPredict(target_label='kow', df_to_train=training_df, df_to_predict=testing_df,
-                          dataset_type='regression')  # Create results object
+                          dataset_type='regression', train=True, predict=False)  # Create results object
 
 predicted_results_df = results.predicted_results_df
 training_time = results.training_time

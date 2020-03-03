@@ -7,6 +7,8 @@ import pandas as pd
 from Neo4j.BulkChem.backends import get_testing_df, get_fragments, get_prop_from_smiles_df, __timer__
 
 
+# pIC50, LogS, LogP, Kow, Water-energy
+
 class __compare__:
     ##################################
     class __init_neo__:  # TODO find a way to separate __init_neo__ in a way that makes sense
@@ -43,12 +45,32 @@ class __compare__:
                             fragments=molecule_dict['fragments'])
             self.graph.merge(molecule, 'molecule', 'chemical_name')
 
+        def insert_fragment_list_nodes(self):
+            print('Inserting fragment(s) nodes before comparing molecules...')
+            fragments = open('bulkchem_datafiles/List_of_fragment_groups.txt', 'r')
+            fragments = fragments.readlines()[0].split(', ')
+            for i in range(len(fragments)):
+                fragment_list = []
+                for x in range(i):
+                    if not fragment_list:
+                        fragment_list = [fragments[i]]
+                        fragment_list_string = ', '.join(fragment_list)
+                        fragment_list_Node = Node("fragments", fragment_list=fragment_list_string)
+                        self.graph.merge(fragment_list_Node, 'fragments', 'fragment_list')
+                    fragment_list.append(fragments[x])
+                    fragment_list_string = ', '.join(fragment_list)
+                    fragment_list_Node = Node("fragments", fragment_list=fragment_list_string)
+                    self.graph.merge(fragment_list_Node, 'fragments', 'fragment_list')
+            print('Done')
+            matcher = NodeMatcher(self.graph)
+            return matcher.match("fragments")
+
         def __init__(self, graph, *files):
             print("Initializing Neo4j database")
             print("Training to predict LogP")
-            training_df = pd.read_csv('bulkchem_datafiles/Lipophilicity-ID.csv')  # Train to from LogP data
+            training_df = pd.read_csv('bulkchem_datafiles/log_p.csv')  # Train to from LogP data
             barzilayPredict(target_label='exp', dataset_type='regression', df_to_train=training_df,
-                            train=True, predict=False)
+                            train=False, predict=False)
             self.graph = graph
             for file in files:
                 raw_data = pd.read_csv(file)
@@ -64,27 +86,9 @@ class __compare__:
                 ))
                 matcher = NodeMatcher(self.graph)
                 self.raw_molecule_nodes = matcher.match("molecule")  # Get nodes from neo
-    ##################################
+                self.raw_fragment_nodes = self.insert_fragment_list_nodes()
 
-    def insert_fragment_list_nodes(self):
-        print('Inserting fragment(s) nodes before comparing molecules...')
-        fragments = open('bulkchem_datafiles/List_of_fragment_groups.txt', 'r')
-        fragments = fragments.readlines()[0].split(', ')
-        for i in range(len(fragments)):
-            fragment_list = []
-            for x in range(i):
-                if not fragment_list:
-                    fragment_list = [fragments[i]]
-                    fragment_list_string = ', '.join(fragment_list)
-                    fragment_list_Node = Node("fragments", fragment_list=fragment_list_string)
-                    self.graph.merge(fragment_list_Node, 'fragments', 'fragment_list')
-                fragment_list.append(fragments[x])
-                fragment_list_string = ', '.join(fragment_list)
-                fragment_list_Node = Node("fragments", fragment_list=fragment_list_string)
-                self.graph.merge(fragment_list_Node, 'fragments', 'fragment_list')
-        print('Done')
-        matcher = NodeMatcher(self.graph)
-        return matcher.match("fragments")
+    ##################################
 
     def __fragment_list_comparision__(self, current_node, current_node_dict):
         current_frags = str(current_node_dict['fragments'])
@@ -105,7 +109,7 @@ class __compare__:
 
     def compare_logp_score(self, testing_logp, testing_node, current_logp, current_node):
         sim_score = abs(testing_logp - current_logp)
-        if 0.001 > sim_score:
+        if 0.005 > sim_score:
             Rel = Relationship(current_node, 'similar_logp', testing_node)
             self.tx.create(Rel)
 
@@ -139,14 +143,15 @@ class __compare__:
                                                                      self.molecules_remaining,
                                                                      time_for_batch,
                                                                      self.time_df,
-                                                                     self.run_time)
+                                                                     self.run_time - clock())
 
     def __init__(self, max_nodes_in_ram, *files):
         self.graph = Graph()
         self.max_nodes_in_ram = max_nodes_in_ram
         self.tx = None
-        self.raw_molecule_nodes = self.__init_neo__(self.graph, *files).raw_molecule_nodes
-        self.raw_fragment_nodes = self.insert_fragment_list_nodes()
+        init_neo = self.__init_neo__(self.graph, *files)
+        self.raw_molecule_nodes = init_neo.raw_molecule_nodes
+        self.raw_fragment_nodes = init_neo.raw_fragment_nodes
 
         self.run_time = clock()  # Declare variables for timer
         self.average_time = None

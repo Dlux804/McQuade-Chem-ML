@@ -124,7 +124,7 @@ class __compare__:
                                                                      self.molecules_remaining,
                                                                      time_for_batch,
                                                                      self.time_df,
-                                                                     self.run_time - clock())
+                                                                     clock() - self.run_time)
 
     def __init__(self, max_nodes_in_ram, *files):
         self.graph = Graph()

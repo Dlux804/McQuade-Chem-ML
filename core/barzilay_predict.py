@@ -44,7 +44,7 @@ class barzilayPredict:
 
     def __init__(self, target_label, dataset_type, df_to_train=None, df_to_predict=None, train=True, predict=True):
         cwd = os.getcwd()
-        os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'\\barzilay_predictions')
+        os.chdir(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/barzilay_predictions')
         self.target_label = target_label.lower()
         self.df_to_train = df_to_train
         self.df_to_predict = df_to_predict

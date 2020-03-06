@@ -20,8 +20,6 @@ def rotated(array_2d):
 
 
 class Labels:
-    def __init__(self, file):
-        self.file = file
 
     @staticmethod
     def model_label_tolist(csv):
@@ -34,14 +32,14 @@ class Labels:
         pre_df = pd.read_csv(csv, index_col=0)
         df = pre_df[pre_df.tuneTime != 0]
         # df = df[df.columns.dropna()]
-        algo_sries = df["algorithm"]
+        algo_lst = df["algorithm"].tolist()
         col_lst = df.columns.tolist()
         col = col_lst[0:10]
         new_df = df.drop(columns=col)
-        new_df["algorithm"] = algo_sries.tolist()
+        new_df["algorithm"] = algo_lst
         # print(new_df)
         header = new_df.columns.tolist()  # List of all columns in dataframe
-        print(header)
+        # print(header)
         label_lst = []  # List of lists of all the labels
         for i in header:
             series = new_df[i]
@@ -56,15 +54,16 @@ class Labels:
         return header, label_lst
 
     @staticmethod
-    def param_label_tolist(csv, algo):
+    def param_label_tolist(csv, algor):
         """
 
         :param csv:
         :return:
         """
-        df = ep.param_finaldf(csv, algo)
+        params = ep.Params()
+        df = params.param_df(csv, algor)
         header = df.columns.tolist()  # List of all columns in dataframe
-        print(header)
+        # print(header)
         label_lst = []  # List of lists of all the labels
         for i in header:
             series = df[i]
@@ -121,17 +120,18 @@ def label_model_todf(csv):
     array_rotate = np.array(rotated_lst)
     add_df = pd.DataFrame(array_rotate, columns=add_col)
     results_df = pd.concat([df, add_df], axis=1)
-    # print(results_df)
+    # final_df = results_df.assign(algorithm=algo_lst)
+    # print(final_df)
     return results_df
 
 
-def label_param_todf(csv, algo):
+def label_param_todf(csv, algor):
     """
 
     :param csv:
     :return:
     """
-    header, label_lst = Labels.param_label_tolist(csv, algo)
+    header, label_lst = Labels.param_label_tolist(csv, algor)
     df = Labels.label_df(header, label_lst)
     enum_col = df["algorithmRun#"]
     header_lst = []

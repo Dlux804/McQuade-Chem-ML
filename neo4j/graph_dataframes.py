@@ -20,6 +20,7 @@ class GraphDataframe:
         algo_modeldf = full_modeldf[full_modeldf.algorithm == algor]  # dataframe with specific algorithms
         df_drop = algo_modeldf.drop(columns="regressor")
         final_df = df_drop.assign(regressor=param_clean)
+        # final_df.to_csv('model_test.csv')
         print("Final Model Dataframe for Graphing")
         print(final_df)
         return final_df
@@ -30,5 +31,9 @@ class GraphDataframe:
         label_paramdf = ml.label_param_todf(csv, algor)
         full_labeldf = pd.concat([param_df, label_paramdf], axis=1)
         print("Final Label Dataframe for Graphing")
+        # full_labeldf.to_csv('label_test.csv')
         print(full_labeldf)
         return full_labeldf
+
+
+# GraphDataframe().label_dataframe('ml_results3.csv', "gdb")

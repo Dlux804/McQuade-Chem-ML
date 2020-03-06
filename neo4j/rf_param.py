@@ -5,7 +5,7 @@ import extract_params as ep  # Extract parameters from ml results
 import make_labels as ml  # Make label dataframes
 
 
-def rf_param(model_csv, algor="rf"):
+def rf_param(csv, algor="rf"):
     """
 
     :param model_csv:

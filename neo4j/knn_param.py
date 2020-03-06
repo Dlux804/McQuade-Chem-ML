@@ -5,7 +5,7 @@ import extract_params as ep  # Extract parameters from ml results
 import make_labels as ml  # Make label dataframes
 
 
-def graph_knnparam(model_csv, algor="knn"):
+def knn_param(model_csv, algor="knn"):
     """
 
     :param model_csv:

@@ -18,14 +18,14 @@ col_knn = ["algorithm", 'leaf_size', "metric", 'metric_params', 'n_jobs', 'n_nei
 col_ada = ['base_estimator', 'learning_rate', "loss", 'n_estimators', 'random_state']
 
 
-def param_dict(algo):
+def param_dict(algor):
     params_dict = {
         "gdb": col_gdb,
         "rf": col_rf,
         "knn": col_knn,
         "ada": col_ada
     }
-    return params_dict[algo]
+    return params_dict[algor]
 
 
 def rotated(array_2d):
@@ -38,91 +38,85 @@ def rotated(array_2d):
     return [list(elem) for elem in list_of_tuples]
 
 
-def get_param(file, algorithm):
-    """
-    Extract parameters and put them into a list
-    :param file:
-    :param algorithm:
-    :return:
-    """
-    df = pd.read_csv(file)
-    df = df[df.tuneTime != 0]
-    new_df = df[df.algorithm == algorithm]
-    dct = new_df.to_dict('records')
-    gdbparam_lst = []
-    new_param = []
-    # if df[df.algorithm == algorithm]:
-    for i in range(len(dct)):
-        row_dict = dct[i]
-        params = row_dict['regressor']
-        # print(params)
-        reg = params[params.find("(")+1:params.find(")")]
-        new_reg = " ".join(reg.split())
-        join_str = " ".join(params.split())
-        element = new_reg.split(",")
-            # print(element)
-        gdbparam_lst.append(element)
-    # new_param.append(join_str)
-    # print(gdbparam_lst)
-    df_drop = new_df.drop('regressor', axis=1)
-    final_df = df_drop.assign(regressor=gdbparam_lst)
-    final_df.to_csv('test.csv')
-    print(final_df['regressor'])
-    return final_df, gdbparam_lst
+class Params:
 
+    @staticmethod
+    def param_extract(csv, algor):
+        """
+        Extract parameters and put them into a list
+        :param csv:
+        :param algor
+        :return:
+        """
+        df = pd.read_csv(csv)
+        df_clean = df[df.tuneTime != 0]
+        df_algor = df_clean[df_clean.algorithm == algor]
+        dct = df_algor.to_dict('records')
+        param_list = []
+        param_clean = []
+        for i in range(len(dct)):
+            row_dict = dct[i]
+            params = row_dict['regressor']
+            # print(params)
+            reg = params[params.find("(") + 1:params.find(")")]
+            new_reg = " ".join(reg.split())
+            final_reg = new_reg.replace("'", "")
+            # print(final_reg)
+            element = final_reg.split(",")
+            param_list.append(element)
+            param_clean.append(final_reg)
+        # print(param_list)
+        return df_algor, param_list, param_clean
 
-# get_param('ml_results3.csv', "gdb")
+    @staticmethod
+    def param_lst(csv, algor):
+        """
 
+        :param csv:
+        :param algor
+        :return:
+        """
+        df_algor, param_list, param_clean = Params.param_extract(csv, algor)
+        # df_results = df_clean[df_clean.algorithm == algor]
+        runs_idx = df_algor["algorithm"]
+        param_df = pd.DataFrame.from_records(param_list, columns=param_dict(algor))
+        unique_df = param_df.loc[:, ~(param_df == param_df.iloc[0]).all()]
+        # print(unique_df)
+        runs_lst = runs_idx.tolist()
+        df_new_col = unique_df.assign(algorithm=runs_lst)
+        # print(df_with_algor)
+        col_list = df_new_col.columns.tolist()
+        main_list = []
+        for col in col_list:
+            col_lst = []
+            for i in df_new_col[col]:
+                if i != None:
+                    t = re.sub('.*=', '', i)
+                    col_lst.append(t)
+                else:
+                    continue
+            main_list.append(col_lst)
+        return col_list, main_list, param_clean
 
-def param_lst(csv, algo):
-    """
+    def param_df(self, csv, algor):
+        """
 
-    :param csv:
-    :param algo:
-    :return:
-    """
-    df, param_lst = get_param(csv, algo)
-    df_results = df[df.algorithm == algo]
-    runs_idx = df_results["algorithm"]
-    param_df = pd.DataFrame.from_records(param_lst, columns=param_dict(algo))
-    unique_df = param_df.loc[:, ~(param_df == param_df.iloc[0]).all()]
-    # final_df["algorithm"] = runs_idx.tolist()
-    runs_lst = runs_idx.tolist()
-    final_df = unique_df.assign(algorithm=runs_lst)
-    # print(final_df)
-    main_lst = []
-    for col in final_df.columns.tolist():
-        col_lst = []
-        for i in final_df[col]:
-            if i != None:
-                t = re.sub('.*=', '', i)
-                col_lst.append(t)
-            else:
-                continue
+        :param csv:
+        :param algor:
+        :return:
+        """
+        col_list, main_list, param_clean = Params.param_lst(csv, algor)
+        rotate_lst = list(rotated(main_list))
+        array_rotate = np.array(rotate_lst)
+        df_records = pd.DataFrame.from_records(array_rotate, columns=col_list)
+        final_df = df_records.assign(regressor=param_clean)
+        # print("Parameter Dataframe\n")
+        # print(final_df)
+        # final_df.to_csv("test.csv")
+        return final_df
 
-        main_lst.append(col_lst)
-    return final_df, main_lst
+# params = Params()
+# params.param_extract('ml_results3.csv', "gdb")
+# params.param_lst('ml_results3.csv', "gdb")
+# params.param_df('ml_results3.csv', "gdb")
 
-
-def param_finaldf(csv, algo):
-    """
-
-    :param csv:
-    :param algo:
-    :return:
-    """
-    df, main_lst = param_lst(csv, algo)
-    # print(runs_idx)
-    rotate_lst = list(rotated(main_lst))
-    array_rotate = np.array(rotate_lst)
-    final_df = pd.DataFrame.from_records(array_rotate, columns=df.columns.tolist())
-    print("Parameter Dataframe\n")
-    print(final_df)
-    # final_df.to_csv(algo + "_params.csv")
-    return final_df
-
-# param_lst('ml_results2.csv', "rf")
-# param_finaldf('ml_results2.csv', "gdb")
-# algo = ['rf', 'gdb', 'knn', 'ada']
-# for i in algo:
-#     param_df('ml_results2.csv', i)

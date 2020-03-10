@@ -5,35 +5,30 @@ import pandas as pd
 
 class GraphDataframe:
     @staticmethod
-    def model_dataframe(csv, algor):
+    def model_dataframe(csv):
         """
 
         :param csv:
-        :param algor:
         :return:
         """
-        _, _, param_clean = ep.Params().param_extract(csv, algor)
-        df = pd.read_csv(csv)  # df of original csv files with all ml results
-        model_df = df[df.tuneTime != 0]
-        label_modeldf = ml.label_model_todf(csv)  # df with all label of ml models
-        full_modeldf = pd.concat([model_df, label_modeldf], axis=1)  # concat both models
-        algo_modeldf = full_modeldf[full_modeldf.algorithm == algor]  # dataframe with specific algorithms
-        df_drop = algo_modeldf.drop(columns="regressor")
-        final_df = df_drop.assign(regressor=param_clean)
-        # final_df.to_csv('model_test.csv')
+        params = ep.Params()
+        df, _ = params.clean_param(csv)
+        label_df = ml.label_model_todf(csv)  # df with all label of ml models
+        final_df = pd.concat([df, label_df], axis=1)  # concat both models
+        # final_df = df_drop.assign(regressor=param_clean)
         print("Final Model Dataframe for Graphing")
         print(final_df)
         return final_df
 
     @staticmethod
-    def label_dataframe(csv, algor):
+    def param_dataframe(csv, algor):
         param_df = ep.Params().param_df(csv, algor)
-        label_paramdf = ml.label_param_todf(csv, algor)
-        full_labeldf = pd.concat([param_df, label_paramdf], axis=1)
+        label_df = ml.label_param_todf(csv, algor)
+        final_df = pd.concat([param_df, label_df], axis=1)
         print("Final Label Dataframe for Graphing")
         # full_labeldf.to_csv('label_test.csv')
-        print(full_labeldf)
-        return full_labeldf
+        print(final_df)
+        return final_df
 
 
-# GraphDataframe().label_dataframe('ml_results3.csv', "gdb")
+# GraphDataframe().model_dataframe('ml_results3.csv')

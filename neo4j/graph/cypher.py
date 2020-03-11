@@ -15,10 +15,6 @@ class Cypher:
 
     """
 
-    def __init__(self, file):
-        self.file = file
-        self.data = pd.read_csv(self.file)
-
     @classmethod
     def get_unique(cls, df, col, num_data=None):
         """
@@ -59,51 +55,38 @@ class Cypher:
         }
         return label_grid[col]
 
+    @staticmethod
+    def get_query(df, col, num_data=None):
+        """
+        Objective: Return a list of cypher commands to run them on Neo4j Desktop.
+        :param df: pandas dataframe
+        :param col: csv column name
+        :param num_data: list of wanted elements in terms of numbers
+        :return: a list of cypher commands
+        """
+        select = Cypher.get_unique(df, col, num_data)
+        # print(select)
+        unique = Cypher.query(col)
+        query_lst = []
+        for i in select:
+            query = query_line(unique[0], unique[1], i)
+            query_lst.append(query)
+        return query_lst
 
-def get_query(df, col, num_data=None):
-    """
-    Objective: Return a list of cypher commands to run them on Neo4j Desktop.
-    :param df: pandas dataframe
-    :param col: csv column name
-    :param num_data: list of wanted elements in terms of numbers
-    :return: a list of cypher commands
-    """
-    select = Cypher.get_unique(df, col, num_data)
-    # print(select)
-    unique = Cypher.query(col)
-    query_lst = []
-    for i in select:
-        query = query_line(unique[0], unique[1], i)
-        query_lst.append(query)
-    return query_lst
-
-
-def run_cypher_command(df, col):
-    """
-    Objective: Automate the task of running Cypher commands in Neo4j Desktop
-    :param df: csv file
-    :param col: csv column name
-    :return: Run cypher commands in Neo4j Desktop
-    """
-    graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
-    queries = get_query(df, col)
-    for queue in queries:
-        graph.evaluate(queue)
-
-
+    def cypher_command(self, df, col):
+        """
+        Objective: Automate the task of running Cypher commands in Neo4j Desktop
+        :param df: csv file
+        :param col: csv column name
+        :return: Run cypher commands in Neo4j Desktop
+        """
+        graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+        queries = Cypher.get_query(df, col)
+        for queue in queries:
+            graph.evaluate(queue)
 
 # run_cypher_command(t.file, "target")
 # run_cypher_command(t.file, "algorithm")
 # run_cypher_command(pd.read_csv('ml_results2.csv'), "dataset")
 # run_cypher_command(t.file, "algorithm")
 # run_cypher_command(t.file, "tuned")
-# queries = get_query(t.data, "feat_meth")
-# for queue in queries:
-#     graph.evaluate(queue)
-
-
-# a = t.query("dataset")
-# for i in selected:
-#     query = test_apoc(a[0], a[1], i)
-# print(a[0])
-# print(query)

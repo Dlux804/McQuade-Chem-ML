@@ -2,11 +2,10 @@ import pandas as pd
 import numpy as np
 from graph import params
 """
-Objective: Make dataframes that will contain names 
-            and labels for knowledge graphs using a dataframe that only has values 
+    Main goal: Make dataframes that will contain labels for the ml results and paramters in the csv containing machine
+                learning results. We will then use these labels to create nodes for our knowledge graphs
 """
 
-add_col = ["Run", "Results"]
 
 
 def rotated(array_2d):
@@ -24,10 +23,12 @@ class Labels:
     @staticmethod
     def model_label_tolist(csv):
         """
-        Objective: Create lists of all the labels I want to make from our ml results inside the csv. The goal is to make
-        labels for the csv that contains ml(machine learning) results.
+        Objective: Create lists of all the labels and headers from our ml results' csv.
         :param csv: csv file
-        :return:
+        :return header: List of all columns we need to make the dataframe that contains all the labels
+        :return label_lst: List of lists of all the labels created from the headers.
+                           This will later be used to make a dataframe
+
         """
         pre_df = pd.read_csv(csv)  # Read csv
         df = pre_df.dropna()  # Drop empty rows("Untuned results).
@@ -43,82 +44,87 @@ class Labels:
         label_lst = []  # List of lists of all the labels
         for i in header:  # Enumerate over all column headers
             series = new_df[i]
-            lst = []
+            lst = []  # list for every enumeration
             label = i + '#'  # Attach a # symbol to the header name
             j = 0
             for row in series:  # Enumerate over all values of a column
                 new_label = label + str(j)
                 j = j + 1
-                lst.append(new_label)  # list for every enumeration
-            label_lst.append(lst)  # Master list
+                lst.append(new_label)  # append list for every enumeration
+            label_lst.append(lst)  # List of lists for every enumeration
         return header, label_lst
 
     @staticmethod
     def param_label_tolist(csv, algor):
         """
 
-        :param csv:
-        :param algor:
-        :return:
+        Objective: Create lists of all the labels and headers specifically for parameters from our ml results' csv.
+        :param csv: csv file
+        :param algor: name of the algorithm
+        :return header: List of all columns we need to make the dataframe that contains all the labels
+        :return label_lst: List of lists of all the labels created using the header.
+                           This will later be used to make a dataframe
         """
-        param = params.Params()
-        df = param.param_df(csv, algor)
-        header = df.columns.tolist()  # List of all columns in dataframe
+        param = params.Params()  # Initiate class intance
+        df = param.param_df(csv, algor)  # Acquire dataframe with all the necessary column headers
+        header = df.columns.tolist()  # List of all columns in dataframe  # Get the header
         # print(header)
         label_lst = []  # List of lists of all the labels
-        for i in header:
+        for i in header:  # Enumerate over all column headers
             series = df[i]
-            lst = []
-            label = i + '#'
+            lst = []  # list for every enumeration
+            label = i + '#'  # Attach a # symbol to the header name
             j = 0
-            for row in series:
+            for row in series:  # Enumerate over all values of a column
                 new_label = label + str(j)
                 j = j + 1
-                lst.append(new_label)
-            label_lst.append(lst)
+                lst.append(new_label)  # append list for every enumeration
+            label_lst.append(lst)  # List of lists for every enumeration
         return header, label_lst
 
     @staticmethod
     def label_df(header, label_lst):
         """
-
-        :param header:
-        :param label_lst:
+        Objective: Put headers and labels together into one dataframe
+        :param header: list of all the column headers
+        :param label_lst: list of all the labels created from the headers
         :return:
         """
-        rotated_lst = list(rotated(label_lst))
-        array_rotate = np.array(rotated_lst)
-        header_lst = []
+        rotated_lst = list(rotated(label_lst))  # Rotate list of lists -90 degrees so it can line up with the columns
+        array_rotate = np.array(rotated_lst)  # Turn into array
+        header_lst = []  # List of all the header
         for i in header:
-            new_item = i + 'Run#'
-            header_lst.append(new_item)
-        final_df = pd.DataFrame(array_rotate, columns=header_lst)
+            new_item = i + 'Run#'  # Attach a Run# to all the header
+            header_lst.append(new_item)  # Append new header list
+        final_df = pd.DataFrame(array_rotate, columns=header_lst)  # Make dataframe using the created labels and headers
         return final_df
 
 
 def label_model_todf(csv):
     """
-
-    :param csv:
-    :return:
+    Objective: Add the Run# and Result# column to the dataframes with all the labels for ml results
+    :param csv: csv file
+    :return: results_df: This is the final dataframe that contains all the labels needed to make the knowledge graph
+                            for ml results
     """
-    header, label_lst = Labels.model_label_tolist(csv)
-    df = Labels.label_df(header, label_lst)
-    enum_col = df["algorithmRun#"]
-    header_lst = []
-    for i in add_col:
-        num = 0
-        lst = []
-        label = i + " #"
-        for row in enum_col:
-            new_label = label + str(num)
-            num = num + 1
-            lst.append(new_label)
-        header_lst.append(lst)
-    rotated_lst = list(rotated(header_lst))
+    add_col = ["Run", "Results"]  # Names of the two columns we wish to add
+    header, label_lst = Labels.model_label_tolist(csv)  # Create headers and labels lists
+    df = Labels.label_df(header, label_lst)  # Make a dataframe that contains all the labels created
+    enum_col = df["algorithmRun#"]  # Use one of the columns in the dataframe to enumerate
+    header_lst = []  # New header list
+    for i in add_col:  # Enumerate over the 2 new headers
+        num = 0  # Start at 0
+        lst = []  # List that will contain new labels
+        label = i + " #"  # Add the symbol #
+        for row in enum_col:  # Enumerate over the number of rows that we have
+            new_label = label + str(num)  # Add the number
+            num = num + 1  # Add 1
+            lst.append(new_label)  # Append lables into list
+        header_lst.append(lst)  # Make list of lists
+    rotated_lst = list(rotated(header_lst))  # Rotate list of lists
     array_rotate = np.array(rotated_lst)
-    add_df = pd.DataFrame(array_rotate, columns=add_col)
-    results_df = pd.concat([df, add_df], axis=1)
+    add_df = pd.DataFrame(array_rotate, columns=add_col)  # Make a dataframe using the new labels
+    results_df = pd.concat([df, add_df], axis=1)  # Concat 2 dataframes to make a master dataframe
     # final_df = results_df.assign(algorithm=algo_lst)
     # print(results_df)
     return results_df
@@ -127,33 +133,30 @@ def label_model_todf(csv):
 def label_param_todf(csv, algor):
     """
 
-    :param csv:
-    :param algor
-    :return:
+    Objective: Add the Run# and Result# column to the dataframes with all the labels for parameters
+    :param csv: csv file
+    :param algor: algorith
+    :return: results_df: This is the final dataframe that contains all the labels needed to make the knowledge graph
+                            for parameters
     """
-    header, label_lst = Labels.param_label_tolist(csv, algor)
-    df = Labels.label_df(header, label_lst)
-    enum_col = df["algorithmRun#"]
-    header_lst = []
-    for i in add_col:
-        num = 0
-        lst = []
-        label = i + " #"
-        for row in enum_col:
-            new_label = label + str(num)
-            num = num + 1
-            lst.append(new_label)
-        header_lst.append(lst)
-    rotated_lst = list(rotated(header_lst))
+    add_col = ["Run", "Results"]  # Names of the two columns we wish to add
+    header, label_lst = Labels.param_label_tolist(csv, algor)  # Create headers and labels lists
+    df = Labels.label_df(header, label_lst)  # Make a dataframe that contains all the labels created
+    enum_col = df["algorithmRun#"]  # Use one of the columns in the dataframe to enumerate
+    header_lst = []  # New header list
+    for i in add_col:  # Enumerate over the 2 new headers
+        num = 0  # Start at 0
+        lst = []  # List that will contain new labels
+        label = i + " #"  # Add the symbol #
+        for row in enum_col:  # Enumerate over the number of rows that we have
+            new_label = label + str(num)  # Add the number
+            num = num + 1  # Add 1
+            lst.append(new_label)  # Append lables into list
+        header_lst.append(lst)  # Make list of lists
+    rotated_lst = list(rotated(header_lst))  # Rotate list of lists
     array_rotate = np.array(rotated_lst)
-    add_df = pd.DataFrame(array_rotate, columns=add_col)
-    results_df = pd.concat([df, add_df], axis=1)
+    add_df = pd.DataFrame(array_rotate, columns=add_col) # Make a dataframe using the new labels
+    results_df = pd.concat([df, add_df], axis=1)  # Concat 2 dataframes to make a master dataframe
     # print(results_df)
     # results_df.to_csv('test_gdb.csv')
     return results_df
-
-
-# header, label_lst = Labels.model_label_tolist('ml_results3.csv')
-# label_param_todf('ml_results3.csv', "gdb")
-
-# label_model_todf('ml_results3.csv')

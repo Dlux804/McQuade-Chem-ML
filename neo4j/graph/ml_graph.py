@@ -4,9 +4,8 @@ from graph import graph_dataframes as gd
 
 
 class MlGraph:
-    def __init__(self, csv, algor):
+    def __init__(self, csv):
         self.csv = csv
-        self.algor = algor
 
     def graph_model(self):
         """
@@ -173,7 +172,7 @@ class MlGraph:
         #
         graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
         graph_df = gd.GraphDataframe()
-        label_df = graph_df.label_dataframe(self.csv, algor)
+        label_df = graph_df.param_dataframe(self.csv, algor)
         param_dct = label_df.to_dict('records')  # Dict of dataframe for ml parameters
         for i in range(len(param_dct)):
             # graph params
@@ -232,7 +231,7 @@ class MlGraph:
         """
         graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
         graph_df = gd.GraphDataframe()
-        label_df = graph_df.label_dataframe(self.csv, algor)
+        label_df = graph_df.param_dataframe(self.csv, algor)
         param_dct = label_df.to_dict('records')  # Dict of dataframe for ml parameters
         for i in range(len(param_dct)):
             print('Creating Relationships Number ' + str(i))
@@ -282,7 +281,7 @@ class MlGraph:
         """
         graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
         graph_df = gd.GraphDataframe()
-        label_df = graph_df.label_dataframe(self.csv, algor)
+        label_df = graph_df.param_dataframe(self.csv, algor)
         param_dct = label_df.to_dict('records')  # Dict of dataframe for ml parameters
         for i in range(len(param_dct)):
             tx = graph.begin()

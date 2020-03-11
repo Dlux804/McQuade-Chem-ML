@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from graph import extract_params as ep
+from graph import params
 """
 Objective: Make dataframes that will contain names 
             and labels for knowledge graphs using a dataframe that only has values 
@@ -61,7 +61,7 @@ class Labels:
         :param algor:
         :return:
         """
-        params = ep.Params()
+        params = params.Params()
         df = params.param_df(csv, algor)
         header = df.columns.tolist()  # List of all columns in dataframe
         # print(header)

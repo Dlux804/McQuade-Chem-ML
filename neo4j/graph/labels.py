@@ -61,8 +61,8 @@ class Labels:
         :param algor:
         :return:
         """
-        params = params.Params()
-        df = params.param_df(csv, algor)
+        param = params.Params()
+        df = param.param_df(csv, algor)
         header = df.columns.tolist()  # List of all columns in dataframe
         # print(header)
         label_lst = []  # List of lists of all the labels

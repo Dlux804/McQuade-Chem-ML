@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import extract_params as ep
+from graph import extract_params as ep
 """
 Objective: Make dataframes that will contain names 
             and labels for knowledge graphs using a dataframe that only has values 

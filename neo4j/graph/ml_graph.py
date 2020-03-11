@@ -1,12 +1,12 @@
 import pandas as pd
 from py2neo import Graph, Node, Relationship
-import graph_dataframes as gd
-import cypher
+from graph import graph_dataframes as gd
 
 
 class MlGraph:
-    def __init__(self, csv):
+    def __init__(self, csv, algor):
         self.csv = csv
+        self.algor = algor
 
     def graph_model(self):
         """

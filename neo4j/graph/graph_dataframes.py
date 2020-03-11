@@ -22,8 +22,14 @@ class GraphDataframe:
 
     @staticmethod
     def param_dataframe(csv, algor):
+        """
+
+        :param csv:
+        :param algor:
+        :return:
+        """
         param_df = params.Params().param_df(csv, algor)
-        label_df = labels_param_todf(csv, algor)
+        label_df = labels.label_param_todf(csv, algor)
         final_df = pd.concat([param_df, label_df], axis=1)
         print("Final Label Dataframe for Graphing")
         # full_labeldf.to_csv('label_test.csv')

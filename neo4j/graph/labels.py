@@ -3,9 +3,15 @@ import numpy as np
 from graph import params
 """
     Main goal: Make dataframes that will contain labels for the ml results and paramters in the csv containing machine
-                learning results. We will then use these labels to create nodes for our knowledge graphs
+                learning results. We will then use these labels to create nodes for our knowledge graphs.
+    Thought Process: We use the column headers from our csv as the basis to make our labels. First, for every n runs, 
+                     we need an "#n" attached to the header as values for our new dataframe. Then we attach "Run#" to 
+                     the headers to make new headers for said dataframe. We need to make a dataframe of that kind for
+                     the whole model and for the tuned parameters
+                     Example: r2_avgRun# (Column headers): r2_avg#0, r2_avg#1, r2_avg#n, ... (Column values) 
+                    
+                     . 
 """
-
 
 
 def rotated(array_2d):

@@ -41,8 +41,9 @@ class Labels:
         # df.to_csv('drop.csv')
         algo_lst = df["algorithm"].tolist()  # I want to keep the algorithm column so we can select rows by algorithm
         col_lst = df.columns.tolist()  # Turn df headers to list
-        col = col_lst[0:10]  # Unused column
+        col = col_lst[0:11]  # Unused column
         new_df = df.drop(columns=col)  # Drop unused column
+        print(new_df)
         new_df["algorithm"] = algo_lst  # Attach the column that contains all algorithms
         # print(new_df)
         header = new_df.columns.tolist()  # List of all columns that we need in the dataframe
@@ -58,7 +59,7 @@ class Labels:
                 j = j + 1
                 lst.append(new_label)  # append list for every enumeration
             label_lst.append(lst)  # List of lists for every enumeration
-        return header, label_lst
+        return header, label_lst, algo_lst
 
     @staticmethod
     def param_label_tolist(csv, algor):
@@ -106,17 +107,21 @@ class Labels:
         return final_df
 
 
-def label_model_todf(csv):
+def label_model_todf(csv, algor):
     """
     Objective: Add the Run# and Result# column to the dataframes with all the labels for ml results
     :param csv: csv file
+    :param algor: algorithm
     :return: results_df: This is the final dataframe that contains all the labels needed to make the knowledge graph
                             for ml results
     """
     add_col = ["Run", "Results"]  # Names of the two columns we wish to add
-    header, label_lst = Labels.model_label_tolist(csv)  # Create headers and labels lists
+    header, label_lst, algor_list = Labels.model_label_tolist(csv)  # Create headers and labels lists
     df = Labels.label_df(header, label_lst)  # Make a dataframe that contains all the labels created
-    enum_col = df["algorithmRun#"]  # Use one of the columns in the dataframe to enumerate
+    new_df = df.assign(algorithm=algor_list)
+    df_algor = new_df[new_df.algorithm == algor]  # Select results with a specific algorithm
+    df_reset = df_algor.reset_index(drop=True)
+    enum_col = df_reset["algorithmRun#"]  # Use one of the columns in the dataframe to enumerate
     header_lst = []  # New header list
     for i in add_col:  # Enumerate over the 2 new headers
         num = 0  # Start at 0
@@ -130,8 +135,9 @@ def label_model_todf(csv):
     rotated_lst = list(rotated(header_lst))  # Rotate list of lists
     array_rotate = np.array(rotated_lst)
     add_df = pd.DataFrame(array_rotate, columns=add_col)  # Make a dataframe using the new labels
-    results_df = pd.concat([df, add_df], axis=1)  # Concat 2 dataframes to make a master dataframe
+    results_df = pd.concat([df_reset, add_df], axis=1)  # Concat 2 dataframes to make a master dataframe
     # final_df = results_df.assign(algorithm=algo_lst)
+    results_df.to_csv('model_label.csv')
     # print(results_df)
     return results_df
 

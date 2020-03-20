@@ -8,25 +8,7 @@ import pandas as pd
 from Neo4j.BulkChem.backends import get_testing_df, get_prop_from_smiles_df, __timer__
 
 
-"""
-
-pKa, LogS, LogP, Kow, Water-energy = PLLKWE
-
-The point of this script to machine learning the properties listed above using Barzilay_Predict. We have not
-looked into the predicting power or usability of the Barzilay scripts, perhaps we can analyze the data a different
-way other than RSME and R^2. This scripts attempts to allow analysis of the scripts using Neo4j to visualize
-the data. 
-
-This script will ML the different properties (data in training directory as training files) onto the chemicals
-found in the bulk chemicals. Then relate molecules that have extremely similar values, difference in 0.05 percent,
-for a property. The idea is if they have a similar value for a property, they must be similar in a way. Even if 
-properties do not make much physical sense, such as pKa for D.D.T., the computer might be able to find relationships a
-person can not find. 
-
-Then the real test is the number of hops needed for the shortest path between two molecules is the determination for
-how similar they are. Direct connections mean very related, no paths at all mean absolutely no relationships.
-
-"""
+# pIC50, LogS, LogP, Kow, Water-energy = PLLKWE
 
 class __compare__:
     ##################################
@@ -67,7 +49,7 @@ class __compare__:
         def __init__(self, graph, *files):
 
             self.graph = graph
-            data_types = ['pka', 'log_p', 'log_s', 'kow', 'water-energy']
+            data_types = ['pic50', 'log_p', 'log_s', 'kow', 'water-energy', 'pka']
 
             print('Organizing Files')
             temp_files = []
@@ -104,14 +86,14 @@ class __compare__:
     ##################################
 
     def compare_score(self, testing_score, testing_node, current_score, current_node, datatype):
-        sim_score = abs(testing_score - current_score)  # Determination and create relationships
-        if 0.005 > sim_score:
+        sim_score = abs(testing_score - current_score)
+        if 0.01 > sim_score:
             Rel = Relationship(current_node, 'similar_{}'.format(datatype), testing_node)
             self.tx.create(Rel)
 
     def __main__(self):
 
-        data_types = ['pka', 'log_p', 'log_s', 'kow', 'water-energy']
+        data_types = ['pic50', 'log_s', 'log_p', 'kow', 'water-energy', 'pka']
 
         print('Finding Relationships...')
         for node in self.raw_molecule_nodes:
@@ -129,14 +111,14 @@ class __compare__:
                 else:
                     testing_df = get_testing_df(i, self.raw_molecule_nodes, self.max_nodes_in_ram, self.counter)
                     testing_df.to_csv('test.csv', index=False)
-                    for data_type in data_types:  # Generate relationships
+                    for data_type in data_types:
                         testing_df['canonical_smiles'].map(lambda x: self.compare_score(
                             get_prop_from_smiles_df(testing_df, x, data_type),
                             get_prop_from_smiles_df(testing_df, x, 'Node'),
                             node_dict[data_type],
                             node, data_type
                         ))
-                    self.tx.commit()  # Commit Relationships
+                    self.tx.commit()
             time_for_batch = clock() - time_for_batch
             time_left_secs, self.m, self.o, self.time_df = __timer__(self.o, self.m, self.counter, self.len_nodes,
                                                                      self.molecules_remaining,

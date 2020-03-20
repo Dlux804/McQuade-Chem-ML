@@ -1,0 +1,41 @@
+input_class,chemical_name,smiles
+Bulk,sulfuric acid ,OS(=O)(=O)O
+Bulk,nitrogen ,N#N
+Bulk,ethylene ,C=C
+Bulk,oxygen ,O=O
+Bulk,propylene ,CC=C
+Bulk,chlorine ,ClCl
+Bulk,ethylene dichloride ,C(CCl)Cl
+Bulk,phosphoric acid ,OP(=O)(O)O
+Bulk,ammonia ,N
+Bulk,sodium hydroxide ,[OH-].[Na+]
+Bulk,benzene ,C1=CC=CC=C1
+Bulk,nitric acid ,[N+](=O)(O)[O-]
+Bulk,ammonium nitrate ,[NH4+].[N+](=O)([O-])[O-]
+Bulk,ethylbenzene ,CCC1=CC=CC=C1
+Bulk,urea ,C(=O)(N)N
+Bulk,styrene ,C=CC1=CC=CC=C1
+Bulk,hydrochloric acid ,Cl
+Bulk,ethylene oxide ,C1CO1
+Bulk,cumene ,CC(C)C1=CC=CC=C1
+Bulk,ammonium sulfate ,[NH4+].[NH4+].[O-]S(=O)(=O)[O-]
+Bulk,"1,3-butadiene ",C=CC=C
+Bulk,acrylonitrile ,C=CC#N
+Bulk,hydrogen ,[HH]
+Bulk,vinyl acetate ,CC(=O)OC=C
+Bulk,titanium dioxide,O=[Ti]=O
+Bulk,aluminum sulfate ,[O-]S(=O)(=O)[O-].[O-]S(=O)(=O)[O-].[O-]S(=O)(=O)[O-].[Al+3].[Al+3]
+Bulk,aniline ,C1=CC=C(C=C1)N
+Bulk,sodium chlorate ,[O-]Cl(=O)=O.[Na+]
+Bulk,sodium sulfate ,[O-]S(=O)(=O)[O-].[Na+].[Na+]
+Dangerous,Ethidium Bromide,CC[N+]1=C2C=C(C=CC2=C3C=CC(=CC3=C1C4=CC=CC=C4)N)N.[Br-]
+Dangerous,Dimethylcadmium,[CH3-].[CH3-].[Cd+2]
+Dangerous,VX,CCOP(=O)(C)SCCN(C(C)C)C(C)C
+Dangerous,Sulfur Trioxide,O=S(=O)=O
+Dangerous,Batrachotoxin,CC1=CNC(=C1C(=O)OC(C)C2=CCC34C2(CC(C56C3=CCC7C5(CCC(C7)(O6)O)C)O)CN(CCO4)C)C
+Dangerous,Dioxygen Difluoride,O(OF)F
+Dangerous,Chlorine Trifluoride,FCl(F)F
+Expensive Drug,Demser (metyrosine),CC(CC1=CC=C(C=C1)O)(C(=O)O)N
+Expensive Drug,Folotyn (pralatrexate),C#CCC(CC1=CN=C2C(=N1)C(=NC(=N2)N)N)C3=CC=C(C=C3)C(=O)NC(CCC(=O)O)C(=O)O
+Expensive Drug,Carbaglu (carglumic acid),C(CC(=O)O)C(C(=O)O)NC(=O)N
+Expensive Drug,Ravicti (glycerol phenylbutyrate),C1=CC=C(C=C1)CCCC(=O)OCC(COC(=O)CCCC2=CC=CC=C2)OC(=O)CCCC3=CC=CC=C3

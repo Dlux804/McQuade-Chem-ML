@@ -137,7 +137,7 @@ def label_model_todf(csv, algor):
     add_df = pd.DataFrame(array_rotate, columns=add_col)  # Make a dataframe using the new labels
     results_df = pd.concat([df_reset, add_df], axis=1)  # Concat 2 dataframes to make a master dataframe
     # final_df = results_df.assign(algorithm=algo_lst)
-    results_df.to_csv('model_label.csv')
+    # results_df.to_csv('model_label.csv')
     # print(results_df)
     return results_df
 

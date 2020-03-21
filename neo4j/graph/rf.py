@@ -102,8 +102,6 @@ def rf(csv, algor="rf"):
         be = Relationship(feat_meth, "contributes to", final_results)
         tx.merge(be)
         loop_param = param_dct[i]
-        regressor = Node("regress", regressor=loop_param['regressor'])
-        tx.create(regressor)
         bootstrap_label = Node("bootstrap_label", bootstrap_labels=loop_param['bootstrapRun#'],
                                bootstraps=loop_param['bootstrap'])
         tx.create(bootstrap_label)

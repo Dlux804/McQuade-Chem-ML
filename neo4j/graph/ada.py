@@ -9,7 +9,7 @@ def ada(csv, algor='ada'):
     :return:
     """
 
-    graph = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+    graphs = Graph("bolt://localhost:7687", user="neo4j", password="1234")
     graph_df = gd.GraphDataframe()
     label_df = graph_df.param_dataframe(csv, algor)
     model_df = graph_df.model_dataframe(csv, algor)
@@ -17,7 +17,7 @@ def ada(csv, algor='ada'):
     param_dct = label_df.to_dict('records')  # Dict of dataframe for ml parameters
     model_dicts = model_df.to_dict('records')
     for i in range(len(param_dct)):
-        tx = graph.begin()
+        tx = graphs.begin()
         ml_dict = model_dicts[i]
         print('Creating model nodes number: ' + str(i))
         runs = Node("run_num", run=ml_dict['Run'])

@@ -102,3 +102,24 @@ def knn(csv, algor="knn"):
         be = Relationship(feat_meth, "contributes to", final_results)
         tx.merge(be)
         loop_param = param_dct[i]
+        leaf_size_label = Node("leaf_size_label", leafsize_label=loop_param['leaf_sizeRun#'],
+                               leaf_size=loop_param['leaf_size'])
+        tx.create(leaf_size_label)
+        n_neighbors_label = Node("n_neighbors_label", nneighbors_label=loop_param['n_neighborsRun#'],
+                                 n_neighbors=loop_param['n_neighbors'])
+        tx.create(n_neighbors_label)
+        p_label = Node("p_label", p_labels=loop_param['pRun#'], p=loop_param['p'])
+        tx.create(p_label)
+        weights_label = Node("weights_label", weights_labels=loop_param['weightsRun#'],
+                             weights=loop_param['weights'])
+        tx.create(weights_label)
+        bf = Relationship(regressor, "has", n_neighbors_label)
+        tx.merge(bf)
+        bg = Relationship(regressor, "has", p_label)
+        tx.merge(bg)
+        bh = Relationship(regressor, "has", weights_label)
+        tx.merge(bh)
+        bi = Relationship(regressor, "has", leaf_size_label)
+        tx.merge(bi)
+        tx.commit()
+    return model_df

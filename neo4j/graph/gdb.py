@@ -104,8 +104,6 @@ def gdb(csv, algor="gdb"):
         tx.merge(be)
         print('Creating param number: ' + str(i))
         loop_param = param_dct[i]
-        regressor = Node("regress", regressor=loop_param['regressor'])
-        tx.create(regressor)
         learning_rate_label = Node("learningrate_label", learningrate_labels=loop_param["learning_rateRun#"],
                                    learning_rates=loop_param['learning_rate'])
         tx.create(learning_rate_label)

@@ -71,7 +71,7 @@ def merger():
 
     return mdf
 
-mdf = merger()
+# mdf = merger()
 
 
 
@@ -291,7 +291,7 @@ def alg_vs_acc(df):
     plt.show()
     """
 
-alg_vs_acc(mdf)
+# alg_vs_acc(mdf)
 
 
 'Code for stacked 3D bar plot'
@@ -425,28 +425,22 @@ data = {
     # "logP14k.csv": "SMILES",
     "18k-logP.csv": "smiles",
     "ESOL.csv": "smiles",
+    "cmc_smiles_26.csv": "smiles",
     "flashpoint.csv": "smiles",
     # "Lipophilicity-ID.csv": "smiles",
     # # "jak2_pic50.csv": "SMILES",
-    "water-energy.csv" : "smiles"
+    # "water-energy.csv" : "smiles"
     # "pyridine_smi_3.csv" : "smiles"
 }
 
-# xdf = moloverlap(data,3)
+# xdf = moloverlap(data,2)
 # analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
 
 
 
 
-# data = [[5., 25., 50., 20.],
-#   [4., 23., 51., 17.],
-#   [6., 22., 52., 19.]]
-#
-# color_list = ['b', 'g', 'r']
-# gap = .8 / len(data)
-# for i, row in enumerate(data):
-#   X = np.arange(len(row))
-#   plt.bar(X + i * gap, row,
-#     width = gap,
-#     color = color_list[i % len(color_list)])
-#
+with misc.cd('../dataFiles/'): # move to dataset directory
+    cmc = pd.read_csv('cmc_smiles_26.csv')
+    cmc = cmc[:9]
+    print(cmc)
+    analysis.grid_image(cmc, 'cmc_molecules_short', molobj=False)

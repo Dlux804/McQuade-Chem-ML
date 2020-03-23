@@ -5,7 +5,7 @@ from time import time
 import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
 from core import features
-
+from rdkit.Chem import PandasTools
 
 def predict(regressor, train_features, test_features, train_target, test_target):
     """Fit model and predict target values.  Return data frame of actual and predicted
@@ -340,4 +340,54 @@ def plotter(X, Y, filename=None, xlabel='', ylabel=''):
         plt.savefig(filename + '.png')
 
     plt.show()
+
+
+def grid_image(df, filename, molobj=True, smi='smiles'):  # list of molecules to print and substructre to align
+    """
+    Creates and saves grid image of 2D drawings of molecules.
+    Accepts dataframe containing a column titled "Molecule" that contains RDKit molecule objects.
+    Accepts filename as string (without .png) for image file.
+    Returns nothing, saves file in current directory.
+    _____________________________
+    Keyword Arguments:
+    molobj=True, if RDKit MolObj column exists in df.  (Must be headed "Molecule")
+    smi='smiles', if molojb=False then use column titled smi to create MolObj column.
+
+     """
+
+    if not molobj:  # no molobj exists
+        PandasTools.AddMoleculeColumnToFrame(df, smi, 'Molecule', includeFingerprints=True)
+
+    # this code makes multiple images of n molecules.  May be prefered for large sets of molecules.
+
+    # mols = df['Molecule']
+    # # for every molecule
+    # for mol in mols:
+    #     # generate 2D structure
+    #     Chem.Compute2DCoords(mol)
+    #
+    # n = 250  # number of structures per image file
+    #
+    # total = len(mols)  # number of molecules being printed
+    #
+    # # break list into printable sections of size n
+    # mols = [mols[i: i + n] for i in range(0, total, n)]
+    # subcount = 1  # counter for how many sections needed
+    #
+    # for i in mols:  # for every sublist of n molecules do...
+    #     # make the images on grid
+    #     img = Draw.MolsToGridImage(i, molsPerRow=6, subImgSize=(1500, 900), legends=[str(x) for x in range(total)])
+    #
+    #     # Save a sub image
+    #     img.save('mole-grid-' + str(subcount) + '.png')
+    #     subcount = subcount + 1
+
+    # create images of molecules in dataframe
+    mol_image = PandasTools.FrameToGridImage(
+        df, column='Molecule',
+        molsPerRow=3, subImgSize=(800, 400),
+        legends=[str(i + 1) for i in range(len(df['Molecule']))]
+    )
+    mol_image.save(filename + '.png')  # shold use a better naming scheme to avoid overwrites.
+
 

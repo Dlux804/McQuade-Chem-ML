@@ -2,7 +2,7 @@ import pandas as pd
 from rdkit import Chem
 import cirpy
 
-def load_smiles(file, drop=True):
+def load_smiles(file, target, drop=True):
     """ Find SMILES in CSV.  Return DataFrame and Series of SMILES.
 
     Keyword Arguments
@@ -18,8 +18,8 @@ def load_smiles(file, drop=True):
             pass
     # rename the column with SMILES to 'smiles'
     csv = csv.rename(columns={smiles_col.name: "smiles"})
-    if drop: # drop all extra columns
-        csv = csv[['smiles', self.target]]
+    if drop:  # drop all extra columns
+        csv = csv[['smiles', target]]
 
     return csv, smiles_col
 

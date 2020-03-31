@@ -422,14 +422,14 @@ data = {
     # "pyridine_smi_1.csv": "smiles",
     # "pyridine_smi_2.csv": "smiles",
     # "cmc_noadd.csv": "canon_smiles",
-    # "logP14k.csv": "SMILES",
-    "18k-logP.csv": "smiles",
+    "logP14k.csv": "SMILES",
+    # "18k-logP.csv": "smiles",
     "ESOL.csv": "smiles",
-    "cmc_smiles_26.csv": "smiles",
+    # "cmc_smiles_26.csv": "smiles",
     "flashpoint.csv": "smiles",
-    # "Lipophilicity-ID.csv": "smiles",
-    # # "jak2_pic50.csv": "SMILES",
-    # "water-energy.csv" : "smiles"
+    "Lipophilicity-ID.csv": "smiles",
+    "jak2_pic50.csv": "SMILES",
+    "water-energy.csv" : "smiles"
     # "pyridine_smi_3.csv" : "smiles"
 }
 
@@ -438,9 +438,15 @@ data = {
 
 
 
+#
+# with misc.cd('../dataFiles/'): # move to dataset directory
+#     cmc = pd.read_csv('cmc_smiles_26.csv')
+#     cmc = cmc[:9]
+#     print(cmc)
+#     analysis.grid_image(cmc, 'cmc_molecules_short', molobj=False)
 
-with misc.cd('../dataFiles/'): # move to dataset directory
-    cmc = pd.read_csv('cmc_smiles_26.csv')
-    cmc = cmc[:9]
-    print(cmc)
-    analysis.grid_image(cmc, 'cmc_molecules_short', molobj=False)
+for key in data.keys():
+    print(key)
+    datasize(key)
+# string = 'ESOL.csv'
+# datasize(string)

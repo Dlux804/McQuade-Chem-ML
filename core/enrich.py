@@ -79,3 +79,20 @@ with open('featurized-ESOL-header.csv', 'w', newline='') as myfile:
     wr.writerow(header)
 
 
+def apoc_csv(df_list, header_file=True):
+    """Creates files for apoc.import.csv Neo4j import.
+    Accepts list of dataframes that must have the same column headers.
+    If header_file=True , removes header from main csv and creates a header-csv.  """
+"""
+Create a class for neo4j datasets.
+
+Takes as input the file (likely csv), and a tuple containing the column header of the measurement and 
+what the measurement is.  i.e ('expt', logP)
+
+Use the dataset class to create the node file, with optional header file.  Basically done already.
+Use the dataset class to create realationship files for the datasets.  Dataset --[CONTAINS]-> Molecule
+
+Expected challenges:  I could make header files for all molsets because they will have the same features.  Only issue
+is that the measurement columns are called separate things.  I would have to add in a section to rename the exp column.
+Which wouldn't be bad. 
+"""

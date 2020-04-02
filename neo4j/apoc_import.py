@@ -1,5 +1,5 @@
 import pandas as pd
-from core import models
+from core import models, ingest
 from core.misc import cd
 import os
 import csv
@@ -26,6 +26,8 @@ smiles:ID(Molecule-ID),name:STRING,MolWt:INT, logP:FLOAT
 Header for relationship file would look like this
 :START_ID(Molecule-ID),:END_ID(Molecule-ID),solubility:FLOAT
 
+I also want to output an auto generated Cypher command for uploading the data.  
+
 """
 
 # define datasets in dict.
@@ -33,9 +35,9 @@ Header for relationship file would look like this
 # value is tuple of target column name and measured property
 sets = {
         # 'Lipophilicity-ID.csv': ('exp', 'logP'),
-        # 'ESOL.csv': ('water-sol', 'logS'),
-        'water-energy.csv': ('expt', 'hydration_energy')
-        # 'logP14k.csv': ('Kow', 'logP'),
+        'ESOL.csv': ('water-sol', 'logS'),
+        # 'water-energy.csv': ('expt', 'hydration_energy')
+        'logP14k.csv': ('Kow', 'logP'),
         # 'jak2_pic50.csv': ('pIC50', 'pIC50'),
         # 'flashpoint2.csv': ('flashpoint', 'flash_point')
     }
@@ -72,7 +74,7 @@ class dataset:
             model.data = model.data.drop(columns=['RDKit2D_calculated', self.target], axis=1)  # drop old target
         self.data = model.data  # save dataframe to instance
 
-    def nodes(self):
+    def mol_nodes(self):
         """
         Make the nodes file for apoc.import.csv
         """
@@ -90,13 +92,59 @@ class dataset:
         for col in cols:
             head = col + type_dict[types_dict[col].name]
             header.append(head)
-        self.nodes_file = self.data
-        self.nodes_file.columns = header
-        print(self.nodes_file.head(5))
-        self.nodes_file.to_csv('nodes-'+self.file, index=False)
+        self.mol_nodes = self.data
+        self.mol_nodes.columns = header
+        # print(self.nodes_file.head(5))
+        self.mol_node_file = 'mol-nodes-'+self.file
+        self.mol_nodes.to_csv(self.mol_node_file, index=False)
+
+
+    def set_nodes(self):
+        """Make node file for dataset."""
+        with cd('../dataFiles'):  # assumes data file location
+            with open(self.file) as csvfile:
+                fileObject = csv.reader(csvfile)
+                # for row in fileObject:
+                #     print(row)
+                row_count = sum(1 for row in fileObject) - 1  # count number entities
+        # print("row count:", row_count)
+        data = {'prop': [self.measurement], 'title:ID': [self.file], 'size:INT': [row_count]}
+        # print(data)
+
+        self.set_node = pd.DataFrame.from_dict(data)
+        # print(self.set_node)
+        self.set_node_file = 'set-node-' + self.file
+        self.set_node.to_csv(self.set_node_file, index=False)
+
+
+    def rels(self):
+        """ make the relationship file for apoc.import.csv"""
+        with cd('../dataFiles'):  # assumes data file location
+            # rels = pd.read_csv(self.file)
+            rels = ingest.load_smiles(self.file, self.target)[0]
+            print(rels.head(5))
+
+        rels[':START_ID'] = self.file  # add relationship starting point as dataset file name
+        rels = rels.rename(columns={'smiles': ':END_ID'})  # rename column
+
+        # drop every column but start and end ID
+        self.rels = rels[[':START_ID', ':END_ID']]
+
+        # write to file
+        self.rels_file = 'rels-' + self.file
+        self.rels.to_csv(self.rels_file, index=False)
+
+
+    def apoc_cmd(self):
+        """Generate a Cypher command for loading the files created with this class."""
+        print()
+        print("CALL apoc.import.csv(\n[{{fileName: 'file:/{}', labels: ['Molecule']}}, {{fileName: 'file:/{}', labels: ['Dataset']}}],\n[{{fileName: 'file:/{}', type: 'CONTAINS'}}],\n{{}})".format(self.mol_node_file, self.set_node_file, self.rels_file))
 
 
 
-set1 = dataset('water-energy.csv', sets['water-energy.csv'])
+set1 = dataset('ESOL.csv', sets['ESOL.csv'])
 set1.enrich()
-set1.nodes()
+set1.mol_nodes()
+set1.set_nodes()
+set1.rels()
+set1.apoc_cmd()

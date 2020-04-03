@@ -6,6 +6,7 @@ from shutil import copy
 
 def same_image(imageA, imageB):
     def resize_image(image):
+        raw_image = image
         image_file = image.split('/')
         image_file = image_file[len(image_file) - 1]
         image_file = "COMPRE$$ED" + image_file
@@ -19,10 +20,15 @@ def same_image(imageA, imageB):
         background.save(image_file)
         return image_file
 
+
     imageA = resize_image(imageA)
     cv_imageA = cv2.imread(imageA)
     imageB = resize_image(imageB)
     cv_imageB = cv2.imread(imageB)
+    if imageA == imageB:
+        return True
+    os.remove(imageA)
+    os.remove(imageB)
     difference = np.sum(cv2.subtract(cv_imageA, cv_imageB)) / 1296
     if difference < 0.05:
         return True
@@ -32,7 +38,6 @@ def search_for_match(input_file):
     for compound_dir in os.listdir('Raw_Scifinder_Files/printed_scifinder'):
         compound_dir = 'Raw_Scifinder_Files/printed_scifinder/' + compound_dir
         for file in os.listdir(compound_dir):
-            raw_file = file
             file = compound_dir + '/' + file
             if same_image(input_file, file):
                 os.remove(input_file)

@@ -17,39 +17,31 @@ for reaction_dir in os.listdir('reactions'):
         raw_reactant = reactant_url
         reactant_url = reaction_dir + '/reactants/' + reactant_url
         reactant_url = 'http://localhost/' + reactant_url
-        compound = Node("compound", reaction=raw_reactant, image_url=reactant_url)
-        graph.merge(compound, 'compound', 'reaction')
+        compound = Node("compound", compound_name=raw_reactant, image_url=reactant_url)
+        graph.merge(compound, 'compound', 'compound_name')
 
     for product_url in products:
         raw_product = product_url
         product_url = reaction_dir + '/products/' + product_url
         product_url = 'http://localhost/' + product_url
-        compound = Node("compound", reaction=raw_product, image_url=product_url)
-        graph.merge(compound, 'compound', 'reaction')
+        compound = Node("compound", compound_name=raw_product, image_url=product_url)
+        graph.merge(compound, 'compound', 'compound_name')
 
-    neo_reactants = Node("neo_reactants", reaction_ID=raw_reaction_dir)
-    graph.merge(neo_reactants, "neo_reactants", "reaction_ID")
-
-    neo_products = Node("neo_products", reaction_ID=raw_reaction_dir)
-    graph.merge(neo_reactants, "neo_products", "reaction_ID")
-
-    Rel = Relationship(neo_reactants, "produces", neo_products)
-    tx = graph.begin()
-    tx.create(Rel)
-    tx.commit()
+    reaction = Node("reaction", reaction_ID=raw_reaction_dir)
+    graph.merge(reaction, "reaction", "reaction_ID")
 
     matcher = NodeMatcher(graph)
 
     for reactant in reactants:
         reactant_node = matcher.match("compound", reaction=reactant).first()
-        Rel = Relationship(reactant_node, "used_for", neo_reactants)
+        Rel = Relationship(reactant_node, "reactant", reaction)
         tx = graph.begin()
         tx.create(Rel)
         tx.commit()
 
     for product in products:
         product_node = matcher.match("compound", reaction=product).first()
-        Rel = Relationship(neo_products, "produces", product_node)
+        Rel = Relationship(reaction, "product", product_node)
         tx = graph.begin()
         tx.create(Rel)
         tx.commit()

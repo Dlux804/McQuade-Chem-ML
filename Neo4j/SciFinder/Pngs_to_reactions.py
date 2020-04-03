@@ -96,18 +96,6 @@ for compound_dir in compound_dirs:
             file = fetch_file(i)
             if file.split('.')[1] == 'ppm':
                 i = i + 1
-            elif check_for_odd_reactant(i):
-                reactants.append(file)
-                i = i + 1
-                while True:
-                    if check_for_odd_reactant(i):
-                        reactants.append(fetch_file(i))
-                        i = i + 1
-                    else:
-                        break
-                first_compound = False
-                reactants.append(fetch_file(i))
-                i = i + 1
             elif first_compound:
                 reactants.append(file)
                 first_compound = False
@@ -128,6 +116,16 @@ for compound_dir in compound_dirs:
             file = fetch_file(i)
             if file.split('.')[1] == 'ppm':
                 i = i + 1
+            elif check_for_odd_reactant(i):
+                reactants.append(file)
+                i = i + 1
+                while True:
+                    if check_for_odd_reactant(i):
+                        reactants.append(fetch_file(i))
+                        i = i + 1
+                    else:
+                        break
+                first_compound = False
             elif first_compound:
                 products.append(file)
                 first_compound = False

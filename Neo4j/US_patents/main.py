@@ -1,13 +1,13 @@
 from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs, clean_up_checker_files
-from Neo4j.US_patents.file_to_neo4j import file_to_neo4j
+from Neo4j.US_patents import no_solvents_csv_to_neo, yes_solvents_csv_to_neo
 import pandas as pd
 import os
 
 US_patents_directory = 'C:/Users/User/Desktop/5104873'
 
 '''
-The above line should be the only line you should only have to edit to make this script work. For the US patents 
-directory, make sure you only have the folders 'grants' and 'applications' saved in the directory. The script is
+For the US patents directory, 
+make sure you only have the folders 'grants' and 'applications' saved in the directory. The script is
 only designed to work for a directory containing only those unzipped folders. The get the folders, unzip the main folder
 and unzip the folders named '2001_Sep2016_USPTOapplications_smiles.7z' and '1976_Sep2016_USPTOgrants_smiles.7z' using 
 a program like 7-zip. Afterwards you should be left with a directory named '5104872' and the folders 'grants' and
@@ -20,8 +20,8 @@ Then afterward, start up a new neo4j graph with the password as 'password' and t
 '''
 
 # US_grants_directory_to_csvs(US_patents_directory)  # This is here to convert the xml files to csv files
-# clean_up_checker_files(US_patents_directory)  # This is here to clean up checker files if you want to recreate graph
 
+clean_up_checker_files(US_patents_directory)  # This is here to clean up checker files if you want to recreate graph
 for main_directories in os.listdir(US_patents_directory):  # Main loop, inserting the csv files
     main_directories = US_patents_directory + '/' + main_directories
     for directories in os.listdir(main_directories):
@@ -33,7 +33,8 @@ for main_directories in os.listdir(US_patents_directory):  # Main loop, insertin
                 print(directory + ": There are {} files left in directory".format(str(i-counter)))
                 file = directory + '/' + file
                 try:
-                    file_to_neo4j(file)
+                    # no_solvents_csv_to_neo.file_to_neo4j(file)  # No solvent as nodes
+                    yes_solvents_csv_to_neo.file_to_neo4j(file)   # Yes solvents as nodes
                 except pd.errors.EmptyDataError:
                     pass
                 counter = counter + 1

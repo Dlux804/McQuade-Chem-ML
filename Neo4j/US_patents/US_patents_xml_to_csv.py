@@ -119,3 +119,16 @@ def US_grants_directory_to_csvs(path_to_directory):
                         xml_to_csv(input_file, output_file)
                     except:
                         pass
+
+
+def clean_up_checker_files(path_to_directory):
+    main_directories = os.listdir(path_to_directory)
+    for main_directory in main_directories:
+        main_directory = path_to_directory + "/" + main_directory
+        for directory in os.listdir(main_directory):
+            directory = main_directory + '/' + directory
+            for file in os.listdir(directory):
+                file = directory + '/' + file
+                split_file = file.split('.')
+                if split_file[len(split_file)-1] == 'checker':
+                    os.remove(file)

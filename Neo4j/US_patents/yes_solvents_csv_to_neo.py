@@ -53,7 +53,7 @@ class file_to_neo4j:
                 produces = Relationship.type('produces')
                 self.tx.merge(produces(reaction_node, product))
             for solvent in self.main_reaction_nodes['solvents']:
-                dissolves = Relationship.type('solvent_for_reaction')
+                dissolves = Relationship.type('spectates')
                 self.tx.merge(dissolves(solvent, reaction_node))
         self.tx.commit()
         open(self.file + ".checker", "a").close()

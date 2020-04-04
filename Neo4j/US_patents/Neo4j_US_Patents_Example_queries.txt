@@ -1,4 +1,7 @@
-	
+
+These example queries are for the 'no_solvents_csv_to_neo' schema. Queries
+for "yes_solvents_csv_to_neo" are being developed.
+
 	This will retrive the schema that was used for the knowledge graph
 ---------------------------------------------------------------------------------
 CALL db.schema()

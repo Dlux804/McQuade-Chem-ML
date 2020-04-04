@@ -99,7 +99,7 @@ class dataset:
         self.mol_nodes.to_csv(self.mol_node_file, index=False)
 
 
-    def set_nodes(self):
+    def dset_nodes(self):
         """Make node file for dataset."""
         with cd('../dataFiles'):  # assumes data file location
             with open(self.file) as csvfile:
@@ -145,6 +145,6 @@ class dataset:
 set1 = dataset('ESOL.csv', sets['ESOL.csv'])
 set1.enrich()
 set1.mol_nodes()
-set1.set_nodes()
+set1.dset_nodes()
 set1.rels()
 set1.apoc_cmd()

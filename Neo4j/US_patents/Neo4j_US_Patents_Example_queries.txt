@@ -1,0 +1,44 @@
+	
+	This will retrive the schema that was used for the knowledge graph
+---------------------------------------------------------------------------------
+CALL db.schema()
+---------------------------------------------------------------------------------
+
+
+	This will return how many *unique compounds are in the database
+	(Compounds are only unique if they have a smiles string or a
+	common name, such as 'ice water')
+---------------------------------------------------------------------------------
+MATCH (n:compound)
+RETURN count(n) as count
+---------------------------------------------------------------------------------
+
+
+	This will find and get two random compounds, and look for the
+	shortest path between them. The only cirtica is that compound
+	a and compound b can not be the same compound
+---------------------------------------------------------------------------------
+MATCH path = shortestPath((a:compound)-[*..50]->(b:compound))
+WHERE a.smiles <> b.smiles
+RETURN path LIMIT 50
+---------------------------------------------------------------------------------
+
+
+	This will take a compound, and look for all the different ways to
+	systhesis the compound. 
+---------------------------------------------------------------------------------
+MATCH path = shortestPath((a:compound)-[*..3]->(b:compound))
+WHERE a.smiles <> b.smiles
+AND b.smiles = "CC(C)c1ccc(C(=O)CCCCl)cc1"
+RETURN path LIMIT 5
+---------------------------------------------------------------------------------
+
+
+	This will take a compound, and look for all the reactions it play
+	a part of. 
+---------------------------------------------------------------------------------
+MATCH path = shortestPath((a:compound)-[*..3]->(b:compound))
+WHERE a.smiles <> b.smiles
+AND a.smiles = "O=C1CCC(=O)N1Br"
+RETURN path LIMIT 5
+---------------------------------------------------------------------------------

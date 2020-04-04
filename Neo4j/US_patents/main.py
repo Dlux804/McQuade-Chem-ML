@@ -9,7 +9,7 @@ US_patents_directory = 'C:/Users/User/Desktop/5104873'
 For the US patents directory, 
 make sure you only have the folders 'grants' and 'applications' saved in the directory. The script is
 only designed to work for a directory containing only those unzipped folders. The get the folders, unzip the main folder
-and unzip the folders named '2001_Sep2016_USPTOapplications_smiles.7z' and '1976_Sep2016_USPTOgrants_smiles.7z' using 
+and unzip the folders named '2001_Sep2016_USPTOapplications_cml.7z' and '1976_Sep2016_USPTOgrants_cml.7z' using 
 a program like 7-zip. Afterwards you should be left with a directory named '5104872' and the folders 'grants' and
 'applications' inside of it. With all folders unzipped, and the rest deleted.
 

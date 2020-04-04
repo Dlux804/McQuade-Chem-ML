@@ -1,0 +1,11 @@
+algorithm,dataset,target,feat_meth,feat_time,regressor,r2_avg,r2_std,mse_avg,mse_std,rmse_avg,rmse_std,time_avg,time_std
+gdb,Lipophilicity-ID.csv,exp,[4],1.1249597072601318,"GradientBoostingRegressor(alpha=0.9, ccp_alpha=0.0, criterion='friedman_mse',
+                          init=None, learning_rate=0.023084930299835917,
+                          loss='ls', max_depth=25, max_features='sqrt',
+                          max_leaf_nodes=None, min_impurity_decrease=0.0,
+                          min_impurity_split=None, min_samples_leaf=24,
+                          min_samples_split=30, min_weight_fraction_leaf=0.0,
+                          n_estimators=2000, n_iter_no_change=None,
+                          presort='deprecated', random_state=None,
+                          subsample=1.0, tol=0.0001, validation_fraction=0.1,
+                          verbose=0, warm_start=False)",0.6822711698200041,0.0029217007293353635,0.4694362405431698,0.004316738287785934,0.6851469232742475,0.003151836131848051,207.7856719493866,120.70688674468369

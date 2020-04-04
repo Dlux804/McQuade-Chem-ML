@@ -1,0 +1,11 @@
+algorithm,dataset,target,feat_meth,feat_time,regressor,r2_avg,r2_std,mse_avg,mse_std,rmse_avg,rmse_std,time_avg,time_std
+gdb,jak2_pic50.csv,pIC50,[4],0.733741044998169,"GradientBoostingRegressor(alpha=0.9, ccp_alpha=0.0, criterion='friedman_mse',
+                          init=None, learning_rate=0.008060748319796794,
+                          loss='ls', max_depth=25, max_features='sqrt',
+                          max_leaf_nodes=None, min_impurity_decrease=0.0,
+                          min_impurity_split=None, min_samples_leaf=9,
+                          min_samples_split=2, min_weight_fraction_leaf=0.0,
+                          n_estimators=2000, n_iter_no_change=None,
+                          presort='deprecated', random_state=None,
+                          subsample=1.0, tol=0.0001, validation_fraction=0.1,
+                          verbose=0, warm_start=False)",0.7157768020734794,0.001556800807583995,0.37739936449584977,0.002067162848476323,0.6143260888920425,0.0016795840127511337,197.69767408370973,112.32145526095188

@@ -1,0 +1,11 @@
+algorithm,dataset,target,feat_meth,feat_time,regressor,r2_avg,r2_std,mse_avg,mse_std,rmse_avg,rmse_std,time_avg,time_std
+gdb,ESOL.csv,water-sol,[4],0.3344430923461914,"GradientBoostingRegressor(alpha=0.9, ccp_alpha=0.0, criterion='friedman_mse',
+                          init=None, learning_rate=0.01832919292466159,
+                          loss='ls', max_depth=20, max_features='sqrt',
+                          max_leaf_nodes=None, min_impurity_decrease=0.0,
+                          min_impurity_split=None, min_samples_leaf=6,
+                          min_samples_split=30, min_weight_fraction_leaf=0.0,
+                          n_estimators=1531, n_iter_no_change=None,
+                          presort='deprecated', random_state=None,
+                          subsample=1.0, tol=0.0001, validation_fraction=0.1,
+                          verbose=0, warm_start=False)",0.8710819580886315,0.0028966763812343565,0.6093702503643919,0.013692020026731058,0.7805724048871446,0.008773317108784984,81.34749298095703,46.0440184051476

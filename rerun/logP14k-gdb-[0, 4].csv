@@ -1,0 +1,11 @@
+algorithm,dataset,target,feat_meth,feat_time,regressor,r2_avg,r2_std,mse_avg,mse_std,rmse_avg,rmse_std,time_avg,time_std
+gdb,logP14k.csv,Kow,"[0, 4]",156.00147485733032,"GradientBoostingRegressor(alpha=0.9, ccp_alpha=0.0, criterion='friedman_mse',
+                          init=None, learning_rate=0.03751372221275142,
+                          loss='ls', max_depth=9, max_features='sqrt',
+                          max_leaf_nodes=None, min_impurity_decrease=0.0,
+                          min_impurity_split=None, min_samples_leaf=15,
+                          min_samples_split=2, min_weight_fraction_leaf=0.0,
+                          n_estimators=2000, n_iter_no_change=None,
+                          presort='deprecated', random_state=None,
+                          subsample=1.0, tol=0.0001, validation_fraction=0.1,
+                          verbose=0, warm_start=False)",0.9267060116366779,0.008797410548526768,0.24931781103523964,0.029094003613876172,0.4984285091570505,0.0297797295944694,1357.978807067871,763.4930211742475

@@ -19,8 +19,8 @@ Then afterward, start up a new neo4j graph with the password as 'password' and t
 *Note this script is dirty and inefficient, efficiency is being worked out. This is only really only for prototyping. 
 '''
 
-US_grants_directory_to_csvs(US_patents_directory)  # This is here to convert the xml files to csv files
-clean_up_checker_files(US_patents_directory)  # This is here to clean up checker files if you want to recreate graph
+# US_grants_directory_to_csvs(US_patents_directory)  # This is here to convert the xml files to csv files
+# clean_up_checker_files(US_patents_directory)  # This is here to clean up checker files if you want to recreate graph
 
 for main_directories in os.listdir(US_patents_directory):  # Main loop, inserting the csv files
     main_directories = US_patents_directory + '/' + main_directories

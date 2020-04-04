@@ -1,6 +1,7 @@
 import pandas as pd
 import ast
-import rdkit.Chem
+from rdkit.Chem import MolFromSmiles, MolToSmiles
+from rdkit.Chem import Descriptors
 import os
 from py2neo import Node, Relationship, NodeMatcher, Graph
 
@@ -23,7 +24,7 @@ class file_to_neo4j:
 
         self.file = file
         if not ignore_checker_files:
-            if os.path.exists(self.file + "checker"):
+            if os.path.exists(self.file + ".checker"):
                 return
 
         self.raw_data = pd.read_csv(file)
@@ -86,11 +87,6 @@ class file_to_neo4j:
         self.reaction_props['solvents'] = solvents
 
     @staticmethod
-    def replace_smiles(smiles):
-        mol = rdkit.Chem.MolFromSmiles(smiles)
-        return rdkit.Chem.MolToSmiles(mol)
-
-    @staticmethod
     def get_molecule_primary_key(prop_dict):
         if 'smiles' in prop_dict.keys():
             return 'smiles'
@@ -123,15 +119,20 @@ class file_to_neo4j:
                     else:
                         prop_dict[prop] = value
         try:
-            prop_dict['smiles'] = self.replace_smiles(str(prop_dict['smiles']))
+            mol = MolFromSmiles(str(prop_dict['smiles']))
+            con_smiles = MolToSmiles(mol)
+            prop_dict['smiles'] = con_smiles
+            prop_dict['molar_mass'] = Descriptors.ExactMolWt(mol)
         except TypeError:
-            pass
+            prop_dict = None
         except KeyError:
-            pass
+            prop_dict = None
         return prop_dict
 
     def insert_and_retrieve_compound_node(self, molecule_dict):
         prop_dict = self.get_molecule_props_dict(molecule_dict)
+        if prop_dict is None:
+            return None
         compound_node = Node('compound', **prop_dict)
         compound_node.__primarylabel__ = 'compound'
         compound_node.__primarykey__ = self.get_molecule_primary_key(prop_dict)
@@ -141,10 +142,12 @@ class file_to_neo4j:
         self.main_reaction_nodes['reactants'] = []
         for molecule_dict in self.items:
             compound_node = self.insert_and_retrieve_compound_node(molecule_dict)
-            self.main_reaction_nodes['reactants'].append(compound_node)
+            if compound_node is not None:
+                self.main_reaction_nodes['reactants'].append(compound_node)
 
     def insert_products(self):
         self.main_reaction_nodes['products'] = []
         for molecule_dict in self.items:
             compound_node = self.insert_and_retrieve_compound_node(molecule_dict)
-            self.main_reaction_nodes['products'].append(compound_node)
+            if compound_node is not None:
+                self.main_reaction_nodes['products'].append(compound_node)

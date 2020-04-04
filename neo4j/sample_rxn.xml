@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reactionList xmlns="http://www.xml-cml.org/schema" xmlns:cmlDict="http://www.xml-cml.org/dictionary/cml/" xmlns:nameDict="http://www.xml-cml.org/dictionary/cml/name/" xmlns:unit="http://www.xml-cml.org/unit/" xmlns:cml="http://www.xml-cml.org/schema" xmlns:dl="http://bitbucket.org/dan2097">
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000035A1</dl:documentId>
+      <dl:paragraphNum>0007</dl:paragraphNum>
+      <dl:paragraphText>PL 137,526 describes the hydrogenation of p-tert-butylphenol to form p-tert-butylcyclohexanol using a nickel catalyst.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[C:1]([C:5]1[CH:10]=[CH:9][C:8]([OH:11])=[CH:7][CH:6]=1)([CH3:4])([CH3:3])[CH3:2]&gt;[Ni]&gt;[C:1]([CH:5]1[CH2:6][CH2:7][CH:8]([OH:11])[CH2:9][CH2:10]1)([CH3:4])([CH3:2])[CH3:3]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">p-tert-butylcyclohexanol</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(C)(C)(C)C1CCC(CC1)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C10H20O/c1-10(2,3)8-4-6-9(11)7-5-8/h8-9,11H,4-7H2,1-3H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">p-tert-butylphenol</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(C)(C)(C)C1=CC=C(C=C1)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C10H14O/c1-10(2,3)8-4-6-9(11)7-5-8/h4-7,11H,1-3H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="catalyst">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">nickel</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[Ni]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Ni"/>
+        <dl:entityType>chemicalClass</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to form p-tert-butylcyclohexanol using a nickel catalyst</dl:phraseText>
+        <dl:chemical ref="m0"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+</reactionList>

@@ -1,0 +1,8 @@
+algorithm,dataset,target,feat_meth,feat_time,regressor,r2,r2_avg,r2_std,mse,mse_avg,mse_std,rmse,rmse_avg,rmse_std,time_avg,time_std
+rf,ESOL.csv,water-sol,[0],0.12809252738952637,"RandomForestRegressor(bootstrap='False', ccp_alpha=0.0, criterion='mse',
+                      max_depth=23, max_features='sqrt', max_leaf_nodes=None,
+                      max_samples=None, min_impurity_decrease=0.0,
+                      min_impurity_split=None, min_samples_leaf=1,
+                      min_samples_split=2, min_weight_fraction_leaf=0.0,
+                      n_estimators=2000, n_jobs=None, oob_score=False,
+                      random_state=None, verbose=0, warm_start=False)","[0.8904120652829998, 0.8936914306710071, 0.8928441469722419, 0.8939050694217967, 0.8938226657924526]",0.8929350756280995,0.0013171656260725598,"[0.5180006322259086, 0.5024997164665751, 0.5065046600104833, 0.5014898880738535, 0.5018793938365838]",0.5060748581226809,0.00622598307755104,"[0.7197226078329821, 0.7088721439488048, 0.7116914078520854, 0.7081595075079156, 0.7084344668609679]",0.7113760268005512,0.004359657801064918,35.60671253204346,19.930453169135568

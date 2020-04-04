@@ -1,8 +1,7 @@
-from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs
+from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs, clean_up_checker_files
 from Neo4j.US_patents.file_to_neo4j import file_to_neo4j
 import pandas as pd
 import os
-
 
 US_patents_directory = 'C:/Users/User/Desktop/5104873'
 
@@ -16,15 +15,19 @@ Then afterward, start up a new neo4j graph with the password as 'password' and t
 '''
 
 US_grants_directory_to_csvs(US_patents_directory)
+clean_up_checker_files(US_patents_directory)
 for main_directories in os.listdir(US_patents_directory):
     main_directories = US_patents_directory + '/' + main_directories
     for directories in os.listdir(main_directories):
         if directories[-4:] == '_csv':
             directory = main_directories + '/' + directories
-            print(directory) # Let user how far the script has made it
+            i = len(os.listdir(directory))
+            counter = 0
             for file in os.listdir(directory):
+                print(directory + ": There are {} files left in directory".format(str(i-counter)))
                 file = directory + '/' + file
                 try:
                     file_to_neo4j(file)
                 except pd.errors.EmptyDataError:
                     pass
+                counter = counter + 1

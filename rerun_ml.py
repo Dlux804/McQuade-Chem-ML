@@ -90,6 +90,8 @@ def targets_features(df, exp, train=0.8, random=None):
     # remove target from features
     # axis 1 is the columns.
     features = df.drop([exp], axis=1)
+    list_df = df.drop([exp, 'smiles'], axis=1)
+    feature_list = list(list_df.columns)
     # features = df['smiles']
     # save list of strings of features
     # feature_list = list(features.columns)
@@ -102,17 +104,15 @@ def targets_features(df, exp, train=0.8, random=None):
     train_features, test_features, train_target, test_target = train_test_split(features, target,
                                                                                 test_size=test_percent,
                                                                                 random_state=random)
-    smiles_lst = [train_features['smiles'].tolist(), test_features['smiles'].tolist()]
-    # print(smiles_lst)
-    rotate_list = list(rotated(smiles_lst))
-    col = ['train_smiles', 'test_smiles']
-    smiles_df = pd.DataFrame(rotate_list, columns=col)
-    # print(name)
-    # new_df.to_csv(name+'.csv')
-    print('smiles dataframe:', smiles_df)
-    train_features = train_features.drop(['smiles'], axis=1)
-    test_features = test_features.drop(['smiles'], axis=1)
-    return train_features, test_features, train_target, test_target, smiles_df
+    train_smiles_df = train_features.loc[:, ['smiles']]
+    test_smiles_df = test_features.loc[:, ['smiles']]
+    train_features = np.array(train_features.drop(['smiles'], axis=1))
+    # train_features = train_features.reset_index(drop=True)
+    test_features = np.array(test_features.drop(['smiles'], axis=1))
+
+    # test_features = test_features.reset_index(drop=True)
+    # feature_list = list(train_features.columns)
+    return train_features, test_features, train_target, test_target, feature_list, train_smiles_df, test_smiles_df
 
 
 
@@ -148,6 +148,7 @@ def main():
             start_time = time()
             # create dataframe for multipredict
             pva_multi = pd.DataFrame([])
+            feats = '' + str(featmeth)
             for i in range(0, n):  # run model n times
                 print('Model Type:', algo)
                 print('Dataset:', data)
@@ -155,8 +156,8 @@ def main():
                 model.featurization(feat_lst)
                 model.regressor = tuner(**param)
                 print('Parameter:', model.regressor)
-                train_features, test_features, train_target, test_target, smiles_df = targets_features(
-                model.data, model.target, random=42)
+                train_features, test_features, train_target, test_target, feature_list, \
+                                train_smiles_df, test_smiles_df = targets_features(model.data, model.target, random=42)
                 model.regressor.fit(train_features, train_target)
                 predictions = model.regressor.predict(test_features)
                 done_time = time()
@@ -172,10 +173,19 @@ def main():
                 rmse[i] = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
                 t[i] = fit_time
                 # store as enumerated column for multipredict
-                pva_multi['predicted' + str(i)] = predictions
-            pva_multi['pred_avg'] = pva.mean(axis=1)
-            pva_multi['pred_std'] = pva.std(axis=1)
-            pva_multi['actual'] = test_target
+                print('Prediction length:', len(predictions))
+                # pva_multi['predicted' + str(i)] = predictions
+
+                with cd('rerun'):
+                    train_smiles_df.to_csv('train_smiles' + '_' + model.dataset[:-4] + '_' + model.algorithm + '_' +
+                                     feats + '_' + str(i) + '.csv')
+                    test_smiles_df.to_csv('test_smiles' + '_' + model.dataset[:-4] + '_' + model.algorithm + '_' +
+                                           feats + '_' + str(i) + '.csv')
+
+                print()
+            # pva_multi['pred_avg'] = pva.mean(axis=1)
+            # pva_multi['pred_std'] = pva.std(axis=1)
+            # pva_multi['actual'] = test_target
             model.stats = {
                 'r2_avg': r2.mean(),
                 'r2_std': r2.std(),
@@ -196,9 +206,9 @@ def main():
             # create model file name
             name = model.dataset[:-4] + '-' + model.algorithm + feats
             # store(model, name)
-                # with cd('rerun'):
-                #     smiles_df.to_csv('smiles'+name+'.csv')
-                #     store(model, name)
+            with cd('rerun'):
+                # smiles_df.to_csv('smiles'+name+n+'.csv')
+                store(model, name)
 
 
 if __name__ == "__main__":

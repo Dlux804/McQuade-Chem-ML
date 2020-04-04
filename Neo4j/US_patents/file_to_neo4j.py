@@ -7,8 +7,9 @@ from py2neo import Node, Relationship, NodeMatcher, Graph
 
 class file_to_neo4j:
 
-    def __init__(self, file):
+    def __init__(self, file, ignore_checker_files=False):
 
+        self.delete_checker_files = ignore_checker_files
         self.graph = Graph()
 
         self.insert_dict = {
@@ -21,7 +22,12 @@ class file_to_neo4j:
         }
 
         self.file = file
+        if not ignore_checker_files:
+            if os.path.exists(self.file + "checker"):
+                return
+
         self.raw_data = pd.read_csv(file)
+        self.tx = self.graph.begin()
 
         for index, row in self.raw_data.iterrows():
             self.reaction_props = {}
@@ -35,17 +41,18 @@ class file_to_neo4j:
                 self.items = ast.literal_eval(self.row_dict[item])
                 self.insert_dict[self.node_type]()
 
-            self.tx = self.graph.begin()
             self.reaction_props['label'] = 'Reaction'
             reaction_node = Node('reaction', **self.reaction_props)
-            self.tx.create(reaction_node)
+            reaction_node.__primarylabel__ = 'reaction'
+            reaction_node.__primarykey__ = 'reaction_smiles'
             for reactant in self.main_reaction_nodes['reactants']:
-                Rel = Relationship(reactant, 'reacts', reaction_node)
-                self.tx.create(Rel)
+                reacts = Relationship.type('reacts')
+                self.tx.merge(reacts(reactant, reaction_node))
             for product in self.main_reaction_nodes['products']:
-                Rel = Relationship(reaction_node, 'produces', product)
-                self.tx.create(Rel)
-            self.tx.commit()
+                produces = Relationship.type('produces')
+                self.tx.merge(produces(reaction_node, product))
+        self.tx.commit()
+        open(self.file + ".checker", "a").close()
 
     @staticmethod
     def list_to_steps_string(items):
@@ -124,14 +131,10 @@ class file_to_neo4j:
         return prop_dict
 
     def insert_and_retrieve_compound_node(self, molecule_dict):
-        tx = self.graph.begin()
         prop_dict = self.get_molecule_props_dict(molecule_dict)
         compound_node = Node('compound', **prop_dict)
-        tx.merge(compound_node, 'compound', self.get_molecule_primary_key(compound_node))
-        tx.commit()
-        primary_key = self.get_molecule_primary_key(prop_dict)
-        primary_key_as_dict = {primary_key: prop_dict[primary_key]}
-        compound_node = self.matcher.match('compound', **primary_key_as_dict).first()
+        compound_node.__primarylabel__ = 'compound'
+        compound_node.__primarykey__ = self.get_molecule_primary_key(prop_dict)
         return compound_node
 
     def insert_reactants(self):

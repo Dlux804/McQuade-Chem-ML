@@ -47,7 +47,8 @@ def xml_to_csv(input_file, output_file):
         sources_list = []
         reactants_list = []
         products_list = []
-        spectators_list = []
+        solvents_list = []
+        catalyst_list = []
         stages_list = []
 
         reaction_smiles = reaction.findall('{http://bitbucket.org/dan2097}reactionSmiles')
@@ -74,7 +75,11 @@ def xml_to_csv(input_file, output_file):
         spectatorList = reaction.find('{http://www.xml-cml.org/schema}spectatorList')
         spectators = spectatorList.findall('{http://www.xml-cml.org/schema}spectator')
         for spectator in spectators:
-            spectators_list.append(get_compound_info(spectator))
+            role = list(spectator.attrib.values())[0]
+            if role == 'solvent':
+                solvents_list.append(get_compound_info(spectator))
+            if role == 'catalyst':
+                catalyst_list.append(get_compound_info(spectator))
 
         reactionActionList = reaction.find('{http://bitbucket.org/dan2097}reactionActionList')
         reactionActions = reactionActionList.findall('{http://bitbucket.org/dan2097}reactionAction')
@@ -90,8 +95,8 @@ def xml_to_csv(input_file, output_file):
             counter = counter + 1
 
         reaction_dict = {'reaction_smiles': reaction_smiles_list, 'sources': sources_list,
-                         'reactants': reactants_list, 'products': products_list, 'spectators': spectators_list,
-                         'stages': stages_list}
+                         'reactants': reactants_list, 'products': products_list, 'solvents': solvents_list,
+                         'catalyst': catalyst_list, 'stages': stages_list}
         reaction_dicts.append(reaction_dict)
 
     all_data = pd.DataFrame.from_records(reaction_dicts)

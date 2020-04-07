@@ -1,5 +1,5 @@
 from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs, clean_up_checker_files
-from Neo4j.US_patents import no_solvents_csv_to_neo, yes_solvents_csv_to_neo
+from Neo4j.US_patents import csv_to_neo
 import pandas as pd
 import os
 
@@ -20,8 +20,8 @@ Then afterward, start up a new neo4j graph with the password as 'password' and t
 '''
 
 # US_grants_directory_to_csvs(US_patents_directory)  # This is here to convert the xml files to csv files
+# clean_up_checker_files(US_patents_directory)  # This is here to clean up checker files if you want to recreate graph
 
-clean_up_checker_files(US_patents_directory)  # This is here to clean up checker files if you want to recreate graph
 for main_directories in os.listdir(US_patents_directory):  # Main loop, inserting the csv files
     main_directories = US_patents_directory + '/' + main_directories
     for directories in os.listdir(main_directories):
@@ -33,8 +33,7 @@ for main_directories in os.listdir(US_patents_directory):  # Main loop, insertin
                 print(directory + ": There are {} files left in directory".format(str(i-counter)))
                 file = directory + '/' + file
                 try:
-                    # no_solvents_csv_to_neo.file_to_neo4j(file)  # No solvent as nodes
-                    yes_solvents_csv_to_neo.file_to_neo4j(file)   # Yes solvents as nodes
+                    csv_to_neo.file_to_neo4j(file)   # Yes solvents as nodes
                 except pd.errors.EmptyDataError:
                     pass
                 counter = counter + 1

@@ -18,7 +18,8 @@ class file_to_neo4j:
             "sources": self.insert_sources,
             "reactants": self.insert_reactants,
             "products": self.insert_products,
-            "spectators": self.insert_spectators,
+            "solvents": self.insert_solvents,
+            "catalyst": self.insert_catalyst,
             "stages": self.insert_stages
         }
 
@@ -53,8 +54,12 @@ class file_to_neo4j:
                 produces = Relationship.type('produces')
                 self.tx.merge(produces(reaction_node, product))
             for solvent in self.main_reaction_nodes['solvents']:
-                dissolves = Relationship.type('spectates')
+                dissolves = Relationship.type('solvent')
                 self.tx.merge(dissolves(solvent, reaction_node))
+            for catalyst in self.main_reaction_nodes['catalyst']:
+                catalyzes = Relationship.type('catalyzes')
+                self.tx.merge(catalyzes(catalyst, reaction_node))
+
         self.tx.commit()
         open(self.file + ".checker", "a").close()
 
@@ -88,7 +93,8 @@ class file_to_neo4j:
         else:
             return None
 
-    def get_molecule_props_dict(self, molecule_dict):
+    @staticmethod
+    def get_molecule_props_dict(molecule_dict):
         prop_dict = {}
         for prop in molecule_dict:
             for value in molecule_dict[prop]:
@@ -145,9 +151,16 @@ class file_to_neo4j:
             if compound_node is not None:
                 self.main_reaction_nodes['products'].append(compound_node)
 
-    def insert_spectators(self):
+    def insert_solvents(self):
         self.main_reaction_nodes['solvents'] = []
         for molecule_dict in self.items:
             compound_node = self.insert_and_retrieve_compound_node(molecule_dict)
             if compound_node is not None:
                 self.main_reaction_nodes['solvents'].append(compound_node)
+
+    def insert_catalyst(self):
+        self.main_reaction_nodes['catalyst'] = []
+        for molecule_dict in self.items:
+            compound_node = self.insert_and_retrieve_compound_node(molecule_dict)
+            if compound_node is not None:
+                self.main_reaction_nodes['catalyst'].append(compound_node)

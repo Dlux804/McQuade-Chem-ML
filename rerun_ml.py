@@ -9,12 +9,13 @@ from neo4j_graph.graph import params, labels
 import os
 import csv
 from sklearn.metrics import mean_squared_error, r2_score
+from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
 try:
-   os.mkdir("./rerun")
+   os.mkdir("./rerun_2")
 except OSError as e:
    print("Directory exists")
 
@@ -60,11 +61,11 @@ def parameter(data, algor):
     algor_df = df[df.algorithm == algor]
     final_df = algor_df.reset_index(drop=True)
     param = params.Params()
-    label = labels.label_param_todf(data, algor)
+    # label = labels.label_param_todf(data, algor)
     # name_lst = label['Run'].tolist()
     df = param.param_df(data, algor)
-    new_rate = df['learning_rate'].astype(float)
-    col = ['algorithm', 'regressor', 'learning_rate']
+    # new_rate = df['learning_rate'].astype(float)
+    col = ['algorithm', 'regressor']
     drop_df = df.drop(col, axis=1)
 
     for i in drop_df:
@@ -74,8 +75,8 @@ def parameter(data, algor):
             drop_df[i] = new_col
         except ValueError:
             pass
-    drop_df['learning_rate'] = new_rate
-    print(drop_df)
+    # drop_df['learning_rate'] = new_rate
+    # print(drop_df)
     dct = drop_df.to_dict('records')
     param_lst = []
     for i in range(len(dct)):
@@ -103,7 +104,7 @@ def targets_features(df, exp, train=0.8, random=None):
     test_percent = 1 - train_percent
     train_features, test_features, train_target, test_target = train_test_split(features, target,
                                                                                 test_size=test_percent,
-                                                                                random_state=random)
+                                                                                random_state=random, shuffle=True)
     train_smiles_df = train_features.loc[:, ['smiles']]
     test_smiles_df = test_features.loc[:, ['smiles']]
     train_features = np.array(train_features.drop(['smiles'], axis=1))
@@ -114,12 +115,51 @@ def targets_features(df, exp, train=0.8, random=None):
     # feature_list = list(train_features.columns)
     return train_features, test_features, train_target, test_target, feature_list, train_smiles_df, test_smiles_df
 
+def make_rdkit2d(df, model_name, num_feat=[0]):
+    feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
+                 'morganchiral3counts', 'atompaircounts']
+    if model_name == 'mlp' or model_name == 'knn':
+        feat_sets.remove('rdkit2d')
+        print(feat_sets)
+        if num_feat == None:  # ask for features
+            print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
+            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
+            num_feat = [int(x) for x in input(
+                'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
 
+        selected_feat = [feat_sets[i] for i in num_feat]
+        print("You have selected the following featurizations: ", end="   ", flush=True)
+        print(*selected_feat, sep=', ')
+
+    # un-normalized features are OK
+    else:
+        feat_sets.remove('rdkit2dnormalized')
+        if num_feat == None:  # ask for features
+            print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
+            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
+            num_feat = [int(x) for x in input(
+                'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
+        selected_feat = [feat_sets[i] for i in num_feat]
+        print("You have selected the following featurizations: ", end="   ", flush=True)
+        print(*selected_feat, sep=', ')
+
+    # Start timer
+    # Use descriptastorus generator
+    generator = MakeGenerator(selected_feat)
+    columns = []
+
+    # get the names of the features for column labels
+    for name, numpy_type in generator.GetColumns():
+        columns.append(name)
+    smi = df['smiles']
+    print('Calculating features...', end=' ', flush=True)
+    data = list(map(generator.process, smi))
+    return data, columns
 
 def main():
     os.chdir(ROOT_DIR)  # Start in root directory
     data = 'ml_results3.csv'
-    algorithm = ['gdb']
+    algorithm = ['rf']
     for algor in algorithm:
         tuner = regressors.regressor(algor)
         df, param_list = parameter(data, algor)
@@ -147,9 +187,10 @@ def main():
             t = np.empty(n)
             start_time = time()
             # create dataframe for multipredict
-            pva_multi = pd.DataFrame([])
+            pva_results = pd.DataFrame()
             feats = '' + str(featmeth)
             for i in range(0, n):  # run model n times
+                times = 42 + np.random.randint(10, 100)
                 print('Model Type:', algo)
                 print('Dataset:', data)
                 print()
@@ -157,7 +198,11 @@ def main():
                 model.regressor = tuner(**param)
                 print('Parameter:', model.regressor)
                 train_features, test_features, train_target, test_target, feature_list, \
-                                train_smiles_df, test_smiles_df = targets_features(model.data, model.target, random=42)
+                                train_smiles_df, test_smiles_df = targets_features(model.data, model.target, random=times)
+                train_smiles_feat, train_smiles_columns = make_rdkit2d(train_smiles_df, algorithm)
+                test_smiles_feat, test_smiles_columns = make_rdkit2d(test_smiles_df, algorithm)
+                train_smiles_feat_df = pd.DataFrame(np.array(train_smiles_feat), columns=train_smiles_columns)
+                test_smiles_feat_df = pd.DataFrame(np.array(test_smiles_feat), columns=test_smiles_columns)
                 model.regressor.fit(train_features, train_target)
                 predictions = model.regressor.predict(test_features)
                 done_time = time()
@@ -169,28 +214,42 @@ def main():
                 pva['actual'] = true
                 pva['predicted'] = predictions
                 r2[i] = r2_score(pva['actual'], pva['predicted'])
+                pva_results['r2'] = r2
+                print('R2', r2)
                 mse[i] = mean_squared_error(pva['actual'], pva['predicted'])
+                pva_results['mse'] = mse
                 rmse[i] = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
+                pva_results['rmse'] = rmse
                 t[i] = fit_time
                 # store as enumerated column for multipredict
                 print('Prediction length:', len(predictions))
                 # pva_multi['predicted' + str(i)] = predictions
 
-                with cd('rerun'):
+                with cd('rerun_2'):
                     train_smiles_df.to_csv('train_smiles' + '_' + model.dataset[:-4] + '_' + model.algorithm + '_' +
+                                     feats + '_' + str(i) + '.csv')
+                    train_smiles_feat_df.to_csv('feat_train_smiles' + '_' + model.dataset[:-4] + '_' + model.algorithm + '_' +
                                      feats + '_' + str(i) + '.csv')
                     test_smiles_df.to_csv('test_smiles' + '_' + model.dataset[:-4] + '_' + model.algorithm + '_' +
                                            feats + '_' + str(i) + '.csv')
+                    test_smiles_feat_df.to_csv('feat_test_smiles' + '_' + model.dataset[:-4] + '_' + model.algorithm + '_' +
+                                     feats + '_' + str(i) + '.csv')
+                    # pva_results.to_csv('results' + '_' + model.dataset[:-4] + '_' + model.algorithm + '_' +
+                    #                        feats + '_' + str(i) + '.csv')
 
                 print()
             # pva_multi['pred_avg'] = pva.mean(axis=1)
             # pva_multi['pred_std'] = pva.std(axis=1)
-            # pva_multi['actual'] = test_target
+            # pva_multi['actual'] = test_targe
+
             model.stats = {
+                'r2': list(r2),
                 'r2_avg': r2.mean(),
                 'r2_std': r2.std(),
+                'mse': list(mse),
                 'mse_avg': mse.mean(),
                 'mse_std': mse.std(),
+                'rmse': list(rmse),
                 'rmse_avg': rmse.mean(),
                 'rmse_std': rmse.std(),
                 'time_avg': t.mean(),
@@ -206,10 +265,25 @@ def main():
             # create model file name
             name = model.dataset[:-4] + '-' + model.algorithm + feats
             # store(model, name)
-            with cd('rerun'):
+            with cd('rerun_2'):
                 # smiles_df.to_csv('smiles'+name+n+'.csv')
                 store(model, name)
 
+
+# with cd('rerun_3'):
+#     new = pd.DataFrame()
+#     df1 = pd.read_csv('test_smiles_ESOL_rf_[0, 2]_0.csv')
+#     df2 = pd.read_csv('test_smiles_ESOL_rf_[0, 2]_1.csv')
+#     df1['MatchSmiles'] = np.where(df1['smiles'] == df2['smiles'], 'True', 'False')
+#     df1.to_csv('match_smiles.csv')
+#     print(df1.equals(df2))
+    # dct = df.to_dict('records')
+    # for i in range(len(dct)):  # Enumerate over the dictionary
+    #     row_dict = dct[i]  # Enumerate over every row
+    #     params = row_dict['r2']  # Enumerate over every cell in the regressor column
+    #     reg = params[params.find("[") + 1:params.find("]")]
+    #     print(reg.split())
+    #     final_reg = reg.replace(" ", ", ")
 
 if __name__ == "__main__":
     main()

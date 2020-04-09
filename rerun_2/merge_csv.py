@@ -30,6 +30,7 @@ def csv_names():
     algorithm = 'rf'
     df = pd.read_csv(data)
     df = df[df.algorithm == algorithm]
+    df = df[df.dataset != 'water-energy.csv']
     df_reset = df.reset_index(drop=True)
     # algo_list = df_reset['algorithm'].tolist()
     data_list = df_reset['dataset'].tolist()

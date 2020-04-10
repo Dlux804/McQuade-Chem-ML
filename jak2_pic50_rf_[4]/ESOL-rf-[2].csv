@@ -1,8 +1,0 @@
-algorithm,dataset,target,feat_meth,feat_time,regressor,r2,r2_avg,r2_std,mse,mse_avg,mse_std,rmse,rmse_avg,rmse_std,time_avg,time_std
-rf,ESOL.csv,water-sol,[2],0.4901578426361084,"RandomForestRegressor(bootstrap='True', ccp_alpha=0.0, criterion='mse',
-                      max_depth=28, max_features='auto', max_leaf_nodes=None,
-                      max_samples=None, min_impurity_decrease=0.0,
-                      min_impurity_split=None, min_samples_leaf=1,
-                      min_samples_split=2, min_weight_fraction_leaf=0.0,
-                      n_estimators=2000, n_jobs=None, oob_score=False,
-                      random_state=None, verbose=0, warm_start=False)","[0.7864153760239796, 0.7970007564503893, 0.7999225194405792, 0.8389105415013354, 0.8489484721675333]",0.8142395331167634,0.024858419596678963,"[1.0113650297811496, 0.855894616571792, 0.8706521917350563, 0.7312523291495516, 0.7549200298060672]",0.8448168394087233,0.09950559447606153,"[1.0056664605032573, 0.9251457272083096, 0.9330874512793838, 0.8551329306894639, 0.8688613409549691]",0.9175787821270767,0.053535203361096344,2921.1857492446898,1961.9988743545366

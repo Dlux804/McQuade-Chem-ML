@@ -74,4 +74,4 @@ data = {
         # "pyridine_smi_3.csv" : "smiles"
         }
 
-overlap_smiles('dataFiles', data)
+# overlap_smiles('dataFiles', data)

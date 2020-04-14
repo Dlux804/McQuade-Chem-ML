@@ -12,7 +12,7 @@ Objective: Find SMILES overlap between multiple files
 """
 
 
-def compare(foldername, datasets):
+def overlap_smiles(foldername, datasets):
     """
 
     :param foldername: Name of the folder which contains all the datasets
@@ -72,4 +72,4 @@ data = {
         # "pyridine_smi_3.csv" : "smiles"
         }
 
-# compare('dataFiles', data)
+# overlap_smiles('dataFiles', data)

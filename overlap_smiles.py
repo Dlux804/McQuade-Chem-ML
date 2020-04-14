@@ -2,7 +2,7 @@ import pandas as pd
 import itertools
 from core.misc import cd
 import os
-
+from rdkit import Chem
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
@@ -27,7 +27,9 @@ def overlap_smiles(foldername, datasets):
             print('Working with:', dataset)
             df = pd.read_csv(dataset)
             smiles_list = df[col].tolist()
-            all_smiles_dict[dataset] = smiles_list  # Make dictionary
+            mol = list(map(Chem.MolFromSmiles, smiles_list))
+            canon_smiles_list = list(map(Chem.MolToSmiles, mol))
+            all_smiles_dict[dataset] = canon_smiles_list  # Make dictionary
         print('Dictionary of all the smiles:', all_smiles_dict)
         all_dict_values = list(all_smiles_dict.values())  # All SMILES value
         all_dict_keys = list(all_smiles_dict.keys())  # All keys
@@ -39,7 +41,7 @@ def overlap_smiles(foldername, datasets):
             print('and')
             print(all_dict_keys[all_dict_values.index(b)])  # Key for the other dataset used for comparison
             intersects = list(set(a).intersection(b))  # list of SMILES intersection
-            # print(intersects)
+            print(intersects)
             intersect_list.append(intersects)
             print('')
         print(intersect_list)
@@ -72,4 +74,4 @@ data = {
         # "pyridine_smi_3.csv" : "smiles"
         }
 
-# overlap_smiles('dataFiles', data)
+overlap_smiles('dataFiles', data)

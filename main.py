@@ -30,7 +30,8 @@ def main():
         'ESOL.csv': 'water-sol',
         'water-energy.csv': 'expt',
         'logP14k.csv': 'Kow',
-        'jak2_pic50.csv': 'pIC50'
+        'jak2_pic50.csv': 'pIC50',
+        'flashpoint.csv': 'flashpoint'
     }
 
     for alg in learner:  # loop over all learning algorithms

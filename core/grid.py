@@ -18,7 +18,7 @@ from skopt.space import Real, Integer, Categorical
 # See https://scikit-optimize.github.io/notebooks/hyperparameter-optimization.html for some help
 
 def ada_paramgrid():
-    """ Defines hyper parameters for adaboost """
+    """ Defines hyper parameters for adaboost. Accepts nothing, returns a dictionary. """
     # define variables to include in parameter grid for scikit-learn CV functions
     base_estimator = [
         tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=3),
@@ -50,7 +50,7 @@ def ada_paramgrid():
 
 
 def rf_paramgrid():
-    """ Defines hyper parameters for random forest """
+    """ Defines hyper parameters for random forest. Accepts nothing, returns a dictionary. """
 
     # define variables to include in parameter grid for scikit-learn CV functions
     n_estimators = [int(x) for x in np.linspace(start = 200, stop = 2000, num = 20)] #Number of trees
@@ -81,7 +81,7 @@ def rf_paramgrid():
 
 
 def svr_paramgrid():
-    """ Defines hyper parameters for supoort vector regression """
+    """ Defines hyper parameters for supoort vector regression. Accepts nothing, returns a dictionary. """
     # define variables to include in parameter grid for scikit-learn CV functions
     # Kernel functions
     kernel = ['rbf', 'poly', 'linear']
@@ -119,7 +119,7 @@ def svr_paramgrid():
 
 
 def gdb_paramgrid():
-    """ Defines hyper parameters for gradient decent boost """
+    """ Defines hyper parameters for gradient decent boost. Accepts nothing, returns a dictionary. """
 
     # define variables to include in parameter grid for scikit-learn CV functions
 
@@ -163,7 +163,7 @@ def gdb_paramgrid():
 
 
 def mlp_paramgrid():
-    """Define the hyper parameters for neural network model."""
+    """Define the hyper parameters for neural network model. Accepts nothing, returns a dictionary."""
 
     # define variables to include in parameter grid for scikit-learn CV functions
 
@@ -201,7 +201,7 @@ def mlp_paramgrid():
 
 
 def knn_paramgrid():
-    """Defines hyper parameters for k-nearest neighbors. """
+    """Defines hyper parameters for k-nearest neighbors. Accepts nothing, returns a dictionary."""
 
     # Number of neighbors to use
     n_neighbors = [int(x) for x in np.linspace(start = 5, stop = 30, num = 20)]
@@ -238,7 +238,10 @@ def knn_paramgrid():
 
 
 def make_grid(method):
-    """ Dictionary containing all the grid functions. Can call specific function based off of dict key."""
+    """
+    Dictionary containing all the grid functions. Can call specific function based off of dict key.
+    Accepts a string, returns callable function.
+    """
     grids = {
         "ada" : ada_paramgrid,
         'rf' : rf_paramgrid,

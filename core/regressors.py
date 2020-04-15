@@ -30,7 +30,7 @@ def regressor(model, tune=False):
 
 
 
-def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1): # WHAT is expt? WHY use it?
+def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1): 
     """
     Tunes hyper parameters of specified model.
 

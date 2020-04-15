@@ -63,7 +63,7 @@ def overlap_smiles(foldername, datasets):
         for key, combo in zip(key_list, combination_list):
             if len(combo) < 1:
                 pass
-                print('There are {0} overlapping molecules for {1}:'.format(len(combo), key))
+                # print('There are {0} overlapping molecules for {1}:'.format(len(combo), key))
             else:
                 print('There are {0} overlapping molecules for {1}:'.format(len(combo), key))
                 overlap_df = pd.DataFrame(combo, columns=[key])
@@ -75,16 +75,16 @@ data = {
         # "pyridine_cas.csv": "CAS",
         # "pyridine_smi_1.csv": "smiles",
         # "pyridine_smi_2.csv": "smiles",
-        # "cmc_noadd.csv": "canon_smiles",
+        "cmc_noadd.csv": "canon_smiles",
         "logP14k.csv": "SMILES",
-        # "18k-logP.csv": "smiles",x
+        "18k-logP.csv": "smiles",
         "ESOL.csv": "smiles",
-        # "cmc_smiles_26.csv": "smiles",
-        # "flashpoint.csv": "smiles",
+        "cmc_smiles_26.csv": "smiles",
+        "flashpoint.csv": "smiles",
         "Lipophilicity-ID.csv": "smiles",
         "jak2_pic50.csv": "SMILES",
         "water-energy.csv": "smiles"
-        # "pyridine_smi_3.csv" : "smiles"
+        # "pyridine_smi_3.csv:"  "smiles"
         }
 
 overlap_smiles('dataFiles', data)

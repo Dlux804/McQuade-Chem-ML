@@ -28,33 +28,44 @@ def overlap_smiles(foldername, datasets):
             df = pd.read_csv(dataset)
             smiles_list = df[col].tolist()
             mol = list(map(Chem.MolFromSmiles, smiles_list))
-            canon_smiles_list = list(map(Chem.MolToSmiles, mol))
+            canon_smiles_list = list((map(Chem.MolToSmiles, mol)))
             all_smiles_dict[dataset] = canon_smiles_list  # Make dictionary
         print('Dictionary of all the smiles:', all_smiles_dict)
-        all_dict_values = list(all_smiles_dict.values())  # All SMILES value
-        all_dict_keys = list(all_smiles_dict.keys())  # All keys
-        # print(all_lists)
-        intersect_list = []  # List of lists od SMILES interseciton
-        for a, b in itertools.combinations(all_dict_values, 2):  # Compare datasets in pairs
-            print('Comparing:')
-            print(all_dict_keys[all_dict_values.index(a)])   # Key for the one of the two dataset used for comparison
-            print('and')
-            print(all_dict_keys[all_dict_values.index(b)])  # Key for the other dataset used for comparison
-            intersects = list(set(a).intersection(b))  # list of SMILES intersection
-            print(intersects)
-            intersect_list.append(intersects)
-            print('')
-        print(intersect_list)
-        combo_list = []
-        for a, b in itertools.combinations(all_dict_keys, 2):  # Loop over pairs of key to make column name for csvs
-            combos = a + '_' + b  # NameFirstDataset_NameSecondDataset
-            combo_list.append(combos)
-        for intersect, combo in zip(intersect_list, combo_list):
-            if len(intersect) < 1:
-                pass  # Ignore empty list
+        all_dict_values = all_smiles_dict.values()  # All SMILES value
+        all_dict_keys = list(all_smiles_dict.keys())  # All keys to list
+        # Make all keys' list
+        key_list = []
+        for i in range(2, len(all_dict_keys)+1):
+            print("Combining " + str(i) + ' dataset')
+            key_combo = list(itertools.combinations(all_dict_keys, i))
+            print('All key combinations in ' + str(i) + ' sets', key_combo)
+            for key_combination in key_combo:
+                iter_combination = list(key_combination)
+                # print(iter_combination)
+                separator = '_'
+                final_str = separator.join(iter_combination)
+                print(final_str)
+                key_list.append(final_str)
+        # Make all combination list
+        set_list = []
+        for lst_value in all_dict_values:
+            set_values = set(lst_value)  # Turn all dict values into set for intersection later
+            set_list.append(set_values)
+        print(set_list)
+        combination_list = []
+        for i in range(2, len(set_list)+1):
+            print("Combining values for " + str(i) + ' dataset')
+            all_value_combo = list(itertools.combinations(set_list, i))
+            for value_combo in all_value_combo:
+                intersects = list(set.intersection(*list(value_combo)))
+                print(intersects)
+                combination_list.append(intersects)
+        for key, combo in zip(key_list, combination_list):
+            if len(combo) < 1:
+                pass
             else:
-                overlap_df = pd.DataFrame(intersect, columns=[combo])
-                overlap_df.to_csv("overlap_" + combo + '.csv')
+                overlap_df = pd.DataFrame(combo, columns=[key])
+                overlap_df.to_csv("overlap_" + key + '.csv')
 
 
 
@@ -74,4 +85,15 @@ data = {
         # "pyridine_smi_3.csv" : "smiles"
         }
 
-# overlap_smiles('dataFiles', data)
+overlap_smiles('dataFiles', data)
+# s1 = [['abd', 'afefads', 'weabtbwtr'], ['sefse', 'sfefsefa'], ['qergqerbw', 'bwerbrsb']]
+
+# print(sorted(set(s1)))
+set1 = set((1, 4, 3))
+set2 = set([4, 5])
+set3 = set([4, 7, 8])
+# print(set1.intersection(set2, set3))
+# print(set(lst))
+# t1 = ('asv', ['dsvs'], ['fesb'])
+#
+# print(list(t1[1:]))

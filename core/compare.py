@@ -14,6 +14,7 @@ from rdkit import Chem
 from rdkit.Chem import Draw
 from rdkit.Chem import PandasTools
 import itertools
+from functools import reduce
 import pprint
 
 
@@ -383,14 +384,21 @@ def moloverlap(datasets, n, image=False):
         # drop duplicated smiles in each data frame just in case
         df_list = [df.drop_duplicates(subset='canon_smiles') for df in df_list]
 
+
         # Set index of df to 'canon_smiles' before concat
         df_list = [df.set_index('canon_smiles') for df in df_list]
 
-        # concat with 'inner' will keep only overlapping index.
-        df_cross = pd.concat(df_list, axis=1, join='inner')  # combine the dataframes of interest
 
+        # concat with 'inner' will keep only overlapping index.
+        # df_cross = pd.concat(df_list, axis=1, join='inner')  # combine the dataframes of interest
+
+
+        # df_cross = reduce(lambda left,right: pd.merge(left,right,on='canon_smiles', indicator=True), df_list)  # combine the dataframes of interest
+        df_cross = reduce(lambda left,right: pd.merge(left,right,on='canon_smiles', indicator=True), df_list)  # combine the dataframes of interest
+
+        # df_cross = reduce(lambda left, right: left.join(right, how='inner', on='canon_smiles'), df_list)
         # need to drop repeated column keys such as "Molecule" and 'canon_smiles', 'smiles'
-        df_cross = df_cross.loc[:, ~df_cross.columns.duplicated()]
+        # df_cross = df_cross.loc[:, ~df_cross.columns.duplicated()]
 
 
         # print("df_cross: ", df_cross)
@@ -422,18 +430,18 @@ data = {
     # "pyridine_smi_1.csv": "smiles",
     # "pyridine_smi_2.csv": "smiles",
     # "cmc_noadd.csv": "canon_smiles",
-    "logP14k.csv": "SMILES",
+    "logP14k.csv": "smiles",
     # "18k-logP.csv": "smiles",
     "ESOL.csv": "smiles",
     # "cmc_smiles_26.csv": "smiles",
-    "flashpoint.csv": "smiles",
-    "Lipophilicity-ID.csv": "smiles",
-    "jak2_pic50.csv": "SMILES",
+    # "flashpoint.csv": "smiles",
+    # "Lipophilicity-ID.csv": "smiles",
+    # "jak2_pic50.csv": "SMILES",
     "water-energy.csv" : "smiles"
     # "pyridine_smi_3.csv" : "smiles"
 }
-
-# xdf = moloverlap(data,2)
+# uncomment this xdf line to perform dataset overlap analysis
+xdf = moloverlap(data,2)
 # analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
 
 

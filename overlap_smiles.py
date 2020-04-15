@@ -58,12 +58,14 @@ def overlap_smiles(foldername, datasets):
             all_value_combo = list(itertools.combinations(set_list, i))
             for value_combo in all_value_combo:
                 intersects = list(set.intersection(*list(value_combo)))
-                print(intersects)
+                print('Molecules intersected:', len(intersects))
                 combination_list.append(intersects)
         for key, combo in zip(key_list, combination_list):
             if len(combo) < 1:
                 pass
+                print('There are {0} overlapping molecules for {1}:'.format(len(combo), key))
             else:
+                print('There are {0} overlapping molecules for {1}:'.format(len(combo), key))
                 overlap_df = pd.DataFrame(combo, columns=[key])
                 overlap_df.to_csv("overlap_" + key + '.csv')
 
@@ -86,14 +88,3 @@ data = {
         }
 
 overlap_smiles('dataFiles', data)
-# s1 = [['abd', 'afefads', 'weabtbwtr'], ['sefse', 'sfefsefa'], ['qergqerbw', 'bwerbrsb']]
-
-# print(sorted(set(s1)))
-set1 = set((1, 4, 3))
-set2 = set([4, 5])
-set3 = set([4, 7, 8])
-# print(set1.intersection(set2, set3))
-# print(set(lst))
-# t1 = ('asv', ['dsvs'], ['fesb'])
-#
-# print(list(t1[1:]))

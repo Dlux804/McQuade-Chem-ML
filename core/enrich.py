@@ -12,11 +12,11 @@ import os
 import pandas as pd
 
 sets = {
-        # 'Lipophilicity-ID.csv': 'exp',
-        # 'ESOL.csv': 'water-sol',
-        # 'water-energy.csv': 'expt',
-        # 'logP14k.csv': 'Kow',
-        # 'jak2_pic50.csv': 'pIC50',
+        'Lipophilicity-ID.csv': 'exp',
+        'ESOL.csv': 'water-sol',
+        'water-energy.csv': 'expt',
+        'logP14k.csv': 'Kow',
+        'jak2_pic50.csv': 'pIC50',
         'flashpoint2.csv': 'flashpoint'
     }
 alg = 'rf'
@@ -40,7 +40,7 @@ for data, target in sets.items():  # loop over dataset dictionary
         model.featurization(method)
         print(model.data)
         model.data = model.data.drop(columns=['RDKit2D_calculated'], axis=1)
-        model.data = model.data[['smiles', target, 'ExactMolWt', 'HeavyAtomCount', 'qed']]
+        # model.data = model.data[['smiles', target, 'ExactMolWt', 'HeavyAtomCount', 'qed']]
         model.data.to_csv('featurized-' + data, index=False)
 
 

@@ -31,6 +31,7 @@ class file_to_neo4j:
         self.timer = timeit.default_timer()
         print("The file being inserted is {}".format(self.file))
         self.csv_file_compounds = self.gather_compounds()
+        print("There are {} unfiltered compounds in csv file".format(len(self.csv_file_compounds)))
         print("Comparing compounds in csv file to compounds in database")
         print("The numbers of chunks to compare against is {}, max nodes in ram allowed is {}, "
               "there are {} compounds in the database".format(self.splits, self.max_nodes_in_ram, self.len_nodes))

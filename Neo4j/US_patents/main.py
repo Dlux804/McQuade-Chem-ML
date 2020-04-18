@@ -1,7 +1,8 @@
 from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs, clean_up_checker_files
-from Neo4j.US_patents import csv_to_neo
+from Neo4j.US_patents import csv_to_neo4j
 import pandas as pd
 import os
+
 
 US_patents_directory = 'C:/Users/User/Desktop/5104873'
 
@@ -33,7 +34,7 @@ for main_directories in os.listdir(US_patents_directory):  # Main loop, insertin
                 print(directory + ": There are {} files left in directory".format(str(i-counter)))
                 file = directory + '/' + file
                 try:
-                    csv_to_neo.file_to_neo4j(file)   # Yes solvents as nodes
+                    csv_to_neo4j.file_to_neo4j(file, max_nodes_in_ram=400000)
                 except pd.errors.EmptyDataError:
                     pass
                 counter = counter + 1

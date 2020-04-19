@@ -48,6 +48,8 @@ def get_compound_info(compound):
     for appearance in appearances:
         appearances_list.append(appearance.text)
     try:
+        print("Converting SMILES from XML to canonical")
+        print()
         full_string = identifiers_list[0]
         smiles = full_string[7:]
         mol = Chem.MolFromSmiles(smiles)

@@ -10,7 +10,7 @@ import ast
     is in the CSVs, leave the extracted information in the CSV.  
 """
 
-smiles_list = ['CCCCCC.[Na+]']
+smiles_list = ['CCCCCCCCCCCCCCC']
 
 
 def split_dict(gen_dict):
@@ -187,7 +187,7 @@ def find_smiles(root_list, files_dicts, smiles_list):
                 with cd('../'):
                     if len(final_list_dict) > 0:
                         all_data = pd.DataFrame.from_records(final_list_dict)
-                        all_data.to_csv(root[-4:] + '_' + main_key[:-4] + '.csv', index=False)
+                        all_data.to_csv(main_key[:-4] + '.csv', index=False)
                     else:
                         pass
 

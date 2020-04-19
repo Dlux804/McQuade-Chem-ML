@@ -4,13 +4,13 @@ import xml.etree.ElementTree as ET
 from core.misc import cd
 from rdkit import Chem
 import csv
-import ast
+import copy
 """
     Objective: Make CSVs from xml files and convert all the SMILES to canonical. If SMILES inthe list of SMILES provided 
     is in the CSVs, leave the extracted information in the CSV.  
 """
 
-smiles_list = ['CCCCCCCCCCCCCCC']
+smiles_list = ['CCOC(C)=O']
 
 
 def split_dict(gen_dict):
@@ -47,9 +47,7 @@ def get_compound_info(compound):
     appearances = compound.findall('{http://bitbucket.org/dan2097}appearance')
     for appearance in appearances:
         appearances_list.append(appearance.text)
-    print("Converting SMILES from XML to canonical")
     try:
-        print()
         full_string = identifiers_list[0]
         smiles = full_string[7:]
         mol = Chem.MolFromSmiles(smiles)
@@ -150,11 +148,6 @@ def xml_to_csv(root_list):
                                              'catalyst': catalyst_list, 'stages': stages_list}
                             reaction_list_dicts.append(reaction_dict)
                         files_dicts[f] = reaction_list_dicts
-
-                        # all_data = pd.DataFrame.from_records(reaction_dicts)
-                        print("Creating dataframe for file:", f)
-                        # all_data.to_csv(f[:-4] + '.csv', index=False)
-                        # print(files_dicts)
     return files_dicts
 
 
@@ -167,29 +160,32 @@ def find_smiles(root_list, files_dicts, smiles_list):
     for root in root_list:
         print('Going to folder:', root)
         with cd(root):
-            final_list_dict = []
-            for main_key, value_dict in files_dicts.items():
-                for real_dicts in value_dict:
-                    # print(real_dicts)
-                    for dict_k, list_v in real_dicts.items():
-                        for final_dict in list_v:
-                            for k in final_dict:
+            for canon in canon_smiles_list:
+                final_list_dict = []
+                for main_key, value_dict in files_dicts.items():
+                    for real_dicts in value_dict:
+                        remove_dict = copy.deepcopy(real_dicts)
+                        remove = ['reaction_smiles', 'sources', 'stages']
+                        [remove_dict.pop(rem, None) for rem in remove]
+                        for dict_k, list_v in remove_dict.items():
+                            for final_dict in list_v:
                                 try:
-                                    for v in final_dict[k]:
-                                        for canon in canon_smiles_list:
-                                            if canon in v:
-                                                print('Given SMILES is in:', v)
-                                                final_list_dict.append(real_dicts)
-                                            else:
-                                                pass
-                                except TypeError:
+                                    all_smiles = final_dict['identifiers']
+                                    full_string = str(all_smiles[0])
+                                    if full_string[7:] == canon:
+                                        print("Find exact match in:", root)
+                                        final_list_dict.append(real_dicts)
+
+                                except IndexError:
                                     pass
-                with cd('../'):
-                    if len(final_list_dict) > 0:
-                        all_data = pd.DataFrame.from_records(final_list_dict)
-                        all_data.to_csv(main_key[:-4] + '.csv', index=False)
-                    else:
-                        pass
+
+            with cd('../'):
+                if len(final_list_dict) > 0:
+                    all_data = pd.DataFrame.from_records(final_list_dict)
+                    all_data.to_csv(main_key[:-4] + '.csv', index=False)
+                else:
+                    pass
+
 
 
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')

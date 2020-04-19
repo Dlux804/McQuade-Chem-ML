@@ -10,7 +10,7 @@ import ast
     is in the CSVs, leave the extracted information in the CSV.  
 """
 
-smiles_list = ['CCCCCCCCCCCC', 'C=C(C)C(=O)OC']
+smiles_list = ['CCCCCC.[Na+]']
 
 
 def split_dict(gen_dict):
@@ -157,13 +157,16 @@ def xml_to_csv(root_list):
 
 
 def find_smiles(root_list, files_dicts, smiles_list):
+    print("Converting given SMILES to canonical")
+    print()
+    mol_list = list(map(Chem.MolFromSmiles, smiles_list))
+    canon_smiles_list = list((map(Chem.MolToSmiles, mol_list)))
+    print("Canonical form of given SMILES:", canon_smiles_list)
     for root in root_list:
+        print('Going to folder:', root)
         with cd(root):
-            mol_list = list(map(Chem.MolFromSmiles, smiles_list))
-            canon_smiles_list = list((map(Chem.MolToSmiles, mol_list)))
             final_list_dict = []
             for main_key, value_dict in files_dicts.items():
-                print(value_dict)
                 for real_dicts in value_dict:
                     # print(real_dicts)
                     for dict_k, list_v in real_dicts.items():
@@ -173,18 +176,18 @@ def find_smiles(root_list, files_dicts, smiles_list):
                                     for v in final_dict[k]:
                                         for canon in canon_smiles_list:
                                             if canon in v:
+                                                print('Given SMILES is in:', v)
                                                 final_list_dict.append(real_dicts)
                                             else:
                                                 pass
                                 except TypeError:
                                     pass
-                        # for final_k, final_v in dict_v.items():
-                        #     print(final_v)
-                #             final_list_dict.append(v)
                 with cd('../'):
-                    all_data = pd.DataFrame.from_records(final_list_dict)
-                    all_data.to_csv(main_key[:-4] + '.csv', index=False)
-
+                    if len(final_list_dict) > 0:
+                        all_data = pd.DataFrame.from_records(final_list_dict)
+                        all_data.to_csv(main_key[:-4] + '.csv', index=False)
+                    else:
+                        pass
 
 
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')

@@ -183,7 +183,7 @@ def find_smiles(root_list, files_dicts, smiles_list):
                 #             final_list_dict.append(v)
                 with cd('../'):
                     all_data = pd.DataFrame.from_records(final_list_dict)
-                    all_data.to_csv(main_key[:-4] + '_test' + '.csv', index=False)
+                    all_data.to_csv(main_key[:-4] + '.csv', index=False)
 
 
 

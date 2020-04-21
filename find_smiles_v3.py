@@ -78,8 +78,7 @@ def xml_to_csv(root_list):
     files_dicts = {}
     for root in root_list:
         with cd(root):
-            for root, dirs, files in os.walk(root):
-
+            for roots, dirs, files in os.walk(root):
                 for f in files:
                     if f.endswith('.xml'):
                         print("working with:", f)
@@ -199,7 +198,7 @@ def find_smiles(files_dicts, smiles_list):
                 all_data = pd.DataFrame.from_records(dict_df)
                 all_data.to_csv(main_key_name[:-4] + '_' + canon_name + '.csv', index=False)
             else:
-                print("No match for %s in" % canon_name,main_key_name)
+                print("No match for %s in" % canon_name, main_key_name)
                 pass
 
 

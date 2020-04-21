@@ -160,13 +160,15 @@ def find_smiles(files_dicts, smiles_list):
     mol_list = list(map(Chem.MolFromSmiles, smiles_list))
     canon_smiles_list = list((map(Chem.MolToSmiles, mol_list)))
     print("Canonical form of given SMILES:", canon_smiles_list)
+    length = len(files_dicts.keys())
     with cd('return_csv/'):
         final_dict_list = []
-        canon_name_list = []
+        canon_list = []
+        main_key_list = []
         for canon in canon_smiles_list:
-            main_key_list = []
+            canon_list.append(canon)
             for main_key, value_dict in files_dicts.items():
-                canon_name_list.append(canon)
+
                 main_key_list.append(main_key)
                 real_dicts_list = []
                 for real_dicts in value_dict:
@@ -180,24 +182,28 @@ def find_smiles(files_dicts, smiles_list):
                                 # print(final_dict)
                                 all_smiles = final_dict['identifiers']
                                 full_string = str(all_smiles[0])
-                                if full_string[7:] == canon:
+                                if canon == full_string[7:]:
                                     real_dicts_list.append(real_dicts)
-
                             except IndexError:
                                 pass
                 final_dict_list.append(real_dicts_list)
 
+    canon_name_list = []
+    for smiles in canon_list:
+        canon_name_list += [smiles] * length
+
+    with cd('./return_csv'):
         for canon_name, main_key_name, dict_df in zip(canon_name_list, main_key_list, final_dict_list):
             if len(dict_df) > 0:
                 print("Found %s match in:" % canon_name, main_key_name)
                 all_data = pd.DataFrame.from_records(dict_df)
-                all_data.to_csv(main_key_name[:-4] + '_' + str(canon_name) + '.csv', index=False)
+                all_data.to_csv(main_key_name[:-4] + '_' + canon_name + '.csv', index=False)
             else:
-                print("No match for " + canon_name, main_key_name)
+                print("No match for %s in" % canon_name,main_key_name)
                 pass
 
 
-smiles_list = ['COC(=O)Cc1ccc(OC)cc1']
+smiles_list = ['COC(=O)Cc1ccc(OC)cc1', 'ClCCl']
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
 files_dicts = xml_to_csv(root_list)
 find_smiles(files_dicts, smiles_list)

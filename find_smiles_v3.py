@@ -56,8 +56,9 @@ def get_compound_info(compound):
         print("XML SMILES:", smiles)
         mol = Chem.MolFromSmiles(smiles)
         new_smiles = Chem.MolToSmiles(mol)
-        if new_smiles is None:
+        if mol is None:
             error_smiles.append(smiles)
+            print("Error SMILES:", smiles)
             pass
         else:
             print("Converted SMILES:", new_smiles)
@@ -214,3 +215,9 @@ root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
 files_dicts = xml_to_csv(root_list)
 find_smiles(files_dicts, smiles_list)
 
+# data = ['Cl(=O)(=O)(=O)F']
+# mol = Chem.MolFromSmiles('Cl(=O)(=O)(=O)F')
+# if mol is None:
+#     print(data)
+# else:
+#     smiles = Chem.MolToSmiles(mol)

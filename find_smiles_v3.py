@@ -49,6 +49,7 @@ def get_compound_info(compound):
     appearances = compound.findall('{http://bitbucket.org/dan2097}appearance')
     for appearance in appearances:
         appearances_list.append(appearance.text)
+    error_smiles = []
     try:
         full_string = identifiers_list[0]
         smiles = full_string[7:]
@@ -56,14 +57,14 @@ def get_compound_info(compound):
         mol = Chem.MolFromSmiles(smiles)
         new_smiles = Chem.MolToSmiles(mol)
         if new_smiles is None:
-            print("Error SMILES", smiles)
+            error_smiles.append(smiles)
             pass
         else:
             print("Converted SMILES:", new_smiles)
             identifiers_list[0] = 'smiles:' + new_smiles
     except IndexError:
         pass
-
+    print(error_smiles)
     chemical_dict = {'chemical_names': chemical_name_list, 'identifiers': identifiers_list,
                      'amounts': amounts_list, 'appearances': appearances_list}
 

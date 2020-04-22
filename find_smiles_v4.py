@@ -54,7 +54,7 @@ def get_compound_info(compound):
     try:
         full_string = identifiers_list[0]
         smiles = full_string[7:]
-        print("XML SMILES:", smiles)
+        # print("XML SMILES:", smiles)
         mol = Chem.MolFromSmiles(smiles)
         if mol is None:
             # error_smiles.append(smiles)
@@ -62,7 +62,7 @@ def get_compound_info(compound):
             pass
         else:
             new_smiles = Chem.MolToSmiles(mol)
-            print("Converted SMILES:", new_smiles)
+            # print("Converted SMILES:", new_smiles)
             identifiers_list[0] = 'smiles:' + new_smiles
     except IndexError:
         pass

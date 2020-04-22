@@ -172,10 +172,12 @@ def find_smiles(files_dicts, smiles_list):
         final_dict_list = []
         canon_list = []
         main_key_list = []
+        canon_name_list = []
+        count_1 = 0
         for canon in canon_smiles_list:
             canon_list.append(canon)
+            count_1 = count_1 +1
             for main_key, value_dict in files_dicts.items():
-
                 main_key_list.append(main_key)
                 real_dicts_list = []
                 for real_dicts in value_dict:
@@ -184,6 +186,7 @@ def find_smiles(files_dicts, smiles_list):
                     remove = ['reaction_smiles', 'sources', 'stages']
                     [remove_dict.pop(rem, None) for rem in remove]
                     for dict_k, list_v in remove_dict.items():
+                        count_2 = 0
                         for final_dict in list_v:
                             try:
                                 # print(final_dict)
@@ -191,13 +194,12 @@ def find_smiles(files_dicts, smiles_list):
                                 full_string = str(all_smiles[0])
                                 if canon == full_string[7:]:
                                     real_dicts_list.append(real_dicts)
+                                    count_2 = count_2 +1
                             except IndexError:
                                 pass
                 final_dict_list.append(real_dicts_list)
 
-    canon_name_list = []
-    for smiles in canon_list:
-        canon_name_list += [smiles] * length
+            canon_name_list += [canon] * length
 
     with cd('./return_csv'):
         for canon_name, main_key_name, dict_df in zip(canon_name_list, main_key_list, final_dict_list):
@@ -208,9 +210,15 @@ def find_smiles(files_dicts, smiles_list):
             else:
                 print("No match for %s in" % canon_name, main_key_name)
                 pass
+    # with cd('./return_csv'):
 
-
-smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H])C', 'O=[C]OO[Na].[Na]', 'O=C(OCC)C', 'O=C1OCCC1C(C)=O', '[H]C([H])=O', '[HH]', '[Cu]=O', 'O=[Bi][Bi](=O)=O', 'O=[Si]=O', 'OCCCCO', '[Cu]', '[Zn]=O', '[Al+3].[Al+3].[O-2].[O-2].[O-2]', '[Zr+4].[O-2].[O-2]', 'CC(C)=O', 'S=C=S', 'C=C=O', 'C=C(C1)OC1=O', '[Na]OC', 'O1CC1', 'CO', 'CC(O)=O', 'O=P(OCC)(OCC)OCC', 'O=C1OCCC1', 'CCOC(C)=O', 'O=C1OCC/C1=C(O[Na])\\C', 'O=C1OCCC1C(C)=O', 'O=C(CCCI)C', 'CCNCCO', 'CCN(CCCC(C)=O)CCO', 'CCN(CCC/C(C)=N/O)CCO', 'CCN(CCCC(C)N)CCO', 'ClC1=CC=NC2=CC(Cl)=CC=C21', 'ClC1=CC=C2C(N=CC=C2NC(CCCN(CC)CCO)C)=C1']
+smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H])C', 'O=[C]OO[Na].[Na]', 'O=C(OCC)C',
+               'O=C1OCCC1C(C)=O', '[H]C([H])=O', '[HH]', '[Cu]=O', 'O=[Bi][Bi](=O)=O', 'O=[Si]=O', 'OCCCCO', '[Cu]',
+               '[Zn]=O', '[Al+3].[Al+3].[O-2].[O-2].[O-2]', '[Zr+4].[O-2].[O-2]', 'CC(C)=O', 'S=C=S', 'C=C=O',
+               'C=C(C1)OC1=O', '[Na]OC', 'O1CC1', 'CO', 'CC(O)=O', 'O=P(OCC)(OCC)OCC', 'O=C1OCCC1', 'CCOC(C)=O',
+               'O=C1OCC/C1=C(O[Na])\\C', 'O=C1OCCC1C(C)=O', 'O=C(CCCI)C', 'CCNCCO', 'CCN(CCCC(C)=O)CCO',
+               'CCN(CCC/C(C)=N/O)CCO', 'CCN(CCCC(C)N)CCO', 'ClC1=CC=NC2=CC(Cl)=CC=C21',
+               'ClC1=CC=C2C(N=CC=C2NC(CCCN(CC)CCO)C)=C1']
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
 files_dicts = xml_to_csv(root_list)
 find_smiles(files_dicts, smiles_list)

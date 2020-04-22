@@ -64,7 +64,7 @@ def get_compound_info(compound):
             identifiers_list[0] = 'smiles:' + new_smiles
     except IndexError:
         pass
-    print(error_smiles)
+    print('Error SMILES', error_smiles)
     chemical_dict = {'chemical_names': chemical_name_list, 'identifiers': identifiers_list,
                      'amounts': amounts_list, 'appearances': appearances_list}
 

@@ -52,9 +52,15 @@ def get_compound_info(compound):
     try:
         full_string = identifiers_list[0]
         smiles = full_string[7:]
+        print("XML SMILES:", smiles)
         mol = Chem.MolFromSmiles(smiles)
         new_smiles = Chem.MolToSmiles(mol)
-        identifiers_list[0] = 'smiles:' + new_smiles
+        if new_smiles is None:
+            print("Error SMILES", smiles)
+            pass
+        else:
+            print("Converted SMILES:", new_smiles)
+            identifiers_list[0] = 'smiles:' + new_smiles
     except IndexError:
         pass
 
@@ -202,7 +208,7 @@ def find_smiles(files_dicts, smiles_list):
                 pass
 
 
-smiles_list = ['COC(=O)Cc1ccc(OC)cc1', 'ClCCl']
+smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H])C', 'O=[C]OO[Na].[Na]', 'O=C(OCC)C', 'O=C1OCCC1C(C)=O', '[H]C([H])=O', '[HH]', '[Cu]=O', 'O=[Bi][Bi](=O)=O', 'O=[Si]=O', 'OCCCCO', '[Cu]', '[Zn]=O', '[Al+3].[Al+3].[O-2].[O-2].[O-2]', '[Zr+4].[O-2].[O-2]', 'CC(C)=O', 'S=C=S', 'C=C=O', 'C=C(C1)OC1=O', '[Na]OC', 'O1CC1', 'CO', 'CC(O)=O', 'O=P(OCC)(OCC)OCC', 'O=C1OCCC1', 'CCOC(C)=O', 'O=C1OCC/C1=C(O[Na])\\C', 'O=C1OCCC1C(C)=O', 'O=C(CCCI)C', 'CCNCCO', 'CCN(CCCC(C)=O)CCO', 'CCN(CCC/C(C)=N/O)CCO', 'CCN(CCCC(C)N)CCO', 'ClC1=CC=NC2=CC(Cl)=CC=C21', 'ClC1=CC=C2C(N=CC=C2NC(CCCN(CC)CCO)C)=C1']
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
 files_dicts = xml_to_csv(root_list)
 find_smiles(files_dicts, smiles_list)

@@ -55,17 +55,17 @@ def get_compound_info(compound):
         smiles = full_string[7:]
         print("XML SMILES:", smiles)
         mol = Chem.MolFromSmiles(smiles)
-        new_smiles = Chem.MolToSmiles(mol)
         if mol is None:
-            error_smiles.append(smiles)
+            # error_smiles.append(smiles)
             print("Error SMILES:", smiles)
             pass
         else:
+            new_smiles = Chem.MolToSmiles(mol)
             print("Converted SMILES:", new_smiles)
             identifiers_list[0] = 'smiles:' + new_smiles
     except IndexError:
         pass
-    print('Error SMILES', error_smiles)
+    # print('Error SMILES', error_smiles)
     chemical_dict = {'chemical_names': chemical_name_list, 'identifiers': identifiers_list,
                      'amounts': amounts_list, 'appearances': appearances_list}
 

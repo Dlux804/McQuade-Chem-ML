@@ -204,7 +204,7 @@ def find_smiles(files_dicts, smiles_list):
                     if len(real_dicts_list) > 0:
                             # print("Found %s match in:" % canon_name, main_key_name)
                             all_data = pd.DataFrame.from_records(real_dicts_list)
-                            all_data.to_csv(main_key[:-4] + '_' + canon + str(count1) + '.csv', index=False)
+                            all_data.to_csv(main_key[:-4] + '_' + canon + '_' +str(count1) + '.csv', index=False)
                     else:
                         # print("No match")
                         pass

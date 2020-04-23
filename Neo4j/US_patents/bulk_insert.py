@@ -11,6 +11,10 @@ from Neo4j.US_patents import csv_to_neo4j_backends
 class US_patents_to_neo:
 
     def __init__(self, main_directory):
+
+        if not os.path.exists('temp_files'):
+            os.mkdir('temp_files')
+
         self.main_directory = main_directory
         self.graph = Graph()
         print('\n-----------------------------------------------------------------------------------------------------')

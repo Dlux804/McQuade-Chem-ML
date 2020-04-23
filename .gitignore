@@ -1,3 +1,5 @@
 /barzilay_predictions/logger_dir/fold_0/
 !output/
 output/*
+/Neo4j/SciFinder/
+/Neo4j/US_patents/temp_files/

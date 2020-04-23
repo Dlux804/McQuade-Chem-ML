@@ -140,7 +140,7 @@ class MlModel:
 
         # Move folder to output/
         # when testing using code below, need ../output/ because it will run from core.
-        # when running from main.py at root, no ../ needed.
+        # when running from US_patents_xml_to_csv.py at root, no ../ needed.
         movesp = 'mv ./' + name + '/ output/'
 
         subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command

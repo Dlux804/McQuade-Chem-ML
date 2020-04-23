@@ -6,6 +6,8 @@ from rdkit import Chem
 import csv
 import numpy as np
 import copy
+# import memory_profiler
+# import time
 """
     Objective: Make CSVs from xml files and convert all the SMILES to canonical. If SMILES inthe list of SMILES provided 
     is in the CSVs, leave the extracted information in the CSV.  
@@ -146,8 +148,10 @@ def xml_to_csv(root_list):
                                 parameters = reactionAction.findall('{http://bitbucket.org/dan2097}parameter')
                                 for parameter in parameters:
                                     if split_dict(parameter.attrib) is not None:
-                                        stages_list.append(
-                                            'step {} properties:'.format(counter) + split_dict(parameter.attrib))
+                                        # stages_list.append(
+                                        #     'step {} properties:'.format(counter) + split_dict(parameter.attrib))
+                                        stages_list.append('{0}{1}'.format('step {} properties:'.format(counter),
+                                                                           split_dict(parameter.attrib)))
                                 counter = counter + 1
 
                             reaction_dict = {'reaction_smiles': reaction_smiles_list, 'sources': sources_list,
@@ -185,13 +189,12 @@ def find_smiles(files_dicts, smiles_list):
                                     real_dicts_list.append(real_dicts)
                             except IndexError:
                                 pass
-                with cd('../return_csv'):
-                    if len(real_dicts_list) > 0:
-                        all_data = pd.DataFrame.from_records(real_dicts_list)
-                        all_data.to_csv("{0}_{1}{2}".format(main_key[:-4], canon, '.csv'), index=False)
-                    else:
-                        # print("No match")
-                        pass
+                if len(real_dicts_list) > 0:
+                    all_data = pd.DataFrame.from_records(real_dicts_list)
+                    all_data.to_csv("{0}_{1}{2}".format(main_key[:-4], canon, '.csv'), index=False)
+                else:
+                    # print("No match")
+                    pass
 
 
 smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H])C', 'O=[C]OO[Na].[Na]', 'O=C(OCC)C',
@@ -204,13 +207,15 @@ smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H
 
 
 
+
+
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
 files_dicts = xml_to_csv(root_list)
 find_smiles(files_dicts, smiles_list)
 
 # m1 = memory_profiler.memory_usage()
 # t1 = time.clock()
-
+#
 # t2 = time.clock()
 # m2 = memory_profiler.memory_usage()
 # time_diff = t2 - t1

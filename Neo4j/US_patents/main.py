@@ -35,9 +35,7 @@ for main_directories in os.listdir(US_patents_directory):  # Main loop, insertin
                 print(directory + ": There are {} files left in directory".format(str(i-counter)))
                 file = directory + '/' + file
                 try:
-                    # csv_to_neo4j.file_to_neo4j(file, max_nodes_in_ram=400000)
-                    data = pd.read_csv(file)
-                    sub_counter = sub_counter + len(data)
+                    csv_to_neo4j.file_to_neo4j(file, max_nodes_in_ram=400000)
                 except pd.errors.EmptyDataError:
                     pass
                 counter = counter + 1

@@ -6,9 +6,6 @@ from rdkit import Chem
 import csv
 import numpy as np
 import copy
-import memory_profiler
-import time
-import timeit
 """
     Objective: Make CSVs from xml files and convert all the SMILES to canonical. If SMILES inthe list of SMILES provided 
     is in the CSVs, leave the extracted information in the CSV.  
@@ -31,16 +28,12 @@ def split_dict(gen_dict):
         return None
     if values[0][0:4] == 'cml:':
         values[0] = values[0][4:]
-    clean_text = values[0] + ':' + values[1]
+    # clean_text = values[0] + ':' + values[1]
+    clean_text = '{0}:{1}'.format(values[0], values[1])
     return clean_text
 
 
 def get_compound_info(compound):
-    chemical_name_list = []
-    identifiers_list = []
-    amounts_list = []
-    appearances_list = []
-
     molecule = compound.find('{http://www.xml-cml.org/schema}molecule')
     chemical_name_list = [child.text for child in molecule]
     # for child in molecule:
@@ -209,16 +202,20 @@ smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H
                'CCN(CCC/C(C)=N/O)CCO', 'CCN(CCCC(C)N)CCO', 'ClC1=CC=NC2=CC(Cl)=CC=C21',
                'ClC1=CC=C2C(N=CC=C2NC(CCCN(CC)CCO)C)=C1']
 
-m1 = memory_profiler.memory_usage()
-t1 = time.clock()
+
+
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
 files_dicts = xml_to_csv(root_list)
 find_smiles(files_dicts, smiles_list)
-t2 = time.clock()
-m2 = memory_profiler.memory_usage()
-time_diff = t2 - t1
-mem_diff = m2[0] - m1[0]
-print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
+
+# m1 = memory_profiler.memory_usage()
+# t1 = time.clock()
+
+# t2 = time.clock()
+# m2 = memory_profiler.memory_usage()
+# time_diff = t2 - t1
+# mem_diff = m2[0] - m1[0]
+# print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
 
 # data = ['Cl(=O)(=O)(=O)F']
 # mol = Chem.MolFromSmiles('Cl(=O)(=O)(=O)F')

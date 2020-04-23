@@ -64,8 +64,12 @@ class file_to_neo4j:
                     for compound in compounds:
                         identifiers = compound['identifiers']
                         for identifier in identifiers:
-                            identifier_name = identifier.split(' = ')[0]
-                            identifier_value = identifier.split(' = ')[1]
+                            try:
+                                identifier_name = identifier.split(' = ')[0]
+                                identifier_value = identifier.split(' = ')[1]
+                            except IndexError:
+                                identifier_name = identifier.split(':')[0]
+                                identifier_value = identifier.split(':')[1]
                             if identifier_name == 'smiles':
                                 try:
                                     mol = MolFromSmiles(identifier_value)
@@ -184,8 +188,12 @@ class file_to_neo4j:
                     for compound in compounds:
                         identifiers = compound['identifiers']
                         for identifier in identifiers:
-                            identifier_name = identifier.split(' = ')[0]
-                            identifier_value = identifier.split(' = ')[1]
+                            try:
+                                identifier_name = identifier.split(' = ')[0]
+                                identifier_value = identifier.split(' = ')[1]
+                            except IndexError:
+                                identifier_name = identifier.split(':')[0]
+                                identifier_value = identifier.split(':')[1]
                             if identifier_name == 'smiles':
                                 try:
                                     mol = MolFromSmiles(identifier_value)

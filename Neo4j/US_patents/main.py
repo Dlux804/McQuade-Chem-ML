@@ -23,6 +23,7 @@ Then afterward, start up a new neo4j graph with the password as 'password' and t
 # US_grants_directory_to_csvs(US_patents_directory)  # This is here to convert the xml files to csv files
 # clean_up_checker_files(US_patents_directory)  # This is here to clean up checker files if you want to recreate graph
 
+sub_counter = 0
 for main_directories in os.listdir(US_patents_directory):  # Main loop, inserting the csv files
     main_directories = US_patents_directory + '/' + main_directories
     for directories in os.listdir(main_directories):
@@ -34,7 +35,11 @@ for main_directories in os.listdir(US_patents_directory):  # Main loop, insertin
                 print(directory + ": There are {} files left in directory".format(str(i-counter)))
                 file = directory + '/' + file
                 try:
-                    csv_to_neo4j.file_to_neo4j(file, max_nodes_in_ram=400000)
+                    # csv_to_neo4j.file_to_neo4j(file, max_nodes_in_ram=400000)
+                    data = pd.read_csv(file)
+                    sub_counter = sub_counter + len(data)
                 except pd.errors.EmptyDataError:
                     pass
                 counter = counter + 1
+
+print(sub_counter)

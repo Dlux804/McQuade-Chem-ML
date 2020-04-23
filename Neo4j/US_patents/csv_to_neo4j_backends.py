@@ -5,10 +5,9 @@ from py2neo import Node, Relationship, NodeMatcher, Graph
 
 class data_to_neo4j:
 
-    def __init__(self, file, input_data):
+    def __init__(self, input_data):
 
         self.input_data = input_data
-        self.file = file
         self.graph = Graph()
         self.matcher = NodeMatcher(self.graph)
 
@@ -54,15 +53,17 @@ class data_to_neo4j:
                 catalyst = self.fetch_node(catalyst)
                 rel = Relationship(catalyst, 'catalyzes', reaction_node)
                 self.tx.create(rel)
-
         self.tx.commit()
-        open(self.file + ".checker", "a").close()
 
     def fetch_node(self, node_str):
         try:
-            node_ID = node_str.split(':')[0]
-            node_ID = node_ID[2:len(node_ID)]
-            return self.matcher.get(int(node_ID))
+            try:
+                node_ID = int(node_str)
+                return self.matcher.get(node_ID)
+            except ValueError:
+                node_ID = node_str.split(':')[0]
+                node_ID = node_ID[2:len(node_ID)]
+                return self.matcher.get(int(node_ID))
         except AttributeError:
             return node_str
 

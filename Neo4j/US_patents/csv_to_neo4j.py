@@ -42,8 +42,10 @@ class file_to_neo4j:
         self.csv_file_compounds = self.add_nodes_to_new_compounds()
         print("Finalizing csv compounds, committing reactions to database")
         self.final_df = self.clean_raw_data()
-        csv_to_neo4j_backends.data_to_neo4j(file, self.final_df)
-        print("Time needed {} minutes".format(round((timeit.default_timer() - self.timer)/60, 2)))
+        csv_to_neo4j_backends.data_to_neo4j(self.final_df)
+        open(self.file + ".checker", "a").close()
+        self.time_needed_to_insert = round((timeit.default_timer() - self.timer)/60, 2)
+        print("Time needed {} minutes".format(self.time_needed_to_insert))
         print("-----------------------------------------------------------------------------------------------------\n")
 
     def gather_compounds(self):

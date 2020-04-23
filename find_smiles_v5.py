@@ -4,7 +4,11 @@ import xml.etree.ElementTree as ET
 from core.misc import cd
 from rdkit import Chem
 import csv
+import numpy as np
 import copy
+import memory_profiler
+import time
+import timeit
 """
     Objective: Make CSVs from xml files and convert all the SMILES to canonical. If SMILES inthe list of SMILES provided 
     is in the CSVs, leave the extracted information in the CSV.  
@@ -38,30 +42,31 @@ def get_compound_info(compound):
     appearances_list = []
 
     molecule = compound.find('{http://www.xml-cml.org/schema}molecule')
-    for child in molecule:
-        chemical_name_list.append(child.text)
+    chemical_name_list = [child.text for child in molecule]
+    # for child in molecule:
+    #     chemical_name_list.append(child.text)
     identifiers = compound.findall('{http://www.xml-cml.org/schema}identifier')
-    for identifier in identifiers:
-        identifiers_list.append(split_dict(identifier.attrib))
+    identifiers_list = [split_dict(identifier.attrib) for identifier in identifiers]
+    # for identifier in identifiers:
+    #     identifiers_list.append(split_dict(identifier.attrib))
     amounts = compound.findall('{http://www.xml-cml.org/schema}amount')
-    for amount in amounts:
-        amounts_list.append(amount.text)
+    amounts_list = [amount.text for amount in amounts]
+    # for amount in amounts:
+    #     amounts_list.append(amount.text)
     appearances = compound.findall('{http://bitbucket.org/dan2097}appearance')
-    for appearance in appearances:
-        appearances_list.append(appearance.text)
-    error_smiles = []
+    appearances_list = [appearance.text for appearance in appearances]
+    # for appearance in appearances:
+    #     appearances_list.append(appearance.text)
     try:
         full_string = identifiers_list[0]
         smiles = full_string[7:]
-        print("XML SMILES:", smiles)
+        # print("XML SMILES:", smiles)
         mol = Chem.MolFromSmiles(smiles)
         if mol is None:
-            # error_smiles.append(smiles)
-            print("Error SMILES:", smiles)
+
             pass
         else:
             new_smiles = Chem.MolToSmiles(mol)
-            print("Converted SMILES:", new_smiles)
             identifiers_list[0] = 'smiles:' + new_smiles
     except IndexError:
         pass
@@ -96,9 +101,6 @@ def xml_to_csv(root_list):
                         reaction_list_dicts = []
                         for reaction in root:
                             reaction_smiles_list = []
-                            sources_list = []
-                            reactants_list = []
-                            products_list = []
                             solvents_list = []
                             catalyst_list = []
                             stages_list = []
@@ -111,20 +113,23 @@ def xml_to_csv(root_list):
                                     reaction_smiles_list.append(raw_reaction_smile)
 
                             sources = reaction.find('{http://bitbucket.org/dan2097}source')
-                            for source in sources:
-                                sources_list.append(source.text)
+                            sources_list = [source.text for source in sources]
+                            # for source in sources:
+                            #     sources_list.append(source.text)
 
                             reactantList = reaction.find('{http://www.xml-cml.org/schema}reactantList')
                             reactants = reactantList.findall("{http://www.xml-cml.org/schema}reactant")
-                            for reactant in reactants:
-                                final_reactant = get_compound_info(reactant)
-                                reactants_list.append(final_reactant)
+                            reactants_list = list(map(get_compound_info, reactants))
+                            # for reactant in reactants:
+                            #     final_reactant = get_compound_info(reactant)
+                            #     reactants_list.append(final_reactant)
 
                             productList = reaction.find('{http://www.xml-cml.org/schema}productList')
                             products = productList.findall('{http://www.xml-cml.org/schema}product')
-                            for product in products:
-                                final_product = get_compound_info(product)
-                                products_list.append(final_product)
+                            products_list = list(map(get_compound_info, products))
+                            # for product in products:
+                            #     final_product = get_compound_info(product)
+                            #     products_list.append(final_product)
 
                             spectatorList = reaction.find('{http://www.xml-cml.org/schema}spectatorList')
                             spectators = spectatorList.findall('{http://www.xml-cml.org/schema}spectator')
@@ -162,23 +167,15 @@ def xml_to_csv(root_list):
 
 
 def find_smiles(files_dicts, smiles_list):
-    print("Converting given SMILES to canonical")
-    print()
+    # print("Converting given SMILES to canonical")
+    # print()
     mol_list = list(map(Chem.MolFromSmiles, smiles_list))
     canon_smiles_list = list((map(Chem.MolToSmiles, mol_list)))
     print("Canonical form of given SMILES:", canon_smiles_list)
-    length = len(files_dicts.keys())
+    # length = len(dictfiles_dicts.keys())
     with cd('return_csv/'):
-        final_dict_list = []
-        canon_list = []
-        main_key_list = []
-        canon_name_list = []
-        count_1 = 0
         for canon in canon_smiles_list:
-            canon_list.append(canon)
-            count_1 = count_1 +1
             for main_key, value_dict in files_dicts.items():
-                main_key_list.append(main_key)
                 real_dicts_list = []
                 for real_dicts in value_dict:
                     # print(real_dicts)
@@ -186,7 +183,6 @@ def find_smiles(files_dicts, smiles_list):
                     remove = ['reaction_smiles', 'sources', 'stages']
                     [remove_dict.pop(rem, None) for rem in remove]
                     for dict_k, list_v in remove_dict.items():
-                        count_2 = 0
                         for final_dict in list_v:
                             try:
                                 # print(final_dict)
@@ -194,23 +190,16 @@ def find_smiles(files_dicts, smiles_list):
                                 full_string = str(all_smiles[0])
                                 if canon == full_string[7:]:
                                     real_dicts_list.append(real_dicts)
-                                    count_2 = count_2 +1
                             except IndexError:
                                 pass
-                final_dict_list.append(real_dicts_list)
+                with cd('../return_csv'):
+                    if len(real_dicts_list) > 0:
+                        all_data = pd.DataFrame.from_records(real_dicts_list)
+                        all_data.to_csv("{0}_{1}{2}".format(main_key[:-4], canon, '.csv'), index=False)
+                    else:
+                        # print("No match")
+                        pass
 
-            canon_name_list += [canon] * length
-
-    with cd('./return_csv'):
-        for canon_name, main_key_name, dict_df in zip(canon_name_list, main_key_list, final_dict_list):
-            if len(dict_df) > 0:
-                print("Found %s match in:" % canon_name, main_key_name)
-                all_data = pd.DataFrame.from_records(dict_df)
-                all_data.to_csv(main_key_name[:-4] + '_' + canon_name + '.csv', index=False)
-            else:
-                print("No match for %s in" % canon_name, main_key_name)
-                pass
-    # with cd('./return_csv'):
 
 smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H])C', 'O=[C]OO[Na].[Na]', 'O=C(OCC)C',
                'O=C1OCCC1C(C)=O', '[H]C([H])=O', '[HH]', '[Cu]=O', 'O=[Bi][Bi](=O)=O', 'O=[Si]=O', 'OCCCCO', '[Cu]',
@@ -219,9 +208,17 @@ smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H
                'O=C1OCC/C1=C(O[Na])\\C', 'O=C1OCCC1C(C)=O', 'O=C(CCCI)C', 'CCNCCO', 'CCN(CCCC(C)=O)CCO',
                'CCN(CCC/C(C)=N/O)CCO', 'CCN(CCCC(C)N)CCO', 'ClC1=CC=NC2=CC(Cl)=CC=C21',
                'ClC1=CC=C2C(N=CC=C2NC(CCCN(CC)CCO)C)=C1']
+
+m1 = memory_profiler.memory_usage()
+t1 = time.clock()
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
 files_dicts = xml_to_csv(root_list)
 find_smiles(files_dicts, smiles_list)
+t2 = time.clock()
+m2 = memory_profiler.memory_usage()
+time_diff = t2 - t1
+mem_diff = m2[0] - m1[0]
+print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
 
 # data = ['Cl(=O)(=O)(=O)F']
 # mol = Chem.MolFromSmiles('Cl(=O)(=O)(=O)F')
@@ -229,3 +226,6 @@ find_smiles(files_dicts, smiles_list)
 #     print(data)
 # else:
 #     smiles = Chem.MolToSmiles(mol)
+
+
+

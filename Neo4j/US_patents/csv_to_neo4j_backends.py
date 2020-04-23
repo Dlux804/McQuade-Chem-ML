@@ -64,6 +64,10 @@ class data_to_neo4j:
                 node_ID = node_str.split(':')[0]
                 node_ID = node_ID[2:len(node_ID)]
                 return self.matcher.get(int(node_ID))
+            except TypeError:
+                node_ID = node_str.split(':')[0]
+                node_ID = node_ID[2:len(node_ID)]
+                return self.matcher.get(int(node_ID))
         except AttributeError:
             return node_str
 

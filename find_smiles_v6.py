@@ -6,8 +6,8 @@ from rdkit import Chem
 import csv
 import numpy as np
 import copy
-import memory_profiler
-import time
+# import memory_profiler
+# import time
 """
     Objective: Make CSVs from xml files and convert all the SMILES to canonical. If SMILES inthe list of SMILES provided 
     is in the CSVs, leave the extracted information in the CSV.  
@@ -101,11 +101,9 @@ def xml_to_csv(root_list):
                             sources = reaction.find('{http://bitbucket.org/dan2097}source')
                             sources_list = [source.text for source in sources]
 
-
                             reactantList = reaction.find('{http://www.xml-cml.org/schema}reactantList')
                             reactants = reactantList.findall("{http://www.xml-cml.org/schema}reactant")
                             reactants_list = list(map(get_compound_info, reactants))
-
 
                             productList = reaction.find('{http://www.xml-cml.org/schema}productList')
                             products = productList.findall('{http://www.xml-cml.org/schema}product')
@@ -175,7 +173,7 @@ def find_smiles(files_dicts, smiles_list):
                                 pass
                 if len(real_dicts_list) > 0:
                     all_data = pd.DataFrame.from_records(real_dicts_list)
-                    all_data.to_csv("{0}_{1}{2}".format(main_key[:-4], canon, '.csv'), index=False)
+                    all_data.to_csv("{0}_{1}.csv".format(main_key[:-4], canon), index=False)
                 else:
                     # print("No match")
                     pass
@@ -193,17 +191,17 @@ smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H
 
 
 
-m1 = memory_profiler.memory_usage()
-t1 = time.clock()
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
 files_dicts = xml_to_csv(root_list)
-# for i in range(10):
 find_smiles(files_dicts, smiles_list)
-t2 = time.clock()
-m2 = memory_profiler.memory_usage()
-time_diff = t2 - t1
-mem_diff = m2[0] - m1[0]
-print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
+# m1 = memory_profiler.memory_usage()
+# t1 = time.perf_counter()
+
+# t2 = time.perf_counter()
+# m2 = memory_profiler.memory_usage()
+# time_diff = t2 - t1
+# mem_diff = m2[0] - m1[0]
+# print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
 
 # data = ['Cl(=O)(=O)(=O)F']
 # mol = Chem.MolFromSmiles('Cl(=O)(=O)(=O)F')

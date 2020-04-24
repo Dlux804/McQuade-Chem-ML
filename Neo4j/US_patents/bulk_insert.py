@@ -175,13 +175,19 @@ class US_patents_to_neo:
                 if file != 'temp_files/0.csv' and file != 'temp_files/unique_compound_data.csv':
                     sub_data = pd.read_csv(file)
                     main_data = main_data.append(sub_data, ignore_index=True)
-            main_data.to_csv('temp_files/unique_compound_data.csv', index=False, sort=True)
+            try:
+                main_data.to_csv('temp_files/unique_compound_data.csv', index=False, sort=True)
+            except TypeError:
+                main_data.to_csv('temp_files/unique_compound_data.csv', index=False)
         elif len(os.listdir('temp_files')) == 1:
             for file in os.listdir('temp_files'):
                 file = 'temp_files/' + file
                 if file != 'temp_files/unique_compound_data.csv':
                     main_data = pd.read_csv('temp_files/0.csv')
-                    main_data.to_csv('temp_files/unique_compound_data.csv', index=False, sort=True)
+                    try:
+                        main_data.to_csv('temp_files/unique_compound_data.csv', index=False, sort=True)
+                    except TypeError:
+                        main_data.to_csv('temp_files/unique_compound_data.csv', index=False)
         for file in os.listdir('temp_files'):
             file = 'temp_files/' + file
             if file != 'temp_files/unique_compound_data.csv':

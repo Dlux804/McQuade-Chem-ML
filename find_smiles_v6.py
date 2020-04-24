@@ -30,7 +30,6 @@ def split_dict(gen_dict):
         return None
     if values[0][0:4] == 'cml:':
         values[0] = values[0][4:]
-    # clean_text = values[0] + ':' + values[1]
     clean_text = '{0}:{1}'.format(values[0], values[1])
     return clean_text
 
@@ -38,12 +37,8 @@ def split_dict(gen_dict):
 def get_compound_info(compound):
     molecule = compound.find('{http://www.xml-cml.org/schema}molecule')
     chemical_name_list = [child.text for child in molecule]
-    # for child in molecule:
-    #     chemical_name_list.append(child.text)
     identifiers = compound.findall('{http://www.xml-cml.org/schema}identifier')
     identifiers_list = [split_dict(identifier.attrib) for identifier in identifiers]
-    # for identifier in identifiers:
-    #     identifiers_list.append(split_dict(identifier.attrib))
     amounts = compound.findall('{http://www.xml-cml.org/schema}amount')
     amounts_list = [amount.text for amount in amounts]
     # for amount in amounts:
@@ -70,7 +65,6 @@ def get_compound_info(compound):
 
 def get_root(foldername):
     with cd(foldername):
-
         root_list = []
         for root, dirs, files in os.walk(foldername):
             root_list.append(root)
@@ -106,22 +100,16 @@ def xml_to_csv(root_list):
 
                             sources = reaction.find('{http://bitbucket.org/dan2097}source')
                             sources_list = [source.text for source in sources]
-                            # for source in sources:
-                            #     sources_list.append(source.text)
+
 
                             reactantList = reaction.find('{http://www.xml-cml.org/schema}reactantList')
                             reactants = reactantList.findall("{http://www.xml-cml.org/schema}reactant")
                             reactants_list = list(map(get_compound_info, reactants))
-                            # for reactant in reactants:
-                            #     final_reactant = get_compound_info(reactant)
-                            #     reactants_list.append(final_reactant)
+
 
                             productList = reaction.find('{http://www.xml-cml.org/schema}productList')
                             products = productList.findall('{http://www.xml-cml.org/schema}product')
                             products_list = list(map(get_compound_info, products))
-                            # for product in products:
-                            #     final_product = get_compound_info(product)
-                            #     products_list.append(final_product)
 
                             spectatorList = reaction.find('{http://www.xml-cml.org/schema}spectatorList')
                             spectators = spectatorList.findall('{http://www.xml-cml.org/schema}spectator')
@@ -200,8 +188,6 @@ smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H
                'O=C1OCC/C1=C(O[Na])\\C', 'O=C1OCCC1C(C)=O', 'O=C(CCCI)C', 'CCNCCO', 'CCN(CCCC(C)=O)CCO',
                'CCN(CCC/C(C)=N/O)CCO', 'CCN(CCCC(C)N)CCO', 'ClC1=CC=NC2=CC(Cl)=CC=C21',
                'ClC1=CC=C2C(N=CC=C2NC(CCCN(CC)CCO)C)=C1']
-
-
 
 
 

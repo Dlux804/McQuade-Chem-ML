@@ -8,7 +8,8 @@ To use:
 Make sure all directories are unzipped,
 and the only two directories that should be in the main directory are Applications and Grants. For example, the path
 to an example file should be (on windows), 'C:/Users/User/Desktop/5104873/grants/1976/pftaps19760106_wk01.xml' with the
-US_patents_directory set to 'C:/Users/User/Desktop/5104873'
+US_patents_directory set to 'C:/Users/User/Desktop/5104873'.
+    Be sure to start up a new neo4j graph with the password as 'password' and have it running before using this code
 
 Info about stopping script:
 When this script inserts all the files into Neo4j, there are times during the script when the user can stop the process 

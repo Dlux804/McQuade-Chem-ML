@@ -7,6 +7,8 @@ import os
 US_patents_directory = 'C:/Users/User/Desktop/5104873'
 
 '''
+This script is designed to insert a csv files, or set of csv files, that was created from US_grants_directory_to_csvs
+
 For the US patents directory, 
 make sure you only have the folders 'grants' and 'applications' saved in the directory. The script is
 only designed to work for a directory containing only those unzipped folders. The get the folders, unzip the main folder
@@ -16,8 +18,7 @@ a program like 7-zip. Afterwards you should be left with a directory named '5104
 
 This is being worked out to make this process more user friendly, but this is the work around for now. 
 
-Then afterward, start up a new neo4j graph with the password as 'password' and the script will do the rest :D.
-*Note this script is dirty and inefficient, efficiency is being worked out. This is only really only for prototyping. 
+Be sure to start up a new neo4j graph with the password as 'password' and have it running before using this code
 '''
 
 # US_grants_directory_to_csvs(US_patents_directory)  # This is here to convert the xml files to csv files

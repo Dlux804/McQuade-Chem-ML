@@ -99,19 +99,19 @@ def targets_features(df, exp, train=0.8, random = None):
                                                                                 test_size=test_percent,
                                                                                random_state=random)  # what data to split and how to do it.
 
-    # Uncomment this section to have data shape distribution printed.
+    #Uncomment this section to have data shape distribution printed.
 
-    # print('Total Feature Shape:', features.shape)
-    # print('Total Target Shape', target.shape)
-    # print()
-    # print('Training Features Shape:', train_features.shape)
-    # print('Training Target Shape:', train_target.shape)
-    # print()
-    # print('Test Features Shape:', test_features.shape)
-    # print('Test Target Shape:', test_target.shape)
-    # print()
-    #
-    # print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
-    #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))
+    print('Total Feature Shape:', features.shape)
+    print('Total Target Shape', target.shape)
+    print()
+    print('Training Features Shape:', train_features.shape)
+    print('Training Target Shape:', train_target.shape)
+    print()
+    print('Test Features Shape:', test_features.shape)
+    print('Test Target Shape:', test_target.shape)
+    print()
+
+    print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
+          np.round(test_features.shape[0] / features.shape[0] * 100, -1))
 
     return train_features, test_features, train_target, test_target, feature_list

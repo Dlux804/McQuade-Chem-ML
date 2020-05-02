@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reactionList xmlns="http://www.xml-cml.org/schema" xmlns:cmlDict="http://www.xml-cml.org/dictionary/cml/" xmlns:nameDict="http://www.xml-cml.org/dictionary/cml/name/" xmlns:unit="http://www.xml-cml.org/unit/" xmlns:cml="http://www.xml-cml.org/schema" xmlns:dl="http://bitbucket.org/dan2097">
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000257A1</dl:documentId>
+      <dl:headingText>Copolymer of Maleic Anhydride-Methyl Vinyl Ether+N,N′-1,3-Phenylenedimaleimide (mole ratio 49.975:50.025:0.025)</dl:headingText>
+      <dl:paragraphNum>0021</dl:paragraphNum>
+      <dl:paragraphText>A 2-liter stainless steel high pressure reactor was charged with 513.88 g of acetone and 0.201 g of N,N′-1,3-phenylenedimaleimide. The reactor was sealed and purged three times with nitrogen gas ending with a head pressure of 25 psi N2. Then the temperature was raised to 70° C. during a 40 min period. When the temperature reached 60° C., 111.88 ml of molten maleic anhydride was introduced. At 80° C., separate feeds of 175.35 ml of methyl vinyl ether and 1.17 g of decanoyl peroxide in 33 g of acetone were introduced into the reactor over a period of 3 hours, with the methyl vinyl ether feed begun 10 min. before the decanoyl peroxide-acetone solution. After the feed was completed, the reactor was maintained at 80° C. for an additional half-hour. The reactor was then cooled to provide a thick, viscous light amber colored solution of the desired copolymer product in acetone.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[C:1]1([N:14]2[C:18](=[O:19])[CH:17]=[CH:16][C:15]2=[O:20])[CH:6]=[CH:5][CH:4]=[C:3]([N:7]2[C:11](=[O:12])[CH:10]=[CH:9][C:8]2=[O:13])[CH:2]=1.[CH3:21][C:22](C)=[O:23]&gt;&gt;[C:18]1(=[O:19])[O:20][C:15](=[O:23])[CH:16]=[CH:17]1.[CH:22]([O:23][CH3:1])=[CH2:21].[C:1]1([N:14]2[C:18](=[O:19])[CH:17]=[CH:16][C:15]2=[O:20])[CH:6]=[CH:5][CH:4]=[C:3]([N:7]2[C:11](=[O:12])[CH:10]=[CH:9][C:8]2=[O:13])[CH:2]=1 |f:2.3.4|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">desired copolymer</name>
+          <dl:nameResolved>Maleic Anhydride Methyl Vinyl Ether N,N′-1,3-Phenylenedimaleimide</dl:nameResolved>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C1(\C=C/C(=O)O1)=O.C(=C)OC.C1(=CC(=CC=C1)N1C(C=CC1=O)=O)N1C(C=CC1=O)=O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C14H8N2O4.C4H2O3.C3H6O/c17-11-4-5-12(18)15(11)9-2-1-3-10(8-9)16-13(19)6-7-14(16)20;5-3-1-2-4(6)7-3;1-3-4-2/h1-8H;1-2H;3H,1H2,2H3"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="2">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">N,N′-1,3-phenylenedimaleimide</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.201">0.201 g</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC(=CC=C1)N1C(C=CC1=O)=O)N1C(C=CC1=O)=O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C14H8N2O4/c17-11-4-5-12(18)15(11)9-2-1-3-10(8-9)16-13(19)6-7-14(16)20/h1-8H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="2">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">acetone</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="513.88">513.88 g</amount>
+        <identifier dictRef="cml:smiles" value="CC(=O)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C3H6O/c1-3(2)4/h1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList/>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A 2-liter stainless steel high pressure reactor was charged with 513.88 g of acetone and 0.201 g of N,N′-1,3-phenylenedimaleimide</dl:phraseText>
+        <chemical>
+          <molecule id="m3">
+            <name dictRef="nameDict:unknown">stainless steel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m1"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="ApparatusAction">
+        <dl:phraseText>The reactor was sealed</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Degass">
+        <dl:phraseText>purged three times with nitrogen gas</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">nitrogen</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="N#N"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/N2/c1-2"/>
+          <dl:entityType>falsePositive</dl:entityType>
+          <dl:state>gas</dl:state>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>Then the temperature was raised to 70° C. during a 40 min period</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="2400">40 min</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="70">70° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Unknown">
+        <dl:phraseText>reached 60° C.</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="60">60° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>111.88 ml of molten maleic anhydride was introduced</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">maleic anhydride</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.11188">111.88 ml</amount>
+          <identifier dictRef="cml:smiles" value="C1(\C=C/C(=O)O1)=O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H2O3/c5-3-1-2-4(6)7-3/h1-2H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Partition">
+        <dl:phraseText>At 80° C., separate</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="80">80° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>were introduced into the reactor over a period of 3 hours, with the methyl vinyl ether feed</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">methyl vinyl ether</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(=C)OC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C3H6O/c1-3-4-2/h3H,1H2,2H3"/>
+          <dl:entityType>definiteReference</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wait">
+        <dl:phraseText>begun 10 min. before the decanoyl peroxide-acetone solution</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">decanoyl peroxide acetone</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(CCCCCCCCC)(=O)OOC(CCCCCCCCC)=O.CC(=O)C"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C20H38O4.C3H6O/c1-3-5-7-9-11-13-15-17-19(21)23-24-20(22)18-16-14-12-10-8-6-4-2;1-3(2)4/h3-18H2,1-2H3;1-2H3"/>
+          <dl:entityType>definiteReference</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Time" normalizedValue="600">10 min.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>the reactor was maintained at 80° C. for an additional half-hour</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="80">80° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The reactor was then cooled</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide a thick, viscous light amber colored solution of the desired copolymer product in acetone</dl:phraseText>
+        <dl:chemical ref="m0"/>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">acetone</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CC(=O)C"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C3H6O/c1-3(2)4/h1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction></reactionList>

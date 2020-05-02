@@ -1,0 +1,3228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reactionList xmlns="http://www.xml-cml.org/schema" xmlns:cmlDict="http://www.xml-cml.org/dictionary/cml/" xmlns:nameDict="http://www.xml-cml.org/dictionary/cml/name/" xmlns:unit="http://www.xml-cml.org/unit/" xmlns:cml="http://www.xml-cml.org/schema" xmlns:dl="http://bitbucket.org/dan2097">
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0067</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 30 g of 3-methyl-2,4-dinitroaniline in 750 mL of boiling ethanol is added dropwise over 90 minutes a solution of 109.6 g of sodium sulfide nonahydrate in 750 mL of water. At the end of the addition, the mixture is heated to reflux for 30 minutes then poured into ice (2000 g) and allowed to stand until all the ice has melted. The mixture is then extracted with methylene chloride and the organic layer is dried over magnesium sulfate and rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with methylene chloride to afford 2,3-diamino-6-nitrotoluene as an orange solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[C:3]([N+:12]([O-])=O)=[C:4]([CH:6]=[CH:7][C:8]=1[N+:9]([O-:11])=[O:10])[NH2:5].O.O.O.O.O.O.O.O.O.[S-2].[Na+].[Na+]&gt;C(O)C.O&gt;[NH2:12][C:3]1[C:4]([NH2:5])=[CH:6][CH:7]=[C:8]([N+:9]([O-:11])=[O:10])[C:2]=1[CH3:1] |f:1.2.3.4.5.6.7.8.9.10.11.12|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2,3-diamino-6-nitrotoluene</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="NC1=C(C(=CC=C1N)[N+](=O)[O-])C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H9N3O2/c1-4-6(10(11)12)3-2-5(8)7(4)9/h2-3H,8-9H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>orange</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">3-methyl-2,4-dinitroaniline</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="30">30 g</amount>
+        <identifier dictRef="cml:smiles" value="CC=1C(=C(N)C=CC1[N+](=O)[O-])[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H7N3O4/c1-4-6(9(11)12)3-2-5(8)7(4)10(13)14/h2-3H,8H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">sodium sulfide nonahydrate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="109.6">109.6 g</amount>
+        <identifier dictRef="cml:smiles" value="O.O.O.O.O.O.O.O.O.[S-2].[Na+].[Na+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/2Na.9H2O.S/h;;9*1H2;/q2*+1;;;;;;;;;;-2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">ice</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2000">2000 g</amount>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ice</name>
+        </molecule>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">ethanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.750">750 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m6">
+          <name dictRef="nameDict:unknown">water</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.750">750 mL</amount>
+        <identifier dictRef="cml:smiles" value="O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 30 g of 3-methyl-2,4-dinitroaniline in 750 mL of boiling ethanol is added dropwise over 90 minutes a solution of 109.6 g of sodium sulfide nonahydrate in 750 mL of water</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m5"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m6"/>
+        <dl:parameter propertyType="Time" normalizedValue="5400">90 minutes</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>At the end of the addition</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>the mixture is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 30 minutes</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="1800">30 minutes</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>then poured into ice (2000 g)</dl:phraseText>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The mixture is then extracted with methylene chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">methylene chloride</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH2Cl2/c2-1-3/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>the organic layer is dried over magnesium sulfate and rotary evaporated</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with methylene chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">methylene chloride</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH2Cl2/c2-1-3/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to afford 2,3-diamino-6-nitrotoluene as an orange solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0069</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 11.8 g of 2,3-diamino-6-nitrotoluene, 390 mL of 88% formic acid and 38 mL of 12N hydrochloric acid is heated to reflux for 1 hour. The resulting mixture is cooled to room temperature and rotary evaporated. The residue is diluted with 200 mL of water, then basified with ammonium hydroxide (28-30%). The suspension is extracted with ethyl acetate (3×200 mL). The combined extracts are dried over magnesium sulfate and rotary evaporated to provide 4-methyl-5-nitrobenzimidazole as an orange solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[NH2:1][C:2]1[C:7]([NH2:8])=[CH:6][CH:5]=[C:4]([N+:9]([O-:11])=[O:10])[C:3]=1[CH3:12].[CH:13](O)=O.Cl.[OH-].[NH4+]&gt;O&gt;[CH3:12][C:3]1[C:2]2[NH:1][CH:13]=[N:8][C:7]=2[CH:6]=[CH:5][C:4]=1[N+:9]([O-:11])=[O:10] |f:3.4|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">4-methyl-5-nitrobenzimidazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CC1=C(C=CC=2N=CNC21)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H7N3O2/c1-5-7(11(12)13)3-2-6-8(5)10-4-9-6/h2-4H,1H3,(H,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>orange</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">2,3-diamino-6-nitrotoluene</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="11.8">11.8 g</amount>
+        <identifier dictRef="cml:smiles" value="NC1=C(C(=CC=C1N)[N+](=O)[O-])C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H9N3O2/c1-4-6(10(11)12)3-2-5(8)7(4)9/h2-3H,8-9H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">formic acid</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.390">390 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH2O2/c2-1-3/h1H,(H,2,3)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">hydrochloric acid</name>
+        </molecule>
+        <amount dl:propertyType="MOLARITY" dl:normalizedValue="12">12N</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.038">38 mL</amount>
+        <identifier dictRef="cml:smiles" value="Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/ClH/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ammonium hydroxide</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[OH-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H3N.H2O/h1H3;1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">water</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.200">200 mL</amount>
+        <identifier dictRef="cml:smiles" value="O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 11.8 g of 2,3-diamino-6-nitrotoluene, 390 mL of 88% formic acid and 38 mL of 12N hydrochloric acid</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 1 hour</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="3600">1 hour</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The resulting mixture is cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>The residue is diluted with 200 mL of water</dl:phraseText>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The suspension is extracted with ethyl acetate (3×200 mL)</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.200">200 mL</amount>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The combined extracts are dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 4-methyl-5-nitrobenzimidazole as an orange solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0071</dl:paragraphNum>
+      <dl:paragraphText>A suspension of 11.2 g of 4-methyl-5-nitrobenzimidazole, 21.58 g of di-tert-butyldicarbonate, 11.7 mL of triethylamine and 100 mg of 4-dimethylamino-pyridine in methanol (800 mL) and ethyl acetate (400 mL) is stirred at room temperature overnight. The mixture is rotary evaporated and the residue purified by flash column chromatography on silica gel, eluting with 10% ethyl acetate in hexanes. The product-containing fractions are combined and rotary evaporated to afford a white solid contaminated with a yellow oil. The solid is dissolved in methylene chloride and enough hexane is added to cause precipitation. The solid is filtered and washed with 50% methylene chloride/hexane. The filtrate is rotary evaporated and the process repeated until no more clean white solid is obtained by precipitation. The combined solid fractions are dried in vacuo to afford 1-tert-butoxycarbonyl-4-methyl-5-nitrobenzimidazole as a white solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[C:10]2[NH:9][CH:8]=[N:7][C:6]=2[CH:5]=[CH:4][C:3]=1[N+:11]([O-:13])=[O:12].[C:14]([O:18][C:19](O[C:19]([O:18][C:14]([CH3:17])([CH3:16])[CH3:15])=[O:20])=[O:20])([CH3:17])([CH3:16])[CH3:15].C(N(CC)CC)C.CCCCCC&gt;CN(C)C1C=CN=CC=1.CO.C(OCC)(=O)C.C(Cl)Cl&gt;[C:14]([O:18][C:19]([N:7]1[C:6]2[CH:5]=[CH:4][C:3]([N+:11]([O-:13])=[O:12])=[C:2]([CH3:1])[C:10]=2[N:9]=[CH:8]1)=[O:20])([CH3:17])([CH3:16])[CH3:15]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">1-tert-butoxycarbonyl-4-methyl-5-nitrobenzimidazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(C)(C)(C)OC(=O)N1C=NC2=C1C=CC(=C2C)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C13H15N3O4/c1-8-9(16(18)19)5-6-10-11(8)14-7-15(10)12(17)20-13(2,3)4/h5-7H,1-4H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>white</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">4-methyl-5-nitrobenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="11.2">11.2 g</amount>
+        <identifier dictRef="cml:smiles" value="CC1=C(C=CC=2N=CNC21)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H7N3O2/c1-5-7(11(12)13)3-2-6-8(5)10-4-9-6/h2-4H,1H3,(H,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">di-tert-butyldicarbonate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="21.58">21.58 g</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(C)(C)OC(=O)OC(=O)OC(C)(C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C10H18O5/c1-9(2,3)14-7(11)13-8(12)15-10(4,5)6/h1-6H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">triethylamine</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.0117">11.7 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)N(CC)CC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H15N/c1-4-7(5-2)6-3/h4-6H2,1-3H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">hexane</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CCCCCC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H14/c1-3-5-6-4-2/h3-6H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="catalyst">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">4-dimethylamino-pyridine</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.100">100 mg</amount>
+        <identifier dictRef="cml:smiles" value="CN(C1=CC=NC=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H10N2/c1-9(2)7-3-5-8-6-4-7/h3-6H,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m6">
+          <name dictRef="nameDict:unknown">methanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.800">800 mL</amount>
+        <identifier dictRef="cml:smiles" value="CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m7">
+          <name dictRef="nameDict:unknown">ethyl acetate</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.400">400 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m8">
+          <name dictRef="nameDict:unknown">methylene chloride</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH2Cl2/c2-1-3/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A suspension of 11.2 g of 4-methyl-5-nitrobenzimidazole, 21.58 g of di-tert-butyldicarbonate, 11.7 mL of triethylamine and 100 mg of 4-dimethylamino-pyridine in methanol (800 mL) and ethyl acetate (400 mL)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m5"/>
+        <dl:chemical ref="m6"/>
+        <dl:chemical ref="m7"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>is stirred at room temperature overnight</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="overnight">overnight</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>The mixture is rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>the residue purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 10% ethyl acetate in hexanes</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to afford a white solid</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dissolve">
+        <dl:phraseText>The solid is dissolved in methylene chloride</dl:phraseText>
+        <dl:chemical ref="m8"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>enough hexane is added</dl:phraseText>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Precipitate">
+        <dl:phraseText>precipitation</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The solid is filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with 50% methylene chloride/hexane</dl:phraseText>
+        <chemical>
+          <molecule id="m12">
+            <name dictRef="nameDict:unknown">methylene chloride hexane</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)Cl.CCCCCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C6H14.CH2Cl2/c1-3-5-6-4-2;2-1-3/h3-6H2,1-2H3;1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>The filtrate is rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>is obtained by precipitation</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The combined solid fractions are dried in vacuo</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to afford 1-tert-butoxycarbonyl-4-methyl-5-nitrobenzimidazole as a white solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0073</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 8 g of 1-tert-butoxycarbonyl-4-methyl-5-nitrobenzimidazole in 40 mL of methanol and 400 mL of ethyl acetate are added 500 mg of palladium-on-carbon (10%) and 7.27 g of ammonium formate. The mixture is stirred at 50° C. for 2 hours, then filtered on Celite, with a methanol wash of the solids. The filtrate is rotary evaporated and the residue partitioned between water and ethyl acetate. The organic layer is washed with saturated ammonium chloride, dried over magnesium sulfate, filtered and rotary evaporated to afford pure 5-amino-1-tert-butoxycarbonyl-4-methylbenzimidazole as an off-white solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[C:1]([O:5][C:6]([N:8]1[C:12]2[CH:13]=[CH:14][C:15]([N+:18]([O-])=O)=[C:16]([CH3:17])[C:11]=2[N:10]=[CH:9]1)=[O:7])([CH3:4])([CH3:3])[CH3:2].C([O-])=O.[NH4+]&gt;CO.C(OCC)(=O)C.[Pd]&gt;[NH2:18][C:15]1[CH:14]=[CH:13][C:12]2[N:8]([C:6]([O:5][C:1]([CH3:2])([CH3:3])[CH3:4])=[O:7])[CH:9]=[N:10][C:11]=2[C:16]=1[CH3:17] |f:1.2|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-amino-1-tert-butoxycarbonyl-4-methylbenzimidazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="NC1=C(C2=C(N(C=N2)C(=O)OC(C)(C)C)C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C13H17N3O2/c1-8-9(14)5-6-10-11(8)15-7-16(10)12(17)18-13(2,3)4/h5-7H,14H2,1-4H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>off-white</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">1-tert-butoxycarbonyl-4-methyl-5-nitrobenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="8">8 g</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(C)(C)OC(=O)N1C=NC2=C1C=CC(=C2C)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C13H15N3O4/c1-8-9(16(18)19)5-6-10-11(8)14-7-15(10)12(17)20-13(2,3)4/h5-7H,1-4H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">ammonium formate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="7.27">7.27 g</amount>
+        <identifier dictRef="cml:smiles" value="C(=O)[O-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH2O2.H3N/c2-1-3;/h1H,(H,2,3);1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">methanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.040">40 mL</amount>
+        <identifier dictRef="cml:smiles" value="CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ethyl acetate</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.400">400 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="catalyst">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">palladium-on-carbon</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.500">500 mg</amount>
+        <identifier dictRef="cml:smiles" value="[Pd]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Pd"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 8 g of 1-tert-butoxycarbonyl-4-methyl-5-nitrobenzimidazole in 40 mL of methanol and 400 mL of ethyl acetate are added 500 mg of palladium-on-carbon (10%) and 7.27 g of ammonium formate</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m5"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The mixture is stirred at 50° C. for 2 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="7200">2 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="50">50° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered on Celite, with a methanol</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">methanol</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CO"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>wash of the solids</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>The filtrate is rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Partition">
+        <dl:phraseText>the residue partitioned between water and ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>The organic layer is washed with saturated ammonium chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">ammonium chloride</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[Cl-].[NH4+]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.H3N/h1H;1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to afford pure 5-amino-1-tert-butoxycarbonyl-4-methylbenzimidazole as an off-white solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0075</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 500 mg of 5-amino-1-(tert-butoxycarbonyl)4-methyl-benzimidazole in 20 mL of tetrahydrofuran are added 753 mg of ethyl N,N-bis(benzyloxycarbonyl)pseudothiourea and 645 mg of mercuric acetate and the mixture is stirred at room temperature for 1 hour. The resulting suspension is diluted with ethyl acetate and washed with water followed by brine. The aqueous layers are extracted with ethyl acetate; the combined organic layers are dried over magnesium sulfate, filtered and rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with 50% ethyl acetate/hexanes followed by recrystallization from hexanes/methylene chloride to provide 927 mg of 1-(tert-butyloxycarbonyl)-5-[N2,N3-bis(benzyloxycarbonyl)-guanidino]-4-methybenzimidazole as a white solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[NH2:1][C:2]1[CH:17]=[CH:16][C:5]2[N:6]([C:9]([O:11][C:12]([CH3:15])([CH3:14])[CH3:13])=[O:10])[CH:7]=[N:8][C:4]=2[C:3]=1[CH3:18].C([N:21]=[C:22](S)[N:23](C(OCC1C=CC=CC=1)=O)[C:24]([O:26][CH2:27][C:28]1[CH:33]=[CH:32][CH:31]=[CH:30][CH:29]=1)=[O:25])C.[C:45]([O:48][CH2:49][CH3:50])(=[O:47])C&gt;O1CCCC1&gt;[C:12]([O:11][C:9]([N:6]1[C:5]2[CH:16]=[CH:17][C:2]([NH:1][C:22]([NH:23][C:24]([O:26][CH2:27][C:28]3[CH:33]=[CH:32][CH:31]=[CH:30][CH:29]=3)=[O:25])=[N:21][C:45]([O:48][CH2:49][C:50]3[CH:16]=[CH:17][CH:2]=[CH:3][CH:4]=3)=[O:47])=[C:3]([CH3:18])[C:4]=2[N:8]=[CH:7]1)=[O:10])([CH3:13])([CH3:14])[CH3:15]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">1-(tert-butyloxycarbonyl)-5-[N2,N3-bis(benzyloxycarbonyl)-guanidino]-4-methybenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.927">927 mg</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(C)(C)OC(=O)N1C=NC2=C1C=CC(=C2C)NC(=NC(=O)OCC2=CC=CC=C2)NC(=O)OCC2=CC=CC=C2"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C30H31N5O6/c1-20-23(15-16-24-25(20)31-19-35(24)29(38)41-30(2,3)4)32-26(33-27(36)39-17-21-11-7-5-8-12-21)34-28(37)40-18-22-13-9-6-10-14-22/h5-16,19H,17-18H2,1-4H3,(H2,32,33,34,36,37)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>white</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="2">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">5-amino-1-(tert-butoxycarbonyl)4-methyl-benzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.500">500 mg</amount>
+        <identifier dictRef="cml:smiles" value="NC1=C(C2=C(N(C=N2)C(=O)OC(C)(C)C)C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C13H17N3O2/c1-8-9(14)5-6-10-11(8)15-7-16(10)12(17)18-13(2,3)4/h5-7H,14H2,1-4H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">ethyl N,N-bis(benzyloxycarbonyl)pseudothiourea</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.753">753 mg</amount>
+        <identifier dictRef="cml:smiles" value="C(C)N=C(N(C(=O)OCC1=CC=CC=C1)C(=O)OCC1=CC=CC=C1)S"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H20N2O4S/c1-2-20-17(26)21(18(22)24-13-15-9-5-3-6-10-15)19(23)25-14-16-11-7-4-8-12-16/h3-12H,2,13-14H2,1H3,(H,20,26)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">mercuric acetate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.645">645 mg</amount>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ethyl acetate</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">tetrahydrofuran</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="O1CCCC1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O/c1-2-4-5-3-1/h1-4H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 500 mg of 5-amino-1-(tert-butoxycarbonyl)4-methyl-benzimidazole in 20 mL of tetrahydrofuran are added 753 mg of ethyl N,N-bis(benzyloxycarbonyl)pseudothiourea and 645 mg of mercuric acetate</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m5"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>the mixture is stirred at room temperature for 1 hour</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="3600">1 hour</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>The resulting suspension is diluted with ethyl acetate</dl:phraseText>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with water</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The aqueous layers are extracted with ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>the combined organic layers are dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 50% ethyl acetate/hexanes</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">ethyl acetate hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Precipitate">
+        <dl:phraseText>followed by recrystallization from hexanes/methylene chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">hexanes methylene chloride</name>
+          </molecule>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 927 mg of 1-(tert-butyloxycarbonyl)-5-[N2,N3-bis(benzyloxycarbonyl)-guanidino]-4-methybenzimidazole as a white solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0077</dl:paragraphNum>
+      <dl:paragraphText>To a cold (0° C.) solution of 874 mg of 1-(tert-butoxycarbonyl)-5-[N2,N3-bis(benzyloxycarbonyl)guanidino]-4-methylbenzimidazole in 2 mL of methylene chloride is added 2 mL of trifluoroacetic acid. The resulting solution is stirred at room temperature for 30 minutes, then rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with 20% methanol/chloroform followed by recrystallization from hexanes/methylene chloride to provide 573 mg of 5-[N2,N3-bis(benzyloxycarbonyl)guanidino]-4-methylbenzimidazole as a white solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>C(OC([N:8]1[C:12]2[CH:13]=[CH:14][C:15]([NH:18][C:19]([NH:31][C:32]([O:34][CH2:35][C:36]3[CH:41]=[CH:40][CH:39]=[CH:38][CH:37]=3)=[O:33])=[N:20][C:21]([O:23][CH2:24][C:25]3[CH:30]=[CH:29][CH:28]=[CH:27][CH:26]=3)=[O:22])=[C:16]([CH3:17])[C:11]=2[N:10]=[CH:9]1)=O)(C)(C)C.FC(F)(F)C(O)=O&gt;C(Cl)Cl&gt;[CH2:24]([O:23][C:21]([N:20]=[C:19]([NH:31][C:32]([O:34][CH2:35][C:36]1[CH:41]=[CH:40][CH:39]=[CH:38][CH:37]=1)=[O:33])[NH:18][C:15]1[CH:14]=[CH:13][C:12]2[N:8]=[CH:9][NH:10][C:11]=2[C:16]=1[CH3:17])=[O:22])[C:25]1[CH:30]=[CH:29][CH:28]=[CH:27][CH:26]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-[N2,N3-bis(benzyloxycarbonyl)guanidino]-4-methylbenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.573">573 mg</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="79.9">79.9</amount>
+        <identifier dictRef="cml:smiles" value="C(C1=CC=CC=C1)OC(=O)N=C(NC1=C(C2=C(N=CN2)C=C1)C)NC(=O)OCC1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C25H23N5O4/c1-17-20(12-13-21-22(17)27-16-26-21)28-23(29-24(31)33-14-18-8-4-2-5-9-18)30-25(32)34-15-19-10-6-3-7-11-19/h2-13,16H,14-15H2,1H3,(H,26,27)(H2,28,29,30,31,32)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>white</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">1-(tert-butoxycarbonyl)-5-[N2,N3-bis(benzyloxycarbonyl)guanidino]-4-methylbenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.874">874 mg</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(C)(C)OC(=O)N1C=NC2=C1C=CC(=C2C)NC(=NC(=O)OCC2=CC=CC=C2)NC(=O)OCC2=CC=CC=C2"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C30H31N5O6/c1-20-23(15-16-24-25(20)31-19-35(24)29(38)41-30(2,3)4)32-26(33-27(36)39-17-21-11-7-5-8-12-21)34-28(37)40-18-22-13-9-6-10-14-22/h5-16,19H,17-18H2,1-4H3,(H2,32,33,34,36,37)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">trifluoroacetic acid</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.002">2 mL</amount>
+        <identifier dictRef="cml:smiles" value="FC(C(=O)O)(F)F"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2HF3O2/c3-2(4,5)1(6)7/h(H,6,7)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">methylene chloride</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.002">2 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH2Cl2/c2-1-3/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a cold (0° C.) solution of 874 mg of 1-(tert-butoxycarbonyl)-5-[N2,N3-bis(benzyloxycarbonyl)guanidino]-4-methylbenzimidazole in 2 mL of methylene chloride is added 2 mL of trifluoroacetic acid</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+        <dl:parameter propertyType="Temperature" normalizedValue="0">0° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The resulting solution is stirred at room temperature for 30 minutes</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="1800">30 minutes</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 20% methanol/chloroform</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">methanol chloroform</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CO.C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3.CH4O/c2-1(3)4;1-2/h1H;2H,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Precipitate">
+        <dl:phraseText>followed by recrystallization from hexanes/methylene chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">hexanes methylene chloride</name>
+          </molecule>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 573 mg of 5-[N2,N3-bis(benzyloxycarbonyl)guanidino]-4-methylbenzimidazole as a white solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0081</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 5.1 g of 2,3-diamino-p-xylene, 200 mL of 88% formic acid and 20 mL of 12N hydrochloric acid is heated to reflux for 3 hours. The resulting mixture is cooled to room temperature and rotary evaporated. The residue is diluted with 100 mL of water, then basified with ammonium hydroxide (28-30%). The suspension is extracted with ethyl acetate (3×100 mL). The combined extracts are dried over magnesium sulfate and rotary evaporated to afford 4,7-dimethylbenzimidazole as a yellow solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[NH2:1][C:2]1[C:7]([NH2:8])=[C:6]([CH3:9])[CH:5]=[CH:4][C:3]=1[CH3:10].[CH:11](O)=O.Cl.[OH-].[NH4+]&gt;O&gt;[CH3:9][C:6]1[C:7]2[NH:8][CH:11]=[N:1][C:2]=2[C:3]([CH3:10])=[CH:4][CH:5]=1 |f:3.4|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">4,7-dimethylbenzimidazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CC1=CC=C(C=2N=CNC21)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H10N2/c1-6-3-4-7(2)9-8(6)10-5-11-9/h3-5H,1-2H3,(H,10,11)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">2,3-diamino-p-xylene</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="5.1">5.1 g</amount>
+        <identifier dictRef="cml:smiles" value="NC1=C(C=CC(=C1N)C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H12N2/c1-5-3-4-6(2)8(10)7(5)9/h3-4H,9-10H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">formic acid</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.200">200 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH2O2/c2-1-3/h1H,(H,2,3)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">hydrochloric acid</name>
+        </molecule>
+        <amount dl:propertyType="MOLARITY" dl:normalizedValue="12">12N</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/ClH/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ammonium hydroxide</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[OH-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H3N.H2O/h1H3;1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">water</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 mL</amount>
+        <identifier dictRef="cml:smiles" value="O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 5.1 g of 2,3-diamino-p-xylene, 200 mL of 88% formic acid and 20 mL of 12N hydrochloric acid</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 3 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The resulting mixture is cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>The residue is diluted with 100 mL of water</dl:phraseText>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The suspension is extracted with ethyl acetate (3×100 mL)</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 mL</amount>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The combined extracts are dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to afford 4,7-dimethylbenzimidazole as a yellow solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0083</dl:paragraphNum>
+      <dl:paragraphText>To a cold (ice bath) solution of 1 g of 4,7-dimethylbenzimidazole in 8 mL of concentrated sulfuric acid is added dropwise concentrated nitric acid (0.37 mL), over 50 minutes. The mixture is stirred an additional 30 minutes in the ice bath, then poured into a mixture of crushed ice (30 mL) and ammonium hydroxide (30 mL). The resulting mixture is extracted with ethyl acetate. The extract is dried over magnesium sulfate and rotary evaporated to afford 4,7-dimethyl-5-nitrobenzimidazole as a dark tan solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[C:10]2[NH:9][CH:8]=[N:7][C:6]=2[C:5]([CH3:11])=[CH:4][CH:3]=1.[N+:12]([O-])([OH:14])=[O:13].[OH-].[NH4+]&gt;S(=O)(=O)(O)O&gt;[CH3:11][C:5]1[C:6]2[NH:7][CH:8]=[N:9][C:10]=2[C:2]([CH3:1])=[CH:3][C:4]=1[N+:12]([O-:14])=[O:13] |f:2.3|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">4,7-dimethyl-5-nitrobenzimidazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CC1=C(C=C(C=2N=CNC21)C)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H9N3O2/c1-5-3-7(12(13)14)6(2)9-8(5)10-4-11-9/h3-4H,1-2H3,(H,10,11)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>dark tan</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">4,7-dimethylbenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1">1 g</amount>
+        <identifier dictRef="cml:smiles" value="CC1=CC=C(C=2N=CNC21)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H10N2/c1-6-3-4-7(2)9-8(6)10-5-11-9/h3-5H,1-2H3,(H,10,11)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">nitric acid</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.00037">0.37 mL</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)(O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/HNO3/c2-1(3)4/h(H,2,3,4)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">ice</name>
+        </molecule>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ice</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.030">30 mL</amount>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">ammonium hydroxide</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.030">30 mL</amount>
+        <identifier dictRef="cml:smiles" value="[OH-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H3N.H2O/h1H3;1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m6">
+          <name dictRef="nameDict:unknown">sulfuric acid</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.008">8 mL</amount>
+        <identifier dictRef="cml:smiles" value="S(O)(O)(=O)=O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H2O4S/c1-5(2,3)4/h(H2,1,2,3,4)"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a cold (ice bath) solution of 1 g of 4,7-dimethylbenzimidazole in 8 mL of concentrated sulfuric acid is added dropwise concentrated nitric acid (0.37 mL)</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">ice</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m6"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wait">
+        <dl:phraseText>over 50 minutes</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="3000">50 minutes</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The mixture is stirred an additional 30 minutes in the ice bath</dl:phraseText>
+        <dl:chemical ref="m3"/>
+        <dl:parameter propertyType="Time" normalizedValue="1800">30 minutes</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>poured into a mixture of crushed ice (30 mL) and ammonium hydroxide (30 mL)</dl:phraseText>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The resulting mixture is extracted with ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The extract is dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to afford 4,7-dimethyl-5-nitrobenzimidazole as a dark tan solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0085</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 1.17 g of 4,7-dimethyl-5-nitrobenzimidazole in 150 mL of methanol are added 160 mg of palladium-on-carbon (10%) and 1.31 g of ammonium formate. The mixture is stirred at room temperature overnight, then filtered on Celite, with a methanol wash of the solids. The filtrate is rotary evaporated and the residue partitioned between water and ethyl acetate. The organic layer is washed with saturated ammonium chloride, dried over magnesium sulfate, filtered and rotary evaporated to afford 5-amino-4,7-dimethylbenzimidazole as a foamy reddish solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[C:10]2[NH:9][CH:8]=[N:7][C:6]=2[C:5]([CH3:11])=[CH:4][C:3]=1[N+:12]([O-])=O.C([O-])=O.[NH4+]&gt;CO.[Pd]&gt;[NH2:12][C:3]1[CH:4]=[C:5]([CH3:11])[C:6]2[N:7]=[CH:8][NH:9][C:10]=2[C:2]=1[CH3:1] |f:1.2|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-amino-4,7-dimethylbenzimidazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="NC1=C(C2=C(N=CN2)C(=C1)C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H11N3/c1-5-3-7(10)6(2)9-8(5)11-4-12-9/h3-4H,10H2,1-2H3,(H,11,12)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>foamy reddish</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">4,7-dimethyl-5-nitrobenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.17">1.17 g</amount>
+        <identifier dictRef="cml:smiles" value="CC1=C(C=C(C=2N=CNC21)C)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H9N3O2/c1-5-3-7(12(13)14)6(2)9-8(5)10-4-11-9/h3-4H,1-2H3,(H,10,11)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">ammonium formate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.31">1.31 g</amount>
+        <identifier dictRef="cml:smiles" value="C(=O)[O-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH2O2.H3N/c2-1-3;/h1H,(H,2,3);1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">methanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.150">150 mL</amount>
+        <identifier dictRef="cml:smiles" value="CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="catalyst">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">palladium-on-carbon</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.160">160 mg</amount>
+        <identifier dictRef="cml:smiles" value="[Pd]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Pd"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 1.17 g of 4,7-dimethyl-5-nitrobenzimidazole in 150 mL of methanol are added 160 mg of palladium-on-carbon (10%) and 1.31 g of ammonium formate</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The mixture is stirred at room temperature overnight</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="overnight">overnight</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered on Celite, with a methanol</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">methanol</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CO"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>wash of the solids</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>The filtrate is rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Partition">
+        <dl:phraseText>the residue partitioned between water and ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>The organic layer is washed with saturated ammonium chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">ammonium chloride</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[Cl-].[NH4+]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.H3N/h1H;1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to afford 5-amino-4,7-dimethylbenzimidazole as a foamy reddish solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0092</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 668 mg of 2,3-diamino-6-nitrotoluene, 20 mL of glacial acetic acid and 2 mL of 12N hydrochloric acid is heated to reflux for 3 hours. The resulting mixture is cooled to room temperature and rotary evaporated. The residue is diluted with 20 mL of water, and basified with ammonium hydroxide (28-30%). The resulting suspension is extracted with ethyl acetate and the extracts are dried over magnesium sulfate, filtered and rotary evaporated to provide 720 mg of 2,4-dimethyl-5-nitrobenzimidazole as a tan solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[NH2:1][C:2]1[C:7]([NH2:8])=[CH:6][CH:5]=[C:4]([N+:9]([O-:11])=[O:10])[C:3]=1[CH3:12].[C:13](O)(=O)[CH3:14].Cl.[OH-].[NH4+]&gt;O&gt;[CH3:13][C:14]1[NH:1][C:2]2[C:3]([CH3:12])=[C:4]([N+:9]([O-:11])=[O:10])[CH:5]=[CH:6][C:7]=2[N:8]=1 |f:3.4|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2,4-dimethyl-5-nitrobenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.720">720 mg</amount>
+        <identifier dictRef="cml:smiles" value="CC=1NC2=C(N1)C=CC(=C2C)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H9N3O2/c1-5-8(12(13)14)4-3-7-9(5)11-6(2)10-7/h3-4H,1-2H3,(H,10,11)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>tan</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">2,3-diamino-6-nitrotoluene</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.668">668 mg</amount>
+        <identifier dictRef="cml:smiles" value="NC1=C(C(=CC=C1N)[N+](=O)[O-])C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H9N3O2/c1-4-6(10(11)12)3-2-5(8)7(4)9/h2-3H,8-9H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">acetic acid</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">hydrochloric acid</name>
+        </molecule>
+        <amount dl:propertyType="MOLARITY" dl:normalizedValue="12">12N</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.002">2 mL</amount>
+        <identifier dictRef="cml:smiles" value="Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/ClH/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ammonium hydroxide</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[OH-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H3N.H2O/h1H3;1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">water</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 668 mg of 2,3-diamino-6-nitrotoluene, 20 mL of glacial acetic acid and 2 mL of 12N hydrochloric acid</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 3 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The resulting mixture is cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>The residue is diluted with 20 mL of water</dl:phraseText>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The resulting suspension is extracted with ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>the extracts are dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 720 mg of 2,4-dimethyl-5-nitrobenzimidazole as a tan solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0094</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 700 mg of 2,4-dimethyl-5-nitrobenzimidazole in 50 mL of methanol is added a catalytic amount of palladium-on-carbon. The resulting suspension is stirred at room temperature under hydrogen at atmospheric pressure for 15 hours. The reaction mixture is filtered on Celite with a methanol wash of the solids and the filtrate is concentrated. The residue is purified by flash column chromatography on silica gel, eluting with 5% methanollethyl acetate to provide 565 mg of 5-amino-2,4-dimethybenzimidazole as a tan solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[NH:3][C:4]2[C:10]([CH3:11])=[C:9]([N+:12]([O-])=O)[CH:8]=[CH:7][C:5]=2[N:6]=1&gt;CO.[Pd]&gt;[NH2:12][C:9]1[CH:8]=[CH:7][C:5]2[N:6]=[C:2]([CH3:1])[NH:3][C:4]=2[C:10]=1[CH3:11]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-amino-2,4-dimethybenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.565">565 mg</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="95.7">95.7</amount>
+        <identifier dictRef="cml:smiles" value="NC1=C(C2=C(N=C(N2)C)C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H11N3/c1-5-7(10)3-4-8-9(5)12-6(2)11-8/h3-4H,10H2,1-2H3,(H,11,12)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>tan</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">2,4-dimethyl-5-nitrobenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.700">700 mg</amount>
+        <identifier dictRef="cml:smiles" value="CC=1NC2=C(N1)C=CC(=C2C)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H9N3O2/c1-5-8(12(13)14)4-3-7-9(5)11-6(2)10-7/h3-4H,1-2H3,(H,10,11)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">methanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.050">50 mL</amount>
+        <identifier dictRef="cml:smiles" value="CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="catalyst">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">palladium-on-carbon</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[Pd]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Pd"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 700 mg of 2,4-dimethyl-5-nitrobenzimidazole in 50 mL of methanol is added a catalytic amount of palladium-on-carbon</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The resulting suspension is stirred at room temperature under hydrogen at atmospheric pressure for 15 hours</dl:phraseText>
+        <dl:atmosphere>
+          <chemical>
+            <molecule id="m4">
+              <name dictRef="nameDict:unknown">hydrogen</name>
+            </molecule>
+            <identifier dictRef="cml:smiles" value="[H][H]"/>
+            <identifier dictRef="cml:inchi" value="InChI=1S/H2/h1H"/>
+            <dl:entityType>falsePositive</dl:entityType>
+          </chemical>
+        </dl:atmosphere>
+        <dl:parameter propertyType="Time" normalizedValue="54000">15 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+        <dl:parameter propertyType="Pressure" normalizedValue="101325">atmospheric pressure</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The reaction mixture is filtered on Celite with a methanol</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">methanol</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CO"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>wash of the solids</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>the filtrate is concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 5% methanollethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)[O-]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 565 mg of 5-amino-2,4-dimethybenzimidazole as a tan solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0108</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 250 mg of 5-amino-1,4-dimethylbenzimidazole in 75 mL of ethyl acetate and 10 mL of methanol are added 789 mg of ethyl N,N-bis(benzyloxycarbonyl)pseudothiourea and 665 mg of mercuric acetate and the mixture is stirred at room temperature for 15 hours. The mixture is filtered on Celite and rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with 5% methanol/ethyl acetate to provide 590 mg of 5-[N2, N3-bis(benzyloxycarbonyl)guanidino]-1,4-dimethybenzimidazole as a white solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[NH2:1][C:2]1[CH:11]=[CH:10][C:5]2[N:6]([CH3:9])[CH:7]=[N:8][C:4]=2[C:3]=1[CH3:12].C([N:15]=[C:16](S)[N:17](C(OCC1C=CC=CC=1)=O)[C:18]([O:20][CH2:21][C:22]1[CH:27]=[CH:26][CH:25]=[CH:24][CH:23]=1)=[O:19])C.[C:39]([O:42][CH2:43][CH3:44])(=[O:41])C&gt;CO&gt;[CH2:43]([O:42][C:39]([N:15]=[C:16]([NH:17][C:18]([O:20][CH2:21][C:22]1[CH:27]=[CH:26][CH:25]=[CH:24][CH:23]=1)=[O:19])[NH:1][C:2]1[CH:11]=[CH:10][C:5]2[N:6]([CH3:9])[CH:7]=[N:8][C:4]=2[C:3]=1[CH3:12])=[O:41])[C:44]1[CH:10]=[CH:11][CH:2]=[CH:3][CH:4]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-[N2, N3-bis(benzyloxycarbonyl)guanidino]-1,4-dimethybenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.590">590 mg</amount>
+        <identifier dictRef="cml:smiles" value="C(C1=CC=CC=C1)OC(=O)N=C(NC1=C(C2=C(N(C=N2)C)C=C1)C)NC(=O)OCC1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C26H25N5O4/c1-18-21(13-14-22-23(18)27-17-31(22)2)28-24(29-25(32)34-15-19-9-5-3-6-10-19)30-26(33)35-16-20-11-7-4-8-12-20/h3-14,17H,15-16H2,1-2H3,(H2,28,29,30,32,33)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>white</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="2">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">5-amino-1,4-dimethylbenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.250">250 mg</amount>
+        <identifier dictRef="cml:smiles" value="NC1=C(C2=C(N(C=N2)C)C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H11N3/c1-6-7(10)3-4-8-9(6)11-5-12(8)2/h3-5H,10H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">ethyl N,N-bis(benzyloxycarbonyl)pseudothiourea</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.789">789 mg</amount>
+        <identifier dictRef="cml:smiles" value="C(C)N=C(N(C(=O)OCC1=CC=CC=C1)C(=O)OCC1=CC=CC=C1)S"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H20N2O4S/c1-2-20-17(26)21(18(22)24-13-15-9-5-3-6-10-15)19(23)25-14-16-11-7-4-8-12-16/h3-12H,2,13-14H2,1H3,(H,20,26)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">mercuric acetate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.665">665 mg</amount>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ethyl acetate</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.075">75 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">methanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.010">10 mL</amount>
+        <identifier dictRef="cml:smiles" value="CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 250 mg of 5-amino-1,4-dimethylbenzimidazole in 75 mL of ethyl acetate and 10 mL of methanol are added 789 mg of ethyl N,N-bis(benzyloxycarbonyl)pseudothiourea and 665 mg of mercuric acetate</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m5"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>the mixture is stirred at room temperature for 15 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="54000">15 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The mixture is filtered on Celite and rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 5% methanol/ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">methanol ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CO.C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2.CH4O/c1-3-6-4(2)5;1-2/h3H2,1-2H3;2H,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 590 mg of 5-[N2, N3-bis(benzyloxycarbonyl)guanidino]-1,4-dimethybenzimidazole as a white solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0112</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 1.08 g of 5-aminobenzimidazole in 20 mL of glacial acetic acid are added 2.68 g of sodium acetate. To this solution is added dropwise 0.4 mL of bromine. The resulting brown precipitate is stirred at room temperature for 2 hours. The reaction mixture is rotary evaporated and the residue is diluted with water and ethyl acetate. The mixture is basified with 1N sodium hydroxide and decanted. The organic layer is washed with water followed by brine. The aqueous layers are extracted with ethyl acetate; the combined organic layers are dried over magnesium sulfate, filtered and rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with 12.5 to 16.5% methanol/methylene chloride followed by recrystallization from hexanes/ethyl acetate to provide 887 mg of 5-amino-4-bromobenzimidazole as a pale brown solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[NH2:1][C:2]1[CH:10]=[CH:9][C:5]2[N:6]=[CH:7][NH:8][C:4]=2[CH:3]=1.C([O-])(=O)C.[Na+].[Br:16]Br&gt;C(O)(=O)C&gt;[NH2:1][C:2]1[CH:10]=[CH:9][C:5]2[N:6]=[CH:7][NH:8][C:4]=2[C:3]=1[Br:16] |f:1.2|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-amino-4-bromobenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.887">887 mg</amount>
+        <identifier dictRef="cml:smiles" value="NC1=C(C2=C(N=CN2)C=C1)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6BrN3/c8-6-4(9)1-2-5-7(6)11-3-10-5/h1-3H,9H2,(H,10,11)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>pale brown</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">5-aminobenzimidazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.08">1.08 g</amount>
+        <identifier dictRef="cml:smiles" value="NC1=CC2=C(N=CN2)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H7N3/c8-5-1-2-6-7(3-5)10-4-9-6/h1-4H,8H2,(H,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">sodium acetate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.68">2.68 g</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)[O-].[Na+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H4O2.Na/c1-2(3)4;/h1H3,(H,3,4);/q;+1/p-1"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">bromine</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.0004">0.4 mL</amount>
+        <identifier dictRef="cml:smiles" value="BrBr"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Br2/c1-2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">acetic acid</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 1.08 g of 5-aminobenzimidazole in 20 mL of glacial acetic acid are added 2.68 g of sodium acetate</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To this solution is added dropwise 0.4 mL of bromine</dl:phraseText>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The resulting brown precipitate is stirred at room temperature for 2 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="7200">2 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>The reaction mixture is rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>the residue is diluted with water and ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>decanted</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>The organic layer is washed with water</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The aqueous layers are extracted with ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>the combined organic layers are dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 12.5 to 16.5% methanol/methylene chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">methanol methylene chloride</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CO.C(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH2Cl2.CH4O/c2-1-3;1-2/h1H2;2H,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Precipitate">
+        <dl:phraseText>followed by recrystallization from hexanes/ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m12">
+            <name dictRef="nameDict:unknown">hexanes ethyl acetate</name>
+          </molecule>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 887 mg of 5-amino-4-bromobenzimidazole as a pale brown solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0120</dl:paragraphNum>
+      <dl:paragraphText>To a suspension of 2 g of 2-methyl-3-nitroaniline and 1.02 g of arsenic(v) oxide hydrate are added 2.88 mL of glycerin followed by 1.09 mL of concentrated sulfuric acid. The resulting black slurry is stirred at about 150° C. for 4 hours. The black oil is cooled to room temperature, diluted with water and poured into a mixture of 25% aqueous ammonium hydroxide and ethyl acetate. The organic layer is washed with water followed by brine. The aqueous layers are extracted with ethyl acetate; the combined organic layers are dried over magnesium sulfate, filtered and rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with 50% ethyl acetate/hexanes followed by recrystallization from hexanes/methylene chloride to provide 1.45 g of 8-methyl-7-nitroquinoline as a pale brown solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[C:8]([N+:9]([O-:11])=[O:10])=[CH:7][CH:6]=[CH:5][C:3]=1[NH2:4].O.[As+3]=O.S(=O)(=O)(O)O.[OH-].[NH4+].O[CH2:23][CH:24]([CH2:26]O)O&gt;O.C(OCC)(=O)C&gt;[CH3:1][C:2]1[C:8]([N+:9]([O-:11])=[O:10])=[CH:7][CH:6]=[C:5]2[C:3]=1[N:4]=[CH:26][CH:24]=[CH:23]2 |f:1.2,4.5|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">8-methyl-7-nitroquinoline</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.45">1.45 g</amount>
+        <identifier dictRef="cml:smiles" value="CC=1C(=CC=C2C=CC=NC12)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C10H8N2O2/c1-7-9(12(13)14)5-4-8-3-2-6-11-10(7)8/h2-6H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>pale brown</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">2-methyl-3-nitroaniline</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2">2 g</amount>
+        <identifier dictRef="cml:smiles" value="CC1=C(N)C=CC=C1[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H8N2O2/c1-5-6(8)3-2-4-7(5)9(10)11/h2-4H,8H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">arsenic(v) oxide hydrate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.02">1.02 g</amount>
+        <identifier dictRef="cml:smiles" value="O.[As+3]=O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/AsO.H2O/c1-2;/h;1H2/q+3;"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">sulfuric acid</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.00109">1.09 mL</amount>
+        <identifier dictRef="cml:smiles" value="S(O)(O)(=O)=O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H2O4S/c1-5(2,3)4/h(H2,1,2,3,4)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ammonium hydroxide</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[OH-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H3N.H2O/h1H3;1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">glycerin</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.00288">2.88 mL</amount>
+        <identifier dictRef="cml:smiles" value="OCC(O)CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C3H8O3/c4-1-3(6)2-5/h3-6H,1-2H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m6">
+          <name dictRef="nameDict:unknown">water</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m7">
+          <name dictRef="nameDict:unknown">ethyl acetate</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a suspension of 2 g of 2-methyl-3-nitroaniline and 1.02 g of arsenic(v) oxide hydrate</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>are added 2.88 mL of glycerin</dl:phraseText>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The resulting black slurry is stirred at about 150° C. for 4 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="14400">4 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="~150">about 150° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The black oil is cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>diluted with water</dl:phraseText>
+        <dl:chemical ref="m6"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>poured into a mixture of 25% aqueous ammonium hydroxide and ethyl acetate</dl:phraseText>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m7"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>The organic layer is washed with water</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The aqueous layers are extracted with ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>the combined organic layers are dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 50% ethyl acetate/hexanes</dl:phraseText>
+        <chemical>
+          <molecule id="m12">
+            <name dictRef="nameDict:unknown">ethyl acetate hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Precipitate">
+        <dl:phraseText>followed by recrystallization from hexanes/methylene chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m13">
+            <name dictRef="nameDict:unknown">hexanes methylene chloride</name>
+          </molecule>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 1.45 g of 8-methyl-7-nitroquinoline as a pale brown solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0122</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 1.45 g of 8-methyl-7-nitroquinoline in 20 mL of ethanol are added 1.45 g of ammonium formate and a catalytic amount of palladium-on-carbon. The resulting suspension is stirred at room temperature for 3 hours. The reaction mixture is filtered on Celite and the filtrate is rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with 50% ethyl acetate/hexanes followed by recrystallization from hexanes/methylene chloride to provide 1.10 g of 7-amino-8-methylquinoline as a pale yellow solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[C:3]([N+:12]([O-])=O)=[CH:4][CH:5]=[C:6]2[C:11]=1[N:10]=[CH:9][CH:8]=[CH:7]2.C([O-])=O.[NH4+]&gt;C(O)C.[Pd]&gt;[NH2:12][C:3]1[C:2]([CH3:1])=[C:11]2[C:6]([CH:7]=[CH:8][CH:9]=[N:10]2)=[CH:5][CH:4]=1 |f:1.2|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">7-amino-8-methylquinoline</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.10">1.10 g</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="90.2">90.2</amount>
+        <identifier dictRef="cml:smiles" value="NC1=CC=C2C=CC=NC2=C1C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C10H10N2/c1-7-9(11)5-4-8-3-2-6-12-10(7)8/h2-6H,11H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>pale yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">8-methyl-7-nitroquinoline</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.45">1.45 g</amount>
+        <identifier dictRef="cml:smiles" value="CC=1C(=CC=C2C=CC=NC12)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C10H8N2O2/c1-7-9(12(13)14)5-4-8-3-2-6-11-10(7)8/h2-6H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">ammonium formate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.45">1.45 g</amount>
+        <identifier dictRef="cml:smiles" value="C(=O)[O-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH2O2.H3N/c2-1-3;/h1H,(H,2,3);1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">ethanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="catalyst">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">palladium-on-carbon</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[Pd]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Pd"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 1.45 g of 8-methyl-7-nitroquinoline in 20 mL of ethanol are added 1.45 g of ammonium formate</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The resulting suspension is stirred at room temperature for 3 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The reaction mixture is filtered on Celite</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 50% ethyl acetate/hexanes</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ethyl acetate hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Precipitate">
+        <dl:phraseText>followed by recrystallization from hexanes/methylene chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">hexanes methylene chloride</name>
+          </molecule>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 1.10 g of 7-amino-8-methylquinoline as a pale yellow solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0124</dl:paragraphNum>
+      <dl:paragraphText>To a pale yellow solution of 500 mg of 7-amino-8-methylquinoline in 20 mL of tetrahydrofuran are added 1.18 g of ethyl N,N-bis(benzyloxycarbonyl)pseudothiourea and 1.01 g of mercuric acetate and the mixture is stirred at room temperature for 1 hour. The suspension is diluted with ethyl acetate and the organic layer is washed with water followed by brine. The aqueous layers are extracted with ethyl acetate; the combined organic layers are dried over magnesium sulfate, filtered and rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with 50% ethyl acetate/hexanes and recrystallization from hexanes/methylene chloride to provide 1.257 g of 7-[N2,N3-bis(benzyloxycarbonyl)guanidino]-8-methylquinoline as a white solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[NH2:1][C:2]1[C:11]([CH3:12])=[C:10]2[C:5]([CH:6]=[CH:7][CH:8]=[N:9]2)=[CH:4][CH:3]=1.C([N:15]=[C:16](S)[N:17](C(OCC1C=CC=CC=1)=O)[C:18]([O:20][CH2:21][C:22]1[CH:27]=[CH:26][CH:25]=[CH:24][CH:23]=1)=[O:19])C.[C:39]([O:42][CH2:43][CH3:44])(=[O:41])C&gt;O1CCCC1&gt;[CH2:43]([O:42][C:39]([N:15]=[C:16]([NH:17][C:18]([O:20][CH2:21][C:22]1[CH:27]=[CH:26][CH:25]=[CH:24][CH:23]=1)=[O:19])[NH:1][C:2]1[C:11]([CH3:12])=[C:10]2[C:5]([CH:6]=[CH:7][CH:8]=[N:9]2)=[CH:4][CH:3]=1)=[O:41])[C:44]1[CH:10]=[CH:11][CH:2]=[CH:3][CH:4]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">7-[N2,N3-bis(benzyloxycarbonyl)guanidino]-8-methylquinoline</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.257">1.257 g</amount>
+        <identifier dictRef="cml:smiles" value="C(C1=CC=CC=C1)OC(=O)N=C(NC1=CC=C2C=CC=NC2=C1C)NC(=O)OCC1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C27H24N4O4/c1-19-23(15-14-22-13-8-16-28-24(19)22)29-25(30-26(32)34-17-20-9-4-2-5-10-20)31-27(33)35-18-21-11-6-3-7-12-21/h2-16H,17-18H2,1H3,(H2,29,30,31,32,33)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>white</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="2">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">7-amino-8-methylquinoline</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.500">500 mg</amount>
+        <identifier dictRef="cml:smiles" value="NC1=CC=C2C=CC=NC2=C1C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C10H10N2/c1-7-9(11)5-4-8-3-2-6-12-10(7)8/h2-6H,11H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">ethyl N,N-bis(benzyloxycarbonyl)pseudothiourea</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.18">1.18 g</amount>
+        <identifier dictRef="cml:smiles" value="C(C)N=C(N(C(=O)OCC1=CC=CC=C1)C(=O)OCC1=CC=CC=C1)S"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H20N2O4S/c1-2-20-17(26)21(18(22)24-13-15-9-5-3-6-10-15)19(23)25-14-16-11-7-4-8-12-16/h3-12H,2,13-14H2,1H3,(H,20,26)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">mercuric acetate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.01">1.01 g</amount>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ethyl acetate</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">tetrahydrofuran</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="O1CCCC1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O/c1-2-4-5-3-1/h1-4H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a pale yellow solution of 500 mg of 7-amino-8-methylquinoline in 20 mL of tetrahydrofuran are added 1.18 g of ethyl N,N-bis(benzyloxycarbonyl)pseudothiourea and 1.01 g of mercuric acetate</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m5"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>the mixture is stirred at room temperature for 1 hour</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="3600">1 hour</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>The suspension is diluted with ethyl acetate</dl:phraseText>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>the organic layer is washed with water</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The aqueous layers are extracted with ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>the combined organic layers are dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 50% ethyl acetate/hexanes and recrystallization from hexanes/methylene chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">ethyl acetate hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">hexanes methylene chloride</name>
+          </molecule>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 1.257 g of 7-[N2,N3-bis(benzyloxycarbonyl)guanidino]-8-methylquinoline as a white solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0128</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 401 mg of 7-aminoquinoline in 15 mL of glacial acetic acid are added 913 mg of sodium acetate followed by a solution of 0.14 mL of bromine in 5 mL of glacial acetic acid. The resulting yellow slurry is stirred at room temperature for 2 hours. The brown mixture is rotary evaporated and the residue is diluted with water and ethyl acetate. The mixture is basified using 1 N sodium hydroxide and decanted. The organic layer is washed with water followed by brine. The combined aqueous layers are extracted with ethyl acetate; the combined organic layers are dried over magnesium sulfate and rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with 20% to 50% ethyl acetatelhexanes followed by recrystallization from hexanesimethylene chloride to provide 521 mg of 7-amino-8-bromoquinoline as a pale brown solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[NH2:1][C:2]1[CH:11]=[C:10]2[C:5]([CH:6]=[CH:7][CH:8]=[N:9]2)=[CH:4][CH:3]=1.C([O-])(=O)C.[Na+].[Br:17]Br&gt;C(O)(=O)C&gt;[NH2:1][C:2]1[C:11]([Br:17])=[C:10]2[C:5]([CH:6]=[CH:7][CH:8]=[N:9]2)=[CH:4][CH:3]=1 |f:1.2|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">7-amino-8-bromoquinoline</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.521">521 mg</amount>
+        <identifier dictRef="cml:smiles" value="NC1=CC=C2C=CC=NC2=C1Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H7BrN2/c10-8-7(11)4-3-6-2-1-5-12-9(6)8/h1-5H,11H2"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>pale brown</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">7-aminoquinoline</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.401">401 mg</amount>
+        <identifier dictRef="cml:smiles" value="NC1=CC=C2C=CC=NC2=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H8N2/c10-8-4-3-7-2-1-5-11-9(7)6-8/h1-6H,10H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">sodium acetate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.913">913 mg</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)[O-].[Na+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H4O2.Na/c1-2(3)4;/h1H3,(H,3,4);/q;+1/p-1"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">bromine</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.00014">0.14 mL</amount>
+        <identifier dictRef="cml:smiles" value="BrBr"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Br2/c1-2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">acetic acid</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.015">15 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">acetic acid</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.005">5 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 401 mg of 7-aminoquinoline in 15 mL of glacial acetic acid are added 913 mg of sodium acetate</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The resulting yellow slurry is stirred at room temperature for 2 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="7200">2 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>The brown mixture is rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>the residue is diluted with water and ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>decanted</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>The organic layer is washed with water</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The combined aqueous layers are extracted with ethyl acetate</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>the combined organic layers are dried over magnesium sulfate and rotary evaporated</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 20% to 50% ethyl acetatelhexanes</dl:phraseText>
+        <chemical>
+          <molecule id="m12">
+            <name dictRef="nameDict:unknown">ethyl</name>
+          </molecule>
+          <dl:entityType>fragment</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Precipitate">
+        <dl:phraseText>followed by recrystallization from hexanesimethylene chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m13">
+            <name dictRef="nameDict:unknown">chloride</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[Cl-]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH/h1H/p-1"/>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 521 mg of 7-amino-8-bromoquinoline as a pale brown solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0134</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 1.6 g of 5-chloro-2,4-dinitrotoluene and 20 mL of N,N-dimethyl-thioformamide is heated to 120° C. for 16 hours. After cooling to room temperature, the mixture is purified by flash column chromatography on silica gel, eluting with 3% to 10% ethyl acetate/hexanes to provide 0.78 g of 6-methyl-5-nitrobenzothiazole as a yellow solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>Cl[C:2]1[C:3]([N+:12]([O-])=O)=[CH:4][C:5]([N+:9]([O-:11])=[O:10])=[C:6]([CH3:8])[CH:7]=1.CN(C)[CH:17]=[S:18]&gt;&gt;[CH3:8][C:6]1[C:5]([N+:9]([O-:11])=[O:10])=[CH:4][C:3]2[N:12]=[CH:17][S:18][C:2]=2[CH:7]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">6-methyl-5-nitrobenzothiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.78">0.78 g</amount>
+        <identifier dictRef="cml:smiles" value="CC1=CC2=C(N=CS2)C=C1[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H6N2O2S/c1-5-2-8-6(9-4-13-8)3-7(5)10(11)12/h2-4H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">5-chloro-2,4-dinitrotoluene</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.6">1.6 g</amount>
+        <identifier dictRef="cml:smiles" value="ClC=1C(=CC(=C(C1)C)[N+](=O)[O-])[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H5ClN2O4/c1-4-2-5(8)7(10(13)14)3-6(4)9(11)12/h2-3H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">N,N-dimethyl-thioformamide</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="CN(C=S)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C3H7NS/c1-4(2)3-5/h3H,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList/>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 1.6 g of 5-chloro-2,4-dinitrotoluene and 20 mL of N,N-dimethyl-thioformamide</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is heated to 120° C. for 16 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="57600">16 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="120">120° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>After cooling to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>the mixture is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m3">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 3% to 10% ethyl acetate/hexanes</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">ethyl acetate hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 0.78 g of 6-methyl-5-nitrobenzothiazole as a yellow solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0136</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 0.78 g of 6-methyl-5-nitrobenzothiazole and 3.62 g of stannous chloride dihydrate in 25 mL of ethanol is heated to 65° C. for 4 hours. The cooled reaction mixture is poured into 10 mL of 50% sodium hydroxide and 45 mL of brine and extracted with ether (4×35 mL). The combined organic layers are washed with brine, dried over sodium sulfate and rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with 15% ethyl acetate/hexanes to provide 0.45 g of 5-amino-6-methylbenzothiazole as a yellow solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[C:10]([N+:11]([O-])=O)=[CH:9][C:5]2[N:6]=[CH:7][S:8][C:4]=2[CH:3]=1.[OH-].[Na+]&gt;C(O)C.[Cl-].[Na+].O&gt;[NH2:11][C:10]1[C:2]([CH3:1])=[CH:3][C:4]2[S:8][CH:7]=[N:6][C:5]=2[CH:9]=1 |f:1.2,4.5.6|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-amino-6-methylbenzothiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.45">0.45 g</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="68.2">68.2</amount>
+        <identifier dictRef="cml:smiles" value="NC=1C(=CC2=C(N=CS2)C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H8N2S/c1-5-2-8-7(3-6(5)9)10-4-11-8/h2-4H,9H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">6-methyl-5-nitrobenzothiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.78">0.78 g</amount>
+        <identifier dictRef="cml:smiles" value="CC1=CC2=C(N=CS2)C=C1[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H6N2O2S/c1-5-2-8-6(9-4-13-8)3-7(5)10(11)12/h2-4H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">stannous chloride dihydrate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="3.62">3.62 g</amount>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">sodium hydroxide</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.010">10 mL</amount>
+        <identifier dictRef="cml:smiles" value="[OH-].[Na+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Na.H2O/h;1H2/q+1;/p-1"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ethanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.025">25 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">brine</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.045">45 mL</amount>
+        <identifier dictRef="cml:smiles" value="[Cl-].[Na+].O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/ClH.Na.H2O/h1H;;1H2/q;+1;/p-1"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 0.78 g of 6-methyl-5-nitrobenzothiazole and 3.62 g of stannous chloride dihydrate in 25 mL of ethanol</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is heated to 65° C. for 4 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="14400">4 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="65">65° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Synthesize">
+        <dl:phraseText>The cooled reaction mixture</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>is poured into 10 mL of 50% sodium hydroxide and 45 mL of brine</dl:phraseText>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>extracted with ether (4×35 mL)</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ether</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.035">35 mL</amount>
+          <identifier dictRef="cml:smiles" value="CCOCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H10O/c1-3-5-4-2/h3-4H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>The combined organic layers are washed with brine</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">brine</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[Cl-].[Na+].O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.Na.H2O/h1H;;1H2/q;+1;/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried over sodium sulfate and rotary evaporated</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">sodium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Na+].[Na+]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/2Na.H2O4S/c;;1-5(2,3)4/h;;(H2,1,2,3,4)/q2*+1;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 15% ethyl acetate/hexanes</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">ethyl acetate hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 0.45 g of 5-amino-6-methylbenzothiazole as a yellow solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0138</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 230 mg of 5-amino-6-methylbenzothiazole in 10 mL of 1/1 ethyl acetate/methanol are added 520 mg of ethyl N,N-bis(benzyloxycarbonyl)-pseudothiourea and 450 mg of mercuric acetate and the mixture is stirred at room temperature for 24 hours. The mixture is filtered on Celite and rotary evaporated. The residue is purified by flash column chromatography on silica gel, eluting with 20% ethyl acetate/hexanes to provide 598 mg of 5-[N2, N3-bis(benzyloxycarbonyl)guanidino]-6-methybenzothiazole as a yellow solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[NH2:1][C:2]1[C:3]([CH3:11])=[CH:4][C:5]2[S:9][CH:8]=[N:7][C:6]=2[CH:10]=1.C([N:14]=[C:15](S)[N:16](C(OCC1C=CC=CC=1)=O)[C:17]([O:19][CH2:20][C:21]1[CH:26]=[CH:25][CH:24]=[CH:23][CH:22]=1)=[O:18])C.[C:38]([O:41][CH2:42][CH3:43])(=[O:40])C.CO&gt;&gt;[CH2:42]([O:41][C:38]([N:14]=[C:15]([NH:16][C:17]([O:19][CH2:20][C:21]1[CH:26]=[CH:25][CH:24]=[CH:23][CH:22]=1)=[O:18])[NH:1][C:2]1[C:3]([CH3:11])=[CH:4][C:5]2[S:9][CH:8]=[N:7][C:6]=2[CH:10]=1)=[O:40])[C:43]1[CH:4]=[CH:3][CH:2]=[CH:10][CH:6]=1 |f:2.3|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-[N2, N3-bis(benzyloxycarbonyl)guanidino]-6-methybenzothiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.598">598 mg</amount>
+        <identifier dictRef="cml:smiles" value="C(C1=CC=CC=C1)OC(=O)N=C(NC=1C(=CC2=C(N=CS2)C1)C)NC(=O)OCC1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C25H22N4O4S/c1-17-12-22-21(26-16-34-22)13-20(17)27-23(28-24(30)32-14-18-8-4-2-5-9-18)29-25(31)33-15-19-10-6-3-7-11-19/h2-13,16H,14-15H2,1H3,(H2,27,28,29,30,31)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="2">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">5-amino-6-methylbenzothiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.230">230 mg</amount>
+        <identifier dictRef="cml:smiles" value="NC=1C(=CC2=C(N=CS2)C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H8N2S/c1-5-2-8-7(3-6(5)9)10-4-11-8/h2-4H,9H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">ethyl N,N-bis(benzyloxycarbonyl)-pseudothiourea</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.520">520 mg</amount>
+        <identifier dictRef="cml:smiles" value="C(C)N=C(N(C(=O)OCC1=CC=CC=C1)C(=O)OCC1=CC=CC=C1)S"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H20N2O4S/c1-2-20-17(26)21(18(22)24-13-15-9-5-3-6-10-15)19(23)25-14-16-11-7-4-8-12-16/h3-12H,2,13-14H2,1H3,(H,20,26)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">mercuric acetate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.450">450 mg</amount>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ethyl acetate methanol</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)OCC.CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2.CH4O/c1-3-6-4(2)5;1-2/h3H2,1-2H3;2H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">1/1</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.010">10 mL</amount>
+        <dl:entityType>definiteReference</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 230 mg of 5-amino-6-methylbenzothiazole in 10 mL of 1/1 ethyl acetate/methanol are added 520 mg of ethyl N,N-bis(benzyloxycarbonyl)-pseudothiourea and 450 mg of mercuric acetate</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m5"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>the mixture is stirred at room temperature for 24 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="86400">24 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The mixture is filtered on Celite and rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by flash column chromatography on silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 20% ethyl acetate/hexanes</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">ethyl acetate hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 598 mg of 5-[N2, N3-bis(benzyloxycarbonyl)guanidino]-6-methybenzothiazole as a yellow solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0142</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 10 g of 1-chloro-2,4-dinitrobenzene and 20.26 g of N,N-dimethylthioformamide is heated to 60° C. for 3 hours. The resulting solid is suspended in 25 mL of xylene and the mixture is heated to reflux for 4 hours. The mixture is allowed to cool to room temperature and 15 mL of ethanol are added. The resulting suspension is filtered, and the brown solid is washed with a minimum amount of ethanol. The solid is dissolved in 120 mL of ethanol, heated to boiling, and filtered hot to remove trace solids. After reduction of the volume to about 100 mL, the solution is allowed to stand overnight at room temperature. The resulting solid is filtered and washed with ethanol to provide 4.68 g of 5-nitrobenzothiazole as reddish-brown needles.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>Cl[C:2]1[CH:7]=[CH:6][C:5]([N+:8]([O-:10])=[O:9])=[CH:4][C:3]=1[N+:11]([O-])=O.CN(C)[CH:16]=[S:17].C(O)C&gt;C1(C)C(C)=CC=CC=1&gt;[N+:8]([C:5]1[CH:6]=[CH:7][C:2]2[S:17][CH:16]=[N:11][C:3]=2[CH:4]=1)([O-:10])=[O:9]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-nitrobenzothiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="4.68">4.68 g</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="52.6">52.6</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=CC2=C(N=CS2)C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H4N2O2S/c10-9(11)5-1-2-7-6(3-5)8-4-12-7/h1-4H"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>reddish-brown</dl:appearance>
+        <dl:state>needles</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">1-chloro-2,4-dinitrobenzene</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="10">10 g</amount>
+        <identifier dictRef="cml:smiles" value="ClC1=C(C=C(C=C1)[N+](=O)[O-])[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H3ClN2O4/c7-5-2-1-4(8(10)11)3-6(5)9(12)13/h1-3H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">N,N-dimethylthioformamide</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="20.26">20.26 g</amount>
+        <identifier dictRef="cml:smiles" value="CN(C=S)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C3H7NS/c1-4(2)3-5/h3H,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">ethanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.015">15 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">xylene</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.025">25 mL</amount>
+        <identifier dictRef="cml:smiles" value="C=1(C(=CC=CC1)C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H10/c1-7-5-3-4-6-8(7)2/h3-6H,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 10 g of 1-chloro-2,4-dinitrobenzene and 20.26 g of N,N-dimethylthioformamide</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is heated to 60° C. for 3 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="60">60° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>the mixture is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 4 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="14400">4 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>to cool to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>15 mL of ethanol are added</dl:phraseText>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The resulting suspension is filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>the brown solid is washed with a minimum amount of ethanol</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">ethanol</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dissolve">
+        <dl:phraseText>The solid is dissolved in 120 mL of ethanol</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ethanol</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.120">120 mL</amount>
+          <identifier dictRef="cml:smiles" value="C(C)O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered hot</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>to remove trace solids</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wait">
+        <dl:phraseText>to stand overnight at room temperature</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="overnight">overnight</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The resulting solid is filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with ethanol</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">ethanol</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 4.68 g of 5-nitrobenzothiazole as reddish-brown needles</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0144</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 3.46 g of 5-nitrobenzothiazole and 15.7 g of stannous chloride dihydrate in 55 mL of 2-propanol is heated to reflux for 3 hours. The cooled reaction mixture is poured into 150 mL of ice/water and neutralized to pH 7 using solid sodium hydroxide. The mixture is extracted with ethyl acetate (3×50 mL). The combined organic layers are dried over sodium sulfate, filtered through a short pad of silica gel, and rotary evaporated to provide 2.45 g of 5-aminobenzothiazole as a yellow-brown solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[N+:1]([C:4]1[CH:5]=[CH:6][C:7]2[S:11][CH:10]=[N:9][C:8]=2[CH:12]=1)([O-])=O.[OH-].[Na+]&gt;CC(O)C&gt;[NH2:1][C:4]1[CH:5]=[CH:6][C:7]2[S:11][CH:10]=[N:9][C:8]=2[CH:12]=1 |f:1.2|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-aminobenzothiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.45">2.45 g</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="84.9">84.9</amount>
+        <identifier dictRef="cml:smiles" value="NC=1C=CC2=C(N=CS2)C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6N2S/c8-5-1-2-7-6(3-5)9-4-10-7/h1-4H,8H2"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow-brown</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">5-nitrobenzothiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="3.46">3.46 g</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=CC2=C(N=CS2)C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H4N2O2S/c10-9(11)5-1-2-7-6(3-5)8-4-12-7/h1-4H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">stannous chloride dihydrate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="15.7">15.7 g</amount>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">ice water</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.150">150 mL</amount>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">sodium hydroxide</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[OH-].[Na+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Na.H2O/h;1H2/q+1;/p-1"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">2-propanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.055">55 mL</amount>
+        <identifier dictRef="cml:smiles" value="CC(C)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C3H8O/c1-3(2)4/h3-4H,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 3.46 g of 5-nitrobenzothiazole and 15.7 g of stannous chloride dihydrate in 55 mL of 2-propanol</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 3 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Synthesize">
+        <dl:phraseText>The cooled reaction mixture</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>is poured into 150 mL of ice/water and neutralized to pH 7</dl:phraseText>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Extract">
+        <dl:phraseText>The mixture is extracted with ethyl acetate (3×50 mL)</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.050">50 mL</amount>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The combined organic layers are dried over sodium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">sodium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Na+].[Na+]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/2Na.H2O4S/c;;1-5(2,3)4/h;;(H2,1,2,3,4)/q2*+1;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered through a short pad of silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>rotary evaporated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 2.45 g of 5-aminobenzothiazole as a yellow-brown solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0146</dl:paragraphNum>
+      <dl:paragraphText>To a cooled (5° C.) solution of 2.04 g of 5-aminobenzothiazole in 60 mL of chloroform are added dropwise 2.15 g of bromine while maintaining the temperature below 10° C. After completion of the addition, the reaction mixture is stirred for 30 minutes at room temperature, then diluted with 14 mL of concentrated ammonium hydroxide and 16 mL of methylene chloride. The aqueous layer is washed with methylene chloride (2×16 mL) and the combined organic layers are rotary evaporated. The residue is purified by an aspirator vacuum-filtration through silica gel, eluting with 15% to 30 ethyl acetate in hexanes to provide 2.44 g of 5-amino-4-bromobenzothiazole as a reddish solid.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[NH2:1][C:2]1[CH:3]=[CH:4][C:5]2[S:9][CH:8]=[N:7][C:6]=2[CH:10]=1.[Br:11]Br&gt;C(Cl)(Cl)Cl.[OH-].[NH4+].C(Cl)Cl&gt;[NH2:1][C:2]1[CH:3]=[CH:4][C:5]2[S:9][CH:8]=[N:7][C:6]=2[C:10]=1[Br:11] |f:3.4|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-amino-4-bromobenzothiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.44">2.44 g</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="79.2">79.2</amount>
+        <identifier dictRef="cml:smiles" value="NC=1C=CC2=C(N=CS2)C1Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H5BrN2S/c8-6-4(9)1-2-5-7(6)10-3-11-5/h1-3H,9H2"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>reddish</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">5-aminobenzothiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.04">2.04 g</amount>
+        <identifier dictRef="cml:smiles" value="NC=1C=CC2=C(N=CS2)C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6N2S/c8-5-1-2-7-6(3-5)9-4-10-7/h1-4H,8H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">bromine</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.15">2.15 g</amount>
+        <identifier dictRef="cml:smiles" value="BrBr"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Br2/c1-2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">chloroform</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.060">60 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ammonium hydroxide</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.014">14 mL</amount>
+        <identifier dictRef="cml:smiles" value="[OH-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H3N.H2O/h1H3;1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">methylene chloride</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.016">16 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH2Cl2/c2-1-3/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>To a cooled (5° C.) solution of 2.04 g of 5-aminobenzothiazole in 60 mL of chloroform</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:parameter propertyType="Temperature" normalizedValue="5">5° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>are added dropwise 2.15 g of bromine</dl:phraseText>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>while maintaining the temperature below 10° C</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="&lt;10">below 10° C</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>After completion of the addition</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>the reaction mixture is stirred for 30 minutes at room temperature</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="1800">30 minutes</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>diluted with 14 mL of concentrated ammonium hydroxide and 16 mL of methylene chloride</dl:phraseText>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>The aqueous layer is washed with methylene chloride (2×16 mL)</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">methylene chloride</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.016">16 mL</amount>
+          <identifier dictRef="cml:smiles" value="C(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH2Cl2/c2-1-3/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified by an aspirator vacuum-filtration through silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 15% to 30 ethyl acetate in hexanes</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">ethyl acetate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)OCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O2/c1-3-6-4(2)5/h3H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to provide 2.44 g of 5-amino-4-bromobenzothiazole as a reddish solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000345A1</dl:documentId>
+      <dl:paragraphNum>0155</dl:paragraphNum>
+      <dl:paragraphText>The methyl N-carbomethoxy-N,N′-dimethylthiopseudourea is combined with 8-methyl-7-nitroquinoline, as prepared in Example 7B, in 10% acetic acid in ethanol and heated to reflux. After the starting amine is consumed, the mixture is decolorized with carbon. The mixture is cooled, filtered and rotary evaporated. Upon recrystallization and drying, N,N′-dimethyl-(8-methylquinolin-7-yl)guanidine is obtained as an acetic acid salt.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>CS[C:3](=[N:10]C)[N:4](C(OC)=O)[CH3:5].[CH3:12][C:13]1[C:14]([N+:23]([O-])=O)=[CH:15][CH:16]=[C:17]2[C:22]=1[N:21]=[CH:20][CH:19]=[CH:18]2.[C:26](O)(=O)C&gt;C(O)C&gt;[CH3:26][N:23]([C:14]1[C:13]([CH3:12])=[C:22]2[C:17]([CH:18]=[CH:19][CH:20]=[N:21]2)=[CH:16][CH:15]=1)[C:3]([NH:4][CH3:5])=[NH:10]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">N,N′-dimethyl-(8-methylquinolin-7-yl)guanidine</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CN(C(=N)NC)C1=CC=C2C=CC=NC2=C1C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C13H16N4/c1-9-11(17(3)13(14)15-2)7-6-10-5-4-8-16-12(9)10/h4-8H,1-3H3,(H2,14,15)"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">methyl N-carbomethoxy-N,N′-dimethylthiopseudourea</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CSC(N(C)C(=O)OC)=NC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H12N2O2S/c1-7-5(11-4)8(2)6(9)10-3/h1-4H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">8-methyl-7-nitroquinoline</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CC=1C(=CC=C2C=CC=NC12)[N+](=O)[O-]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C10H8N2O2/c1-7-9(12(13)14)5-4-8-3-2-6-11-10(7)8/h2-6H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">acetic acid</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ethanol</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(C)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Synthesize">
+        <dl:phraseText>as prepared in Example 7B, in 10% acetic acid in ethanol</dl:phraseText>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>heated to reflux</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>After the starting amine is consumed</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">amine</name>
+          </molecule>
+          <dl:entityType>definiteReference</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The mixture is cooled</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Precipitate">
+        <dl:phraseText>Upon recrystallization</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>drying</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>N,N′-dimethyl-(8-methylquinolin-7-yl)guanidine is obtained as an acetic acid salt</dl:phraseText>
+        <dl:chemical ref="m0"/>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">acetic acid</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)(=O)O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)"/>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction></reactionList>

@@ -1,0 +1,3453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reactionList xmlns="http://www.xml-cml.org/schema" xmlns:cmlDict="http://www.xml-cml.org/dictionary/cml/" xmlns:nameDict="http://www.xml-cml.org/dictionary/cml/name/" xmlns:unit="http://www.xml-cml.org/unit/" xmlns:cml="http://www.xml-cml.org/schema" xmlns:dl="http://bitbucket.org/dan2097">
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0119</dl:paragraphNum>
+      <dl:paragraphText>4-Fluorobenzamide (5.0 g, 35.9 mmol) in benzene (100 ml) is added Lawesson's reagent (7.27 g, 18.0 mmol) and the resulting solution is heated to reflux for 1 hour. The solution is cooled to room temperature, concentrated and water (10 ml) added. The mixture is heated to reflux for 3 hours, and cooled to room temperature. The precipitate is filtered and dried under vacuum to yield 4-fluorothiobenzamide as a yellow solid (4.1 g, 71%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]([NH2:8])=O)=[CH:4][CH:3]=1.COC1C=CC(P2(SP(C3C=CC(OC)=CC=3)(=S)S2)=[S:20])=CC=1&gt;C1C=CC=CC=1&gt;[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]([NH2:8])=[S:20])=[CH:4][CH:3]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">4-fluorothiobenzamide</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="4.1">4.1 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="71">71%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="146.8">146.8</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C(=S)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6FNS/c8-6-3-1-5(2-4-6)7(9)10/h1-4H,(H2,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">4-Fluorobenzamide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0359">35.9 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="5.0">5.0 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C(=O)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6FNO/c8-6-3-1-5(2-4-6)7(9)10/h1-4H,(H2,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">Lawesson's reagent</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0180">18.0 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="7.27">7.27 g</amount>
+        <identifier dictRef="cml:smiles" value="COC=1C=CC(=CC1)P2(=S)SP(=S)(S2)C=3C=CC(=CC3)OC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C14H14O2P2S4/c1-15-11-3-7-13(8-4-11)17(19)21-18(20,22-17)14-9-5-12(16-2)6-10-14/h3-10H,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">benzene</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+        <identifier dictRef="cml:smiles" value="C1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H6/c1-2-4-6-5-3-1/h1-6H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>4-Fluorobenzamide (5.0 g, 35.9 mmol) in benzene (100 ml) is added Lawesson's reagent (7.27 g, 18.0 mmol)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>the resulting solution is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 1 hour</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="3600">1 hour</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The solution is cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>water (10 ml) added</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.010">10 ml</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>The mixture is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 3 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The precipitate is filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried under vacuum</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 4-fluorothiobenzamide as a yellow solid (4.1 g, 71%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0121</dl:paragraphNum>
+      <dl:paragraphText>To a solution of the crude product of 4-fluorothiobenzamide (2.0 g, 12.9 mmol) in EtOH (30 ml) is added 2-bromo-4′ methylacetophenone (2.75 g, 12.9 mmol). The mixture is heated to reflux for 24 hours. The course of the reaction is followed by thin layer chromatography. Upon completion of the reaction the solution is cooled to room temperature and the white precipitate filtered and dried under vacuum to yield 2-(4′-fluorophenyl)-4-(p-tolyl) thiazole (1.54 g, 54%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]([NH2:8])=[S:7])=[CH:4][CH:3]=1.Br[CH2:12][C:13]([C:15]1[CH:20]=[CH:19][C:18]([CH3:21])=[CH:17][CH:16]=1)=O&gt;CCO&gt;[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]2[S:7][CH:12]=[C:13]([C:15]3[CH:20]=[CH:19][C:18]([CH3:21])=[CH:17][CH:16]=3)[N:8]=2)=[CH:4][CH:3]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-(p-tolyl) thiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.54">1.54 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="54">54%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="44.3">44.3</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C16H12FNS/c1-11-2-4-12(5-3-11)15-10-19-16(18-15)13-6-8-14(17)9-7-13/h2-10H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">crude product</name>
+        </molecule>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">4-fluorothiobenzamide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0129">12.9 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.0">2.0 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C(=S)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6FNS/c8-6-3-1-5(2-4-6)7(9)10/h1-4H,(H2,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">2-bromo-4′ methylacetophenone</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0129">12.9 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.75">2.75 g</amount>
+        <identifier dictRef="cml:smiles" value="BrCC(=O)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H9BrO/c1-7-2-4-8(5-3-7)9(11)6-10/h2-5H,6H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">EtOH</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.030">30 ml</amount>
+        <identifier dictRef="cml:smiles" value="CCO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of the crude product of 4-fluorothiobenzamide (2.0 g, 12.9 mmol) in EtOH (30 ml) is added 2-bromo-4′ methylacetophenone (2.75 g, 12.9 mmol)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>The mixture is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 24 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="86400">24 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Synthesize">
+        <dl:phraseText>Upon completion of the reaction the solution</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>is cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>the white precipitate filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried under vacuum</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 2-(4′-fluorophenyl)-4-(p-tolyl) thiazole (1.54 g, 54%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0159</dl:paragraphNum>
+      <dl:paragraphText>To a solution of p-fluorothiobenzamide (0.39 g, 2.5 mmol) in 20 mL of abs. EtOH is added 2,4′-dibromoacetophenone (0.7 g, 2.5 mmol) all at once. The reaction mixture is stirred at room temperature for 3 hours and then chilled in ice bath. The precipitate is collected by filtration, washed with cold EtOH (5 ml×2) and dried in vacuum to give 2-(4′-fluorophenyl)-4-(4′-bromo-phenyl)thiazole as a white fluffy crystaline solid (1.55 g, 93%). mp.158°-9° C.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]([NH2:8])=[S:7])=[CH:4][CH:3]=1.Br[CH2:12][C:13]([C:15]1[CH:20]=[CH:19][C:18]([Br:21])=[CH:17][CH:16]=1)=O&gt;CCO&gt;[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]2[S:7][CH:12]=[C:13]([C:15]3[CH:20]=[CH:19][C:18]([Br:21])=[CH:17][CH:16]=3)[N:8]=2)=[CH:4][CH:3]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-(4′-bromo-phenyl)thiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.55">1.55 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="93">93%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="185.5">185.5</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H9BrFNS/c16-12-5-1-10(2-6-12)14-9-19-15(18-14)11-3-7-13(17)8-4-11/h1-9H"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>white fluffy crystaline</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">p-fluorothiobenzamide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0025">2.5 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.39">0.39 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C(=S)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6FNS/c8-6-3-1-5(2-4-6)7(9)10/h1-4H,(H2,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">2,4′-dibromoacetophenone</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0025">2.5 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.7">0.7 g</amount>
+        <identifier dictRef="cml:smiles" value="BrCC(=O)C1=CC=C(C=C1)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H6Br2O/c9-5-8(11)6-1-3-7(10)4-2-6/h1-4H,5H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">EtOH</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CCO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>EtOH is added 2,4′-dibromoacetophenone (0.7 g, 2.5 mmol) all at once</dl:phraseText>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The reaction mixture is stirred at room temperature for 3 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>chilled in ice bath</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">ice</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Recover">
+        <dl:phraseText>The precipitate is collected by filtration</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with cold EtOH (5 ml×2)</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">EtOH</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.005">5 ml</amount>
+          <identifier dictRef="cml:smiles" value="CCO"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried in vacuum</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to give 2-(4′-fluorophenyl)-4-(4′-bromo-phenyl)thiazole as a white fluffy crystaline solid (1.55 g, 93%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0161</dl:paragraphNum>
+      <dl:paragraphText>In a 100 ml flask is placed triphenylphosphine (80 mg, 10%), PdCl2 (40 mg, 5%) and 2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole (0.98 g, 2.9 mmol) in 20 mL of diethylamine. After stirring for 15 min under N2 atmosphere, CuI (30 mg, 5%) and 1-dimethylamino-2-propyne (0.27 g, 3.18 mmol) in 20 ml of acetonitrile are added to the mixture. After 18 h of heating, the solvent is evaporated under reduced pressure and the residue is filtered through silica gel pad (50 g) using CHCl3 (400 mL) and 2% MeOH in CHCl3(400 mL). A large portion of unreacted 2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole is recovered. after removal of chloroform filtrate (0.55 g, 56%). The second part of the filtrate (2% MeOH in CHCl3) is concentrated and the residual solid is then purified over silca gel column eluting with 2% MeOH in CHCl3. 2-(4′-fluorophenyl)-4-[4′-(3-dimethylamino-2-propyn-1-yl)phenyl]thiazole is obtained after concentration and trituration with hexane (0.25 g, 27% yield), mp. 98°-9° C.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>C1(P(C2C=CC=CC=2)C2C=CC=CC=2)C=CC=CC=1.[F:20][C:21]1[CH:26]=[CH:25][C:24]([C:27]2[S:28][CH:29]=[C:30]([C:32]3[CH:37]=[CH:36][C:35](Br)=[CH:34][CH:33]=3)[N:31]=2)=[CH:23][CH:22]=1.[CH3:39][N:40]([CH3:44])[CH2:41][C:42]#[CH:43]&gt;C(NCC)C.C(#N)C.Cl[Pd]Cl.[Cu]I&gt;[F:20][C:21]1[CH:26]=[CH:25][C:24]([C:27]2[S:28][CH:29]=[C:30]([C:32]3[CH:37]=[CH:36][C:35]([CH2:43][C:42]#[C:41][N:40]([CH3:44])[CH3:39])=[CH:34][CH:33]=3)[N:31]=2)=[CH:23][CH:22]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-[4′-(3-dimethylamino-2-propyn-1-yl)phenyl]thiazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)CC#CN(C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C20H17FN2S/c1-23(2)13-3-4-15-5-7-16(8-6-15)19-14-24-20(22-19)17-9-11-18(21)12-10-17/h5-12,14H,4H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">triphenylphosphine</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.080">80 mg</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=CC=C1)P(C1=CC=CC=C1)C1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C18H15P/c1-4-10-16(11-5-1)19(17-12-6-2-7-13-17)18-14-8-3-9-15-18/h1-15H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0029">2.9 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.98">0.98 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H9BrFNS/c16-12-5-1-10(2-6-12)14-9-19-15(18-14)11-3-7-13(17)8-4-11/h1-9H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">1-dimethylamino-2-propyne</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00318">3.18 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.27">0.27 g</amount>
+        <identifier dictRef="cml:smiles" value="CN(CC#C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C5H9N/c1-4-5-6(2)3/h1H,5H2,2-3H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">diethylamine</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)NCC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H11N/c1-3-5-4-2/h5H,3-4H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">acetonitrile</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(C)#N"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H3N/c1-2-3/h1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="catalyst">
+        <molecule id="m6">
+          <name dictRef="nameDict:unknown">PdCl2</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.040">40 mg</amount>
+        <identifier dictRef="cml:smiles" value="Cl[Pd]Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/2ClH.Pd/h2*1H;/q;;+2/p-2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="catalyst">
+        <molecule id="m7">
+          <name dictRef="nameDict:unknown">CuI</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.030">30 mg</amount>
+        <identifier dictRef="cml:smiles" value="[Cu]I"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Cu.HI/h;1H/q+1;/p-1"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="ApparatusAction">
+        <dl:phraseText>In a 100 ml flask is placed</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>After stirring for 15 min under N2 atmosphere</dl:phraseText>
+        <dl:atmosphere>
+          <chemical>
+            <molecule id="m8">
+              <name dictRef="nameDict:unknown">N2</name>
+            </molecule>
+            <identifier dictRef="cml:smiles" value="N#N"/>
+            <identifier dictRef="cml:inchi" value="InChI=1S/N2/c1-2"/>
+            <dl:entityType>falsePositive</dl:entityType>
+          </chemical>
+        </dl:atmosphere>
+        <dl:parameter propertyType="Time" normalizedValue="900">15 min</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>CuI (30 mg, 5%) and 1-dimethylamino-2-propyne (0.27 g, 3.18 mmol) in 20 ml of acetonitrile are added to the mixture</dl:phraseText>
+        <dl:chemical ref="m7"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>After 18 h of heating</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="64800">18 h</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>the solvent is evaporated under reduced pressure</dl:phraseText>
+        <dl:parameter propertyType="Pressure" normalizedValue="reduced pressure">reduced pressure</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>the residue is filtered through silica gel pad (50 g)</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Recover">
+        <dl:phraseText>A large portion of unreacted 2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole is recovered</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)Br"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C15H9BrFNS/c16-12-5-1-10(2-6-12)14-9-19-15(18-14)11-3-7-13(17)8-4-11/h1-9H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>after removal of chloroform filtrate (0.55 g, 56%)</dl:phraseText>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">chloroform</name>
+          </molecule>
+          <amount dl:propertyType="MASS" dl:normalizedValue="0.55">0.55 g</amount>
+          <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The second part of the filtrate (2% MeOH in CHCl3) is concentrated</dl:phraseText>
+        <chemical>
+          <molecule id="m12">
+            <name dictRef="nameDict:unknown">MeOH</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CO"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m13">
+            <name dictRef="nameDict:unknown">CHCl3</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>the residual solid is then purified over silca gel column</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 2% MeOH in CHCl3</dl:phraseText>
+        <chemical>
+          <molecule id="m14">
+            <name dictRef="nameDict:unknown">MeOH</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CO"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m15">
+            <name dictRef="nameDict:unknown">CHCl3</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>2-(4′-fluorophenyl)-4-[4′-(3-dimethylamino-2-propyn-1-yl)phenyl]thiazole is obtained</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:headingText>2-(4′-Fluorophenyl)-4-[4′-[3-(N,N-dimethylamino)-propyl]phenyl]thiazole (II: R1= H, R2=4-F, p= 3, V= N, R3=R4=CH3)</dl:headingText>
+      <dl:paragraphNum>0163</dl:paragraphNum>
+      <dl:paragraphText>A warm solution of 2-(4′-fluorophenyl)-4-[4′-(1-dimethylamino-2-propyn-3-yl)phenyl]thiazole (0.2 g, 0.6 mmol) in abs. EtOH (20 mL) containing a catalytic amount of palladium on activated carbon (5%, 20 mg) is shaked under hydrogen atomsphere (30 psi) for 2 h. After removal of the catalyst by filtration, the filtrate is concentrated to give 2-(4′-fluorophenyl)-4-[4′-(3-N,N-dimethylaminopropyl)phenyl]thiazole as desired product (0.18 g, 89%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[F:1][C:2]1[CH:7]=[CH:6][C:5]([C:8]2[S:9][CH:10]=[C:11]([C:13]3[CH:18]=[CH:17][C:16]([C:19]#[C:20][CH2:21][N:22]([CH3:24])[CH3:23])=[CH:15][CH:14]=3)[N:12]=2)=[CH:4][CH:3]=1&gt;[Pd].CCO&gt;[F:1][C:2]1[CH:3]=[CH:4][C:5]([C:8]2[S:9][CH:10]=[C:11]([C:13]3[CH:18]=[CH:17][C:16]([CH2:19][CH2:20][CH2:21][N:22]([CH3:24])[CH3:23])=[CH:15][CH:14]=3)[N:12]=2)=[CH:6][CH:7]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-[4′-(3-N,N-dimethylaminopropyl)phenyl]thiazole</name>
+        </molecule>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+      <product role="product">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">desired product</name>
+          <dl:nameResolved>2-(4′-Fluorophenyl)-4-[4′-[3-(N,N-dimethylamino)-propyl]phenyl]thiazole</dl:nameResolved>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.18">0.18 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="89">89%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="88.1">88.1</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)CCCN(C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C20H21FN2S/c1-23(2)13-3-4-15-5-7-16(8-6-15)19-14-24-20(22-19)17-9-11-18(21)12-10-17/h5-12,14H,3-4,13H2,1-2H3"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-[4′-(1-dimethylamino-2-propyn-3-yl)phenyl]thiazole</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0006">0.6 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.2">0.2 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)C#CCN(C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C20H17FN2S/c1-23(2)13-3-4-15-5-7-16(8-6-15)19-14-24-20(22-19)17-9-11-18(21)12-10-17/h5-12,14H,13H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="catalyst">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">palladium on activated carbon</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.020">20 mg</amount>
+        <identifier dictRef="cml:smiles" value="[Pd]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Pd"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">EtOH</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="CCO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>EtOH (20 mL) containing a catalytic amount of palladium on activated carbon (5%, 20 mg)</dl:phraseText>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Unknown">
+        <dl:phraseText>for 2 h</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="7200">2 h</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>After removal of the catalyst</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>by filtration</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>the filtrate is concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to give 2-(4′-fluorophenyl)-4-[4′-(3-N,N-dimethylaminopropyl)phenyl]thiazole as desired product (0.18 g, 89%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+        <dl:chemical ref="m1"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0198</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 3-nitrobenzenethioamide (2.73 g, 15 mmol) and 3-methoxy-α-[bromoacetophenone (3.43 g, 15 mmol) in EtOH (30 mL) is heated under reflux for 18 h. It is cooled and filtered to give 4 g of 2-(3′-nitrophenyl)-4[(3′-methoxy)phenyl]thiazole as a yellow solid, mp. 122°-123° C.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[N+:1]([C:4]1[CH:5]=[C:6]([C:10](=[S:12])[NH2:11])[CH:7]=[CH:8][CH:9]=1)([O-:3])=[O:2].Br[CH2:14][C:15]([C:17]1[CH:22]=[CH:21][CH:20]=[CH:19][CH:18]=1)=O.C[CH2:24][OH:25]&gt;&gt;[N+:1]([C:4]1[CH:5]=[C:6]([C:10]2[S:12][CH:14]=[C:15]([C:17]3[CH:22]=[CH:21][CH:20]=[C:19]([O:25][CH3:24])[CH:18]=3)[N:11]=2)[CH:7]=[CH:8][CH:9]=1)([O-:3])=[O:2]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(3′-nitrophenyl)-4[(3′-methoxy)phenyl]thiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="4">4 g</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C=CC1)C=1SC=C(N1)C1=CC(=CC=C1)OC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C16H12N2O3S/c1-21-14-7-3-4-11(9-14)15-10-22-16(17-15)12-5-2-6-13(8-12)18(19)20/h2-10H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">3-nitrobenzenethioamide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.015">15 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.73">2.73 g</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C=CC1)C(N)=S"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6N2O2S/c8-7(12)5-2-1-3-6(4-5)9(10)11/h1-4H,(H2,8,12)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">bromoacetophenone</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.015">15 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="3.43">3.43 g</amount>
+        <identifier dictRef="cml:smiles" value="BrCC(=O)C1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H7BrO/c9-6-8(10)7-4-2-1-3-5-7/h1-5H,6H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">EtOH</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.030">30 mL</amount>
+        <identifier dictRef="cml:smiles" value="CCO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList/>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 3-nitrobenzenethioamide (2.73 g, 15 mmol) and 3-methoxy-α-[bromoacetophenone (3.43 g, 15 mmol) in EtOH (30 mL)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">3-methoxy</name>
+          </molecule>
+          <dl:entityType>fragment</dl:entityType>
+        </chemical>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>under reflux for 18 h</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="64800">18 h</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>It is cooled</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to give 4 g of 2-(3′-nitrophenyl)-4[(3′-methoxy)phenyl]thiazole as a yellow solid, mp. 122°-123° C.</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0205</dl:paragraphNum>
+      <dl:paragraphText>To a solution of p-tolunitrile (10.1 g, 86.21 mmol) in 100 ml CHCl3:MeOH (1:1) cooled to 5° C. in an ice-water bath is bubbled HCl for 1 hour to reach saturation. The solution is stirred at 10° C. for 43 hours, then concentrated under reduced pressure to yield p-methylbenzimidate hydrochloride as pale yellow crystals (15.98 g, 99%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[C:1]1([CH3:9])[CH:6]=[CH:5][C:4]([C:7]#[N:8])=[CH:3][CH:2]=1.C(Cl)(Cl)[Cl:11].C[OH:15]&gt;&gt;[ClH:11].[CH3:9][C:1]1[CH:6]=[CH:5][C:4]([C:7](=[NH:8])[OH:15])=[CH:3][CH:2]=1 |f:1.2,3.4|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">p-methylbenzimidate hydrochloride</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="15.98">15.98 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="99">99%</amount>
+        <identifier dictRef="cml:smiles" value="Cl.CC1=CC=C(C(O)=N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H9NO.ClH/c1-6-2-4-7(5-3-6)8(9)10;/h2-5H,1H3,(H2,9,10);1H"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>pale yellow</dl:appearance>
+        <dl:state>crystals</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">p-tolunitrile</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.08621">86.21 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="10.1">10.1 g</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=C(C=C1)C#N)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H7N/c1-7-2-4-8(6-9)5-3-7/h2-5H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">CHCl3 MeOH</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl.CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3.CH4O/c2-1(3)4;1-2/h1H;2H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList/>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>To a solution of p-tolunitrile (10.1 g, 86.21 mmol) in 100 ml CHCl3:MeOH (1:1) cooled to 5° C. in an ice-water bath</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <chemical>
+          <molecule id="m3">
+            <name dictRef="nameDict:unknown">ice water</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Temperature" normalizedValue="5">5° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Degass">
+        <dl:phraseText>is bubbled HCl for 1 hour</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">HCl</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Time" normalizedValue="3600">1 hour</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The solution is stirred at 10° C. for 43 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="154800">43 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="10">10° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated under reduced pressure</dl:phraseText>
+        <dl:parameter propertyType="Pressure" normalizedValue="reduced pressure">reduced pressure</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield p-methylbenzimidate hydrochloride as pale yellow crystals (15.98 g, 99%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0207</dl:paragraphNum>
+      <dl:paragraphText>To a solution of p-methylbenzimidate hydrochloride (8.00 g, 43.09 mmol) in MeOH (100 ml) is added NH3/MeOH solution (2.68M, 24.12 ml, 64.64 mmol). Upon the addition of the NH3, the mixture has a pH around 8.5. To this solution is added ammonium chloride (2.30 g, 43.09 mmol). The reaction mixture is stirred at room temperature for 20 hours, then cooled in refrigerator and the precipitate is removed by filtration. The mother liquor is concentrated to yield the crude product which is taken up in a limited amount of cold EtOH and the white precipitate is filtered. The beige filtrate is concentrated to yield p-methylbenzamidine hydrochloride as an off-white solid (7.15 g, 97%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[ClH:1].[CH3:2][C:3]1[CH:11]=[CH:10][C:6]([C:7](=[NH:9])O)=[CH:5][CH:4]=1.[NH3:12].CO.[Cl-].[NH4+].CCO&gt;CO&gt;[ClH:1].[CH3:2][C:3]1[CH:11]=[CH:10][C:6]([C:7]([NH2:12])=[NH:9])=[CH:5][CH:4]=1 |f:0.1,2.3,4.5,8.9|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">p-methylbenzamidine hydrochloride</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="7.15">7.15 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="97">97%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="97.2">97.2</amount>
+        <identifier dictRef="cml:smiles" value="Cl.CC1=CC=C(C(=N)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H10N2.ClH/c1-6-2-4-7(5-3-6)8(9)10;/h2-5H,1H3,(H3,9,10);1H"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>off-white</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">p-methylbenzimidate hydrochloride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.04309">43.09 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="8.00">8.00 g</amount>
+        <identifier dictRef="cml:smiles" value="Cl.CC1=CC=C(C(O)=N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H9NO.ClH/c1-6-2-4-7(5-3-6)8(9)10;/h2-5H,1H3,(H2,9,10);1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">NH3 MeOH</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.06464">64.64 mmol</amount>
+        <amount dl:propertyType="MOLARITY" dl:normalizedValue="2.68">2.68M</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.02412">24.12 ml</amount>
+        <identifier dictRef="cml:smiles" value="N.CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH4O.H3N/c1-2;/h2H,1H3;1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">NH3</name>
+          <dl:nameResolved>p-methylbenzimidate hydrochloride</dl:nameResolved>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="Cl.CC1=CC=C(C(O)=N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H9NO.ClH/c1-6-2-4-7(5-3-6)8(9)10;/h2-5H,1H3,(H2,9,10);1H"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ammonium chloride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.04309">43.09 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.30">2.30 g</amount>
+        <identifier dictRef="cml:smiles" value="[Cl-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/ClH.H3N/h1H;1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">EtOH</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CCO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m6">
+          <name dictRef="nameDict:unknown">MeOH</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+        <identifier dictRef="cml:smiles" value="CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of p-methylbenzimidate hydrochloride (8.00 g, 43.09 mmol) in MeOH (100 ml) is added NH3/MeOH solution (2.68M, 24.12 ml, 64.64 mmol)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m6"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>Upon the addition of the NH3</dl:phraseText>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To this solution is added ammonium chloride (2.30 g, 43.09 mmol)</dl:phraseText>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The reaction mixture is stirred at room temperature for 20 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="72000">20 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>cooled in refrigerator</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>the precipitate is removed by filtration</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The mother liquor is concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield the crude product which</dl:phraseText>
+        <chemical role="product">
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">crude product</name>
+          </molecule>
+          <dl:entityType>definiteReference</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>the white precipitate is filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The beige filtrate is concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield p-methylbenzamidine hydrochloride as an off-white solid (7.15 g, 97%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0209</dl:paragraphNum>
+      <dl:paragraphText>To a mixture of p-methylbenzamidine hydrochloride (5.1 g, 30.0 mmol) in CHCl3 (100 ml) is added triethyl amine (15.12 g, 20.9 ml, 150.0 mmol) and cooled to 5° C. in an ice-water bath. To the mixture is slowly added perchloromethyl mercaptan (95%, 6.16 g, 31.5 mmol) in CHCl3(10 ml) over 1 hour. The yellow solution is allowed to warm up to room temperature. After 2 hours the mixture is washed with water (100 ml×2) and brine (100 ml). The organic layer is dried over MgSO4 and the solvent is removed under reduced pressure to yield a brown oil. The oil is purified on a bed of silica gel, eluting with 1:1 CHCl3:hexanes to yield 3-(p-tolyl)-5-chloro-1,2,4-thiadiazole as a yellow solid (2.78 g, 44%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>Cl.[CH3:2][C:3]1[CH:11]=[CH:10][C:6]([C:7]([NH2:9])=[NH:8])=[CH:5][CH:4]=1.C(N(CC)CC)C.[Cl:19][C:20]([SH:23])(Cl)Cl&gt;C(Cl)(Cl)Cl&gt;[C:3]1([CH3:2])[CH:11]=[CH:10][C:6]([C:7]2[N:9]=[C:20]([Cl:19])[S:23][N:8]=2)=[CH:5][CH:4]=1 |f:0.1|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">3-(p-tolyl)-5-chloro-1,2,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.78">2.78 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="44">44%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="44.0">44.0</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=C(C=C1)C1=NSC(=N1)Cl)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H7ClN2S/c1-6-2-4-7(5-3-6)8-11-9(10)13-12-8/h2-5H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">p-methylbenzamidine hydrochloride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0300">30.0 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="5.1">5.1 g</amount>
+        <identifier dictRef="cml:smiles" value="Cl.CC1=CC=C(C(=N)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H10N2.ClH/c1-6-2-4-7(5-3-6)8(9)10;/h2-5H,1H3,(H3,9,10);1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">triethyl amine</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.1500">150.0 mmol</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.0209">20.9 ml</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="15.12">15.12 g</amount>
+        <identifier dictRef="cml:smiles" value="C(C)N(CC)CC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H15N/c1-4-7(5-2)6-3/h4-6H2,1-3H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">perchloromethyl mercaptan</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0315">31.5 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="6.16">6.16 g</amount>
+        <identifier dictRef="cml:smiles" value="ClC(Cl)(Cl)S"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3S/c2-1(3,4)5/h5H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">CHCl3</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">CHCl3</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.010">10 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a mixture of p-methylbenzamidine hydrochloride (5.1 g, 30.0 mmol) in CHCl3 (100 ml)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>is added triethyl amine (15.12 g, 20.9 ml, 150.0 mmol)</dl:phraseText>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>cooled to 5° C. in an ice-water bath</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ice water</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Temperature" normalizedValue="5">5° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Unknown">
+        <dl:phraseText>over 1 hour</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="3600">1 hour</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to warm up to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>After 2 hours the mixture is washed with water (100 ml×2) and brine (100 ml)</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">brine</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+          <identifier dictRef="cml:smiles" value="[Cl-].[Na+].O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.Na.H2O/h1H;;1H2/q;+1;/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Time" normalizedValue="7200">2 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The organic layer is dried over MgSO4</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">MgSO4</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[O-]S(=O)(=O)[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>the solvent is removed under reduced pressure</dl:phraseText>
+        <dl:parameter propertyType="Pressure" normalizedValue="reduced pressure">reduced pressure</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield a brown oil</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The oil is purified on a bed of silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 1:1 CHCl3</dl:phraseText>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">CHCl3</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>hexanes to yield 3-(p-tolyl)-5-chloro-1,2,4-thiadiazole as a yellow solid (2.78 g, 44%)</dl:phraseText>
+        <chemical>
+          <molecule id="m12">
+            <name dictRef="nameDict:unknown">hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0211</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 3-(p-tolyl)-5-chloro-1,2,4-thiadiazole (0.50 g, 2.37 mmol) and [1,3-bis(diphenylphosphino)propane]nickel(II) chloride catalyst (1.41 g, 2.61 mmol) in anhydrous THF (20 ml) is cooled in an ice-water bath. To this mixture is added slowly 4-fluorophenyl-magnesium bromide (1.0M in THF, 2.5 ml, 2.49 mmol) with exclusion of both moisture and oxygen. The mixture is allowed to warm to room temperature and stirred for 18 hours under N2. The mixture is filtered through celite and concentrated. The residue is taken up in CHCl3 (50 ml) and washed with brine (50 ml×2). The organic layer is dried over magnesium sulfate and concentrated. The residue is purified on a silica gel column, eluting with 3:7 CHCl3:hexanes to yield 5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole (0.20 g, 31%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[C:1]1([CH3:13])[CH:6]=[CH:5][C:4]([C:7]2[N:11]=[C:10](Cl)[S:9][N:8]=2)=[CH:3][CH:2]=1.[F:14][C:15]1[CH:20]=[CH:19][C:18]([Mg]Br)=[CH:17][CH:16]=1.O=O&gt;Cl[Ni]1(Cl)[P](C2C=CC=CC=2)(C2C=CC=CC=2)CCC[P]1(C1C=CC=CC=1)C1C=CC=CC=1.C1COCC1&gt;[F:14][C:15]1[CH:20]=[CH:19][C:18]([C:10]2[S:9][N:8]=[C:7]([C:4]3[CH:5]=[CH:6][C:1]([CH3:13])=[CH:2][CH:3]=3)[N:11]=2)=[CH:17][CH:16]=1 |^1:27,43|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.20">0.20 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="31">31%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="31.2">31.2</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C1=NC(=NS1)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H11FN2S/c1-10-2-4-11(5-3-10)14-17-15(19-18-14)12-6-8-13(16)9-7-12/h2-9H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">3-(p-tolyl)-5-chloro-1,2,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00237">2.37 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.50">0.50 g</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=C(C=C1)C1=NSC(=N1)Cl)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H7ClN2S/c1-6-2-4-7(5-3-6)8-11-9(10)13-12-8/h2-5H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">4-fluorophenyl-magnesium bromide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00249">2.49 mmol</amount>
+        <amount dl:propertyType="MOLARITY" dl:normalizedValue="1.0">1.0M</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.0025">2.5 ml</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)[Mg]Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H4F.BrH.Mg/c7-6-4-2-1-3-5-6;;/h2-5H;1H;/q;;+1/p-1"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">oxygen</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="O=O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/O2/c1-2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="catalyst">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">[1,3-bis(diphenylphosphino)propane]nickel(II) chloride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00261">2.61 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.41">1.41 g</amount>
+        <identifier dictRef="cml:smiles" value="Cl[Ni]1([P](CCC[P](C2=CC=CC=C2)1C3=CC=CC=C3)(C4=CC=CC=C4)C5=CC=CC=C5)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C27H26P2.2ClH.Ni/c1-5-14-24(15-6-1)28(25-16-7-2-8-17-25)22-13-23-29(26-18-9-3-10-19-26)27-20-11-4-12-21-27;;;/h1-12,14-21H,13,22-23H2;2*1H;/q;;;+2/p-2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">THF</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 ml</amount>
+        <identifier dictRef="cml:smiles" value="C1CCOC1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O/c1-2-4-5-3-1/h1-4H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 3-(p-tolyl)-5-chloro-1,2,4-thiadiazole (0.50 g, 2.37 mmol) and [1,3-bis(diphenylphosphino)propane]nickel(II) chloride catalyst (1.41 g, 2.61 mmol) in anhydrous THF (20 ml)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>is cooled in an ice-water bath</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ice water</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To this mixture is added slowly 4-fluorophenyl-magnesium bromide (1.0M in THF, 2.5 ml, 2.49 mmol) with exclusion of both moisture and oxygen</dl:phraseText>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to warm to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>stirred for 18 hours under N2</dl:phraseText>
+        <dl:atmosphere>
+          <chemical>
+            <molecule id="m7">
+              <name dictRef="nameDict:unknown">N2</name>
+            </molecule>
+            <identifier dictRef="cml:smiles" value="N#N"/>
+            <identifier dictRef="cml:inchi" value="InChI=1S/N2/c1-2"/>
+            <dl:entityType>falsePositive</dl:entityType>
+          </chemical>
+        </dl:atmosphere>
+        <dl:parameter propertyType="Time" normalizedValue="64800">18 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The mixture is filtered through celite</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with brine (50 ml×2)</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">brine</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.050">50 ml</amount>
+          <identifier dictRef="cml:smiles" value="[Cl-].[Na+].O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.Na.H2O/h1H;;1H2/q;+1;/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The organic layer is dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified on a silica gel column</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 3:7 CHCl3</dl:phraseText>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">CHCl3</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>hexanes to yield 5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole (0.20 g, 31%)</dl:phraseText>
+        <chemical>
+          <molecule id="m12">
+            <name dictRef="nameDict:unknown">hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0213</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole (0.16 g, 0.59 mmol) in CCl4 (20 ml) is added NBS (0.11 g, 0.59 mmol) and the mixture is heated to reflux for 36 hours. The mixture is cooled to room temperature and filtered through celite. The mother liquor is concentrated. The residue is taken up in chloroform (30 ml) and washed with water (30 ml). The organic layer is dried over MgSO4 and concentrated to yield 5-(4′-fluorophenyl)-3-(p-bromomethylphenyl)-1,2,4-thiadiazole, (0.22 g) as crude product which is used as is without further purification.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[F:1][C:2]1[CH:7]=[CH:6][C:5]([C:8]2[S:12][N:11]=[C:10]([C:13]3[CH:18]=[CH:17][C:16]([CH3:19])=[CH:15][CH:14]=3)[N:9]=2)=[CH:4][CH:3]=1.C1C(=O)N([Br:27])C(=O)C1&gt;C(Cl)(Cl)(Cl)Cl&gt;[F:1][C:2]1[CH:3]=[CH:4][C:5]([C:8]2[S:12][N:11]=[C:10]([C:13]3[CH:18]=[CH:17][C:16]([CH2:19][Br:27])=[CH:15][CH:14]=3)[N:9]=2)=[CH:6][CH:7]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-(4′-fluorophenyl)-3-(p-bromomethylphenyl)-1,2,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.22">0.22 g</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="106.8">106.8</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C1=NC(=NS1)C1=CC=C(C=C1)CBr"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H10BrFN2S/c16-9-10-1-3-11(4-2-10)14-18-15(20-19-14)12-5-7-13(17)8-6-12/h1-8H,9H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00059">0.59 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.16">0.16 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C1=NC(=NS1)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H11FN2S/c1-10-2-4-11(5-3-10)14-17-15(19-18-14)12-6-8-13(16)9-7-12/h2-9H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">NBS</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00059">0.59 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.11">0.11 g</amount>
+        <identifier dictRef="cml:smiles" value="C1CC(=O)N(C1=O)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H4BrNO2/c5-6-3(7)1-2-4(6)8/h1-2H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">CCl4</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CCl4/c2-1(3,4)5"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole (0.16 g, 0.59 mmol) in CCl4 (20 ml) is added NBS (0.11 g, 0.59 mmol)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>the mixture is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 36 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="129600">36 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The mixture is cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered through celite</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The mother liquor is concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with water (30 ml)</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.030">30 ml</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The organic layer is dried over MgSO4</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">MgSO4</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[O-]S(=O)(=O)[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 5-(4′-fluorophenyl)-3-(p-bromomethylphenyl)-1,2,4-thiadiazole, (0.22 g) as crude product which</dl:phraseText>
+        <dl:chemical ref="m0"/>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">crude product</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0220</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 3-nitrobenzhydrazide (2.16 g, 11.92 mmol) in pyridine (40 ml) cooled to 0° C. in an ice bath is added dropwise p-toluoyl chloride (1.94 g, 11.92 mmol). The mixture is allowed to warm to room temperature and stirred for 12 hours. The mixture is quenched with 350 mL of water and stirred for thirty minutes. The precipitate is filtered and dried in a vacuum oven to yield 1-[(4-methyl)benzoyl]-2-(3-nitrobenzoyl)hydrazine as a pale yellow solid. (2.94 g, 82%)</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[N+:1]([C:4]1[CH:5]=[C:6]([CH:11]=[CH:12][CH:13]=1)[C:7]([NH:9][NH2:10])=[O:8])([O-:3])=[O:2].[C:14]1([CH3:23])[CH:19]=[CH:18][C:17]([C:20](Cl)=[O:21])=[CH:16][CH:15]=1&gt;N1C=CC=CC=1&gt;[CH3:23][C:14]1[CH:19]=[CH:18][C:17]([C:20]([NH:10][NH:9][C:7](=[O:8])[C:6]2[CH:11]=[CH:12][CH:13]=[C:4]([N+:1]([O-:3])=[O:2])[CH:5]=2)=[O:21])=[CH:16][CH:15]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">1-[(4-methyl)benzoyl]-2-(3-nitrobenzoyl)hydrazine</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CC1=CC=C(C(=O)NNC(C2=CC(=CC=C2)[N+](=O)[O-])=O)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H13N3O4/c1-10-5-7-11(8-6-10)14(19)16-17-15(20)12-3-2-4-13(9-12)18(21)22/h2-9H,1H3,(H,16,19)(H,17,20)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>pale yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">3-nitrobenzhydrazide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.01192">11.92 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.16">2.16 g</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C(=O)NN)C=CC1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H7N3O3/c8-9-7(11)5-2-1-3-6(4-5)10(12)13/h1-4H,8H2,(H,9,11)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">p-toluoyl chloride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.01192">11.92 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.94">1.94 g</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=C(C=C1)C(=O)Cl)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H7ClO/c1-6-2-4-7(5-3-6)8(9)10/h2-5H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">pyridine</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.040">40 ml</amount>
+        <identifier dictRef="cml:smiles" value="N1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C5H5N/c1-2-4-6-5-3-1/h1-5H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>To a solution of 3-nitrobenzhydrazide (2.16 g, 11.92 mmol) in pyridine (40 ml) cooled to 0° C. in an ice bath</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">ice</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Temperature" normalizedValue="0">0° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>is added dropwise p-toluoyl chloride (1.94 g, 11.92 mmol)</dl:phraseText>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to warm to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>stirred for 12 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="43200">12 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Quench">
+        <dl:phraseText>The mixture is quenched with 350 mL of water</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.350">350 mL</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>stirred for thirty minutes</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="1800">thirty minutes</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The precipitate is filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried in a vacuum oven</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 1-[(4-methyl)benzoyl]-2-(3-nitrobenzoyl)hydrazine as a pale yellow solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0222</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 1-[(4-methyl)benzoyl]-2-(3-nitrobenzoyl)hydrazine (1.40 g, 4.68 mmol) and Lawesson's Reagent (0.95 g, 2.34 mmol) in benzene (25 ml) is slowly heated to 60° C. After 3 hours the solution is concentrated, quenched with 35 ml of water and heated to reflux for 12 hours. The mixture is then cooled to room temperature and the precpitate is collected by filtration. The precipitate is then taken up in chloroform (100 ml) and the insoluble portion is removed by filtration. The filtrate is then dried over MgSO4 and concentrated to yield 2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-thiadiazole as a pale yellow solid. (0.67 g, 48%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[CH:22]=[CH:21][C:5]([C:6]([NH:8][NH:9][C:10](=O)[C:11]2[CH:16]=[CH:15][CH:14]=[C:13]([N+:17]([O-:19])=[O:18])[CH:12]=2)=O)=[CH:4][CH:3]=1.COC1C=CC(P2(SP(C3C=CC(OC)=CC=3)(=S)S2)=[S:32])=CC=1&gt;C1C=CC=CC=1&gt;[N+:17]([C:13]1[CH:12]=[C:11]([C:10]2[S:32][C:6]([C:5]3[CH:21]=[CH:22][C:2]([CH3:1])=[CH:3][CH:4]=3)=[N:8][N:9]=2)[CH:16]=[CH:15][CH:14]=1)([O-:19])=[O:18]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-thiadiazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C=CC1)C=1SC(=NN1)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H11N3O2S/c1-10-5-7-11(8-6-10)14-16-17-15(21-14)12-3-2-4-13(9-12)18(19)20/h2-9H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>pale yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">1-[(4-methyl)benzoyl]-2-(3-nitrobenzoyl)hydrazine</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00468">4.68 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.40">1.40 g</amount>
+        <identifier dictRef="cml:smiles" value="CC1=CC=C(C(=O)NNC(C2=CC(=CC=C2)[N+](=O)[O-])=O)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H13N3O4/c1-10-5-7-11(8-6-10)14(19)16-17-15(20)12-3-2-4-13(9-12)18(21)22/h2-9H,1H3,(H,16,19)(H,17,20)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">Lawesson's Reagent</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00234">2.34 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.95">0.95 g</amount>
+        <identifier dictRef="cml:smiles" value="COC=1C=CC(=CC1)P2(=S)SP(=S)(S2)C=3C=CC(=CC3)OC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C14H14O2P2S4/c1-15-11-3-7-13(8-4-11)17(19)21-18(20,22-17)14-9-5-12(16-2)6-10-14/h3-10H,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">benzene</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.025">25 ml</amount>
+        <identifier dictRef="cml:smiles" value="C1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H6/c1-2-4-6-5-3-1/h1-6H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 1-[(4-methyl)benzoyl]-2-(3-nitrobenzoyl)hydrazine (1.40 g, 4.68 mmol) and Lawesson's Reagent (0.95 g, 2.34 mmol) in benzene (25 ml)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is slowly heated to 60° C</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="60">60° C</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>After 3 hours the solution is concentrated</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Quench">
+        <dl:phraseText>quenched with 35 ml of water</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.035">35 ml</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 12 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="43200">12 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The mixture is then cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Recover">
+        <dl:phraseText>the precpitate is collected by filtration</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>the insoluble portion is removed by filtration</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The filtrate is then dried over MgSO4</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">MgSO4</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[O-]S(=O)(=O)[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-thiadiazole as a pale yellow solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000177A1</dl:documentId>
+      <dl:paragraphNum>0224</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-thiadiazole (0.66 g, 2.22 mmol) in CCl4 (75 ml) is added NBS (0.43 g, 2.44 mmol) and refluxed for 12 hours. The mixture is then concentrated and the residue is taken up in chloroform (50 ml) and washed with saturated NaHCO3 (50 ml) and brine (50 ml). The organic layer is dried over MgSO4 and concentrated to yield 2-(3′-nitrophenyl)-5-(p-bromomethylphenyl)-1,3,4-thiadiazole as a tan solid. (0.69 g, 83%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[N+:1]([C:4]1[CH:5]=[C:6]([C:10]2[S:11][C:12]([C:15]3[CH:20]=[CH:19][C:18]([CH3:21])=[CH:17][CH:16]=3)=[N:13][N:14]=2)[CH:7]=[CH:8][CH:9]=1)([O-:3])=[O:2].C1C(=O)N([Br:29])C(=O)C1&gt;C(Cl)(Cl)(Cl)Cl&gt;[N+:1]([C:4]1[CH:5]=[C:6]([C:10]2[S:11][C:12]([C:15]3[CH:16]=[CH:17][C:18]([CH2:21][Br:29])=[CH:19][CH:20]=3)=[N:13][N:14]=2)[CH:7]=[CH:8][CH:9]=1)([O-:3])=[O:2]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(3′-nitrophenyl)-5-(p-bromomethylphenyl)-1,3,4-thiadiazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C=CC1)C=1SC(=NN1)C1=CC=C(C=C1)CBr"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H10BrN3O2S/c16-9-10-4-6-11(7-5-10)14-17-18-15(22-14)12-2-1-3-13(8-12)19(20)21/h1-8H,9H2"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>tan</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00222">2.22 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.66">0.66 g</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C=CC1)C=1SC(=NN1)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H11N3O2S/c1-10-5-7-11(8-6-10)14-16-17-15(21-14)12-3-2-4-13(9-12)18(19)20/h2-9H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">NBS</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00244">2.44 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.43">0.43 g</amount>
+        <identifier dictRef="cml:smiles" value="C1CC(=O)N(C1=O)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H4BrNO2/c5-6-3(7)1-2-4(6)8/h1-2H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">CCl4</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.075">75 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CCl4/c2-1(3,4)5"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-thiadiazole (0.66 g, 2.22 mmol) in CCl4 (75 ml) is added NBS (0.43 g, 2.44 mmol)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>refluxed for 12 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="43200">12 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The mixture is then concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with saturated NaHCO3 (50 ml) and brine (50 ml)</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">NaHCO3</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.050">50 ml</amount>
+          <identifier dictRef="cml:smiles" value="C(=O)(O)[O-].[Na+]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH2O3.Na/c2-1(3)4;/h(H2,2,3,4);/q;+1/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">brine</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.050">50 ml</amount>
+          <identifier dictRef="cml:smiles" value="[Cl-].[Na+].O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.Na.H2O/h1H;;1H2/q;+1;/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The organic layer is dried over MgSO4</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">MgSO4</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[O-]S(=O)(=O)[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 2-(3′-nitrophenyl)-5-(p-bromomethylphenyl)-1,3,4-thiadiazole as a tan solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000184A1</dl:documentId>
+      <dl:paragraphNum>0204</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 3.2 g of ethyl 2,5-dimethylfuran-3-carboxylate, 35 ml of ethanol and 20 ml of 2 N sodium hydroxide was stirred at room temperature for 1.5 hours followed by heating under reflux for an hour. After the reaction mixture was allowed to cool to room temperature, it was concentrated under reduced pressure. The residue was dissolved in water and acidified with diluted sulfuric acid. Precipitated crystals were collected by filtration, washed with water and dried to give 2.27 g of 2,5-dimethylfuran-3-carboxylic acid in a 85% yield.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[O:3][C:4]([CH3:12])=[CH:5][C:6]=1[C:7]([O:9]CC)=[O:8].[OH-].[Na+]&gt;C(O)C&gt;[CH3:1][C:2]1[O:3][C:4]([CH3:12])=[CH:5][C:6]=1[C:7]([OH:9])=[O:8] |f:1.2|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2,5-dimethylfuran-3-carboxylic acid</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.27">2.27 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="85">85% yield</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="85.1">85.1</amount>
+        <identifier dictRef="cml:smiles" value="CC=1OC(=CC1C(=O)O)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H8O3/c1-4-3-6(7(8)9)5(2)10-4/h3H,1-2H3,(H,8,9)"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">ethyl 2,5-dimethylfuran-3-carboxylate</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="3.2">3.2 g</amount>
+        <identifier dictRef="cml:smiles" value="CC=1OC(=CC1C(=O)OCC)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H12O3/c1-4-11-9(10)8-5-6(2)12-7(8)3/h5H,4H2,1-3H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">sodium hydroxide</name>
+        </molecule>
+        <amount dl:propertyType="MOLARITY" dl:normalizedValue="2">2 N</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 ml</amount>
+        <identifier dictRef="cml:smiles" value="[OH-].[Na+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Na.H2O/h;1H2/q+1;/p-1"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">ethanol</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.035">35 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(C)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 3.2 g of ethyl 2,5-dimethylfuran-3-carboxylate, 35 ml of ethanol and 20 ml of 2 N sodium hydroxide</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>was stirred at room temperature for 1.5 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="5400">1.5 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>by heating</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>under reflux for an hour</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="3600">an hour</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>to cool to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>it was concentrated under reduced pressure</dl:phraseText>
+        <dl:parameter propertyType="Pressure" normalizedValue="reduced pressure">reduced pressure</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dissolve">
+        <dl:phraseText>The residue was dissolved in water</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Precipitate">
+        <dl:phraseText>Precipitated crystals</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Recover">
+        <dl:phraseText>were collected by filtration</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with water</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to give 2.27 g of 2,5-dimethylfuran-3-carboxylic acid in a 85% yield</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0118</dl:paragraphNum>
+      <dl:paragraphText>4-Fluorobenzamide (5.0 g, 35.9 mmol) in benzene (100 ml) is added Lawesson's reagent (7.27 g, 18.0 mmol) and the resulting solution is heated to reflux for 1 hour. The solution is cooled to room temperature, concentrated and water (150 ml) added. The mixture is heated to reflux for 3 hours, and cooled to room temperature. The precipitate is filtered and dried under vacuum to yield 4-fluorothiobenzamide as a yellow solid (4.1 g, 71%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]([NH2:8])=O)=[CH:4][CH:3]=1.COC1C=CC(P2(SP(C3C=CC(OC)=CC=3)(=S)S2)=[S:20])=CC=1&gt;C1C=CC=CC=1&gt;[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]([NH2:8])=[S:20])=[CH:4][CH:3]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">4-fluorothiobenzamide</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="4.1">4.1 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="71">71%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="146.8">146.8</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C(=S)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6FNS/c8-6-3-1-5(2-4-6)7(9)10/h1-4H,(H2,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">4-Fluorobenzamide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0359">35.9 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="5.0">5.0 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C(=O)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6FNO/c8-6-3-1-5(2-4-6)7(9)10/h1-4H,(H2,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">Lawesson's reagent</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0180">18.0 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="7.27">7.27 g</amount>
+        <identifier dictRef="cml:smiles" value="COC=1C=CC(=CC1)P2(=S)SP(=S)(S2)C=3C=CC(=CC3)OC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C14H14O2P2S4/c1-15-11-3-7-13(8-4-11)17(19)21-18(20,22-17)14-9-5-12(16-2)6-10-14/h3-10H,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">benzene</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+        <identifier dictRef="cml:smiles" value="C1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H6/c1-2-4-6-5-3-1/h1-6H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>4-Fluorobenzamide (5.0 g, 35.9 mmol) in benzene (100 ml) is added Lawesson's reagent (7.27 g, 18.0 mmol)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>the resulting solution is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 1 hour</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="3600">1 hour</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The solution is cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>water (150 ml) added</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.150">150 ml</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>The mixture is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 3 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The precipitate is filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried under vacuum</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 4-fluorothiobenzamide as a yellow solid (4.1 g, 71%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0120</dl:paragraphNum>
+      <dl:paragraphText>To a solution of the crude product of 4-fluorothiobenzamide (2.0 g, 12.9 mmol) in EtOH (30ml) is added 2-bromo-4′methylacetophenone (2.75 g, 12.9 mmol). The mixture is heated to reflux for 24 hours. The course of the reaction is followed by thin layer chromatography. Upon completion of the reaction the solution is cooled to room temperature and the white precipitate filtered and dried under vacuum to yield 2-(4′-fluorophenyl)-4-(p-tolyl) thiazole (1.54 g, 54%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]([NH2:8])=[S:7])=[CH:4][CH:3]=1.Br[CH2:12][C:13]([C:15]1[CH:20]=[CH:19][C:18]([CH3:21])=[CH:17][CH:16]=1)=O&gt;CCO&gt;[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]2[S:7][CH:12]=[C:13]([C:15]3[CH:20]=[CH:19][C:18]([CH3:21])=[CH:17][CH:16]=3)[N:8]=2)=[CH:4][CH:3]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-(p-tolyl) thiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.54">1.54 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="54">54%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="44.3">44.3</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C16H12FNS/c1-11-2-4-12(5-3-11)15-10-19-16(18-15)13-6-8-14(17)9-7-13/h2-10H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">crude product</name>
+        </molecule>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">4-fluorothiobenzamide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0129">12.9 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.0">2.0 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C(=S)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6FNS/c8-6-3-1-5(2-4-6)7(9)10/h1-4H,(H2,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">2-bromo-4′methylacetophenone</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0129">12.9 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.75">2.75 g</amount>
+        <identifier dictRef="cml:smiles" value="BrCC(=O)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H9BrO/c1-7-2-4-8(5-3-7)9(11)6-10/h2-5H,6H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">EtOH</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.030">30ml</amount>
+        <identifier dictRef="cml:smiles" value="CCO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of the crude product of 4-fluorothiobenzamide (2.0 g, 12.9 mmol) in EtOH (30ml) is added 2-bromo-4′methylacetophenone (2.75 g, 12.9 mmol)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>The mixture is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 24 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="86400">24 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Synthesize">
+        <dl:phraseText>Upon completion of the reaction the solution</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>is cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>the white precipitate filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried under vacuum</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 2-(4′-fluorophenyl)-4-(p-tolyl) thiazole (1.54 g, 54%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0162</dl:paragraphNum>
+      <dl:paragraphText>To a solution of p-fluorothiobenzamide (0.39 g, 2.5 mmol) in 20 mL of abs. EtOH is added 2,4′-dibromoacetophenone (0.7 g, 2.5 mmol) all at once. The reaction mixture is stirred at room temperature for 3 hours and then chilled in ice bath. The precipitate is collected by filtration, washed with cold EtOH (5 ml×2) and dried in vacuum to give 2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole as a white fluffy crystaline solid (1.55 g, 93%). mp.158-9° C.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]([NH2:8])=[S:7])=[CH:4][CH:3]=1.Br[CH2:12][C:13]([C:15]1[CH:20]=[CH:19][C:18]([Br:21])=[CH:17][CH:16]=1)=O&gt;CCO&gt;[F:1][C:2]1[CH:10]=[CH:9][C:5]([C:6]2[S:7][CH:12]=[C:13]([C:15]3[CH:20]=[CH:19][C:18]([Br:21])=[CH:17][CH:16]=3)[N:8]=2)=[CH:4][CH:3]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.55">1.55 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="93">93%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="185.5">185.5</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H9BrFNS/c16-12-5-1-10(2-6-12)14-9-19-15(18-14)11-3-7-13(17)8-4-11/h1-9H"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>white fluffy crystaline</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">p-fluorothiobenzamide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0025">2.5 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.39">0.39 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C(=S)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6FNS/c8-6-3-1-5(2-4-6)7(9)10/h1-4H,(H2,9,10)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">2,4′-dibromoacetophenone</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0025">2.5 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.7">0.7 g</amount>
+        <identifier dictRef="cml:smiles" value="BrCC(=O)C1=CC=C(C=C1)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H6Br2O/c9-5-8(11)6-1-3-7(10)4-2-6/h1-4H,5H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">EtOH</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CCO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>EtOH is added 2,4′-dibromoacetophenone (0.7 g, 2.5 mmol) all at once</dl:phraseText>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The reaction mixture is stirred at room temperature for 3 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>chilled in ice bath</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">ice</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Recover">
+        <dl:phraseText>The precipitate is collected by filtration</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with cold EtOH (5 ml×2)</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">EtOH</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.005">5 ml</amount>
+          <identifier dictRef="cml:smiles" value="CCO"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried in vacuum</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to give 2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole as a white fluffy crystaline solid (1.55 g, 93%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0164</dl:paragraphNum>
+      <dl:paragraphText>In a 100 ml flask is placed triphenylphosphine (80 mg, 10 %) , PdCl2 (40 mg, 5 %) and 2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole (0.98 g, 2.9 mmol) in 20 mL of diethylamine. After stirring for 15 min under N2 atmosphere, CuI (30 mg, 5 %) and 1-dimethylamino-2-propyne (0.27 g, 3.18 mmol) in 20 ml of acetonitrile are added to the mixture. After 18 h of heating, the solvent is evaporated under reduced pressure and the residue is filtered through silica gel pad (50 g) using CHCl3 (400 mL) and 2% MeOH in CHCl3(400 mL). A large portion of unreacted 2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole is recovered after removal of chloroform filtrate (0.55 g, 56%). The second part of the filtrate (2% MeOH in CHCl3) is concentrated and the residual solid is then purified over silca gel column eluting with 2% MeOH in CHCl3. 2-(4′-fluorophenyl)-4-[4′-(3-dimethylamino-2-propyn-1-yl)phenyl]thiazole is obtained after concentration and trituration with hexane (0.25 g, 27% yield), mp. 98-9° C.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>C1(P(C2C=CC=CC=2)C2C=CC=CC=2)C=CC=CC=1.[F:20][C:21]1[CH:26]=[CH:25][C:24]([C:27]2[S:28][CH:29]=[C:30]([C:32]3[CH:37]=[CH:36][C:35](Br)=[CH:34][CH:33]=3)[N:31]=2)=[CH:23][CH:22]=1.[CH3:39][N:40]([CH3:44])[CH2:41][C:42]#[CH:43]&gt;C(NCC)C.C(#N)C.Cl[Pd]Cl.[Cu]I&gt;[F:20][C:21]1[CH:26]=[CH:25][C:24]([C:27]2[S:28][CH:29]=[C:30]([C:32]3[CH:37]=[CH:36][C:35]([CH2:43][C:42]#[C:41][N:40]([CH3:44])[CH3:39])=[CH:34][CH:33]=3)[N:31]=2)=[CH:23][CH:22]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-[4′-(3-dimethylamino-2-propyn-1-yl)phenyl]thiazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)CC#CN(C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C20H17FN2S/c1-23(2)13-3-4-15-5-7-16(8-6-15)19-14-24-20(22-19)17-9-11-18(21)12-10-17/h5-12,14H,4H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">triphenylphosphine</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.080">80 mg</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=CC=C1)P(C1=CC=CC=C1)C1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C18H15P/c1-4-10-16(11-5-1)19(17-12-6-2-7-13-17)18-14-8-3-9-15-18/h1-15H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0029">2.9 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.98">0.98 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H9BrFNS/c16-12-5-1-10(2-6-12)14-9-19-15(18-14)11-3-7-13(17)8-4-11/h1-9H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">1-dimethylamino-2-propyne</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00318">3.18 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.27">0.27 g</amount>
+        <identifier dictRef="cml:smiles" value="CN(CC#C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C5H9N/c1-4-5-6(2)3/h1H,5H2,2-3H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">diethylamine</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="C(C)NCC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H11N/c1-3-5-4-2/h5H,3-4H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">acetonitrile</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(C)#N"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H3N/c1-2-3/h1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="catalyst">
+        <molecule id="m6">
+          <name dictRef="nameDict:unknown">PdCl2</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.040">40 mg</amount>
+        <identifier dictRef="cml:smiles" value="Cl[Pd]Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/2ClH.Pd/h2*1H;/q;;+2/p-2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="catalyst">
+        <molecule id="m7">
+          <name dictRef="nameDict:unknown">CuI</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.030">30 mg</amount>
+        <identifier dictRef="cml:smiles" value="[Cu]I"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Cu.HI/h;1H/q+1;/p-1"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="ApparatusAction">
+        <dl:phraseText>In a 100 ml flask is placed</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>After stirring for 15 min under N2 atmosphere</dl:phraseText>
+        <dl:atmosphere>
+          <chemical>
+            <molecule id="m8">
+              <name dictRef="nameDict:unknown">N2</name>
+            </molecule>
+            <identifier dictRef="cml:smiles" value="N#N"/>
+            <identifier dictRef="cml:inchi" value="InChI=1S/N2/c1-2"/>
+            <dl:entityType>falsePositive</dl:entityType>
+          </chemical>
+        </dl:atmosphere>
+        <dl:parameter propertyType="Time" normalizedValue="900">15 min</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>CuI (30 mg, 5 %) and 1-dimethylamino-2-propyne (0.27 g, 3.18 mmol) in 20 ml of acetonitrile are added to the mixture</dl:phraseText>
+        <dl:chemical ref="m7"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>After 18 h of heating</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="64800">18 h</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>the solvent is evaporated under reduced pressure</dl:phraseText>
+        <dl:parameter propertyType="Pressure" normalizedValue="reduced pressure">reduced pressure</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>the residue is filtered through silica gel pad (50 g)</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Recover">
+        <dl:phraseText>A large portion of unreacted 2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole is recovered</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-(4′-bromophenyl)thiazole</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)Br"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C15H9BrFNS/c16-12-5-1-10(2-6-12)14-9-19-15(18-14)11-3-7-13(17)8-4-11/h1-9H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>after removal of chloroform filtrate (0.55 g, 56%)</dl:phraseText>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">chloroform</name>
+          </molecule>
+          <amount dl:propertyType="MASS" dl:normalizedValue="0.55">0.55 g</amount>
+          <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The second part of the filtrate (2% MeOH in CHCl3) is concentrated</dl:phraseText>
+        <chemical>
+          <molecule id="m12">
+            <name dictRef="nameDict:unknown">MeOH</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CO"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m13">
+            <name dictRef="nameDict:unknown">CHCl3</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>the residual solid is then purified over silca gel column</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 2% MeOH in CHCl3</dl:phraseText>
+        <chemical>
+          <molecule id="m14">
+            <name dictRef="nameDict:unknown">MeOH</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CO"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m15">
+            <name dictRef="nameDict:unknown">CHCl3</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>2-(4′-fluorophenyl)-4-[4′-(3-dimethylamino-2-propyn-1-yl)phenyl]thiazole is obtained</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:headingText>2-(4′-Fluorophenyl)-4-[4′-[3-(N,N-dimethylamino)-propyl]phenyl]thiazole (II: R1=H, R2=4-F, p=3, V=N, R3=R4=CH3)</dl:headingText>
+      <dl:paragraphNum>0166</dl:paragraphNum>
+      <dl:paragraphText>A warm solution of 2-(4′-fluorophenyl)-4-[4′-(1-dimethylamino-2-propyn-3-yl)phenyl]thiazole (0.2 g, 0.6 mmol) in abs. EtOH (20 mL) containing a catalytic amount of palladium on activated carbon (5 %, 20 mg) is shaked under hydrogen atomsphere (30 psi) for 2 h. After removal of the catalyst by filtration, the filtrate is concentrated to give 2-(4′-fluorophenyl)-4-[4′-(3-N,N-dimethylaminopropyl)phenyl]thiazole as desired product (0.18 g, 89 %)</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[F:1][C:2]1[CH:7]=[CH:6][C:5]([C:8]2[S:9][CH:10]=[C:11]([C:13]3[CH:18]=[CH:17][C:16]([C:19]#[C:20][CH2:21][N:22]([CH3:24])[CH3:23])=[CH:15][CH:14]=3)[N:12]=2)=[CH:4][CH:3]=1&gt;[Pd].CCO&gt;[F:1][C:2]1[CH:3]=[CH:4][C:5]([C:8]2[S:9][CH:10]=[C:11]([C:13]3[CH:18]=[CH:17][C:16]([CH2:19][CH2:20][CH2:21][N:22]([CH3:24])[CH3:23])=[CH:15][CH:14]=3)[N:12]=2)=[CH:6][CH:7]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-[4′-(3-N,N-dimethylaminopropyl)phenyl]thiazole</name>
+        </molecule>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+      <product role="product">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">desired product</name>
+          <dl:nameResolved>2-(4′-Fluorophenyl)-4-[4′-[3-(N,N-dimethylamino)-propyl]phenyl]thiazole</dl:nameResolved>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.18">0.18 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="89">89 %</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="88.1">88.1</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)CCCN(C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C20H21FN2S/c1-23(2)13-3-4-15-5-7-16(8-6-15)19-14-24-20(22-19)17-9-11-18(21)12-10-17/h5-12,14H,3-4,13H2,1-2H3"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">2-(4′-fluorophenyl)-4-[4′-(1-dimethylamino-2-propyn-3-yl)phenyl]thiazole</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0006">0.6 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.2">0.2 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C=1SC=C(N1)C1=CC=C(C=C1)C#CCN(C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C20H17FN2S/c1-23(2)13-3-4-15-5-7-16(8-6-15)19-14-24-20(22-19)17-9-11-18(21)12-10-17/h5-12,14H,13H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="catalyst">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">palladium on activated carbon</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.020">20 mg</amount>
+        <identifier dictRef="cml:smiles" value="[Pd]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Pd"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">EtOH</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 mL</amount>
+        <identifier dictRef="cml:smiles" value="CCO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>EtOH (20 mL) containing a catalytic amount of palladium on activated carbon (5 %, 20 mg)</dl:phraseText>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Unknown">
+        <dl:phraseText>for 2 h</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="7200">2 h</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>After removal of the catalyst</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>by filtration</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>the filtrate is concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to give 2-(4′-fluorophenyl)-4-[4′-(3-N,N-dimethylaminopropyl)phenyl]thiazole as desired product (0.18 g, 89 %)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+        <dl:chemical ref="m1"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0204</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 3-nitrobenzenethioamide (2.73 g, 15 mmol) and 3-methoxy-α-[bromoacetophenone (3.43 g, 15 mmol) in EtOH (30 mL) is heated under reflux for 18 h. It is cooled and filtered to give 4 g of 2-(3′-nitrophenyl)-4[(3′-methoxy)phenyl]thiazole as a yellow solid, mp. 122-123° C.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[N+:1]([C:4]1[CH:5]=[C:6]([C:10](=[S:12])[NH2:11])[CH:7]=[CH:8][CH:9]=1)([O-:3])=[O:2].Br[CH2:14][C:15]([C:17]1[CH:22]=[CH:21][CH:20]=[CH:19][CH:18]=1)=O.C[CH2:24][OH:25]&gt;&gt;[N+:1]([C:4]1[CH:5]=[C:6]([C:10]2[S:12][CH:14]=[C:15]([C:17]3[CH:22]=[CH:21][CH:20]=[C:19]([O:25][CH3:24])[CH:18]=3)[N:11]=2)[CH:7]=[CH:8][CH:9]=1)([O-:3])=[O:2]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(3′-nitrophenyl)-4[(3′-methoxy)phenyl]thiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="4">4 g</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C=CC1)C=1SC=C(N1)C1=CC(=CC=C1)OC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C16H12N2O3S/c1-21-14-7-3-4-11(9-14)15-10-22-16(17-15)12-5-2-6-13(8-12)18(19)20/h2-10H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">3-nitrobenzenethioamide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.015">15 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.73">2.73 g</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C=CC1)C(N)=S"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H6N2O2S/c8-7(12)5-2-1-3-6(4-5)9(10)11/h1-4H,(H2,8,12)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">bromoacetophenone</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.015">15 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="3.43">3.43 g</amount>
+        <identifier dictRef="cml:smiles" value="BrCC(=O)C1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H7BrO/c9-6-8(10)7-4-2-1-3-5-7/h1-5H,6H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">EtOH</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.030">30 mL</amount>
+        <identifier dictRef="cml:smiles" value="CCO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList/>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 3-nitrobenzenethioamide (2.73 g, 15 mmol) and 3-methoxy-α-[bromoacetophenone (3.43 g, 15 mmol) in EtOH (30 mL)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">3-methoxy</name>
+          </molecule>
+          <dl:entityType>fragment</dl:entityType>
+        </chemical>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>under reflux for 18 h</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="64800">18 h</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>It is cooled</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to give 4 g of 2-(3′-nitrophenyl)-4[(3′-methoxy)phenyl]thiazole as a yellow solid, mp. 122-123° C.</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0212</dl:paragraphNum>
+      <dl:paragraphText>To a solution of p-tolunitrile (10.1 g, 86.21 mmol) in 100 ml CHCl3:MeOH (1:1) cooled to 5° C. in an ice-water bath is bubbled HCl for 1 hour to reach saturation. The solution is stirred at 10° C. for 43 hours, then concentrated under reduced pressure to yield p-methylbenzimidate hydrochloride as pale yellow crystals (15.98g, 99%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[C:1]1([CH3:9])[CH:6]=[CH:5][C:4]([C:7]#[N:8])=[CH:3][CH:2]=1.C(Cl)(Cl)[Cl:11].C[OH:15]&gt;&gt;[ClH:11].[CH3:9][C:1]1[CH:6]=[CH:5][C:4]([C:7](=[NH:8])[OH:15])=[CH:3][CH:2]=1 |f:1.2,3.4|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">p-methylbenzimidate hydrochloride</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="15.98">15.98g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="99">99%</amount>
+        <identifier dictRef="cml:smiles" value="Cl.CC1=CC=C(C(O)=N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H9NO.ClH/c1-6-2-4-7(5-3-6)8(9)10;/h2-5H,1H3,(H2,9,10);1H"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>pale yellow</dl:appearance>
+        <dl:state>crystals</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">p-tolunitrile</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.08621">86.21 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="10.1">10.1 g</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=C(C=C1)C#N)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H7N/c1-7-2-4-8(6-9)5-3-7/h2-5H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">CHCl3 MeOH</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl.CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3.CH4O/c2-1(3)4;1-2/h1H;2H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList/>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>To a solution of p-tolunitrile (10.1 g, 86.21 mmol) in 100 ml CHCl3:MeOH (1:1) cooled to 5° C. in an ice-water bath</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+        <chemical>
+          <molecule id="m3">
+            <name dictRef="nameDict:unknown">ice water</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Temperature" normalizedValue="5">5° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Degass">
+        <dl:phraseText>is bubbled HCl for 1 hour</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">HCl</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Time" normalizedValue="3600">1 hour</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The solution is stirred at 10° C. for 43 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="154800">43 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="10">10° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated under reduced pressure</dl:phraseText>
+        <dl:parameter propertyType="Pressure" normalizedValue="reduced pressure">reduced pressure</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield p-methylbenzimidate hydrochloride as pale yellow crystals (15.98g, 99%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0214</dl:paragraphNum>
+      <dl:paragraphText>To a solution of p-methylbenzimidate hydrochloride (8.00 g, 43.09 mmol) in MeOH (100 ml) is added NH3/MeOH solution (2.68M, 24.12 ml, 64.64 mmol). Upon the addition of the NH3, the mixture has a pH around 8.5. To this solution is added ammonium chloride (2.30 g, 43.09 mmol). The reaction mixture is stirred at room temperature for 20 hours, then cooled in refrigerator and the precipitate is removed by filtration. The mother liquor is concentrated to yield the crude product which is taken up in a limited amount of cold EtOH and the white precipitate is filtered. The beige filtrate is concentrated to yield p-methylbenzamidine hydrochloride as an off-white solid (7.15g, 97%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[ClH:1].[CH3:2][C:3]1[CH:11]=[CH:10][C:6]([C:7](=[NH:9])O)=[CH:5][CH:4]=1.[NH3:12].CO.[Cl-].[NH4+].CCO&gt;CO&gt;[ClH:1].[CH3:2][C:3]1[CH:11]=[CH:10][C:6]([C:7]([NH2:12])=[NH:9])=[CH:5][CH:4]=1 |f:0.1,2.3,4.5,8.9|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">p-methylbenzamidine hydrochloride</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="7.15">7.15g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="97">97%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="97.2">97.2</amount>
+        <identifier dictRef="cml:smiles" value="Cl.CC1=CC=C(C(=N)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H10N2.ClH/c1-6-2-4-7(5-3-6)8(9)10;/h2-5H,1H3,(H3,9,10);1H"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>off-white</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">p-methylbenzimidate hydrochloride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.04309">43.09 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="8.00">8.00 g</amount>
+        <identifier dictRef="cml:smiles" value="Cl.CC1=CC=C(C(O)=N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H9NO.ClH/c1-6-2-4-7(5-3-6)8(9)10;/h2-5H,1H3,(H2,9,10);1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">NH3 MeOH</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.06464">64.64 mmol</amount>
+        <amount dl:propertyType="MOLARITY" dl:normalizedValue="2.68">2.68M</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.02412">24.12 ml</amount>
+        <identifier dictRef="cml:smiles" value="N.CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH4O.H3N/c1-2;/h2H,1H3;1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">NH3</name>
+          <dl:nameResolved>p-methylbenzimidate hydrochloride</dl:nameResolved>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="Cl.CC1=CC=C(C(O)=N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H9NO.ClH/c1-6-2-4-7(5-3-6)8(9)10;/h2-5H,1H3,(H2,9,10);1H"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">ammonium chloride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.04309">43.09 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.30">2.30 g</amount>
+        <identifier dictRef="cml:smiles" value="[Cl-].[NH4+]"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/ClH.H3N/h1H;1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">EtOH</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CCO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m6">
+          <name dictRef="nameDict:unknown">MeOH</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+        <identifier dictRef="cml:smiles" value="CO"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH4O/c1-2/h2H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of p-methylbenzimidate hydrochloride (8.00 g, 43.09 mmol) in MeOH (100 ml) is added NH3/MeOH solution (2.68M, 24.12 ml, 64.64 mmol)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m6"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>Upon the addition of the NH3</dl:phraseText>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To this solution is added ammonium chloride (2.30 g, 43.09 mmol)</dl:phraseText>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The reaction mixture is stirred at room temperature for 20 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="72000">20 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>cooled in refrigerator</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>the precipitate is removed by filtration</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The mother liquor is concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield the crude product which</dl:phraseText>
+        <chemical role="product">
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">crude product</name>
+          </molecule>
+          <dl:entityType>definiteReference</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>the white precipitate is filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The beige filtrate is concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield p-methylbenzamidine hydrochloride as an off-white solid (7.15g, 97%)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0216</dl:paragraphNum>
+      <dl:paragraphText>To a mixture of p-methylbenzamidine hydrochloride (5.1 g, 30.0 mmol) in CHCl3 (100 ml) is added triethyl amine (15.12 g, 20.9 ml, 150.0 mmol) and cooled to 5° C. in an ice-water bath. To the mixture is slowly added perchloromethyl mercaptan (95%, 6.16 g, 31.5 mmol) in CHCl3(10 ml) over 1 hour. The yellow solution is allowed to warm up to room temperature. After 2 hours the mixture is washed with water (100 ml×2) and brine (100 ml). The organic layer is dried over MgSO4 and the solvent is removed under reduced pressure to yield a brown oil. The oil is purified on a bed of silica gel, eluting with 1:1 CHCl3:hexanes to yield 3-(p-tolyl)-5-chloro-1,2,4-thiadiazole as a yellow solid (2.78g, 44%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>Cl.[CH3:2][C:3]1[CH:11]=[CH:10][C:6]([C:7]([NH2:9])=[NH:8])=[CH:5][CH:4]=1.C(N(CC)CC)C.[Cl:19][C:20]([SH:23])(Cl)Cl&gt;C(Cl)(Cl)Cl&gt;[C:3]1([CH3:2])[CH:11]=[CH:10][C:6]([C:7]2[N:9]=[C:20]([Cl:19])[S:23][N:8]=2)=[CH:5][CH:4]=1 |f:0.1|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">3-(p-tolyl)-5-chloro-1,2,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.78">2.78g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="44">44%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="44.0">44.0</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=C(C=C1)C1=NSC(=N1)Cl)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H7ClN2S/c1-6-2-4-7(5-3-6)8-11-9(10)13-12-8/h2-5H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">p-methylbenzamidine hydrochloride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0300">30.0 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="5.1">5.1 g</amount>
+        <identifier dictRef="cml:smiles" value="Cl.CC1=CC=C(C(=N)N)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H10N2.ClH/c1-6-2-4-7(5-3-6)8(9)10;/h2-5H,1H3,(H3,9,10);1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">triethyl amine</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.1500">150.0 mmol</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.0209">20.9 ml</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="15.12">15.12 g</amount>
+        <identifier dictRef="cml:smiles" value="C(C)N(CC)CC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H15N/c1-4-7(5-2)6-3/h4-6H2,1-3H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">perchloromethyl mercaptan</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0315">31.5 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="6.16">6.16 g</amount>
+        <identifier dictRef="cml:smiles" value="ClC(Cl)(Cl)S"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3S/c2-1(3,4)5/h5H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">CHCl3</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">CHCl3</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.010">10 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a mixture of p-methylbenzamidine hydrochloride (5.1 g, 30.0 mmol) in CHCl3 (100 ml)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>is added triethyl amine (15.12 g, 20.9 ml, 150.0 mmol)</dl:phraseText>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>cooled to 5° C. in an ice-water bath</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ice water</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Temperature" normalizedValue="5">5° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Unknown">
+        <dl:phraseText>over 1 hour</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="3600">1 hour</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to warm up to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>After 2 hours the mixture is washed with water (100 ml×2) and brine (100 ml)</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">brine</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+          <identifier dictRef="cml:smiles" value="[Cl-].[Na+].O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.Na.H2O/h1H;;1H2/q;+1;/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Time" normalizedValue="7200">2 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The organic layer is dried over MgSO4</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">MgSO4</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[O-]S(=O)(=O)[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>the solvent is removed under reduced pressure</dl:phraseText>
+        <dl:parameter propertyType="Pressure" normalizedValue="reduced pressure">reduced pressure</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield a brown oil</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The oil is purified on a bed of silica gel</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 1:1 CHCl3</dl:phraseText>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">CHCl3</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>hexanes to yield 3-(p-tolyl)-5-chloro-1,2,4-thiadiazole as a yellow solid (2.78g, 44%)</dl:phraseText>
+        <chemical>
+          <molecule id="m12">
+            <name dictRef="nameDict:unknown">hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0218</dl:paragraphNum>
+      <dl:paragraphText>A mixture of 3-(p-tolyl)-5-chloro-1,2,4-thiadiazole (0.50 g, 2.37 mmol) and [1,3-bis(diphenylphosphino)propane]nickel(II) chloride catalyst (1.41g, 2.61 mmol) in anhydrous THF (20 ml) is cooled in an ice-water bath. To this mixture is added slowly 4-fluorophenyl-magnesium bromide (1.0M in THF, 2.5 ml, 2.49 mmol) with exclusion of both moisture and oxygen. The mixture is allowed to warm to room temperature and stirred for 18 hours under N2. The mixture is filtered through celite and concentrated. The residue is taken up in CHCl3 (50 ml) and washed with brine (50 ml×2). The organic layer is dried over magnesium sulfate and concentrated. The residue is purified on a silica gel column, eluting with 3:7 CHCl3:hexanes to yield 5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole (0.20 g, 31%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[C:1]1([CH3:13])[CH:6]=[CH:5][C:4]([C:7]2[N:11]=[C:10](Cl)[S:9][N:8]=2)=[CH:3][CH:2]=1.[F:14][C:15]1[CH:20]=[CH:19][C:18]([Mg]Br)=[CH:17][CH:16]=1.O=O&gt;Cl[Ni]1(Cl)[P](C2C=CC=CC=2)(C2C=CC=CC=2)CCC[P]1(C1C=CC=CC=1)C1C=CC=CC=1.C1COCC1&gt;[F:14][C:15]1[CH:20]=[CH:19][C:18]([C:10]2[S:9][N:8]=[C:7]([C:4]3[CH:5]=[CH:6][C:1]([CH3:13])=[CH:2][CH:3]=3)[N:11]=2)=[CH:17][CH:16]=1 |^1:27,43|</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.20">0.20 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="31">31%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="31.2">31.2</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C1=NC(=NS1)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H11FN2S/c1-10-2-4-11(5-3-10)14-17-15(19-18-14)12-6-8-13(16)9-7-12/h2-9H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">3-(p-tolyl)-5-chloro-1,2,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00237">2.37 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.50">0.50 g</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=C(C=C1)C1=NSC(=N1)Cl)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C9H7ClN2S/c1-6-2-4-7(5-3-6)8-11-9(10)13-12-8/h2-5H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">4-fluorophenyl-magnesium bromide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00249">2.49 mmol</amount>
+        <amount dl:propertyType="MOLARITY" dl:normalizedValue="1.0">1.0M</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.0025">2.5 ml</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)[Mg]Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H4F.BrH.Mg/c7-6-4-2-1-3-5-6;;/h2-5H;1H;/q;;+1/p-1"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">oxygen</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="O=O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/O2/c1-2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="catalyst">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">[1,3-bis(diphenylphosphino)propane]nickel(II) chloride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00261">2.61 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.41">1.41g</amount>
+        <identifier dictRef="cml:smiles" value="Cl[Ni]1([P](CCC[P](C2=CC=CC=C2)1C3=CC=CC=C3)(C4=CC=CC=C4)C5=CC=CC=C5)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C27H26P2.2ClH.Ni/c1-5-14-24(15-6-1)28(25-16-7-2-8-17-25)22-13-23-29(26-18-9-3-10-19-26)27-20-11-4-12-21-27;;;/h1-12,14-21H,13,22-23H2;2*1H;/q;;;+2/p-2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">THF</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 ml</amount>
+        <identifier dictRef="cml:smiles" value="C1CCOC1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O/c1-2-4-5-3-1/h1-4H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A mixture of 3-(p-tolyl)-5-chloro-1,2,4-thiadiazole (0.50 g, 2.37 mmol) and [1,3-bis(diphenylphosphino)propane]nickel(II) chloride catalyst (1.41g, 2.61 mmol) in anhydrous THF (20 ml)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>is cooled in an ice-water bath</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">ice water</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To this mixture is added slowly 4-fluorophenyl-magnesium bromide (1.0M in THF, 2.5 ml, 2.49 mmol) with exclusion of both moisture and oxygen</dl:phraseText>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to warm to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>stirred for 18 hours under N2</dl:phraseText>
+        <dl:atmosphere>
+          <chemical>
+            <molecule id="m7">
+              <name dictRef="nameDict:unknown">N2</name>
+            </molecule>
+            <identifier dictRef="cml:smiles" value="N#N"/>
+            <identifier dictRef="cml:inchi" value="InChI=1S/N2/c1-2"/>
+            <dl:entityType>falsePositive</dl:entityType>
+          </chemical>
+        </dl:atmosphere>
+        <dl:parameter propertyType="Time" normalizedValue="64800">18 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The mixture is filtered through celite</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with brine (50 ml×2)</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">brine</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.050">50 ml</amount>
+          <identifier dictRef="cml:smiles" value="[Cl-].[Na+].O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.Na.H2O/h1H;;1H2/q;+1;/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The organic layer is dried over magnesium sulfate</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">magnesium sulfate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>The residue is purified on a silica gel column</dl:phraseText>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>eluting with 3:7 CHCl3</dl:phraseText>
+        <chemical>
+          <molecule id="m11">
+            <name dictRef="nameDict:unknown">CHCl3</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(Cl)(Cl)Cl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CHCl3/c2-1(3)4/h1H"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>hexanes to yield 5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole (0.20 g, 31%)</dl:phraseText>
+        <chemical>
+          <molecule id="m12">
+            <name dictRef="nameDict:unknown">hexanes</name>
+          </molecule>
+          <dl:entityType>chemicalClass</dl:entityType>
+        </chemical>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0220</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole (0.16 g, 0.59 mmol) in CCl4 (20 ml) is added NBS (0.11 g, 0.59 mmol) and the mixture is heated to reflux for 36 hours. The mixture is cooled to room temperature and filtered through celite. The mother liquor is concentrated. The residue is taken up in chloroform (30 ml) amd washed with water (30 ml). The organic layer is dried over MgSO4 and concentrated to yield 5-(4′-fluorophenyl)-3-(p-bromomethylphenyl)-1,2,4-thiadiazole, (0.22 g) as crude product which is used as is without further purification.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[F:1][C:2]1[CH:7]=[CH:6][C:5]([C:8]2[S:12][N:11]=[C:10]([C:13]3[CH:18]=[CH:17][C:16]([CH3:19])=[CH:15][CH:14]=3)[N:9]=2)=[CH:4][CH:3]=1.C1C(=O)N([Br:27])C(=O)C1&gt;C(Cl)(Cl)(Cl)Cl&gt;[F:1][C:2]1[CH:3]=[CH:4][C:5]([C:8]2[S:12][N:11]=[C:10]([C:13]3[CH:18]=[CH:17][C:16]([CH2:19][Br:27])=[CH:15][CH:14]=3)[N:9]=2)=[CH:6][CH:7]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">5-(4′-fluorophenyl)-3-(p-bromomethylphenyl)-1,2,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.22">0.22 g</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="106.8">106.8</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C1=NC(=NS1)C1=CC=C(C=C1)CBr"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H10BrFN2S/c16-9-10-1-3-11(4-2-10)14-18-15(20-19-14)12-5-7-13(17)8-6-12/h1-8H,9H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00059">0.59 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.16">0.16 g</amount>
+        <identifier dictRef="cml:smiles" value="FC1=CC=C(C=C1)C1=NC(=NS1)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H11FN2S/c1-10-2-4-11(5-3-10)14-17-15(19-18-14)12-6-8-13(16)9-7-12/h2-9H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">NBS</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00059">0.59 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.11">0.11 g</amount>
+        <identifier dictRef="cml:smiles" value="C1CC(=O)N(C1=O)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H4BrNO2/c5-6-3(7)1-2-4(6)8/h1-2H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">CCl4</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CCl4/c2-1(3,4)5"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 5-(4′-fluorophenyl)-3-(p-tolyl)-1,2,4-thiadiazole (0.16 g, 0.59 mmol) in CCl4 (20 ml) is added NBS (0.11 g, 0.59 mmol)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>the mixture is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 36 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="129600">36 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>The mixture is cooled to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>filtered through celite</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The mother liquor is concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>amd washed with water (30 ml)</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.030">30 ml</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The organic layer is dried over MgSO4</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">MgSO4</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[O-]S(=O)(=O)[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 5-(4′-fluorophenyl)-3-(p-bromomethylphenyl)-1,2,4-thiadiazole, (0.22 g) as crude product which</dl:phraseText>
+        <dl:chemical ref="m0"/>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">crude product</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0228</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 3-nitrobenzhydrazide (2.16 g, 11.92 mmol) in pyridine (40ml) cooled to 0° C. in an ice bath is added dropwise p-toluoyl chloride (1.94 g, 11.92 mmol). The mixture is allowed to warm to room temperature and stirred for 12 hours. The mixture is quenched with 350 mL of water and stirred for thirty minutes. The precipitate is filtered and dried in a vacuum oven to yield 1-[(4-methyl)benzoyl]-2-(3-nitrobenzoyl)hydrazine as a pale yellow solid. (2.94 g, 82%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[N+:1]([C:4]1[CH:5]=[C:6]([CH:11]=[CH:12][CH:13]=1)[C:7]([NH:9][NH2:10])=[O:8])([O-:3])=[O:2].[C:14]1([CH3:23])[CH:19]=[CH:18][C:17]([C:20](Cl)=[O:21])=[CH:16][CH:15]=1&gt;N1C=CC=CC=1&gt;[CH3:23][C:14]1[CH:19]=[CH:18][C:17]([C:20]([NH:10][NH:9][C:7](=[O:8])[C:6]2[CH:11]=[CH:12][CH:13]=[C:4]([N+:1]([O-:3])=[O:2])[CH:5]=2)=[O:21])=[CH:16][CH:15]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">1-[(4-methyl)benzoyl]-2-(3-nitrobenzoyl)hydrazine</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="CC1=CC=C(C(=O)NNC(C2=CC(=CC=C2)[N+](=O)[O-])=O)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H13N3O4/c1-10-5-7-11(8-6-10)14(19)16-17-15(20)12-3-2-4-13(9-12)18(21)22/h2-9H,1H3,(H,16,19)(H,17,20)"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>pale yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">3-nitrobenzhydrazide</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.01192">11.92 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="2.16">2.16 g</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C(=O)NN)C=CC1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H7N3O3/c8-9-7(11)5-2-1-3-6(4-5)10(12)13/h1-4H,8H2,(H,9,11)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">p-toluoyl chloride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.01192">11.92 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.94">1.94 g</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=C(C=C1)C(=O)Cl)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H7ClO/c1-6-2-4-7(5-3-6)8(9)10/h2-5H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">pyridine</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.040">40ml</amount>
+        <identifier dictRef="cml:smiles" value="N1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C5H5N/c1-2-4-6-5-3-1/h1-5H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>To a solution of 3-nitrobenzhydrazide (2.16 g, 11.92 mmol) in pyridine (40ml) cooled to 0° C. in an ice bath</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">ice</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+        <dl:parameter propertyType="Temperature" normalizedValue="0">0° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>is added dropwise p-toluoyl chloride (1.94 g, 11.92 mmol)</dl:phraseText>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to warm to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>stirred for 12 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="43200">12 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Quench">
+        <dl:phraseText>The mixture is quenched with 350 mL of water</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.350">350 mL</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>stirred for thirty minutes</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="1800">thirty minutes</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The precipitate is filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried in a vacuum oven</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 1-[(4-methyl)benzoyl]-2-(3-nitrobenzoyl)hydrazine as a pale yellow solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0232</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-thiadiazole (0.66 g, 2.22 mmol) in CCl4 (75 ml) is added NBS (0.43 g, 2.44 mmol) and refluxed for 12 hours. The mixture is then concentrated and the residue is taken up in chloroform (50 ml) and washed with saturated NaHCO3 (50 ml) and brine (50 ml). The organic layer is dried over MgSO4 and concentrated to yield 2-(3′-nitrophenyl)-5-(p-bromomethylphenyl)-1,3,4-thiadiazole as a tan solid. (0.69 g, 83%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[N+:1]([C:4]1[CH:5]=[C:6]([C:10]2[S:11][C:12]([C:15]3[CH:20]=[CH:19][C:18]([CH3:21])=[CH:17][CH:16]=3)=[N:13][N:14]=2)[CH:7]=[CH:8][CH:9]=1)([O-:3])=[O:2].C1C(=O)N([Br:29])C(=O)C1&gt;C(Cl)(Cl)(Cl)Cl&gt;[N+:1]([C:4]1[CH:5]=[C:6]([C:10]2[S:11][C:12]([C:15]3[CH:16]=[CH:17][C:18]([CH2:21][Br:29])=[CH:19][CH:20]=3)=[N:13][N:14]=2)[CH:7]=[CH:8][CH:9]=1)([O-:3])=[O:2]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(3′-nitrophenyl)-5-(p-bromomethylphenyl)-1,3,4-thiadiazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C=CC1)C=1SC(=NN1)C1=CC=C(C=C1)CBr"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H10BrN3O2S/c16-9-10-4-6-11(7-5-10)14-17-18-15(22-14)12-2-1-3-13(8-12)19(20)21/h1-8H,9H2"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>tan</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-thiadiazole</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00222">2.22 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.66">0.66 g</amount>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C=CC1)C=1SC(=NN1)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H11N3O2S/c1-10-5-7-11(8-6-10)14-16-17-15(21-14)12-3-2-4-13(9-12)18(19)20/h2-9H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">NBS</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00244">2.44 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.43">0.43 g</amount>
+        <identifier dictRef="cml:smiles" value="C1CC(=O)N(C1=O)Br"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H4BrNO2/c5-6-3(7)1-2-4(6)8/h1-2H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">CCl4</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.075">75 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(Cl)(Cl)(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CCl4/c2-1(3,4)5"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-thiadiazole (0.66 g, 2.22 mmol) in CCl4 (75 ml) is added NBS (0.43 g, 2.44 mmol)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m3"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>refluxed for 12 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="43200">12 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The mixture is then concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with saturated NaHCO3 (50 ml) and brine (50 ml)</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">NaHCO3</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.050">50 ml</amount>
+          <identifier dictRef="cml:smiles" value="C(=O)(O)[O-].[Na+]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH2O3.Na/c2-1(3)4;/h(H2,2,3,4);/q;+1/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">brine</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.050">50 ml</amount>
+          <identifier dictRef="cml:smiles" value="[Cl-].[Na+].O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.Na.H2O/h1H;;1H2/q;+1;/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The organic layer is dried over MgSO4</dl:phraseText>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">MgSO4</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="[O-]S(=O)(=O)[O-].[Mg+2]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/Mg.H2O4S/c;1-5(2,3)4/h;(H2,1,2,3,4)/q+2;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 2-(3′-nitrophenyl)-5-(p-bromomethylphenyl)-1,3,4-thiadiazole as a tan solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010000178A1</dl:documentId>
+      <dl:paragraphNum>0237</dl:paragraphNum>
+      <dl:paragraphText>A suspension of 1-[(4-methylbenzoyl)]-2-(3-nitrobenzoyl)hydrazine (1.37 g, 4.58 mmol) in 20 ml thionyl chloride is heated to reflux for 12 hours. The solution is concentrated and the residue is taken up in chloroform (50 ml) and washed with water (50 ml) and brine (50 ml). The organic layer is dried over MgSC4 and concentrated to yield 2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-oxadiazole as a yellow solid. (1.12 g, 87%).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C:2]1[CH:22]=[CH:21][C:5]([C:6]([NH:8][NH:9][C:10](=[O:20])[C:11]2[CH:16]=[CH:15][CH:14]=[C:13]([N+:17]([O-:19])=[O:18])[CH:12]=2)=O)=[CH:4][CH:3]=1&gt;S(Cl)(Cl)=O&gt;[N+:17]([C:13]1[CH:12]=[C:11]([C:10]2[O:20][C:6]([C:5]3[CH:21]=[CH:22][C:2]([CH3:1])=[CH:3][CH:4]=3)=[N:8][N:9]=2)[CH:16]=[CH:15][CH:14]=1)([O-:19])=[O:18]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-oxadiazole</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="[N+](=O)([O-])C=1C=C(C=CC1)C=1OC(=NN1)C1=CC=C(C=C1)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H11N3O3/c1-10-5-7-11(8-6-10)14-16-17-15(21-14)12-3-2-4-13(9-12)18(19)20/h2-9H,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+        <dl:appearance>yellow</dl:appearance>
+        <dl:state>solid</dl:state>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">1-[(4-methylbenzoyl)]-2-(3-nitrobenzoyl)hydrazine</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.00458">4.58 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1.37">1.37 g</amount>
+        <identifier dictRef="cml:smiles" value="CC1=CC=C(C(=O)NNC(C2=CC(=CC=C2)[N+](=O)[O-])=O)C=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C15H13N3O4/c1-10-5-7-11(8-6-10)14(19)16-17-15(20)12-3-2-4-13(9-12)18(21)22/h2-9H,1H3,(H,16,19)(H,17,20)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">thionyl chloride</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.020">20 ml</amount>
+        <identifier dictRef="cml:smiles" value="S(=O)(Cl)Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/Cl2OS/c1-4(2)3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>A suspension of 1-[(4-methylbenzoyl)]-2-(3-nitrobenzoyl)hydrazine (1.37 g, 4.58 mmol) in 20 ml thionyl chloride</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>is heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>to reflux for 12 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="43200">12 hours</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The solution is concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed with water (50 ml) and brine (50 ml)</dl:phraseText>
+        <chemical>
+          <molecule id="m3">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.050">50 ml</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">brine</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.050">50 ml</amount>
+          <identifier dictRef="cml:smiles" value="[Cl-].[Na+].O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.Na.H2O/h1H;;1H2/q;+1;/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>The organic layer is dried over MgSC4</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">MgSC4</name>
+          </molecule>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>concentrated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 2-(3′-nitrophenyl)-5-(p-tolyl)-1,3,4-oxadiazole as a yellow solid</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction></reactionList>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reactionList xmlns="http://www.xml-cml.org/schema" xmlns:cmlDict="http://www.xml-cml.org/dictionary/cml/" xmlns:nameDict="http://www.xml-cml.org/dictionary/cml/name/" xmlns:unit="http://www.xml-cml.org/unit/" xmlns:cml="http://www.xml-cml.org/schema" xmlns:dl="http://bitbucket.org/dan2097">
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010001307A1</dl:documentId>
+      <dl:paragraphNum>0050</dl:paragraphNum>
+      <dl:paragraphText>Glutaminase in an amount of 0.3 U per 1 ml of the buffer was added to boric acid buffer (disodium borate-sodium hydroxide, pH 11) containing 0.3 M glutamine and 1.5 M ethylamine, and the mixture was incubated at 30° C. for 22 hours to react the components. Two-hundred and twenty-five millimoles of theanine was isolated from 1 L of the reaction mixture. Incidentally, a by-product, glutamic acid, was 20 mmol. Theanine was isolated and purified from the reaction mixture by applying the reaction mixture to a Dowex 50×8, Dowex 1×2 column chromatography and eluting with ethanol.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>B(O)(O)O.[NH2:5][C@H:6]([C:12]([OH:14])=[O:13])[CH2:7][CH2:8][C:9](=[O:11])[NH2:10].[CH2:15](N)[CH3:16]&gt;&gt;[NH2:5][C@H:6]([C:12]([OH:14])=[O:13])[CH2:7][CH2:8][C:9]([NH:10][CH2:15][CH3:16])=[O:11]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">theanine</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.225">Two-hundred and twenty-five millimoles</amount>
+        <identifier dictRef="cml:smiles" value="N[C@@H](CCC(=O)NCC)C(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H14N2O3/c1-2-9-6(10)4-3-5(8)7(11)12/h5H,2-4,8H2,1H3,(H,9,10)(H,11,12)/t5-/m0/s1"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">boric acid</name>
+        </molecule>
+        <amount dl:propertyType="PH" dl:normalizedValue="11">pH 11</amount>
+        <identifier dictRef="cml:smiles" value="B(O)(O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/BH3O3/c2-1(3)4/h2-4H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">glutamine</name>
+        </molecule>
+        <amount dl:propertyType="MOLARITY" dl:normalizedValue="0.3">0.3 M</amount>
+        <identifier dictRef="cml:smiles" value="N[C@@H](CCC(N)=O)C(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C5H10N2O3/c6-3(5(9)10)1-2-4(7)8/h3H,1-2,6H2,(H2,7,8)(H,9,10)/t3-/m0/s1"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">ethylamine</name>
+        </molecule>
+        <amount dl:propertyType="MOLARITY" dl:normalizedValue="1.5">1.5 M</amount>
+        <identifier dictRef="cml:smiles" value="C(C)N"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H7N/c1-2-3/h2-3H2,1H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">reaction mixture</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="1">1 L</amount>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList/>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>Glutaminase in an amount of 0.3 U per 1 ml of the buffer was added to boric acid buffer (disodium borate-sodium hydroxide, pH 11)</dl:phraseText>
+        <dl:chemical ref="m1"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>containing 0.3 M glutamine and 1.5 M ethylamine</dl:phraseText>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wait">
+        <dl:phraseText>the mixture was incubated at 30° C. for 22 hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="79200">22 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="30">30° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Synthesize">
+        <dl:phraseText>to react the components</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>Two-hundred and twenty-five millimoles of theanine was isolated from 1 L of the reaction mixture</dl:phraseText>
+        <dl:chemical ref="m0"/>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction></reactionList>

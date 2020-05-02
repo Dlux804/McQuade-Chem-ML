@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reactionList xmlns="http://www.xml-cml.org/schema" xmlns:cmlDict="http://www.xml-cml.org/dictionary/cml/" xmlns:nameDict="http://www.xml-cml.org/dictionary/cml/name/" xmlns:unit="http://www.xml-cml.org/unit/" xmlns:cml="http://www.xml-cml.org/schema" xmlns:dl="http://bitbucket.org/dan2097">
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010002398A1</dl:documentId>
+      <dl:paragraphNum>0045</dl:paragraphNum>
+      <dl:paragraphText>One half of the mother liquor is precipitated with 1.1 g of ethanol, giving enriched amorphous (6R) tetrahydrofolic acid with a chemical content of 63.3% and a (6R) percentage of 75.9, while in the other half of the mother liquor the pH is rapidly brought to 3.5 using 6.3 g of hydrochloric acid, resulting in enriched, amorphous (6R)-tetrahydrofolic acid with a chemical content of 64.8% and a (6R) percentage of 75.9.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[C:1]([OH:32])(=[O:31])[CH2:2][CH2:3][C@H:4]([NH:8][C:9]([C:11]1[CH:30]=[CH:29][C:14]([NH:15][CH2:16][CH:17]2[NH:28][C:27]3[C:25](=[O:26])[NH:24][C:22]([NH2:23])=[N:21][C:20]=3[NH:19][CH2:18]2)=[CH:13][CH:12]=1)=[O:10])[C:5]([OH:7])=[O:6].Cl&gt;&gt;[C:1]([OH:32])(=[O:31])[CH2:2][CH2:3][C@H:4]([NH:8][C:9]([C:11]1[CH:12]=[CH:13][C:14]([NH:15][CH2:16][C@H:17]2[NH:28][C:27]3[C:25](=[O:26])[NH:24][C:22]([NH2:23])=[N:21][C:20]=3[NH:19][CH2:18]2)=[CH:29][CH:30]=1)=[O:10])[C:5]([OH:7])=[O:6]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">(6R)-tetrahydrofolic acid</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(CC[C@@H](C(=O)O)NC(=O)C1=CC=C(NC[C@@H]2CNC=3N=C(N)NC(=O)C3N2)C=C1)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H23N7O6/c20-19-25-15-14(17(30)26-19)23-11(8-22-15)7-21-10-3-1-9(2-4-10)16(29)24-12(18(31)32)5-6-13(27)28/h1-4,11-12,21,23H,5-8H2,(H,24,29)(H,27,28)(H,31,32)(H4,20,22,25,26,30)/t11-,12+/m1/s1"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">( 6R )</name>
+          <dl:nameResolved>tetrahydrofolic acid</dl:nameResolved>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(CC[C@@H](C(=O)O)NC(=O)C1=CC=C(NCC2CNC=3N=C(N)NC(=O)C3N2)C=C1)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H23N7O6/c20-19-25-15-14(17(30)26-19)23-11(8-22-15)7-21-10-3-1-9(2-4-10)16(29)24-12(18(31)32)5-6-13(27)28/h1-4,11-12,21,23H,5-8H2,(H,24,29)(H,27,28)(H,31,32)(H4,20,22,25,26,30)/t11?,12-/m0/s1"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">75.9</name>
+        </molecule>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">hydrochloric acid</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="6.3">6.3 g</amount>
+        <identifier dictRef="cml:smiles" value="Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/ClH/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList/>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Precipitate">
+        <dl:phraseText>One half of the mother liquor is precipitated with 1.1 g of ethanol</dl:phraseText>
+        <chemical>
+          <molecule id="m4">
+            <name dictRef="nameDict:unknown">ethanol</name>
+          </molecule>
+          <amount dl:propertyType="MASS" dl:normalizedValue="1.1">1.1 g</amount>
+          <identifier dictRef="cml:smiles" value="C(C)O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>giving enriched amorphous (6R) tetrahydrofolic acid with a chemical content of 63.3%</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">tetrahydrofolic acid</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(CC[C@@H](C(=O)O)NC(=O)C1=CC=C(NCC2CNC=3N=C(N)NC(=O)C3N2)C=C1)(=O)O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C19H23N7O6/c20-19-25-15-14(17(30)26-19)23-11(8-22-15)7-21-10-3-1-9(2-4-10)16(29)24-12(18(31)32)5-6-13(27)28/h1-4,11-12,21,23H,5-8H2,(H,24,29)(H,27,28)(H,31,32)(H4,20,22,25,26,30)/t11?,12-/m0/s1"/>
+          <dl:entityType>definiteReference</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>resulting in enriched, amorphous (6R)-tetrahydrofolic acid with a chemical content of 64.8%</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010002398A1</dl:documentId>
+      <dl:paragraphNum>0055</dl:paragraphNum>
+      <dl:paragraphText>By dissolving 20 g of the resulting crystalline (6S)-tetrahydrofolic acid in 80 ml of water at pH 9 and subsequently slowly bringing the pH to 5.1 using hydrochloric acid, 4.5 g of crystalline (6S)-tetrahydrofolic acid with a chemical content of 94.0% and a (6S) percentage of 94.7 are obtained after seeding with crystalline (6S)-tetrahydrofolic acid. The water content after drying is 1.8%.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[C:1]([OH:32])(=[O:31])[CH2:2][CH2:3][C@H:4]([NH:8][C:9]([C:11]1[CH:30]=[CH:29][C:14]([NH:15][CH2:16][C@@H:17]2[NH:28][C:27]3[C:25](=[O:26])[NH:24][C:22]([NH2:23])=[N:21][C:20]=3[NH:19][CH2:18]2)=[CH:13][CH:12]=1)=[O:10])[C:5]([OH:7])=[O:6].Cl&gt;O&gt;[C:1]([OH:32])(=[O:31])[CH2:2][CH2:3][C@H:4]([NH:8][C:9]([C:11]1[CH:12]=[CH:13][C:14]([NH:15][CH2:16][CH:17]2[NH:28][C:27]3[C:25](=[O:26])[NH:24][C:22]([NH2:23])=[N:21][C:20]=3[NH:19][CH2:18]2)=[CH:29][CH:30]=1)=[O:10])[C:5]([OH:7])=[O:6]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">( 6S )</name>
+          <dl:nameResolved>tetrahydrofolic acid</dl:nameResolved>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(CC[C@@H](C(=O)O)NC(=O)C1=CC=C(NCC2CNC=3N=C(N)NC(=O)C3N2)C=C1)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H23N7O6/c20-19-25-15-14(17(30)26-19)23-11(8-22-15)7-21-10-3-1-9(2-4-10)16(29)24-12(18(31)32)5-6-13(27)28/h1-4,11-12,21,23H,5-8H2,(H,24,29)(H,27,28)(H,31,32)(H4,20,22,25,26,30)/t11?,12-/m0/s1"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </product>
+      <product role="product">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">94.7</name>
+        </molecule>
+        <dl:entityType>definiteReference</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">(6S)-tetrahydrofolic acid</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="20">20 g</amount>
+        <identifier dictRef="cml:smiles" value="C(CC[C@@H](C(=O)O)NC(=O)C1=CC=C(NC[C@H]2CNC=3N=C(N)NC(=O)C3N2)C=C1)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H23N7O6/c20-19-25-15-14(17(30)26-19)23-11(8-22-15)7-21-10-3-1-9(2-4-10)16(29)24-12(18(31)32)5-6-13(27)28/h1-4,11-12,21,23H,5-8H2,(H,24,29)(H,27,28)(H,31,32)(H4,20,22,25,26,30)/t11-,12-/m0/s1"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">hydrochloric acid</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/ClH/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">(6S)-tetrahydrofolic acid</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="4.5">4.5 g</amount>
+        <identifier dictRef="cml:smiles" value="C(CC[C@@H](C(=O)O)NC(=O)C1=CC=C(NC[C@H]2CNC=3N=C(N)NC(=O)C3N2)C=C1)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H23N7O6/c20-19-25-15-14(17(30)26-19)23-11(8-22-15)7-21-10-3-1-9(2-4-10)16(29)24-12(18(31)32)5-6-13(27)28/h1-4,11-12,21,23H,5-8H2,(H,24,29)(H,27,28)(H,31,32)(H4,20,22,25,26,30)/t11-,12-/m0/s1"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">water</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.080">80 ml</amount>
+        <identifier dictRef="cml:smiles" value="O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Dissolve">
+        <dl:phraseText>By dissolving 20 g of the resulting crystalline (6S)-tetrahydrofolic acid in 80 ml of water at pH 9</dl:phraseText>
+        <dl:chemical ref="m2"/>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>a (6S) percentage of 94.7 are obtained</dl:phraseText>
+        <dl:chemical ref="m0"/>
+        <dl:chemical ref="m1"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010002398A1</dl:documentId>
+      <dl:paragraphNum>0057</dl:paragraphNum>
+      <dl:paragraphText>After subsequently slowly bringing the pH to 4.4 using hydrochloric acid and maintaining this value, 42.0 g of crystalline (6R)-tetrahydrofolic acid with a chemical content of 96.2% and a (6R) percentage of 99.5 are obtained.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>Cl.[C:2]([OH:33])(=[O:32])[CH2:3][CH2:4][C@H:5]([NH:9][C:10]([C:12]1[CH:31]=[CH:30][C:15]([NH:16][CH2:17][C@H:18]2[NH:29][C:28]3[C:26](=[O:27])[NH:25][C:23]([NH2:24])=[N:22][C:21]=3[NH:20][CH2:19]2)=[CH:14][CH:13]=1)=[O:11])[C:6]([OH:8])=[O:7]&gt;&gt;[C:2]([OH:33])(=[O:32])[CH2:3][CH2:4][C@H:5]([NH:9][C:10]([C:12]1[CH:13]=[CH:14][C:15]([NH:16][CH2:17][CH:18]2[NH:29][C:28]3[C:26](=[O:27])[NH:25][C:23]([NH2:24])=[N:22][C:21]=3[NH:20][CH2:19]2)=[CH:30][CH:31]=1)=[O:11])[C:6]([OH:8])=[O:7]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">( 6R )</name>
+          <dl:nameResolved>tetrahydrofolic acid</dl:nameResolved>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C(CC[C@@H](C(=O)O)NC(=O)C1=CC=C(NCC2CNC=3N=C(N)NC(=O)C3N2)C=C1)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H23N7O6/c20-19-25-15-14(17(30)26-19)23-11(8-22-15)7-21-10-3-1-9(2-4-10)16(29)24-12(18(31)32)5-6-13(27)28/h1-4,11-12,21,23H,5-8H2,(H,24,29)(H,27,28)(H,31,32)(H4,20,22,25,26,30)/t11?,12-/m0/s1"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </product>
+      <product role="product">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">99.5</name>
+        </molecule>
+        <dl:entityType>definiteReference</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">hydrochloric acid</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="Cl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/ClH/h1H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">(6R)-tetrahydrofolic acid</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="42.0">42.0 g</amount>
+        <identifier dictRef="cml:smiles" value="C(CC[C@@H](C(=O)O)NC(=O)C1=CC=C(NC[C@@H]2CNC=3N=C(N)NC(=O)C3N2)C=C1)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C19H23N7O6/c20-19-25-15-14(17(30)26-19)23-11(8-22-15)7-21-10-3-1-9(2-4-10)16(29)24-12(18(31)32)5-6-13(27)28/h1-4,11-12,21,23H,5-8H2,(H,24,29)(H,27,28)(H,31,32)(H4,20,22,25,26,30)/t11-,12+/m1/s1"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList/>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>maintaining this value, 42.0 g of crystalline (6R)-tetrahydrofolic acid with a chemical content of 96.2%</dl:phraseText>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>a (6R) percentage of 99.5 are obtained</dl:phraseText>
+        <dl:chemical ref="m0"/>
+        <dl:chemical ref="m1"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010002397A1</dl:documentId>
+      <dl:paragraphNum>0097</dl:paragraphNum>
+      <dl:paragraphText>To a solution of 50 gm (0.13 mol) of ergosterol (1) in 300 ml of anhydrous pyridine was added 33.3 ml (0.35 mol) of acetic anhydride. The mixture was stirred at room temperature overnight and then 600 ml of water was added. The precipitate was filtered and washed three times with 200 ml portions of acetonitrile and then air dried to yield 42.0 g (74%) of (2).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][C@@H:2]([C@@H:10]1[C@@:14]2([CH3:29])[CH2:15][CH2:16][C@@H:17]3[C@@:22]4([CH3:28])[CH2:23][CH2:24][C@H:25]([OH:27])[CH2:26][C:21]4=[CH:20][CH:19]=[C:18]3[C@@H:13]2[CH2:12][CH2:11]1)/[CH:3]=[CH:4]/[C@@H:5]([CH:7]([CH3:9])[CH3:8])[CH3:6].[C:30](OC(=O)C)(=[O:32])[CH3:31].O&gt;N1C=CC=CC=1&gt;[C:30]([O:27][C@H:25]1[CH2:24][CH2:23][C@@:22]2([CH3:28])[C:21](=[CH:20][CH:19]=[C:18]3[C@@H:17]2[CH2:16][CH2:15][C@@:14]2([CH3:29])[C@H:13]3[CH2:12][CH2:11][C@@H:10]2[C@H:2]([CH3:1])/[CH:3]=[CH:4]/[C@H:5]([CH3:6])[CH:7]([CH3:8])[CH3:9])[CH2:26]1)(=[O:32])[CH3:31]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">( 2 )</name>
+          <dl:nameResolved>(22E)-5,7,22-ergostatriene-3β-yl Acetate</dl:nameResolved>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="42.0">42.0 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="74">74%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="73.6">73.6</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)O[C@@H]1CC2=CC=C3[C@@H]4CC[C@H]([C@@H](/C=C/[C@@H](C(C)C)C)C)[C@]4(CC[C@@H]3[C@]2(CC1)C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C30H46O2/c1-19(2)20(3)8-9-21(4)26-12-13-27-25-11-10-23-18-24(32-22(5)31)14-16-29(23,6)28(25)15-17-30(26,27)7/h8-11,19-21,24,26-28H,12-18H2,1-7H3/b9-8+/t20-,21+,24-,26+,27-,28-,29-,30+/m0/s1"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">ergosterol</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.13">0.13 mol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="50">50 gm</amount>
+        <identifier dictRef="cml:smiles" value="C[C@H](/C=C/[C@H](C)C(C)C)[C@H]1CC[C@@H]2[C@@]1(CC[C@H]3C2=CC=C4[C@@]3(CC[C@@H](C4)O)C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C28H44O/c1-18(2)19(3)7-8-20(4)24-11-12-25-23-10-9-21-17-22(29)13-15-27(21,5)26(23)14-16-28(24,25)6/h7-10,18-20,22,24-26,29H,11-17H2,1-6H3/b8-7+/t19-,20+,22-,24+,25-,26-,27-,28+/m0/s1"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">acetic anhydride</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.35">0.35 mol</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.0333">33.3 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)OC(C)=O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H6O3/c1-3(5)7-4(2)6/h1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">water</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.600">600 ml</amount>
+        <identifier dictRef="cml:smiles" value="O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">pyridine</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.300">300 ml</amount>
+        <identifier dictRef="cml:smiles" value="N1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C5H5N/c1-2-4-6-5-3-1/h1-5H"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To a solution of 50 gm (0.13 mol) of ergosterol (1) in 300 ml of anhydrous pyridine was added 33.3 ml (0.35 mol) of acetic anhydride</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m4"/>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>The mixture was stirred at room temperature overnight</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="overnight">overnight</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>600 ml of water was added</dl:phraseText>
+        <dl:chemical ref="m3"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The precipitate was filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed three times with 200 ml portions of acetonitrile</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">acetonitrile</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="C(C)#N"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C2H3N/c1-2-3/h1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>air dried</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 42.0 g (74%) of (2)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010002397A1</dl:documentId>
+      <dl:paragraphNum>0110</dl:paragraphNum>
+      <dl:paragraphText>One gram (2.4 mmol) of (7) was dissolved in 250 ml of ether and benzene (4:1) and irradiated with stirring under nitrogen in a water-cooled quartz immersion well using a Hanovia medium-pressure UV lamp for 2 hrs. The solution was concentrated in vacuo, redissolved in 100 ml of ethanol and heated under reflux overnight. The solution was concentrated to dryness in vacuo and the residue was purified on a silica gel column using 30% ethyl acetate in hexane to yield 0.55 g (55 %) of (8).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH3:1][CH:2]([C@:4]([OH:30])(/[CH:6]=[CH:7]/[C@H:8]([C@@H:10]1[C@:27]2([CH3:28])[C@H:13]([C:14]3[C@H:24]([CH2:25][CH2:26]2)[C@:22]2([CH3:23])[C:17]([CH2:18][C@@H:19]([OH:29])[CH2:20][CH2:21]2)=[CH:16][CH:15]=3)[CH2:12][CH2:11]1)[CH3:9])[CH3:5])[CH3:3].C1C=CC=CC=1.O&gt;CCOCC&gt;[CH3:9][C@@H:8]([C@@H:10]1[C@@:27]2([CH3:28])[CH2:26][CH2:25][CH2:24]/[C:14](=[CH:15]\[CH:16]=[C:17]3\[CH2:18][C@@H:19]([OH:29])[CH2:20][CH2:21][C:22]\3=[CH2:23])/[C@@H:13]2[CH2:12][CH2:11]1)/[CH:7]=[CH:6]/[C:4]([OH:30])([CH:2]([CH3:1])[CH3:3])[CH3:5]</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">( 8 )</name>
+          <dl:nameResolved>24-hydroxyvitamin D2</dl:nameResolved>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="0.55">0.55 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="55">55 %</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="55.5">55.5</amount>
+        <identifier dictRef="cml:smiles" value="C[C@H](/C=C/C(C)(C(C)C)O)[C@H]1CC[C@@H]\2[C@@]1(CCC/C2=C\C=C/3\C[C@H](CCC3=C)O)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C28H44O2/c1-19(2)28(6,30)17-15-21(4)25-13-14-26-22(8-7-16-27(25,26)5)10-11-23-18-24(29)12-9-20(23)3/h10-11,15,17,19,21,24-26,29-30H,3,7-9,12-14,16,18H2,1-2,4-6H3/b17-15+,22-10+,23-11-/t21-,24+,25-,26+,27-,28?/m1/s1"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">( 7 )</name>
+          <dl:nameResolved>(22E)-5,7,22-ergostatriene-3β, 24-diol</dl:nameResolved>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.0024">2.4 mmol</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="1">One gram</amount>
+        <identifier dictRef="cml:smiles" value="CC(C)[C@@](C)(\C=C\[C@@H](C)[C@H]1CC[C@H]2C3=CC=C4C[C@H](CC[C@]4(C)[C@H]3CC[C@]12C)O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C28H44O2/c1-18(2)28(6,30)16-11-19(3)23-9-10-24-22-8-7-20-17-21(29)12-14-26(20,4)25(22)13-15-27(23,24)5/h7-8,11,16,18-19,21,23-25,29-30H,9-10,12-15,17H2,1-6H3/b16-11+/t19-,21+,23-,24+,25+,26+,27-,28-/m1/s1"/>
+        <dl:entityType>definiteReference</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">benzene</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="C1=CC=CC=C1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H6/c1-2-4-6-5-3-1/h1-6H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">water</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+        <dl:entityType>chemicalClass</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">quartz</name>
+        </molecule>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m5">
+          <name dictRef="nameDict:unknown">ether</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.250">250 ml</amount>
+        <identifier dictRef="cml:smiles" value="CCOCC"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H10O/c1-3-5-4-2/h3-4H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Dissolve">
+        <dl:phraseText>One gram (2.4 mmol) of (7) was dissolved in 250 ml of ether</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:chemical ref="m5"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Irradiate">
+        <dl:phraseText>benzene (4:1) and irradiated</dl:phraseText>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>with stirring under nitrogen in a water-</dl:phraseText>
+        <dl:chemical ref="m3"/>
+        <dl:atmosphere>
+          <chemical>
+            <molecule id="m6">
+              <name dictRef="nameDict:unknown">nitrogen</name>
+            </molecule>
+            <identifier dictRef="cml:smiles" value="N#N"/>
+            <identifier dictRef="cml:inchi" value="InChI=1S/N2/c1-2"/>
+            <dl:entityType>falsePositive</dl:entityType>
+          </chemical>
+        </dl:atmosphere>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>cooled quartz immersion</dl:phraseText>
+        <dl:chemical ref="m4"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Unknown">
+        <dl:phraseText>for 2 hrs</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="7200">2 hrs</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The solution was concentrated in vacuo</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dissolve">
+        <dl:phraseText>redissolved in 100 ml of ethanol</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">ethanol</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.100">100 ml</amount>
+          <identifier dictRef="cml:smiles" value="C(C)O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>heated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>under reflux overnight</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="overnight">overnight</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Concentrate">
+        <dl:phraseText>The solution was concentrated to dryness in vacuo</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Purify">
+        <dl:phraseText>the residue was purified on a silica gel column</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">silica gel</name>
+          </molecule>
+          <dl:entityType>falsePositive</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to yield 0.55 g (55 %) of (8)</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010002402A1</dl:documentId>
+      <dl:headingText>Preparation of 2-[(1-[3-chlorophenyl]) (1-hydroxy)methyl]-5,5-dimethylpyrrolidine</dl:headingText>
+      <dl:paragraphNum>0046</dl:paragraphNum>
+      <dl:paragraphText>35.4 ml (0.24 mols) of diisopropylamine are dissolved in 350 ml of tetrahydrofuran and cooled to −75°C. under nitrogen with a bath of dry ice and acetone. At this temperature, 180 ml (0.29 mols) of an approximately 1.6 molar solution of butyl lithium in hexane are added dropwise. By removing the cooling bath, the temperature is allowed to rise to −10°C. The solution of lithium-diisopropylamine thus obtained is again cooled to −78° C. This solution is mixed over the course of 20 minutes with 32 g (0.25 mols) of 1-nitroso-2,2-dimethylpyrrolidine and stirred for a further 10 minutes. Then, 35.2 g (0.25 mols) of 3-chlorobenzaldehyde are added dropwise over the course of 15 minutes, and the mixture is stirred for a further 3 hours at −75°C. To the resulting orange-coloured solution is then added dropwise, over the course of 20 minutes, a solution of 40 ml (0.7 mols) of glacial acetic acid in 80 ml of tetrahydrofuran. The reaction mixture which is now light yellow is warmed to room temperature by removing the cooling bath, and is then poured onto a mixture of 1 litre each of saturated sodium chloride solution and methyl chloride. After shaking out, the aqueous phase is separated and washed twice, each time with 200 ml of methylene chloride. The combined organic phases are washed with 200 ml of water, dried over sodium sulphate and the solvent residues are removed in a vacuum. The crystalline residue is dissolved whilst hot in a mixture of 180 ml of toluene and 270 ml of hexane. Upon cooling, the title substance is obtained in the form of white crystals having a m.p. of 143-144°C.</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>N([N:3]1[CH2:7][CH2:6][CH2:5][C:4]1([CH3:9])[CH3:8])=O.[Cl:10][C:11]1[CH:12]=[C:13]([CH:16]=[CH:17][CH:18]=1)[CH:14]=[O:15].C(O)(=O)C&gt;O1CCCC1&gt;[Cl:10][C:11]1[CH:12]=[C:13]([CH:14]([CH:7]2[CH2:6][CH2:5][C:4]([CH3:9])([CH3:8])[NH:3]2)[OH:15])[CH:16]=[CH:17][CH:18]=1</dl:reactionSmiles>
+    <productList>
+      <product>
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2-[(1-[3-chlorophenyl]) (1-hydroxy)methyl]-5,5-dimethylpyrrolidine</name>
+        </molecule>
+        <identifier dictRef="cml:smiles" value="ClC=1C=C(C=CC1)C(O)C1NC(CC1)(C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C13H18ClNO/c1-13(2)7-6-11(15-13)12(16)9-4-3-5-10(14)8-9/h3-5,8,11-12,15-16H,6-7H2,1-2H3"/>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">1-nitroso-2,2-dimethylpyrrolidine</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.25">0.25 mols</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="32">32 g</amount>
+        <identifier dictRef="cml:smiles" value="N(=O)N1C(CCC1)(C)C"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C6H12N2O/c1-6(2)4-3-5-8(6)7-9/h3-5H2,1-2H3"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="1">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">3-chlorobenzaldehyde</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.25">0.25 mols</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="35.2">35.2 g</amount>
+        <identifier dictRef="cml:smiles" value="ClC=1C=C(C=O)C=CC1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C7H5ClO/c8-7-3-1-2-6(4-7)5-9/h1-5H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">acetic acid</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.7">0.7 mols</amount>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.040">40 ml</amount>
+        <identifier dictRef="cml:smiles" value="C(C)(=O)O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C2H4O2/c1-2(3)4/h1H3,(H,3,4)"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m4">
+          <name dictRef="nameDict:unknown">tetrahydrofuran</name>
+        </molecule>
+        <amount dl:propertyType="VOLUME" dl:normalizedValue="0.080">80 ml</amount>
+        <identifier dictRef="cml:smiles" value="O1CCCC1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C4H8O/c1-2-4-5-3-1/h1-4H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>is again cooled to −78° C</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="-78">−78° C</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>This solution is mixed over the course of 20 minutes with 32 g (0.25 mols) of 1-nitroso-2,2-dimethylpyrrolidine</dl:phraseText>
+        <dl:chemical ref="m1"/>
+        <dl:parameter propertyType="Time" normalizedValue="1200">20 minutes</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>stirred for a further 10 minutes</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="600">10 minutes</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>Then, 35.2 g (0.25 mols) of 3-chlorobenzaldehyde are added dropwise over the course of 15 minutes</dl:phraseText>
+        <dl:chemical ref="m2"/>
+        <dl:parameter propertyType="Time" normalizedValue="900">15 minutes</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>the mixture is stirred for a further 3 hours at −75°C</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="10800">3 hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="-75">−75°C</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>To the resulting orange-coloured solution is then added dropwise, over the course of 20 minutes</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="1200">20 minutes</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Heat">
+        <dl:phraseText>The reaction mixture which is now light yellow is warmed to room temperature</dl:phraseText>
+        <dl:parameter propertyType="Temperature" normalizedValue="room temperature">room temperature</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>by removing the cooling bath</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>is then poured onto a mixture of 1 litre each of saturated sodium chloride solution and methyl chloride</dl:phraseText>
+        <chemical>
+          <molecule id="m5">
+            <name dictRef="nameDict:unknown">sodium chloride</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="1">1 litre</amount>
+          <identifier dictRef="cml:smiles" value="[Cl-].[Na+]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/ClH.Na/h1H;/q;+1/p-1"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m6">
+            <name dictRef="nameDict:unknown">methyl chloride</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="CCl"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/CH3Cl/c1-2/h1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>After shaking out</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Partition">
+        <dl:phraseText>the aqueous phase is separated</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>washed twice</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Wash">
+        <dl:phraseText>The combined organic phases are washed with 200 ml of water</dl:phraseText>
+        <chemical>
+          <molecule id="m7">
+            <name dictRef="nameDict:unknown">water</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.200">200 ml</amount>
+          <identifier dictRef="cml:smiles" value="O"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/H2O/h1H2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dry">
+        <dl:phraseText>dried over sodium sulphate</dl:phraseText>
+        <chemical>
+          <molecule id="m8">
+            <name dictRef="nameDict:unknown">sodium sulphate</name>
+          </molecule>
+          <identifier dictRef="cml:smiles" value="S(=O)(=O)([O-])[O-].[Na+].[Na+]"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/2Na.H2O4S/c;;1-5(2,3)4/h;;(H2,1,2,3,4)/q2*+1;/p-2"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Remove">
+        <dl:phraseText>the solvent residues are removed in a vacuum</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Dissolve">
+        <dl:phraseText>The crystalline residue is dissolved whilst</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>hot in a mixture of 180 ml of toluene and 270 ml of hexane</dl:phraseText>
+        <chemical>
+          <molecule id="m9">
+            <name dictRef="nameDict:unknown">toluene</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.180">180 ml</amount>
+          <identifier dictRef="cml:smiles" value="C1(=CC=CC=C1)C"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C7H8/c1-7-5-3-2-4-6-7/h2-6H,1H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+        <chemical>
+          <molecule id="m10">
+            <name dictRef="nameDict:unknown">hexane</name>
+          </molecule>
+          <amount dl:propertyType="VOLUME" dl:normalizedValue="0.270">270 ml</amount>
+          <identifier dictRef="cml:smiles" value="CCCCCC"/>
+          <identifier dictRef="cml:inchi" value="InChI=1S/C6H14/c1-3-5-6-4-2/h3-6H2,1-2H3"/>
+          <dl:entityType>exact</dl:entityType>
+        </chemical>
+      </dl:reactionAction>
+      <dl:reactionAction action="Cool">
+        <dl:phraseText>Upon cooling</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>the title substance is obtained in the form of white crystals</dl:phraseText>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction>
+  <reaction>
+    <dl:source>
+      <dl:documentId>US20010002425A1</dl:documentId>
+      <dl:paragraphNum>0049</dl:paragraphNum>
+      <dl:paragraphText>In a three-neck flask, 100 ml in inner volume, made of glass and provided with a stirrer, 4.0 g (30 mmols) of terephthal aldehyde and 30 g of dichloromethane were placed. The reactants, after having added 8.1 g (75 mmols) of 1,3-propane dithiol, were stirred continuously at 25° C. for 20 minutes and, after having subsequently added 6.3 ml (50 mmols) of a boron trifluoride diethyl ether complex, further stirred continuously at 25° C. for two hours, to form a white precipitate. The resultant white precipitate was filtered, to obtain 6.6 g (70% in yield) of 2,2′-(1,4-phenylene) bis-1,3-dithian (hereinafter referred to as “Intermediate (3)”).</dl:paragraphText>
+    </dl:source>
+    <dl:reactionSmiles>[CH:1](=O)[C:2]1[CH:9]=[CH:8][C:5]([CH:6]=O)=[CH:4][CH:3]=1.[CH2:11]([SH:15])[CH2:12][CH2:13][SH:14]&gt;ClCCl&gt;[C:5]1([CH:6]2[S:15][CH2:11][CH2:12][CH2:13][S:14]2)[CH:8]=[CH:9][C:2]([CH:1]2[S:15][CH2:11][CH2:12][CH2:13][S:14]2)=[CH:3][CH:4]=1</dl:reactionSmiles>
+    <productList>
+      <product role="product">
+        <molecule id="m0">
+          <name dictRef="nameDict:unknown">2,2′-(1,4-phenylene) bis-1,3-dithian</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="6.6">6.6 g</amount>
+        <amount dl:propertyType="PERCENTYIELD" dl:normalizedValue="70">70%</amount>
+        <amount dl:propertyType="CALCULATEDPERCENTYIELD" dl:normalizedValue="69.9">69.9</amount>
+        <identifier dictRef="cml:smiles" value="C1(=CC=C(C=C1)C1SCCCS1)C1SCCCS1"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C14H18S4/c1-7-15-13(16-8-1)11-3-5-12(6-4-11)14-17-9-2-10-18-14/h3-6,13-14H,1-2,7-10H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </product>
+    </productList>
+    <reactantList>
+      <reactant role="reactant" count="1">
+        <molecule id="m1">
+          <name dictRef="nameDict:unknown">terephthal aldehyde</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.030">30 mmols</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="4.0">4.0 g</amount>
+        <identifier dictRef="cml:smiles" value="C(C1=CC=C(C=O)C=C1)=O"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C8H6O2/c9-5-7-1-2-8(6-10)4-3-7/h1-6H"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+      <reactant role="reactant" count="2">
+        <molecule id="m2">
+          <name dictRef="nameDict:unknown">1,3-propane dithiol</name>
+        </molecule>
+        <amount dl:propertyType="AMOUNT" dl:normalizedValue="0.075">75 mmols</amount>
+        <amount dl:propertyType="MASS" dl:normalizedValue="8.1">8.1 g</amount>
+        <identifier dictRef="cml:smiles" value="C(CCS)S"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/C3H8S2/c4-2-1-3-5/h4-5H,1-3H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </reactant>
+    </reactantList>
+    <spectatorList>
+      <spectator role="solvent">
+        <molecule id="m3">
+          <name dictRef="nameDict:unknown">dichloromethane</name>
+        </molecule>
+        <amount dl:propertyType="MASS" dl:normalizedValue="30">30 g</amount>
+        <identifier dictRef="cml:smiles" value="ClCCl"/>
+        <identifier dictRef="cml:inchi" value="InChI=1S/CH2Cl2/c2-1-3/h1H2"/>
+        <dl:entityType>exact</dl:entityType>
+      </spectator>
+    </spectatorList>
+    <dl:reactionActionList>
+      <dl:reactionAction action="ApparatusAction">
+        <dl:phraseText>In a three-neck flask, 100 ml in inner volume, made of glass</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>provided with a stirrer</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Add">
+        <dl:phraseText>The reactants, after having added 8.1 g (75 mmols) of 1,3-propane dithiol</dl:phraseText>
+        <dl:chemical ref="m2"/>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>were stirred continuously at 25° C. for 20 minutes</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="1200">20 minutes</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="25">25° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Stir">
+        <dl:phraseText>further stirred continuously at 25° C. for two hours</dl:phraseText>
+        <dl:parameter propertyType="Time" normalizedValue="7200">two hours</dl:parameter>
+        <dl:parameter propertyType="Temperature" normalizedValue="25">25° C.</dl:parameter>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to form a white precipitate</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Filter">
+        <dl:phraseText>The resultant white precipitate was filtered</dl:phraseText>
+      </dl:reactionAction>
+      <dl:reactionAction action="Yield">
+        <dl:phraseText>to obtain 6.6 g (70% in yield) of 2,2′-(1,4-phenylene) bis-1,3-dithian (</dl:phraseText>
+        <dl:chemical ref="m0"/>
+      </dl:reactionAction>
+    </dl:reactionActionList>
+  </reaction></reactionList>

@@ -155,8 +155,8 @@ if __name__ == "__main__":
                         try:
                             __main__(file)
                             open(file + ".checker", "a").close()
-                            time_needed = round((timeit.default_timer() - start_timer) / 60, 2)
-                            print(f"Time Needed for file {time_needed} minutes")
+                            time_needed = round((timeit.default_timer() - start_timer), 2)
+                            print(f"Time Needed for file {time_needed} seconds")
                         except pd.errors.EmptyDataError:
                             open(file + ".checker", "a").close()
                     i = i + 1

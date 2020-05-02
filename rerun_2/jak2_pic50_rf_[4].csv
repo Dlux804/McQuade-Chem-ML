@@ -1,8 +1,0 @@
-algorithm,dataset,target,feat_meth,feat_time,regressor,r2,r2_avg,r2_std,mse,mse_avg,mse_std,rmse,rmse_avg,rmse_std,time_avg,time_std
-rf,jak2_pic50.csv,pIC50,[4],0.6099951267242432,"RandomForestRegressor(bootstrap='False', ccp_alpha=0.0, criterion='mse',
-                      max_depth=30, max_features='sqrt', max_leaf_nodes=None,
-                      max_samples=None, min_impurity_decrease=0.0,
-                      min_impurity_split=None, min_samples_leaf=1,
-                      min_samples_split=2, min_weight_fraction_leaf=0.0,
-                      n_estimators=2000, n_jobs=None, oob_score=False,
-                      random_state=None, verbose=0, warm_start=False)","[0.668461715806471, 0.6502557479369091, 0.668922443186319, 0.6809903566443555, 0.6325104080978001]",0.6602281343343709,0.016983365883744946,"[0.47650729804481784, 0.45172716248112404, 0.48606738618702217, 0.39869478965345856, 0.533058378541889]",0.46921100298166235,0.0440274504443312,"[0.6902950804147584, 0.6721065112622582, 0.6971853313051144, 0.6314228295314152, 0.7301084703945634]",0.6842236445816219,0.03238838027911618,265.74345140457154,177.87277870954955

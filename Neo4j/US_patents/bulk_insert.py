@@ -5,6 +5,7 @@ import pandas as pd
 
 import py2neo
 from py2neo import Graph
+import concurrent.futures as cf
 from rdkit.Chem import MolToSmiles, MolFromSmiles
 from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs, clean_up_checker_files
 
@@ -88,6 +89,20 @@ def clean_up_compound(compound):
         return compound
 
 
+def gather_reactions(reaction_row):
+    dict_row = dict(reaction_row)
+    compound_labels = ['reactants', 'products', 'catalyst', 'solvents']
+    for item in dict_row:
+        if item in compound_labels:
+            new_compounds = []
+            compounds = ast.literal_eval(dict_row[item])
+            for compound in compounds:
+                new_compound = clean_up_compound(compound)
+                if new_compound is not None:
+                    new_compounds.append(new_compound)
+            dict_row[item] = new_compounds
+    return dict_row
+
 def __main__(file):
 
 
@@ -97,24 +112,17 @@ def __main__(file):
     print(f"There are {len(file_data)} reactions in file")
 
     reactions = []
-    compound_counter = 0
-    for index, row in file_data.iterrows():
-        dict_row = dict(row)
-        compound_labels = ['reactants', 'products', 'catalyst', 'solvents']
-        for item in dict_row:
-            if item in compound_labels:
-                new_compounds = []
-                compounds = ast.literal_eval(dict_row[item])
-                for compound in compounds:
-                    new_compound = clean_up_compound(compound)
-                    if new_compound is not None:
-                        new_compounds.append(new_compound)
-                        compound_counter = compound_counter + 1
-                dict_row[item] = new_compounds
-        reactions.append(dict_row)
-    file_data = pd.DataFrame.from_records(reactions)
 
-    print(f"There are {compound_counter} compounds in file")
+    with cf.ThreadPoolExecutor() as executor:
+
+        results = []
+        for index, row in file_data.iterrows():
+            results.append(executor.submit(gather_reactions, row))
+
+        for f in cf.as_completed(results):
+            reactions.append(f.result())
+
+    file_data = pd.DataFrame.from_records(reactions)
 
     reactions = []
     for index, row in file_data.iterrows():
@@ -131,8 +139,9 @@ if __name__ == "__main__":
 
     US_patents_directory = 'C:/Users/User/Desktop/5104873'
     # US_grants_directory_to_csvs(US_patents_directory)  # Create csv directories
-    # clean_up_checker_files(US_patents_directory)
+    clean_up_checker_files(US_patents_directory)
 
+    main_timer = timeit.default_timer()
     check_for_constraint()
     for main_directory in os.listdir(US_patents_directory):
         main_directory = US_patents_directory + '/' + main_directory
@@ -160,3 +169,8 @@ if __name__ == "__main__":
                         except pd.errors.EmptyDataError:
                             open(file + ".checker", "a").close()
                     i = i + 1
+    time_needed_minutes = round((timeit.default_timer() - main_timer)/60, 2)
+    time_needed_hours = round(time_needed_minutes/60, 2)
+    print("---------------------------------------")
+    print(f"Time Needed to insert all files into Neo4j {time_needed_minutes} minutes,"
+          f"{time_needed_hours} hours")

@@ -24,18 +24,20 @@ Be sure to start up a new neo4j graph with the password as 'password' and have i
 # US_grants_directory_to_csvs(US_patents_directory)  # This is here to convert the xml files to csv files
 # clean_up_checker_files(US_patents_directory)  # This is here to clean up checker files if you want to recreate graph
 
-for main_directories in os.listdir(US_patents_directory):  # Main loop, inserting the csv files
-    main_directories = US_patents_directory + '/' + main_directories
-    for directories in os.listdir(main_directories):
-        if directories[-4:] == '_csv':
-            directory = main_directories + '/' + directories
-            i = len(os.listdir(directory))
-            counter = 0
-            for file in os.listdir(directory):
-                print(directory + ": There are {} files left in directory".format(str(i-counter)))
-                file = directory + '/' + file
-                try:
-                    csv_to_neo4j.file_to_neo4j(file, max_nodes_in_ram=400000)
-                except pd.errors.EmptyDataError:
-                    pass
-                counter = counter + 1
+if __name__ == '__main__':
+
+    for main_directories in os.listdir(US_patents_directory):  # Main loop, inserting the csv files
+        main_directories = US_patents_directory + '/' + main_directories
+        for directories in os.listdir(main_directories):
+            if directories[-4:] == '_csv':
+                directory = main_directories + '/' + directories
+                i = len(os.listdir(directory))
+                counter = 0
+                for file in os.listdir(directory):
+                    print(directory + ": There are {} files left in directory".format(str(i-counter)))
+                    file = directory + '/' + file
+                    try:
+                        csv_to_neo4j.file_to_neo4j(file, max_nodes_in_ram=400000)
+                    except pd.errors.EmptyDataError:
+                        pass
+                    counter = counter + 1

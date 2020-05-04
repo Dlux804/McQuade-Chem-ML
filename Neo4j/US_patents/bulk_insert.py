@@ -6,14 +6,24 @@ import pandas as pd
 import py2neo
 from py2neo import Graph
 import concurrent.futures as cf
-from rdkit.Chem import MolToSmiles, MolFromSmiles
+from rdkit.Chem import MolToSmiles, MolFromSmiles, MolToSmarts
 from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs, clean_up_checker_files
+
+'''
+The reaction string below is the query that is feed to Neo4j that will insert all the reactions into neo4j. The
+UNWIND parameter allows neo4j to literate over all rows in a list in a very effective manner compared to traditional
+insert methods. This is likely not even the fastest way to insert all the data into Neo4j, but at our scale this
+is fast enough. The slowest parts are are functions that need to happen in python, such which for this file is
+converting non-con smiles to con smiles.
+APOC will be faster if we ever get to the point where we need to insert more than 50 GBs of data. 
+'''
+
 
 reaction_string = """
 
 UNWIND $parameters as row
 MERGE (rxn:reaction {reaction_smiles: row.reaction_smiles})
-ON CREATE SET rxn.sources = row.sources, rxn.insert_stages = row.stages
+ON CREATE SET rxn.reaction_smarts = row.reaction_smarts, rxn.sources = row.sources, rxn.insert_stages = row.stages
 
 FOREACH (reactant in row.reactants | 
          MERGE (com:compound {smiles: reactant.smiles}) 
@@ -45,6 +55,13 @@ FOREACH (product in row.products |
         
 """
 
+'''
+This function will check and make sure that constraints are on the graph. This is important because constraints allow
+nodes to replace IDs with, well the constraint label. This allows Neo4j to quickly merge the different nodes. 
+Constraints plus UNWIND allow for some really impressive speed up times in inserting data into Neo4j.
+'''
+
+
 def check_for_constraint():
 
     compound_constraint_check_string = """
@@ -65,6 +82,12 @@ def check_for_constraint():
         tx.evaluate(reaction_constraint_check_string)
     except py2neo.database.ClientError:
         pass
+
+
+"""
+This function will clean up the properties of the various compounds in the file, as well as convert non-con smiles to
+con smiles.
+"""
 
 
 def clean_up_compound(compound):
@@ -89,9 +112,18 @@ def clean_up_compound(compound):
         return compound
 
 
+"""
+This function is a helper function for the main function. It will take a reaction row, and clean it up to be
+inserted into Neo4j. The function is to be called by the executor to be ran in parallel and convert all the rows in
+the file 'at once'.
+"""
+
+
 def gather_reactions(reaction_row):
     dict_row = dict(reaction_row)
     compound_labels = ['reactants', 'products', 'catalyst', 'solvents']
+    new_reaction_smiles = []
+    reaction_smarts = []
     for item in dict_row:
         if item in compound_labels:
             new_compounds = []
@@ -101,7 +133,29 @@ def gather_reactions(reaction_row):
                 if new_compound is not None:
                     new_compounds.append(new_compound)
             dict_row[item] = new_compounds
+        if item == 'reaction_smiles':
+            reaction_smiles = ast.literal_eval(dict_row[item])
+            for reaction_smile in reaction_smiles:
+                mol = MolFromSmiles(reaction_smile)
+                if mol is None:
+                    new_reaction_smiles.append(reaction_smile)
+                    reaction_smarts.append('None_reaction_smiles')
+                else:
+                    new_reaction_smiles.append(MolToSmiles(mol))
+                    reaction_smarts.append(MolToSmarts(mol))
+
+    dict_row['reaction_smiles'] = new_reaction_smiles
+    dict_row['reaction_smarts'] = reaction_smarts
+
     return dict_row
+
+
+"""
+This is the main function that wraps everything up. First the graph is spun up, and the data from the csv file is read.
+Then using parallelization, all the rows in the dataframe are cleaned up and added to a list. Then the list is feed to 
+neo4j where the reactions are merged to the graph.
+"""
+
 
 def __main__(file):
 
@@ -139,7 +193,7 @@ if __name__ == "__main__":
 
     US_patents_directory = 'C:/Users/User/Desktop/5104873'
     # US_grants_directory_to_csvs(US_patents_directory)  # Create csv directories
-    clean_up_checker_files(US_patents_directory)
+    # clean_up_checker_files(US_patents_directory)
 
     main_timer = timeit.default_timer()
     check_for_constraint()

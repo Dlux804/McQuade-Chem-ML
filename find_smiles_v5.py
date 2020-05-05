@@ -6,8 +6,8 @@ from rdkit import Chem
 import csv
 import numpy as np
 import copy
-# import memory_profiler
-# import time
+import memory_profiler
+import time
 """
     Objective: Make CSVs from xml files and convert all the SMILES to canonical. If SMILES inthe list of SMILES provided 
     is in the CSVs, leave the extracted information in the CSV.  
@@ -182,10 +182,7 @@ def find_smiles(files_dicts, smiles_list):
                     for dict_k, list_v in remove_dict.items():
                         for final_dict in list_v:
                             try:
-                                # print(final_dict)
-                                all_smiles = final_dict['identifiers']
-                                full_string = str(all_smiles[0])
-                                if canon == full_string[7:]:
+                                if canon == final_dict['identifiers'][0][7:]:
                                     real_dicts_list.append(real_dicts)
                             except IndexError:
                                 pass
@@ -209,18 +206,22 @@ smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H
 
 
 
-root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
-files_dicts = xml_to_csv(root_list)
-find_smiles(files_dicts, smiles_list)
 
-# m1 = memory_profiler.memory_usage()
-# t1 = time.clock()
-#
-# t2 = time.clock()
-# m2 = memory_profiler.memory_usage()
-# time_diff = t2 - t1
-# mem_diff = m2[0] - m1[0]
-# print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
+
+
+root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
+m1 = memory_profiler.memory_usage()
+t1 = time.perf_counter()
+
+files_dicts = xml_to_csv(root_list)
+
+t2 = time.perf_counter()
+m2 = memory_profiler.memory_usage()
+time_diff = t2 - t1
+mem_diff = m2[0] - m1[0]
+print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
+
+find_smiles(files_dicts, smiles_list)
 
 # data = ['Cl(=O)(=O)(=O)F']
 # mol = Chem.MolFromSmiles('Cl(=O)(=O)(=O)F')

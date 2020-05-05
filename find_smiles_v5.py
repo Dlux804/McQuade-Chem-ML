@@ -6,8 +6,8 @@ from rdkit import Chem
 import csv
 import numpy as np
 import copy
-# import memory_profiler
-# import time
+import memory_profiler
+import time
 """
     Objective: Make CSVs from xml files and convert all the SMILES to canonical. If SMILES inthe list of SMILES provided 
     is in the CSVs, leave the extracted information in the CSV.  
@@ -53,16 +53,17 @@ def get_compound_info(compound):
     # for appearance in appearances:
     #     appearances_list.append(appearance.text)
     try:
-        full_string = identifiers_list[0]
-        smiles = full_string[7:]
-        # print("XML SMILES:", smiles)
-        mol = Chem.MolFromSmiles(smiles)
-        if mol is None:
+        # full_string =
+        # smiles = identifiers_list[0][7:]
+        mol = Chem.MolFromSmiles(identifiers_list[0][7:])
 
+        # mol = Chem.MolFromSmiles(smiles)
+
+        if mol is None:
             pass
         else:
             new_smiles = Chem.MolToSmiles(mol)
-            identifiers_list[0] = 'smiles:' + new_smiles
+            identifiers_list[0] = 'smiles:{0}'.format(new_smiles)
     except IndexError:
         pass
     # print('Error SMILES', error_smiles)
@@ -128,12 +129,10 @@ def xml_to_csv(root_list):
                             for spectator in spectators:
                                 role = list(spectator.attrib.values())[0]
                                 if role == 'solvent':
-                                    final_solvent = get_compound_info(spectator)
-                                    solvents_list.append(final_solvent)
+                                    solvents_list.append(get_compound_info(spectator))
 
                                 if role == 'catalyst':
-                                    final_catalyst = get_compound_info(spectator)
-                                    catalyst_list.append(final_catalyst)
+                                    catalyst_list.append(get_compound_info(spectator))
 
                             reactionActionList = reaction.find('{http://bitbucket.org/dan2097}reactionActionList')
                             reactionActions = reactionActionList.findall('{http://bitbucket.org/dan2097}reactionAction')
@@ -199,24 +198,18 @@ smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H
 
 
 
-
-
-
-
+m1 = memory_profiler.memory_usage()
+t1 = time.perf_counter()
 
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
 files_dicts = xml_to_csv(root_list)
 find_smiles(files_dicts, smiles_list)
 
-# m1 = memory_profiler.memory_usage()
-# t1 = time.perf_counter()
-#
-#
-# t2 = time.perf_counter()
-# m2 = memory_profiler.memory_usage()
-# time_diff = t2 - t1
-# mem_diff = m2[0] - m1[0]
-# print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
+t2 = time.perf_counter()
+m2 = memory_profiler.memory_usage()
+time_diff = t2 - t1
+mem_diff = m2[0] - m1[0]
+print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
 
 
 # data = ['Cl(=O)(=O)(=O)F']

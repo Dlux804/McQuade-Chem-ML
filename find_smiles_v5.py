@@ -6,8 +6,8 @@ from rdkit import Chem
 import csv
 import numpy as np
 import copy
-import memory_profiler
-import time
+# import memory_profiler
+# import time
 """
     Objective: Make CSVs from xml files and convert all the SMILES to canonical. If SMILES inthe list of SMILES provided 
     is in the CSVs, leave the extracted information in the CSV.  
@@ -206,17 +206,17 @@ smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H
 
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
 files_dicts = xml_to_csv(root_list)
-
-m1 = memory_profiler.memory_usage()
-t1 = time.perf_counter()
-
 find_smiles(files_dicts, smiles_list)
 
-t2 = time.perf_counter()
-m2 = memory_profiler.memory_usage()
-time_diff = t2 - t1
-mem_diff = m2[0] - m1[0]
-print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
+# m1 = memory_profiler.memory_usage()
+# t1 = time.perf_counter()
+#
+#
+# t2 = time.perf_counter()
+# m2 = memory_profiler.memory_usage()
+# time_diff = t2 - t1
+# mem_diff = m2[0] - m1[0]
+# print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
 
 
 # data = ['Cl(=O)(=O)(=O)F']

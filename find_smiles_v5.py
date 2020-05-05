@@ -109,15 +109,12 @@ def xml_to_csv(root_list):
 
                             sources = reaction.find('{http://bitbucket.org/dan2097}source')
                             sources_list = [source.text for source in sources]
-                            # for source in sources:
-                            #     sources_list.append(source.text)
+
 
                             reactantList = reaction.find('{http://www.xml-cml.org/schema}reactantList')
                             reactants = reactantList.findall("{http://www.xml-cml.org/schema}reactant")
                             reactants_list = list(map(get_compound_info, reactants))
-                            # for reactant in reactants:
-                            #     final_reactant = get_compound_info(reactant)
-                            #     reactants_list.append(final_reactant)
+
 
                             productList = reaction.find('{http://www.xml-cml.org/schema}productList')
                             products = productList.findall('{http://www.xml-cml.org/schema}product')
@@ -144,12 +141,11 @@ def xml_to_csv(root_list):
                             for reactionAction in reactionActions:
                                 texts = reactionAction.findall('{http://bitbucket.org/dan2097}phraseText')
                                 for text in texts:
-                                    stages_list.append('step {}:'.format(counter) + text.text)
+                                    stages_list.append('step {}:{}'.format(counter, text.text))
                                 parameters = reactionAction.findall('{http://bitbucket.org/dan2097}parameter')
                                 for parameter in parameters:
                                     if split_dict(parameter.attrib) is not None:
-                                        # stages_list.append(
-                                        #     'step {} properties:'.format(counter) + split_dict(parameter.attrib))
+
                                         stages_list.append('{0}{1}'.format('step {} properties:'.format(counter),
                                                                            split_dict(parameter.attrib)))
                                 counter = counter + 1
@@ -172,15 +168,15 @@ def find_smiles(files_dicts, smiles_list):
     # length = len(dictfiles_dicts.keys())
     with cd('return_csv/'):
         for canon in canon_smiles_list:
-            for main_key, value_dict in files_dicts.items():
+            for main_key in files_dicts:
                 real_dicts_list = []
-                for real_dicts in value_dict:
+                for real_dicts in files_dicts[main_key]:
                     # print(real_dicts)
                     remove_dict = copy.deepcopy(real_dicts)
                     remove = ['reaction_smiles', 'sources', 'stages']
                     [remove_dict.pop(rem, None) for rem in remove]
-                    for dict_k, list_v in remove_dict.items():
-                        for final_dict in list_v:
+                    for dict_k in remove_dict:
+                        for final_dict in remove_dict[dict_k]:
                             try:
                                 if canon == final_dict['identifiers'][0][7:]:
                                     real_dicts_list.append(real_dicts)
@@ -190,7 +186,6 @@ def find_smiles(files_dicts, smiles_list):
                     all_data = pd.DataFrame.from_records(real_dicts_list)
                     all_data.to_csv("{0}_{1}{2}".format(main_key[:-4], canon, '.csv'), index=False)
                 else:
-                    # print("No match")
                     pass
 
 
@@ -210,10 +205,12 @@ smiles_list = ['C#C', '[C-]#[O+]', 'CCN(CC)CC', 'C1COCCO1', 'O=C1OCCC1', 'O=C([H
 
 
 root_list = get_root('C:/Users/quang/McQuade-Chem-ML/xml')
+files_dicts = xml_to_csv(root_list)
+
 m1 = memory_profiler.memory_usage()
 t1 = time.perf_counter()
 
-files_dicts = xml_to_csv(root_list)
+find_smiles(files_dicts, smiles_list)
 
 t2 = time.perf_counter()
 m2 = memory_profiler.memory_usage()
@@ -221,7 +218,6 @@ time_diff = t2 - t1
 mem_diff = m2[0] - m1[0]
 print(f"It took {time_diff} Secs and {mem_diff} Mb to execute this method")
 
-find_smiles(files_dicts, smiles_list)
 
 # data = ['Cl(=O)(=O)(=O)F']
 # mol = Chem.MolFromSmiles('Cl(=O)(=O)(=O)F')

@@ -7,6 +7,7 @@ import py2neo
 from py2neo import Graph
 import concurrent.futures as cf
 from rdkit.Chem import MolToSmiles, MolFromSmiles, MolToSmarts
+from rdkit.Chem.Descriptors import MolWt
 from Neo4j.BulkChem.backends import get_fragments, get_file_location
 from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs, clean_up_checker_files
 
@@ -29,28 +30,28 @@ ON CREATE SET rxn.reaction_smarts = row.reaction_smarts, rxn.reactant_fragments 
 FOREACH (reactant in row.reactants | 
          MERGE (com:compound {smiles: reactant.smiles}) 
          ON CREATE SET com.chemical_names = reactant.chemical_names, com.appearances = reactant.appearances,
-                       com.inchi = reactant.inchi
+                       com.inchi = reactant.inchi, com.molar_mass = reactant.molwt
          MERGE (com)-[:reacts]->(rxn)
         )
 
 FOREACH (solvent in row.solvents | 
          MERGE (com:compound {smiles: solvent.smiles})
          ON CREATE SET com.chemical_names = solvent.chemical_names, com.appearances = solvent.appearances,
-                       com.inchi = solvent.inchi 
+                       com.inchi = solvent.inchi, com.molar_mass = solvent.molwt
          MERGE (com)-[:solvent_for]->(rxn)
         )
 
 FOREACH (catalyst in row.catalyst | 
          MERGE (com:compound {smiles: catalyst.smiles})
          ON CREATE SET com.chemical_names = catalyst.chemical_names, com.appearances = catalyst.appearances,
-                       com.inchi = catalyst.inchi
+                       com.inchi = catalyst.inchi, com.molar_mass = catalyst.molwt
          MERGE (com)-[:catalysis]->(rxn)
         )
 
 FOREACH (product in row.products | 
          MERGE (com:compound {smiles: product.smiles})
          ON CREATE SET com.chemical_names = product.chemical_names, com.appearances = product.appearances,
-                       com.inchi = product.inchi
+                       com.inchi = product.inchi, com.molar_mass = product.molwt
          MERGE (rxn)-[:produces]->(com)
         )   
 """
@@ -102,6 +103,7 @@ def clean_up_compound(compound):
                 smiles = MolToSmiles(mol)
                 compound['smiles'] = smiles
                 check = True
+                compound['molwt'] = MolWt(mol)
         else:
             inchi = id_value
             compound['inchi'] = inchi
@@ -268,5 +270,6 @@ if __name__ == "__main__":
     time_needed_minutes = round((timeit.default_timer() - main_timer) / 60, 2)
     time_needed_hours = round(time_needed_minutes / 60, 2)
     print("---------------------------------------")
-    print(f"Time Needed to insert all files into Neo4j {time_needed_minutes} minutes,"
+    print(f"Time Needed to insert all files into Neo4j, time needed: {time_needed_minutes} minutes, "
           f"{time_needed_hours} hours")
+

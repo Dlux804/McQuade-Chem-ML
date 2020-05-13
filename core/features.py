@@ -99,7 +99,7 @@ def targets_features(df, exp, train=0.8, random = None):
                                                                                 test_size=test_percent,
                                                                                random_state=random)  # what data to split and how to do it.
 
-    #Uncomment this section to have data shape distribution printed.
+    # Uncomment this section to have data shape distribution printed.
 
     # print('Total Feature Shape:', features.shape)
     # print('Total Target Shape', target.shape)

@@ -170,14 +170,12 @@ class MlModel:
 #
 #
 #
-
-
-# Save results
-model1.store()
-
-
-# Must show() graph AFTER it has been saved.
-# if show() is called before save, the save will be blank
-# display PvA graph
-model1.graphM.show()
+# # Save results
+# model1.store()
+#
+#
+# # Must show() graph AFTER it has been saved.
+# # if show() is called before save, the save will be blank
+# # display PvA graph
+# model1.graphM.show()
 

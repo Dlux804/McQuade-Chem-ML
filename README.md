@@ -20,7 +20,7 @@ Anaconda download link: https://www.anaconda.com/distribution/
 
  With Git, Pycharm, and Anaconda installed, use Pycharm's "get from version control" option to clone our repository (you can copy/paste this link: https://github.com/Dlux804/McQuade-Chem-ML).
 
- ![Alt text](graphics/Getting set up picture.png)
+ ![Alt text](graphics/Getting-set-up-picture.png)
 
 ### Dependencies
 We should all be using the same conda evironment so that we do not run into the issue
@@ -31,18 +31,18 @@ environment on our repo (mlapp.yml).
  ```conda env create -f env_init\mlapp.yml```
  Note: On windows, you will have you comment out "-gunicorn" in the mlapp.yml file.
  
- ![Alt text](graphics/Dependecies step 1 picture2.png)
+ ![Alt text](graphics/Dependecies-step-1-picture2.png)
  
-  ![Alt text](graphics/Dependecies step 1 picture.png)
+ ![Alt text](graphics/Dependecies-step-1-picture.png)
  
  2. In Pycharm, go to the bottom right and hit the interpreter button. Select "Add interpreter".
  
  
- ![Alt text](graphics/Dependecies step 2 picture.png)
+ ![Alt text](graphics/Dependecies-step-2-picture.png)
  
  3. Navigate to "Conda Environment" and select "Existing environment". The mlapp\python.exe environment should be located in the Anaconda3\envs folder. Select this interpreter and check "Make available to all projects". Hit OK. You should now be able to run our code.
  
-  ![Alt text](graphics/Dependecies step 3 picture.png)
+  ![Alt text](graphics/Dependecies-step-3-picture.png)
  
  4. Update the virtual environment as necessary using ```conda install```
  5. Update the mlapp.yml file using ```conda env export > mlapp.yml --no-builds --from-history```. Make sure that you add the 

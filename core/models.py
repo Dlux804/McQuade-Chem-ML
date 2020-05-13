@@ -147,7 +147,7 @@ class MlModel:
 
 
 
-#This section is for troubleshooting and should be commented out when finished testing
+# This section is for troubleshooting and should be commented out when finished testing
 
 # change active directory
 # with misc.cd('../dataFiles/'):

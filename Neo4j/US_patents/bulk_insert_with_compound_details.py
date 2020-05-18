@@ -1,9 +1,7 @@
 import ast
 import os
 import timeit
-import numpy as np
 import pandas as pd
-from multiprocessing import Pool
 import swifter
 
 import py2neo

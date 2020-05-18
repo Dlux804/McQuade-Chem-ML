@@ -3,12 +3,15 @@ from rdkit import Chem
 from py2neo import Node, Relationship
 from io import StringIO
 import numpy as np
+import pathlib
 
 '''
 The point of this file to initialize the Neo4j graph database. This script is designed mainly for the bulkchemdata, but
 will at some in the future add to allow for other data sources (such as pubchem, NIST, etc.)
 '''
 
+def get_file_location():
+    return str(pathlib.Path(__file__).parent.absolute())
 
 def generate_search_query(label, index, index_value):  # Weird bug with smiles, this function fixes the bug
     query = r'''match (n:{0} {1}{2}:'{3}'{4}) RETURN n'''.format(label, '{', index, index_value, '}')
@@ -17,12 +20,15 @@ def generate_search_query(label, index, index_value):  # Weird bug with smiles, 
     return query
 
 
-def get_fragments(smiles):
+def get_fragments(smiles, fragments_df=None):
     smiles_mol = Chem.MolFromSmiles(smiles)
     if smiles_mol is None:
         return None
 
-    fragments_df = pd.read_csv('bulkchem_datafiles/Function-Groups-SMARTS.csv')
+    if fragments_df is None:
+        path = pathlib.Path(__file__).parent.absolute()
+        fragments_df = pd.read_csv(str(path) + '/bulkchem_datafiles/Function-Groups-SMARTS.csv')
+
     frags = []
     for i in range(0, len(fragments_df)):
         row = dict(fragments_df.loc[i, :])
@@ -47,6 +53,7 @@ def get_fragments(smiles):
                 frags.append(row['Fragment'])
     frags = list(set(frags))
     return ", ".join(frags)
+
 
 def get_prop_from_smiles_df(df, con_smiles, prop):
     prop_dict = df.loc[df['canonical_smiles'] == con_smiles].to_dict('records')[0]

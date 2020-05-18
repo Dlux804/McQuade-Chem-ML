@@ -27,6 +27,7 @@ dependencies:
 # For Neo4j
   - py2neo
   - xlrd
+  - swifter
 # For McQuade_Tabula
   - tabula-py
   - pip:

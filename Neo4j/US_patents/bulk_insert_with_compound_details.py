@@ -1,12 +1,14 @@
 import ast
 import os
 import timeit
+import numpy as np
 import pandas as pd
+from multiprocessing import Pool
+import swifter
 
 import py2neo
 from py2neo import Graph
-import concurrent.futures as cf
-from rdkit.Chem import MolToSmiles, MolFromSmiles, MolToSmarts
+from rdkit.Chem import MolToSmiles, MolFromSmiles, MolToSmarts, MolFromSmarts, FragmentCatalog, RDConfig
 from rdkit.Chem.Descriptors import MolWt
 from Neo4j.BulkChem.backends import get_fragments, get_file_location
 from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs, clean_up_checker_files
@@ -111,6 +113,18 @@ def clean_up_compound(compound):
     compound.pop('identifiers')
     if check:
         return compound
+    else:
+        return None
+
+
+def clean_up_compounds(compounds):
+    new_compounds = []
+    compounds = ast.literal_eval(compounds)
+    for compound in compounds:
+        new_compound = clean_up_compound(compound)
+        if new_compound is not None:
+            new_compounds.append(new_compound)
+    return new_compounds
 
 
 """
@@ -119,79 +133,64 @@ The longest step in the process of inserting data into the database.
 """
 
 
-def gather_reaction_details(reaction_smiles, fragments_df):
-    reaction_smiles = ast.literal_eval(reaction_smiles)
+def get_new_reaction_smiles(reaction_smiles):
+    try:
+        reaction_smiles = ast.literal_eval(reaction_smiles)
+    except ValueError:
+        pass
     new_reaction_smiles = []
-    reaction_smarts = []
-    reaction_reactant_fragments = []
-    reaction_product_fragments = []
     for reaction_smile in reaction_smiles:
         mol = MolFromSmiles(reaction_smile)
         if mol is not None:
             new_reaction_smiles.append(MolToSmiles(mol))
+        else:
+            new_reaction_smiles.append(reaction_smile)
+    return new_reaction_smiles
+
+
+def get_reaction_smarts(reaction_smiles):
+    reaction_smarts = []
+    for reaction_smile in reaction_smiles:
+        mol = MolFromSmiles(reaction_smile)
+        if mol is not None:
             reaction_smarts.append(MolToSmarts(mol))
         else:
-            reaction_smile = reaction_smile.split()[0]
-            mol = MolFromSmiles(reaction_smile)
-            if mol is not None:
-                new_reaction_smiles.append(MolToSmiles(mol))
-                reaction_smarts.append(MolToSmarts(mol))
-            else:
-                new_reaction_smiles.append(reaction_smile)
-                reaction_smarts.append('')
+            reaction_smarts.append('')
+    return reaction_smarts
+
+
+def calculate_functional_groups(smarts):
+    fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
+    fparams = FragmentCatalog.FragCatParams(1, 1000, fName)
+    fcat = FragmentCatalog.FragCatalog(fparams)
+    fcgen = FragmentCatalog.FragCatGenerator()
+
+    m = MolFromSmarts(smarts)
+    fcgen.AddFragsFromMol(m, fcat)
+    f = fcat.GetNumEntries()
+    functional_groups = []
+    for i in range(f):
+        functional_groups.append(fcat.GetEntryDescription(i))
+    if functional_groups:
+        return functional_groups
+    else:
+        return None
+
+
+def gather_fragments(reaction_smarts, fragments_df):
+    reaction_reactant_fragments = []
+    reaction_product_fragments = []
     reactant = reaction_smarts[0]
     product = reaction_smarts[2]
     if reactant != '' or product != '':
         reactant_fragments = get_fragments(reactant, fragments_df=fragments_df)
         product_fragments = get_fragments(product, fragments_df=fragments_df)
-        if reactant_fragments is None and product_fragments is None:
-            reaction_reactant_fragments = []
-            reaction_product_fragments = []
-        elif reactant_fragments is None:
-            reaction_reactant_fragments = []
-            reaction_product_fragments = product_fragments.split(', ')
-        elif product_fragments is None:
-            reaction_reactant_fragments = reactant_fragments.split(', ')
-            reaction_product_fragments = []
-        else:
-            old_frags = [elem for elem in reactant_fragments.split(', ') if elem not in product_fragments.split(', ')]
-            new_frags = [elem for elem in product_fragments.split(', ') if elem not in reactant_fragments.split(', ')]
-            reaction_reactant_fragments = old_frags
-            reaction_product_fragments = new_frags
-    return new_reaction_smiles, reaction_smarts, reaction_reactant_fragments, reaction_product_fragments
-
-
-"""
-This function is a helper function for the main function. It will take a reaction row, and clean it up to be
-inserted into Neo4j. The function is to be called by the executor to be ran in parallel and convert all the rows in
-the file 'at once'.
-"""
-
-
-def gather_reactions(reaction_row, fragments_df):
-    dict_row = dict(reaction_row)
-    compound_labels = ['reactants', 'products', 'catalyst', 'solvents']
-    new_reaction_smiles = []
-    reaction_smarts = []
-    reactant_fragments = []
-    product_fragments = []
-    for item in dict_row:
-        if item in compound_labels:
-            new_compounds = []
-            compounds = ast.literal_eval(dict_row[item])
-            for compound in compounds:
-                new_compound = clean_up_compound(compound)
-                if new_compound is not None:
-                    new_compounds.append(new_compound)
-            dict_row[item] = new_compounds
-        if item == 'reaction_smiles':
-            new_reaction_smiles, reaction_smarts, reactant_fragments, product_fragments = gather_reaction_details(
-                dict_row['reaction_smiles'], fragments_df)
-    dict_row['reaction_smiles'] = new_reaction_smiles
-    dict_row['reaction_smarts'] = reaction_smarts
-    dict_row['reactant_fragments'] = reactant_fragments
-    dict_row['product_fragments'] = product_fragments
-    return dict_row
+        if reactant_fragments and product_fragments:
+            reactant_fragments = set(reactant_fragments.split(', '))
+            product_fragments = set(product_fragments.split(', '))
+            reaction_reactant_fragments = reactant_fragments.difference(product_fragments)
+            reaction_product_fragments = product_fragments.difference(reactant_fragments)
+    return list(reaction_reactant_fragments), list(reaction_product_fragments)
 
 
 """
@@ -207,18 +206,18 @@ def __main__(working_file, fragments_df):
 
     print(f"There are {len(file_data)} reactions in file")
 
-    reactions = []
+    file_data['reaction_smiles'] = file_data['reaction_smiles'].swifter.progress_bar(enable=False).apply(
+        get_new_reaction_smiles)
+    file_data['reaction_smarts'] = file_data['reaction_smiles'].swifter.progress_bar(enable=False).apply(
+        get_reaction_smarts)
+    file_data['reactants'] = file_data['reactants'].swifter.progress_bar(enable=False).apply(clean_up_compounds)
+    file_data['products'] = file_data['products'].swifter.progress_bar(enable=False).apply(clean_up_compounds)
+    file_data['solvents'] = file_data['solvents'].swifter.progress_bar(enable=False).apply(clean_up_compounds)
+    file_data['catalyst'] = file_data['catalyst'].swifter.progress_bar(enable=False).apply(clean_up_compounds)
 
-    with cf.ThreadPoolExecutor() as executor:
-
-        results = []
-        for index, row in file_data.iterrows():
-            results.append(executor.submit(gather_reactions, row, fragments_df))
-
-        for f in cf.as_completed(results):
-            reactions.append(f.result())
-
-    file_data = pd.DataFrame.from_records(reactions)
+    file_data['reactant_fragments'], \
+    file_data['product_fragments'] = zip(*file_data['reaction_smarts'].swifter.progress_bar(enable=True).apply(
+        gather_fragments, fragments_df=fragments_df))
 
     reactions = []
     for index, row in file_data.iterrows():
@@ -272,4 +271,3 @@ if __name__ == "__main__":
     print("---------------------------------------")
     print(f"Time Needed to insert all files into Neo4j, time needed: {time_needed_minutes} minutes, "
           f"{time_needed_hours} hours")
-

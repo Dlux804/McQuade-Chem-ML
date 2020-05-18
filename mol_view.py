@@ -13,7 +13,10 @@ def canon_smi(smi):
     """Prints out SMILES.  Useful for going from PubChem version of SMILES to arromatic SMILES."""
     mol = Chem.MolFromSmiles(smi)
     smi  = Chem.MolToSmiles(mol)
-    print(smi)
+    Chem.Kekulize(mol)
+    smi_k = Chem.MolToSmiles(mol,kekuleSmiles=True)
+    print('Non Kekulized SMILES: ', smi)
+    print('Kekulized SMILES: ', smi_k)
     return smi
 
 

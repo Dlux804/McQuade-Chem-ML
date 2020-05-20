@@ -6,15 +6,14 @@ from time import time
 
 # TODO: Add featurization timer
 def featurize(df, model_name, num_feat=None):
-    """ Caclulate molecular features.  Returns DataFrame,
-     list of selected features (numeric values. i.e [0,4]), and
-      time to featurize
+    """
+    Caclulate molecular features.
+    Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
+     and time to featurize.
 
     Keyword arguments:
     num_feat -- Features you want by their numerical value.  Default = None (require user input)
     """
-
-
 
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
@@ -36,6 +35,7 @@ def featurize(df, model_name, num_feat=None):
 
     # un-normalized features are OK
     else:
+        feat_sets.remove('rdkit2dnormalized')
         if num_feat == None:  # ask for features
             print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
             [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
@@ -47,6 +47,7 @@ def featurize(df, model_name, num_feat=None):
 
     # Start timer
     start_feat = time()
+
     # Use descriptastorus generator
     generator = MakeGenerator(selected_feat)
     columns = []
@@ -55,17 +56,13 @@ def featurize(df, model_name, num_feat=None):
     for name, numpy_type in generator.GetColumns():
         columns.append(name)
     smi = df['smiles']
-    data = []
     print('Calculating features...', end=' ', flush=True)
-    for mol in smi:
-        # actually calculate the descriptors.  Function accepts a smiles
-        desc = generator.process(mol)
-        data.append(desc)
+    data = list(map(generator.process, smi))
     print('Done.')
     stop_feat = time()
     feat_time = stop_feat - start_feat
 
-    # make dataframe of all features and merge with lipo df
+    # make dataframe of all features
     features = pd.DataFrame(data, columns=columns)
     df = pd.concat([df, features], axis=1)
     df = df.dropna()
@@ -100,16 +97,19 @@ def targets_features(df, exp, train=0.8, random = None):
     test_percent = 1 - train_percent
     train_features, test_features, train_target, test_target = train_test_split(featuresarr, target,
                                                                                 test_size=test_percent,
-                                                                                random_state=random)  # what data to split and how to do it.
+                                                                               random_state=random)  # what data to split and how to do it.
+
+    # Uncomment this section to have data shape distribution printed.
+
     # print('Total Feature Shape:', features.shape)
     # print('Total Target Shape', target.shape)
     # print()
-    # # print('Training Features Shape:', train_features.shape)
-    # # print('Training Target Shape:', train_target.shape)
-    # # print()
-    # # print('Test Features Shape:', test_features.shape)
-    # # print('Test Target Shape:', test_target.shape)
-    # # print()
+    # print('Training Features Shape:', train_features.shape)
+    # print('Training Target Shape:', train_target.shape)
+    # print()
+    # print('Test Features Shape:', test_features.shape)
+    # print('Test Target Shape:', test_target.shape)
+    # print()
     #
     # print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
     #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))

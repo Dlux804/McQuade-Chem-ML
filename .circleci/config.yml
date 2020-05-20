@@ -35,7 +35,6 @@ jobs:
             conda env create -f env_init/mlapp.yml
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
-
       - save_cache:
           paths:
             - /root/repo/dependencies/envs/mlapp
@@ -52,9 +51,6 @@ jobs:
             conda activate mlapp
             python -m pytest tests/
             pytest -v
-
-
-
       - store_artifacts:
           path: test-reports
           destination: test-reports

@@ -47,7 +47,7 @@ class __compare__:
 
         def insert_fragment_list_nodes(self):
             print('Inserting fragment(s) nodes before comparing molecules...')
-            fragments = open('bulkchem_datafiles/List_of_fragment_groups.txt', 'r')
+            fragments = open('datafiles/List_of_fragment_groups.txt', 'r')
             fragments = fragments.readlines()[0].split(', ')
             for i in range(len(fragments)):
                 fragment_list = []
@@ -68,7 +68,7 @@ class __compare__:
         def __init__(self, graph, *files):
             print("Initializing Neo4j database")
             print("Training to predict LogP")
-            training_df = pd.read_csv('bulkchem_datafiles/log_p.csv')  # Train to from LogP data
+            training_df = pd.read_csv('datafiles/log_p.csv')  # Train to from LogP data
             barzilayPredict(target_label='exp', dataset_type='regression', df_to_train=training_df,
                             train=False, predict=False)
             self.graph = graph

@@ -57,15 +57,15 @@ class __compare__:
                 df = pd.read_csv(file)
                 file = file.split('/')
                 file = file[len(file)-1]
-                df.to_csv('bulkchem_datafiles/temp/{}'.format(file), index=False)
-                temp_files.append('bulkchem_datafiles/temp/{}'.format(file))
+                df.to_csv('datafiles/temp/{}'.format(file), index=False)
+                temp_files.append('datafiles/temp/{}'.format(file))
             files = temp_files
 
             print("Initializing Neo4j database")
             for data_type in data_types:
                 print("Training to predict {}".format(data_type))
                 training_df = pd.read_csv(
-                    'bulkchem_datafiles/Training_datafiles/{}.csv'.format(data_type))  # Train
+                    'datafiles/Training_datafiles/{}.csv'.format(data_type))  # Train
                 self.__train__(training_df, data_type)
                 for file in files:
                     raw_data = pd.read_csv(file)

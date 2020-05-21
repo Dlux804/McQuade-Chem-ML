@@ -27,7 +27,7 @@ def get_fragments(smiles, fragments_df=None):
 
     if fragments_df is None:
         path = pathlib.Path(__file__).parent.absolute()
-        fragments_df = pd.read_csv(str(path) + '/bulkchem_datafiles/Function-Groups-SMARTS.csv')
+        fragments_df = pd.read_csv(str(path) + '/datafiles/Function-Groups-SMARTS.csv')
 
     frags = []
     for i in range(0, len(fragments_df)):
@@ -64,7 +64,7 @@ def get_prop_from_smiles_df(df, con_smiles, prop):
 These methods are the backbone methods that are needed for the main function to work properly.
 
 The timer keeps track of the time needed until all entities are related and inserted. Instead of explaining how
-the math works in words in this file, please refer to 'bulkchem_datafiles/Time_vs_molecules_demo.xlsx'. The file
+the math works in words in this file, please refer to 'datafiles/Time_vs_molecules_demo.xlsx'. The file
 can serve as a visual explanation to understand the math behind this function. But in summary, the time needed to 
 trained is directly related to number of operations remaining. Time Remaining = m * Operations left:
 where m = change in time/change in operations. The m is a changing average that is calculated as the relationships
@@ -125,7 +125,7 @@ def __timer__(o2, m2, counter, len_nodes, molecules_remaining,
                                         'Total Time passed (min)': run_time,
                                         'Predicted Time Left (min)': time_left_minutes}, ignore_index=True)
     print("\nTime Remaining: {0} minutes ({1} hours)".format(time_left_minutes, time_left_hours))
-    time_df.to_csv('bulkchem_datafiles/Time_vs_molecules.csv', index=False)
+    time_df.to_csv('datafiles/Time_vs_molecules.csv', index=False)
 
     return time_needed, m, o1, time_df
 
@@ -138,7 +138,7 @@ class init_neo_bulkchem:
     not the user uses this options depends on the relationships planned for the GB.
     """
 
-    def __init__(self, graph, fragments_as_nodes=True, bulk_chem_data='bulkchem_datafiles/BulkChemData_Orginial.csv'):
+    def __init__(self, graph, fragments_as_nodes=True, bulk_chem_data='datafiles/BulkChemData_Orginial.csv'):
         print("Initializing Bulk Chem Data...")
         self.fragments_as_nodes = fragments_as_nodes
         self.graph = graph

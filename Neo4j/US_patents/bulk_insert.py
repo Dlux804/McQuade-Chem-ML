@@ -7,7 +7,8 @@ import py2neo
 from py2neo import Graph
 import concurrent.futures as cf
 from rdkit.Chem import MolToSmiles, MolFromSmiles, MolToSmarts
-from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs, clean_up_checker_files
+from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs
+from Neo4j.US_patents.backends import clean_up_checker_files
 
 '''
 The reaction string below is the query that is feed to Neo4j that will insert all the reactions into neo4j. The
@@ -193,7 +194,7 @@ if __name__ == "__main__":
 
     US_patents_directory = 'C:/Users/User/Desktop/5104873'
     # US_grants_directory_to_csvs(US_patents_directory)  # Create csv directories
-    # clean_up_checker_files(US_patents_directory)
+    clean_up_checker_files(US_patents_directory)
 
     main_timer = timeit.default_timer()
     check_for_constraint()

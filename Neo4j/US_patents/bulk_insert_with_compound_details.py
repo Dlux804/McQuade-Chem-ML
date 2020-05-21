@@ -6,10 +6,10 @@ import swifter
 
 import py2neo
 from py2neo import Graph
-from rdkit.Chem import MolToSmiles, MolFromSmiles, MolToSmarts, MolFromSmarts, FragmentCatalog, RDConfig
+from rdkit.Chem import MolToSmiles, MolFromSmiles, rdChemReactions
 from rdkit.Chem.Descriptors import MolWt
-from Neo4j.BulkChem.backends import get_fragments, get_file_location
-from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs, clean_up_checker_files
+from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs
+from Neo4j.US_patents.backends import clean_up_checker_files, save_reaction_image, get_fragments, get_file_location
 
 '''
 The reaction string below is the query that is feed to Neo4j that will insert all the reactions into neo4j. The
@@ -24,34 +24,40 @@ reaction_query = """
 
 UNWIND $parameters as row
 MERGE (rxn:reaction {reaction_smiles: row.reaction_smiles})
-ON CREATE SET rxn.reaction_smarts = row.reaction_smarts, rxn.reactant_fragments = row.reactant_fragments, 
-              rxn.product_fragments = row.product_fragments, rxn.sources = row.sources, rxn.insert_stages = row.stages
+ON CREATE SET rxn.reactant_fragments = row.reactant_fragments, 
+              rxn.product_fragments = row.product_fragments, rxn.sources = row.sources, rxn.insert_stages = row.stages,
+              rxn.sha256_hashed_reaction_smiles = row.hashed_reaction_smiles, 
+              rxn.reaction_image_location = row.reaction_image_location
 
 FOREACH (reactant in row.reactants | 
          MERGE (com:compound {smiles: reactant.smiles}) 
          ON CREATE SET com.chemical_names = reactant.chemical_names, com.appearances = reactant.appearances,
-                       com.inchi = reactant.inchi, com.molar_mass = reactant.molwt
+                       com.inchi = reactant.inchi, com.molar_mass = reactant.molwt, 
+                       com.functional_groups = reactant.functional_groups
          MERGE (com)-[:reacts]->(rxn)
         )
 
 FOREACH (solvent in row.solvents | 
          MERGE (com:compound {smiles: solvent.smiles})
          ON CREATE SET com.chemical_names = solvent.chemical_names, com.appearances = solvent.appearances,
-                       com.inchi = solvent.inchi, com.molar_mass = solvent.molwt
+                       com.inchi = solvent.inchi, com.molar_mass = solvent.molwt, 
+                       com.functional_groups = solvent.functional_groups
          MERGE (com)-[:solvent_for]->(rxn)
         )
 
 FOREACH (catalyst in row.catalyst | 
          MERGE (com:compound {smiles: catalyst.smiles})
          ON CREATE SET com.chemical_names = catalyst.chemical_names, com.appearances = catalyst.appearances,
-                       com.inchi = catalyst.inchi, com.molar_mass = catalyst.molwt
+                       com.inchi = catalyst.inchi, com.molar_mass = catalyst.molwt, 
+                       com.functional_groups = catalyst.functional_groups
          MERGE (com)-[:catalysis]->(rxn)
         )
 
 FOREACH (product in row.products | 
          MERGE (com:compound {smiles: product.smiles})
          ON CREATE SET com.chemical_names = product.chemical_names, com.appearances = product.appearances,
-                       com.inchi = product.inchi, com.molar_mass = product.molwt
+                       com.inchi = product.inchi, com.molar_mass = product.molwt, 
+                       com.functional_groups = product.functional_groups
          MERGE (rxn)-[:produces]->(com)
         )   
 """
@@ -104,6 +110,7 @@ def clean_up_compound(compound):
                 compound['smiles'] = smiles
                 check = True
                 compound['molwt'] = MolWt(mol)
+                compound['functional_groups'] = get_fragments(smiles, fragments_df=fragments_df)
         else:
             inchi = id_value
             compound['inchi'] = inchi
@@ -133,62 +140,14 @@ The longest step in the process of inserting data into the database.
 
 def get_new_reaction_smiles(reaction_smiles):
     try:
-        reaction_smiles = ast.literal_eval(reaction_smiles)
+        rxn = rdChemReactions.ReactionFromSmarts(reaction_smiles)
+        new_smiles = rdChemReactions.ReactionToSmarts(rxn)
+        return new_smiles
     except ValueError:
-        pass
-    new_reaction_smiles = []
-    for reaction_smile in reaction_smiles:
-        mol = MolFromSmiles(reaction_smile)
-        if mol is not None:
-            new_reaction_smiles.append(MolToSmiles(mol))
-        else:
-            new_reaction_smiles.append(reaction_smile)
-    return new_reaction_smiles
-
-
-def get_reaction_smarts(reaction_smiles):
-    reaction_smarts = []
-    for reaction_smile in reaction_smiles:
-        mol = MolFromSmiles(reaction_smile)
-        if mol is not None:
-            reaction_smarts.append(MolToSmarts(mol))
-        else:
-            reaction_smarts.append('')
-    return reaction_smarts
-
-
-def calculate_functional_groups(smarts):
-    fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
-    fparams = FragmentCatalog.FragCatParams(1, 1000, fName)
-    fcat = FragmentCatalog.FragCatalog(fparams)
-    fcgen = FragmentCatalog.FragCatGenerator()
-
-    m = MolFromSmarts(smarts)
-    fcgen.AddFragsFromMol(m, fcat)
-    f = fcat.GetNumEntries()
-    functional_groups = []
-    for i in range(f):
-        functional_groups.append(fcat.GetEntryDescription(i))
-    if functional_groups:
-        return functional_groups
-    else:
-        return None
-
-
-def gather_fragments(reaction_smarts, fragments_df):
-    reaction_reactant_fragments = []
-    reaction_product_fragments = []
-    reactant = reaction_smarts[0]
-    product = reaction_smarts[2]
-    if reactant != '' or product != '':
-        reactant_fragments = get_fragments(reactant, fragments_df=fragments_df)
-        product_fragments = get_fragments(product, fragments_df=fragments_df)
-        if reactant_fragments and product_fragments:
-            reactant_fragments = set(reactant_fragments.split(', '))
-            product_fragments = set(product_fragments.split(', '))
-            reaction_reactant_fragments = reactant_fragments.difference(product_fragments)
-            reaction_product_fragments = product_fragments.difference(reactant_fragments)
-    return list(reaction_reactant_fragments), list(reaction_product_fragments)
+        mid_reaction_smiles = reaction_smiles.split('|')[0]
+        rxn = rdChemReactions.ReactionFromSmarts(mid_reaction_smiles)
+        new_smiles = rdChemReactions.ReactionToSmarts(rxn)
+        return new_smiles
 
 
 """
@@ -198,7 +157,10 @@ neo4j where the reactions are merged to the graph.
 """
 
 
-def __main__(working_file, fragments_df):
+def __main__(working_file):
+
+    start_timer = timeit.default_timer()
+
     file_data = pd.read_csv(working_file)
     graph = Graph()
 
@@ -206,16 +168,14 @@ def __main__(working_file, fragments_df):
 
     file_data['reaction_smiles'] = file_data['reaction_smiles'].swifter.progress_bar(enable=False).apply(
         get_new_reaction_smiles)
-    file_data['reaction_smarts'] = file_data['reaction_smiles'].swifter.progress_bar(enable=False).apply(
-        get_reaction_smarts)
-    file_data['reactants'] = file_data['reactants'].swifter.progress_bar(enable=False).apply(clean_up_compounds)
-    file_data['products'] = file_data['products'].swifter.progress_bar(enable=False).apply(clean_up_compounds)
-    file_data['solvents'] = file_data['solvents'].swifter.progress_bar(enable=False).apply(clean_up_compounds)
-    file_data['catalyst'] = file_data['catalyst'].swifter.progress_bar(enable=False).apply(clean_up_compounds)
 
-    file_data['reactant_fragments'], \
-    file_data['product_fragments'] = zip(*file_data['reaction_smarts'].swifter.progress_bar(enable=True).apply(
-        gather_fragments, fragments_df=fragments_df))
+    file_data['reactants'] = file_data['reactants'].swifter.progress_bar(enable=True).apply(clean_up_compounds)
+    file_data['products'] = file_data['products'].swifter.progress_bar(enable=True).apply(clean_up_compounds)
+    file_data['solvents'] = file_data['solvents'].swifter.progress_bar(enable=True).apply(clean_up_compounds)
+    file_data['catalyst'] = file_data['catalyst'].swifter.progress_bar(enable=True).apply(clean_up_compounds)
+
+    file_data['reaction_image_location'] = file_data['reaction_smiles'].swifter.progress_bar(enable=True).apply(
+        save_reaction_image, xampp_installed=xampp_installed)
 
     reactions = []
     for index, row in file_data.iterrows():
@@ -227,10 +187,22 @@ def __main__(working_file, fragments_df):
     tx = graph.begin(autocommit=True)
     tx.evaluate(reaction_query, parameters={"parameters": reactions})
 
+    time_needed = round((timeit.default_timer() - start_timer), 2)
+    print(f"Time Needed for file {time_needed} seconds")
+
+    time_df = pd.read_csv('Time_df.csv')
+    time_df = time_df.append({'Number of Reactions': len(file_data), 'Time Needed (s)': time_needed}, ignore_index=True)
+    time_df.to_csv('Time_df.csv', index=False)
+
 
 if __name__ == "__main__":
 
-    fragments_df_data = pd.read_csv(get_file_location() + '/bulkchem_datafiles/Function-Groups-SMARTS.csv')
+    if not os.path.exists('time_df.csv'):
+        df = pd.DataFrame(columns=['Number of Reactions', 'Time Needed (s)'])
+        df.to_csv('time_df.csv')
+
+    xampp_installed = True
+    fragments_df = pd.read_csv(get_file_location() + '/datafiles/Function-Groups-SMARTS.csv')
 
     US_patents_directory = 'C:/Users/User/Desktop/5104873'
     # US_grants_directory_to_csvs(US_patents_directory)  # Create csv directories
@@ -255,12 +227,9 @@ if __name__ == "__main__":
                         print("---------------------------------------")
                         print(f"Working in directory {directory}\n"
                               f"There are {number_of_files - i} files remaining")
-                        start_timer = timeit.default_timer()
                         try:
-                            __main__(file, fragments_df_data)
+                            __main__(file)
                             open(file + ".checker", "a").close()
-                            time_needed = round((timeit.default_timer() - start_timer), 2)
-                            print(f"Time Needed for file {time_needed} seconds")
                         except pd.errors.EmptyDataError:
                             open(file + ".checker", "a").close()
                     i = i + 1

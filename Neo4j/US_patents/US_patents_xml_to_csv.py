@@ -43,7 +43,7 @@ def xml_to_csv(input_file, output_file):
 
     reaction_dicts = []
     for reaction in root:
-        reaction_smiles_list = []
+        reaction_smiles = ''
         sources_list = []
         reactants_list = []
         products_list = []
@@ -51,12 +51,9 @@ def xml_to_csv(input_file, output_file):
         catalyst_list = []
         stages_list = []
 
-        reaction_smiles = reaction.findall('{http://bitbucket.org/dan2097}reactionSmiles')
-        for reaction_smile in reaction_smiles:
-            raw_reaction_smiles = reaction_smile.text
-            raw_reaction_smiles = raw_reaction_smiles.split('>')
-            for raw_reaction_smile in raw_reaction_smiles:
-                reaction_smiles_list.append(raw_reaction_smile)
+        reaction_smiles_in_xml = reaction.findall('{http://bitbucket.org/dan2097}reactionSmiles')
+        for reaction_smile in reaction_smiles_in_xml:
+            reaction_smiles = reaction_smile.text
 
         sources = reaction.find('{http://bitbucket.org/dan2097}source')
         for source in sources:
@@ -94,7 +91,7 @@ def xml_to_csv(input_file, output_file):
                     stages_list.append('step {} properties:'.format(counter) + split_dict(parameter.attrib))
             counter = counter + 1
 
-        reaction_dict = {'reaction_smiles': reaction_smiles_list, 'sources': sources_list,
+        reaction_dict = {'reaction_smiles': reaction_smiles, 'sources': sources_list,
                          'reactants': reactants_list, 'products': products_list, 'solvents': solvents_list,
                          'catalyst': catalyst_list, 'stages': stages_list}
         reaction_dicts.append(reaction_dict)
@@ -124,16 +121,3 @@ def US_grants_directory_to_csvs(path_to_directory):
                         xml_to_csv(input_file, output_file)
                     except:
                         pass
-
-
-def clean_up_checker_files(path_to_directory):
-    main_directories = os.listdir(path_to_directory)
-    for main_directory in main_directories:
-        main_directory = path_to_directory + "/" + main_directory
-        for directory in os.listdir(main_directory):
-            directory = main_directory + '/' + directory
-            for file in os.listdir(directory):
-                file = directory + '/' + file
-                split_file = file.split('.')
-                if split_file[len(split_file)-1] == 'checker':
-                    os.remove(file)

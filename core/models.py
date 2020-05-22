@@ -1,11 +1,10 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade research group.
 '''
-from core import ingest, features, grid, regressors, analysis, misc
+from core import ingest, features, grid, regressors, analysis, name
 # from main import ROOT_DIR
 import csv
 import os
-import pandas as pd
 import subprocess
 
 
@@ -70,7 +69,7 @@ class MlModel:
         # Done tuning, time to fit and predict
 
         #Variable importance for rf and gdb
-        if self.algorithm in ['rf', 'gdb'] and self.feature_list == [0]:
+        if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
             self.impgraph, self.varimp = analysis.impgraph(self.algorithm, self.regressor, train_features, train_target, self.feature_list)
         else:
             pass
@@ -86,20 +85,9 @@ class MlModel:
     def store(self):
         """  Organize and store model inputs and outputs.  """
 
-        # Check if model was tuned, store a string
-        if self.tuned:
-            tuned = 'tuned'
-        else:
-            tuned = 'notune'
-
-        # unpack featurization method list
-        feats = ''
-        for meth in self.feat_meth:
-            feats = feats + '-' + str(meth)
-
         # create model file name
-        name = self.dataset[:-4] + '-' + self.algorithm + feats + '-' + tuned
-        csvfile = name + '.csv'
+        run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)
+        csvfile = ''.join("%s.csv" % run_name)
 
         # create dictionary of attributes
         att = dict(vars(self))  # makes copy so does not affect original attributes
@@ -118,13 +106,13 @@ class MlModel:
             f.close()
 
         # save data frames
-        self.data.to_csv(name+'data.csv')
-        self.pvaM.to_csv(name+'predictions.csv')
+        self.data.to_csv(''.join("%s_data.csv" % run_name))
+        self.pvaM.to_csv(''.join("%s_predictions.csv" % run_name))
 
         # save graphs
-        self.graphM.savefig(name+'PvAM')
-        if self.algorithm in ['rf', 'gdb'] and self.feature_list == [0]:
-            self.impgraph.savefig(name+'impgraph')
+        self.graphM.savefig("%s_PvAM" % run_name)
+        if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
+            self.impgraph.savefig("%s_impgraph" % run_name)
             self.impgraph.close()
         else:
             pass
@@ -132,16 +120,19 @@ class MlModel:
         # self.graph.savefig(name+'PvA')
 
         # make folders for each run
-        os.mkdir(name)
+        try:
+            os.mkdir(run_name)
+        except OSError as e:
+            pass
 
         # put output files into new folder
-        filesp = 'mv ./' + name + '* ' + name +'/'
+        filesp = 'mv ./' + run_name + '* ' + run_name +'/'
         subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
         # Move folder to output/
         # when testing using code below, need ../output/ because it will run from core.
         # when running from main.py at root, no ../ needed.
-        movesp = 'mv ./' + name + '/ output/'
+        movesp = 'mv ./' + run_name + '/ output/'
 
         subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 

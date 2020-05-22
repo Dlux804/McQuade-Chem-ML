@@ -15,22 +15,26 @@ def main():
     # list of available learning algorithms
     # learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
     # learner = ['gdb', 'rf', 'ada', 'knn']
-    learner = ['gdb']
+    # learner = ['gdb']
+    learner = ['rf']
 
     # list of available featurization methods
-    featurize = [[0], [0, 2], [0, 3], [0, 4], [0,5], [0, 6], [2], [3], [4], [5], [6]]
-
+    # featurize = [[0], [0, 2], [0, 3], [0, 4], [0,5], [0, 6], [2], [3], [4], [5], [6]]
+    featurize = [[0]]
     # features for models that require normalized data (nn, svm)
     norm_featurize = [[1], [1,2], [1,3], [1,4], [1,5], [1,6], [2], [3], [4], [5], [6]]
 
 
     # data sets in dict. Key: Filename.csv , Value: Target column header
+    # sets = {
+    #     'Lipophilicity-ID.csv': 'exp',
+    #     'ESOL.csv': 'water-sol',
+    #     'water-energy.csv': 'expt',
+    #     'logP14k.csv': 'Kow',
+    #     'jak2_pic50.csv': 'pIC50'
+    # }
     sets = {
-        'Lipophilicity-ID.csv': 'exp',
-        'ESOL.csv': 'water-sol',
-        'water-energy.csv': 'expt',
-        'logP14k.csv': 'Kow',
-        'jak2_pic50.csv': 'pIC50'
+        'water-energy.csv': 'expt'
     }
 
     for alg in learner:  # loop over all learning algorithms

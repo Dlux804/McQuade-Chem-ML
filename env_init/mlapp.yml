@@ -17,7 +17,7 @@ dependencies:
   - tqdm
   - tensorflow
   - tensorboardX
-  #- gunicorn
+  - gunicorn
   - pytorch
   - torchvision
   - flask

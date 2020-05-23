@@ -96,7 +96,7 @@ This is the overview of our MLModels Python class functions.  ```main.py``` esse
  * [dataFiles](./dataFiles)
    * [ESOL.csv](./dataFiles/ESOL.csv)
    * [jak2_pic50.csv](./dataFiles/jak2_pic50.csv)
-   * [Lipophilicity-ID.csv](dataFiles/Lipophilicity-ID.csv)
+   * [Lipophilicity-ID.csv](./dataFiles/Lipophilicity-ID.csv)
    * [logP14k.csv](./dataFiles/logP14k.csv)
    * [water-energy.csv](./dataFiles/water-energy.csv)
  * [graphics](./graphics)

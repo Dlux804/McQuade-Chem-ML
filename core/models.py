@@ -1,12 +1,12 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade research group.
 '''
-from core import ingest, features, grid, regressors, analysis, name
+from core import ingest, features, grid, regressors, analysis
 # from main import ROOT_DIR
 import csv
 import os
 import subprocess
-
+import shutil
 
 class MlModel:
     """
@@ -49,15 +49,17 @@ class MlModel:
 
             # FIXME Unfortunate hard code deep in the program.
             folds = 2
-            iters = 3
+            iters = 50
             jobs = -1  # for bayes, max jobs = folds.
 
             # Make parameter grid
             param_grid = grid.make_grid(self.algorithm)
 
             # Run Hyper Tuning
-            params,  self.tuneTime = regressors.hyperTune(self.regressor(), train_features,
-                                                                train_target, param_grid, folds, iters, jobs=folds)
+            params,  self.tuneTime, self.run_name = regressors.hyperTune(self.regressor(), self.algorithm, self.dataset,
+                                                                         self.feat_meth, self.tuned, train_features,
+                                                                         train_target, param_grid, folds, iters,
+                                                                         jobs=folds)
 
             # redefine regressor model with best parameters.
             self.regressor = self.regressor(**params)  # **dict will unpack a dictionary for use as keywrdargs
@@ -86,8 +88,13 @@ class MlModel:
         """  Organize and store model inputs and outputs.  """
 
         # create model file name
-        run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)
-        csvfile = ''.join("%s.csv" % run_name)
+
+        csvfile = ''.join("%s.csv" % self.run_name)
+
+        try:
+            os.mkdir(self.run_name)
+        except OSError as e:
+            pass
 
         # create dictionary of attributes
         att = dict(vars(self))  # makes copy so does not affect original attributes
@@ -95,9 +102,13 @@ class MlModel:
         del att['smiles']  # do not want series in dict
         del att['graphM']  # do not want graph object
         del att['stats']  # will unpack and add on
+        del att['varimp']  # don't need variable importance in our machine learning results record
+        del att['impgraph']  # Don't need a graph object in our csv
+        del att['pvaM']  # do not want DF in dict
+        del att['run_name']
         # del att['impgraph']
         att.update(self.stats)
-        att.update(self.varimp)
+        # att.update(self.varimp)
         # Write contents of attributes dictionary to a CSV
         with open(csvfile, 'w') as f:  # Just use 'w' mode in Python 3.x
             w = csv.DictWriter(f, att.keys())
@@ -105,14 +116,19 @@ class MlModel:
             w.writerow(att)
             f.close()
 
+        # Path to output directory
+        output_directory = ''.join('%s\output' % os.getcwd())
+        # Copy csv file to ouput directory
+        shutil.copy(csvfile, output_directory)
+
         # save data frames
-        self.data.to_csv(''.join("%s_data.csv" % run_name))
-        self.pvaM.to_csv(''.join("%s_predictions.csv" % run_name))
+        self.data.to_csv(''.join("%s_data.csv" % self.run_name))
+        self.pvaM.to_csv(''.join("%s_predictions.csv" % self.run_name))
 
         # save graphs
-        self.graphM.savefig("%s_PvAM" % run_name)
+        self.graphM.savefig(''.join("%s_PvAM" % self.run_name))
         if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
-            self.impgraph.savefig("%s_impgraph" % run_name)
+            self.impgraph.savefig(''.join("%s_impgraph" % self.run_name))
             self.impgraph.close()
         else:
             pass
@@ -120,21 +136,22 @@ class MlModel:
         # self.graph.savefig(name+'PvA')
 
         # make folders for each run
-        try:
-            os.mkdir(run_name)
-        except OSError as e:
-            pass
+
 
         # put output files into new folder
-        filesp = 'mv ./' + run_name + '* ' + run_name +'/'
+        filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # Change mv to move to use in Windows system
+        # filesp = 'move ./' + run_name + '* ' + run_name + '/'
         subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
+
+        movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # Change mv to move to use in Windows system
+        subprocess.Popen(movepkl, shell=True, stdout=subprocess.PIPE)  # run bash command
 
         # Move folder to output/
         # when testing using code below, need ../output/ because it will run from core.
         # when running from main.py at root, no ../ needed.
-        movesp = 'mv ./' + run_name + '/ output/'
-
-        subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
+        # movesp = 'move ./' + run_name + ' output/'
+        #
+        # subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
 
 

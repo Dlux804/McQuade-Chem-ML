@@ -17,7 +17,7 @@ UNWIND parameter allows neo4j to literate over all rows in a list in a very effe
 insert methods. This is likely not even the fastest way to insert all the data into Neo4j, but at our scale this
 is fast enough. The slowest parts are are functions that need to happen in python, such as: converting non-con smiles
 to con smiles, getting reaction smarts, and finding the fragments in the reaction smarts.
-APOC will be faster if we ever get to the point where we need to insert more than 50 GBs of data. 
+APOC will be faster if we ever get to the point where we need to insert more than 50 GBs of data
 '''
 
 reaction_query = """

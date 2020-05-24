@@ -139,11 +139,12 @@ class MlModel:
 
 
         # put output files into new folder
-        filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # Change mv to move to use in Windows system
-        # filesp = 'move ./' + run_name + '* ' + run_name + '/'
+        filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # move for Windows system
+        # filesp = ''.join(['mv ./', self.run_name, '* ', self.run_name, '/'])  # mv for Linux system
         subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
-        movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # Change mv to move to use in Windows system
+        movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # move for Windows system
+        # movepkl = ''.join(['mv ./', '.pkl', '* ', self.run_name, '/']) # mv for Linux system
         subprocess.Popen(movepkl, shell=True, stdout=subprocess.PIPE)  # run bash command
 
         # Move folder to output/

@@ -173,11 +173,18 @@ def parallel_apply(df_column, function, **props):
         for mid_df in mid_dfs:
             results.append(executor.submit(__aw__, mid_df, function, **props))
 
-        for f in tqdm.tqdm(cf.as_completed(results), total=number_of_cpus):
-            if main_df is None:
-                main_df = f.result()
-            else:
-                main_df = main_df.append(f.result())
+        if loading_bars:
+            for f in tqdm.tqdm(cf.as_completed(results), total=number_of_cpus):
+                if main_df is None:
+                    main_df = f.result()
+                else:
+                    main_df = main_df.append(f.result())
+        else:
+            for f in cf.as_completed(results):
+                if main_df is None:
+                    main_df = f.result()
+                else:
+                    main_df = main_df.append(f.result())
 
     return main_df
 
@@ -233,9 +240,10 @@ if __name__ == "__main__":
     US_patents_directory = '/home/user/Desktop/5104873'
     fragments_df = pd.read_csv(get_file_location() + '/datafiles/Function-Groups-SMARTS.csv')
     covert_xml_to_csv = False
-    clean_checker_files = True
+    clean_checker_files = False
     insert_compounds_with_functional_groups = True
     log_time_needed = True
+    loading_bars = False
     save_reaction_images = False
     reaction_images_directory = None
 

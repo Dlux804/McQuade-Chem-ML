@@ -1,9 +1,9 @@
 import numpy as np
 # from sklearn.model_selection import RandomizedSearchCV
-from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor
+# from sklearn.ensemble import GradientBoostingRegressor
 # from sklearn.model_selection import train_test_split
-from sklearn.svm import SVR
-from sklearn.ensemble import RandomForestRegressor
+# from sklearn.svm import SVR
+# from sklearn.ensemble import RandomForestRegressor
 # from sklearn.metrics import mean_squared_error, r2_score
 from sklearn import tree
 # from sklearn.ensemble import AdaBoostRegressor

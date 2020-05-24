@@ -11,6 +11,8 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
 from skopt import BayesSearchCV
 from time import time
+from skopt import callbacks
+from core import name
 
 
 def regressor(model, tune=False):
@@ -28,7 +30,9 @@ def regressor(model, tune=False):
     return regressors[model]
 
 
-def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1): # WHAT is expt? WHY use it?
+
+def hyperTune(model, algorithm, dataset, feat_meth, tune,
+              train_features, train_target, grid, folds, iters, jobs=-1):
     """
     Tunes hyper parameters of specified model.
 
@@ -41,6 +45,7 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1):
    NOTE: jobs has been depreciated since max processes in parallel for Bayes is the number of CV folds
 
     """
+    run_name = name.name(algorithm, dataset, feat_meth, tune)
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
 
@@ -56,8 +61,17 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1):
         cv=folds  # number of cross-val folds to use
     )
 
+    checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % run_name), compress=9)
+
+    def on_step(optim_result):
+        score = bayes.best_score_
+        print("best score: %s" % score)
+
+    deltay = callbacks.DeltaYStopper(0.1, 8)
+
     # Fit the Bayes search model
-    bayes.fit(train_features, train_target)
+    bayes.fit(train_features, train_target, callback=[checkpoint_saver, on_step, deltay])
+    # bayes.fit(train_features, train_target, callback=[checkpoint_saver, on_step])
     tuned = bayes.best_params_
     tune_score = bayes.best_score_
 
@@ -67,4 +81,4 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1):
     print('Best Parameter Found After ', (stop_tune - start_tune), "sec\n")
     print('Best params achieve a test score of', tune_score, ':')
     print(tuned)
-    return tuned, tune_time
+    return tuned, tune_time, run_name

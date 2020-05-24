@@ -63,15 +63,12 @@ def hyperTune(model, algorithm, dataset, feat_meth, tune,
 
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % run_name), compress=9)
 
-    def on_step(optim_result):
-        score = bayes.best_score_
-        print("best score: %s" % score)
 
-    deltay = callbacks.DeltaYStopper(0.1, 8)
+    # deltay = callbacks.DeltaYStopper(0.1, 8)
 
     # Fit the Bayes search model
-    bayes.fit(train_features, train_target, callback=[checkpoint_saver, on_step, deltay])
-    # bayes.fit(train_features, train_target, callback=[checkpoint_saver, on_step])
+    # bayes.fit(train_features, train_target, callback=[checkpoint_saver, on_step, deltay])
+    bayes.fit(train_features, train_target, callback=[checkpoint_saver])
     tuned = bayes.best_params_
     tune_score = bayes.best_score_
 

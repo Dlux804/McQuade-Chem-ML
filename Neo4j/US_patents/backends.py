@@ -30,24 +30,25 @@ def compress(uncompressed_smiles):
     return compressed_smiles
 
 
-def save_reaction_image(smiles, directory_location='C:/xampp/htdocs', xampp_installed=True):
-    if not os.path.exists('C:/xampp/htdocs') and xampp_installed:
-        raise Exception('XAMPP is not installed or is set to a directory other than default. Please specify where'
-                        'htdocs directory is located, or set xampp_installed=False')
-    if not os.path.exists('C:/xampp/htdocs/reactions') and xampp_installed:
-        os.mkdir('C:/xampp/htdocs/reactions')
+def save_reaction_image(smiles, directory_location):
+    if not os.path.exists(directory_location):
+        raise Exception('Directory not found')
 
     rxn = rdChemReactions.ReactionFromSmarts(smiles)
     rimage = Draw.ReactionToImage(rxn)
     compressed_smiles = compress(smiles)
-    file_location = f'{directory_location}/reactions/{compressed_smiles}.png'
-    if xampp_installed and not os.path.exists(file_location):
-        rimage.save(file_location)
-    return f'http://localhost/reactions/{compressed_smiles}.png'
+    file_location = f'{directory_location}/{compressed_smiles}.png'
+    rimage.save(file_location)
+    return file_location
 
 
 def get_file_location():
     return str(pathlib.Path(__file__).parent.absolute())
+
+
+def test_functional_group(smarts, mol):
+    sub_mol = MolFromSmarts(smarts)
+    return len(mol.GetSubstructMatches(sub_mol))
 
 
 def get_fragments(smiles, fragments_df=None):
@@ -59,26 +60,7 @@ def get_fragments(smiles, fragments_df=None):
         path = pathlib.Path(__file__).parent.absolute()
         fragments_df = pd.read_csv(str(path) + '/datafiles/Function-Groups-SMARTS.csv')
 
-    frags = []
-    for i in range(0, len(fragments_df)):
-        row = dict(fragments_df.loc[i, :])
-        if str(row['Sub-SMARTS']) != 'nan':
-            sub_mol = MolFromSmarts(str(row['Sub-SMARTS']))
-            main_mol = MolFromSmarts(str(row['SMARTS']))
-            sub_mol_matches = len(smiles_mol.GetSubstructMatches(sub_mol))
-            main_mol_matches = len(smiles_mol.GetSubstructMatches(main_mol))
-            if sub_mol_matches == 0:
-                pass
-            elif sub_mol_matches == main_mol_matches:
-                frags.append(row['Fragment'])
-            elif sub_mol_matches > main_mol_matches > 0:
-                frags.append(row['Fragment'])
-                frags.append(row['Sub-Fragment'])
-            else:
-                frags.append(row['Sub-Fragment'])
-        else:
-            main_mol = MolFromSmarts(str(row['SMARTS']))
-            main_mol_matches = len(smiles_mol.GetSubstructMatch(main_mol))
-            if main_mol_matches > 0:
-                frags.append(row['Fragment'])
-    return list(set(frags))
+    fragments_df['number_of_matches'] = fragments_df['SMARTS'].apply(test_functional_group, mol=smiles_mol)
+    fragments_df = fragments_df.loc[fragments_df['number_of_matches'] > 0]
+    test = fragments_df['number_of_matches'].astype(str) + '|' + fragments_df['Fragment']
+    return test.tolist()

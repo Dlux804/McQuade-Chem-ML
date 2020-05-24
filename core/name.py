@@ -7,6 +7,7 @@ Objective: A systematic way to create a unique name for every single machine lea
 This code follows the "Letters and Numbers" rule explained in naming_schemes_v2.pptx in the naming branch
 """
 
+
 def represent_dataset():
     """
     Get string representation for all current dataset in dataFiles
@@ -104,7 +105,8 @@ def name(algorithm, dataset, feat_meth, tune=False):
     else:
         tune_string = str(0)  # Else, it will be 0
     now = datetime.now()
-    date_string = now.strftime("%y%m%d%H%m_")  # Get date and time string
+    date_string = now.strftime("%y%m%d%H%M_")  # Get date and time string
     run_name = ''.join([date_string, algorithm_string, dataset_string, feat_string, tune_string])  # Run name
-    print("Run Name is:", run_name)
+    date = now.strftime("%m/%d/%Y %H:%M:%S")
+    print("Created {0} on {1}".format(run_name, date))
     return run_name

@@ -249,7 +249,7 @@ if __name__ == "__main__":
 
     if not os.path.exists('Time_df.csv') and log_time_needed:
         df = pd.DataFrame(columns=['Number of Reactions', 'Time Needed (s)'])
-        df.to_csv('Time_df.csv')
+        df.to_csv('Time_df.csv', index=False)
 
     if covert_xml_to_csv:
         US_grants_directory_to_csvs(US_patents_directory)

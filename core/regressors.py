@@ -6,10 +6,9 @@ Employ the function dictionary to call regressor functions by model keyword.
 from sklearn.ensemble import AdaBoostRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
-from sklearn.model_selection import RandomizedSearchCV
 from skopt import BayesSearchCV
 from time import time
 
@@ -27,7 +26,6 @@ def regressor(model, tune=False):
         'knn': KNeighborsRegressor
     }
     return regressors[model]
-
 
 
 def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1): # WHAT is expt? WHY use it?

@@ -13,6 +13,7 @@ dependencies:
   - scikit-learn
   - matplotlib
   - pytest
+  - pandas_flavor
 # For Barzilay MPNN
   - tqdm
   - tensorflow

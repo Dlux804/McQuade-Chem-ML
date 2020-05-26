@@ -48,8 +48,8 @@ class MlModel:
             # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
 
             # FIXME Unfortunate hard code deep in the program.
-            folds = 3
-            iters = 100
+            folds = 2
+            iters = 50
             jobs = -1  # for bayes, max jobs = folds.
 
             # Make parameter grid
@@ -130,9 +130,9 @@ class MlModel:
         self.pvaM.to_csv(''.join("%s_predictions.csv" % self.run_name))
 
         # save graphs
-        self.graphM.savefig(''.join("%s_PvAM" % self.run_name))
+        self.graphM.savefig(''.join("%s_PvAM" % self.run_name), transparent=True)
         if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
-            self.impgraph.savefig(''.join("%s_impgraph" % self.run_name))
+            self.impgraph.savefig(''.join("%s_impgraph" % self.run_name), transparent=True)
             self.impgraph.close()
         else:
             pass

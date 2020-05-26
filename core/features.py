@@ -66,6 +66,8 @@ def featurize(df, model_name, num_feat=None):
     features = pd.DataFrame(data, columns=columns)
     df = pd.concat([df, features], axis=1)
     df = df.dropna()
+    # remove the "RDKit2d_calculated = True" column(s)
+    df = df[df.columns.drop(list(df.filter(regex='_calculated')))]
 
     return df, num_feat, feat_time
 

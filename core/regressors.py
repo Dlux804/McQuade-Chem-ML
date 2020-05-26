@@ -11,24 +11,47 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
 from skopt import BayesSearchCV
 from time import time
+from tensorflow import keras
+# import tensorflow as tf  # is this needed or just Keras?
 
 
-def regressor(model, tune=False):
-    """Returns model specific regressor function."""
+def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=[200]):
+    """
+    Create neural network architecture and compile.  Accepts number of hiiden layers, number of neurons,
+    learning rate, and input shape. Returns compiled model.
 
-    # Create Dictionary of regressors to be called with self.algorithm as key.
-    regressors = {
-        'ada': AdaBoostRegressor,
-        'rf': RandomForestRegressor,
-        'svr': SVR,
-        'gdb': GradientBoostingRegressor,
-        'mlp': MLPRegressor,
-        'knn': KNeighborsRegressor
-    }
-    return regressors[model]
+    Keyword Arguments:
+        n_hidden (integer): Number of hidden layers with n_neurons to be added to model, excludes input and output layer. Default = 2
+        n_neuron (integer): Number of neurons to add to each hidden layer. Default = 50
+        learning_rate (float):  Model learning rate that is passed to model optimizer.  Smaller values are slower, High values
+                        are prone to unstable training. Default = 0.001
+        in_shape (integer): Input dimension should match number of features.  Default = 200 but should be overridden.
+    """
+
+    model = keras.models.Sequential()
+    model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
+    for layer in range(n_hidden):  # create hidden layers
+        model.add(keras.layers.Dense(n_neuron, activation="relu"))
+    model.add(keras.layers.Dense(1))  # output layer
+    # TODO Add optimizer selection as keyword arg
+    # optimizer = keras.optimizers.SGD(lr=learning_rate)  # this is a point to vary.  Dict could help call other ones.
+    # optimizer = keras.optimizers.RMSprop(learning_rate=learning_rate)
+    optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
+    model.compile(loss="mse", optimizer=optimizer, metrics=[tf.keras.metrics.RootMeanSquaredError(name='rmse')])
+    return model
+
+def wrapKeras(build_func, in_shape):
+    """
+    Wraps up a Keras model to appear as sklearn Regressor for use in hyper parameter tuning.
+    :param build_func: Callable function that builds Keras model.
+    :param in_shape: Input dimension.  Must match number of features.
+    :return: Regressor() like function for use with sklearn based optimization.
+    """
+    return keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_nn, in_shape=200)  # pass non-hyper params here
 
 
-def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1): # WHAT is expt? WHY use it?
+
+def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50): # WHAT is expt? WHY use it?
     """
     Tunes hyper parameters of specified model.
 
@@ -43,11 +66,17 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1):
     """
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
+    if model == "nn":
+        fit_params = "callbacks"  # pseudo code.  add callbacks, epochs
+        #  {'epochs': 50, 'callbacks': [chkpt_cb, stop_cb], 'validation_data': (val_features,val_target)}
+    else:
+        fit_params = None
 
     # set up Bayes Search
     bayes = BayesSearchCV(
         estimator=model,  # what regressor to use
         search_spaces=grid,  # hyper parameters to search through
+        fit_params= fit_params,
         n_iter=iters,  # number of combos tried
         random_state=42,  # random seed
         verbose=3,  # output print level
@@ -68,3 +97,18 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1):
     print('Best params achieve a test score of', tune_score, ':')
     print(tuned)
     return tuned, tune_time
+
+
+def regressor(model):
+    """Returns model specific regressor function."""
+
+    # Create Dictionary of regressors to be called with self.algorithm as key.
+    regressors = {
+        'ada': AdaBoostRegressor,
+        'rf': RandomForestRegressor,
+        'svr': SVR,
+        'gdb': GradientBoostingRegressor,
+        'mlp': MLPRegressor,
+        'knn': KNeighborsRegressor
+    }
+    return regressors[model]

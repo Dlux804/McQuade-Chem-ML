@@ -10,7 +10,7 @@ from rdkit.Chem import MolToSmiles, MolFromSmiles, rdChemReactions
 from rdkit.Chem.Descriptors import MolWt
 import concurrent.futures as cf
 from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs
-from Neo4j.US_patents.backends import clean_up_checker_files, save_reaction_image, get_fragments, get_file_location
+from Neo4j.US_patents.backends import clean_up_checker_files, save_reaction_image, get_functional_groups, get_file_location
 
 from rdkit import RDLogger
 
@@ -115,7 +115,7 @@ def clean_up_compound(compound):
                 check = True
                 compound['molwt'] = MolWt(mol)
                 if insert_compounds_with_functional_groups:
-                    compound['functional_groups'] = get_fragments(smiles, fragments_df=fragments_df)
+                    compound['functional_groups'] = get_functional_groups(smiles, fragments_df=fragments_df)
         else:
             inchi = id_value
             compound['inchi'] = inchi

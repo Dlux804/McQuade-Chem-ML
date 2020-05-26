@@ -8,6 +8,7 @@ import os
 import subprocess
 import shutil
 
+
 class MlModel:
     """
     Class to set up and run machine learning algorithm.
@@ -25,7 +26,6 @@ class MlModel:
             feats -- Features you want.  Default = None (requires user input)
         """
         self.data, self.feat_meth, self.feat_time = features.featurize(self.data, self.algorithm, feats)
-
 
 
     def run(self, tune=False):
@@ -70,7 +70,7 @@ class MlModel:
 
         # Done tuning, time to fit and predict
 
-        #Variable importance for rf and gdb
+        # Variable importance for rf and gdb
         if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
             self.impgraph, self.varimp = analysis.impgraph(self.algorithm, self.regressor, train_features, train_target, self.feature_list)
         else:
@@ -84,6 +84,7 @@ class MlModel:
         # run the model 5 times and collect the metric stats as dictionary
         # self.stats = analysis.replicate_model(self, 5)
         self.regressor = params
+
     def store(self):
         """  Organize and store model inputs and outputs.  """
 
@@ -139,8 +140,6 @@ class MlModel:
         # self.graph.savefig(name+'PvA')
 
         # make folders for each run
-
-
         # put output files into new folder
         filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # move for Windows system
         # filesp = ''.join(['mv ./', self.run_name, '* ', self.run_name, '/'])  # mv for Linux system

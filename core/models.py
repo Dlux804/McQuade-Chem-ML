@@ -48,8 +48,8 @@ class MlModel:
             # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
 
             # FIXME Unfortunate hard code deep in the program.
-            folds = 2
-            iters = 50
+            folds = 3
+            iters = 100
             jobs = -1  # for bayes, max jobs = folds.
 
             # Make parameter grid
@@ -83,7 +83,7 @@ class MlModel:
 
         # run the model 5 times and collect the metric stats as dictionary
         # self.stats = analysis.replicate_model(self, 5)
-
+        self.regressor = params
     def store(self):
         """  Organize and store model inputs and outputs.  """
 
@@ -102,10 +102,13 @@ class MlModel:
         del att['smiles']  # do not want series in dict
         del att['graphM']  # do not want graph object
         del att['stats']  # will unpack and add on
-        del att['varimp']  # don't need variable importance in our machine learning results record
-        del att['impgraph']  # Don't need a graph object in our csv
         del att['pvaM']  # do not want DF in dict
         del att['run_name']
+        try:
+            del att['varimp']  # don't need variable importance in our machine learning results record
+            del att['impgraph']  # Don't need a graph object in our csv
+        except KeyError:
+            pass
         # del att['impgraph']
         att.update(self.stats)
         # att.update(self.varimp)

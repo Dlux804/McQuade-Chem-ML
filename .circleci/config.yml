@@ -31,8 +31,7 @@ jobs:
       - save_cache:
           paths:
             - "venv"
-          key:
-            - pipreq-{{ checksum "env_init/Requirements.txt" }}
+          key: pipreq-{{ checksum "env_init/Requirements.txt" }}
 
       - run:
           name: Run tests

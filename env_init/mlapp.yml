@@ -14,7 +14,7 @@ dependencies:
   - tensorflow
   - matplotlib
   - pytest
-  - pandas_flavor
+  - pandas-flavor
 # For Barzilay MPNN
   - tqdm
   - tensorboardX

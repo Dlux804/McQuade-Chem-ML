@@ -7,7 +7,14 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/python:3.7.7 # continuumio/anaconda3
+      # using anaconda3 from continuumio
+      - image: continuumio/anaconda3
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
     working_directory: ~/repo
 
     steps:
@@ -16,30 +23,36 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - pipreq-{{ checksum "env_init/Requirements.txt" }}
+            - v2-condareqs-{{ checksum "env_init/mlapp.yml" }}
             # fallback to using the latest cache if no exact match is found
-            - pipreq-
+            - v2-condareqs-
 
         # Install the necessary Python packages
+        # activate conda env for future use
       - run:
           name: Install dependencies
           command: |
-            pip install virtualenv
-            python3 -m venv env
-            source env/bin/activate
-            pip install -r env_init/Requirements.txt
-            pip install "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
-#            pip install "git+https://github.com/darenr/scikit-optimize.git#egg=scikit-optimize"
+            conda env create -f env_init/mlapp.yml
+            source /opt/conda/etc/profile.d/conda.sh
+            conda activate mlapp
       - save_cache:
           paths:
-            - "venv"
-          key: pipreq-{{ checksum "env_init/Requirements.txt" }}
-
+            - /root/repo/dependencies/envs/mlapp
+            - env_init/
+            - env_init/mlapp.yml
+          key: v2-condareqs-{{ checksum "env_init/mlapp.yml" }}
+      # run tests!
+      # this example uses Django's built-in test-runner
+      # other common Python testing frameworks include pytest and nose
+      # https://pytest.org
+      # https://nose.readthedocs.io
       - run:
           name: Run tests
           command: |
-            source env/bin/activate
-            python3 -m pytest tests/
+            source /opt/conda/etc/profile.d/conda.sh
+            conda activate mlapp
+            python -m pytest tests/
+            pytest -v
       - store_artifacts:
           path: test-reports
           destination: test-reports

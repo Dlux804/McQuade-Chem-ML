@@ -54,11 +54,12 @@ jobs:
       # other common Python testing frameworks include pytest and nose
       # https://pytest.org
       # https://nose.readthedocs.io
+
+        #            source /opt/conda/etc/profile.d/conda.sh
+        #            conda activate mlapp
       - run:
           name: Run tests
           command: |
-#            source /opt/conda/etc/profile.d/conda.sh
-#            conda activate mlapp
             source env/bin/activate
             python -m pytest tests/
       - store_artifacts:

@@ -30,4 +30,4 @@ def test_models_run():
         # Call featurization function
         model1.featurization([0])
         # Call run function
-        model1.run(tune=False)
+        # model1.run(tune=False)

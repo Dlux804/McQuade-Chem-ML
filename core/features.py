@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
 from time import time
-
+from core import misc
 
 def featurize(df, model_name, num_feat=None):
     """
@@ -66,10 +66,16 @@ def featurize(df, model_name, num_feat=None):
     features = pd.DataFrame(data, columns=columns)
     df = pd.concat([df, features], axis=1)
     df = df.dropna()
-    df = df.reset_index(drop=True)
+    df = df.drop(list(df.filter(regex='_calculated')), axis=1)
 
-    df = df[df.columns.drop(list(df.filter(regex='_calculated')))]
     return df, num_feat, feat_time
+
+
+with misc.cd("../dataFiles"):
+    df = pd.read_csv("water-energy.csv")
+    featurize(df, 'rf', [0])
+
+
 
 
 def targets_features(df, exp, train=0.8, random = None):

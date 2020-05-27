@@ -8,7 +8,8 @@ jobs:
     docker:
       # specify the version you desire here
       # using anaconda3 from continuumio
-      - image: continuumio/anaconda3
+      - image: circleci/python:3.7.7 # continuumio/anaconda3
+
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -23,22 +24,31 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v2-condareqs-{{ checksum "env_init/mlapp.yml" }}
+#            - v2-condareqs-{{ checksum "env_init/mlapp.yml" }}
+            - pipreq-{{ checksum "env_init/Requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
-            - v2-condareqs-
+            - pipreq-
 
         # Install the necessary Python packages
         # activate conda env for future use
       - run:
           name: Install dependencies
           command: |
-            conda env create -f env_init/mlapp.yml
-            source /opt/conda/etc/profile.d/conda.sh
-            conda activate mlapp
+#            conda env create -f env_init/mlapp.yml
+#            source /opt/conda/etc/profile.d/conda.sh
+#            conda activate mlapp
+            pip install virtualenv
+            python3 -m venv env
+            source env/bin/activate
+            pip install -r env_init/Requirements.txt
       - save_cache:
           paths:
-            - /root/repo/dependencies/envs/mlapp
-          key: v2-condareqs-{{ checksum "env_init/mlapp.yml" }}
+#            - /root/repo/dependencies/envs/mlapp
+            - "venv"
+          key:
+            - pipreq-{{ checksum "env_init/Requirements.txt" }}
+
+#          v2-condareqs-{{ checksum "env_init/mlapp.yml" }}
       # run tests!
       # this example uses Django's built-in test-runner
       # other common Python testing frameworks include pytest and nose
@@ -47,10 +57,10 @@ jobs:
       - run:
           name: Run tests
           command: |
-            source /opt/conda/etc/profile.d/conda.sh
-            conda activate mlapp
+#            source /opt/conda/etc/profile.d/conda.sh
+#            conda activate mlapp
+            source env/bin/activate
             python -m pytest tests/
-            pytest -v
       - store_artifacts:
           path: test-reports
           destination: test-reports

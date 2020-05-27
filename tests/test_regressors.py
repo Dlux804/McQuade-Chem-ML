@@ -55,16 +55,16 @@ def setup():
 
 
 
-def test_regressors_hypertune(setup):
-    """
-    Once we know RandomizedSearchCV is called successfully, want to make sure that the output is correct.
-    """
-    # Load the data
-    train_features, test_features, train_target, test_target = setup
-    # Call the function that we would like to test
-    tuned, tune_time = regressors.hyperTune(RandomForestRegressor(), train_features, train_target,
-                                            grid=grid.rf_paramgrid(), folds=2, iters=1, jobs=1)
-    # Assert if tuned is a dictionary
-    assert type(tuned) == dict
-    # Assert if tune_time is a float
-    assert type(tune_time) == float
+# def test_regressors_hypertune(setup):
+#     """
+#     Once we know RandomizedSearchCV is called successfully, want to make sure that the output is correct.
+#     """
+#     # Load the data
+#     train_features, test_features, train_target, test_target = setup
+#     # Call the function that we would like to test
+#     tuned, tune_time = regressors.hyperTune(RandomForestRegressor(), train_features, train_target,
+#                                             grid=grid.rf_paramgrid(), folds=2, iters=1, jobs=1)
+#     # Assert if tuned is a dictionary
+#     assert type(tuned) == dict
+#     # Assert if tune_time is a float
+#     assert type(tune_time) == float

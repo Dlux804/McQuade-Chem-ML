@@ -67,6 +67,7 @@ def featurize(df, model_name, num_feat=None):
     df = pd.concat([df, features], axis=1)
     df = df.dropna()
 
+    df = df[df.columns.drop(list(df.filter(regex='_calculated')))]
     return df, num_feat, feat_time
 
 
@@ -115,3 +116,6 @@ def targets_features(df, exp, train=0.8, random = None):
     #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))
 
     return train_features, test_features, train_target, test_target, feature_list
+
+
+

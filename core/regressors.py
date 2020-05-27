@@ -1,8 +1,7 @@
-'''
+"""
 List of the different regressors associated with each learning algorithm.
 Employ the function dictionary to call regressor functions by model keyword.
-'''
-
+"""
 from sklearn.ensemble import AdaBoostRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.neighbors import KNeighborsRegressor
@@ -28,7 +27,6 @@ def regressor(model, tune=False):
         'knn': KNeighborsRegressor
     }
     return regressors[model]
-
 
 
 def hyperTune(model, algorithm, dataset, feat_meth, tune,
@@ -63,12 +61,11 @@ def hyperTune(model, algorithm, dataset, feat_meth, tune,
 
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % run_name), compress=9)
 
-
-    # deltay = callbacks.DeltaYStopper(0.1, 8)
+    deltay = callbacks.DeltaYStopper(0.01, 10)
 
     # Fit the Bayes search model
-    # bayes.fit(train_features, train_target, callback=[checkpoint_saver, on_step, deltay])
-    bayes.fit(train_features, train_target, callback=[checkpoint_saver])
+    bayes.fit(train_features, train_target, callback=[checkpoint_saver, deltay])
+    # bayes.fit(train_features, train_target, callback=[checkpoint_saver])
     tuned = bayes.best_params_
     tune_score = bayes.best_score_
 

@@ -56,13 +56,13 @@ class MlModel:
             param_grid = grid.make_grid(self.algorithm)
 
             # Run Hyper Tuning
-            params,  self.tuneTime, self.run_name = regressors.hyperTune(self.regressor(), self.algorithm, self.dataset,
+            self.params,  self.tuneTime, self.run_name = regressors.hyperTune(self.regressor(), self.algorithm, self.dataset,
                                                                          self.feat_meth, self.tuned, train_features,
                                                                          train_target, param_grid, folds, iters,
                                                                          jobs=folds)
 
             # redefine regressor model with best parameters.
-            self.regressor = self.regressor(**params)  # **dict will unpack a dictionary for use as keywrdargs
+            self.regressor = self.regressor(**self.params)  # **dict will unpack a dictionary for use as keywrdargs
 
         else:  # Don't tune.
             self.regressor = self.regressor()  # make it callable to match Tune = True case
@@ -78,12 +78,9 @@ class MlModel:
         # multipredict
         # self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
         self.stats, self.pvaM, fits_time = analysis.replicate_multi(self.regressor, train_features, test_features, train_target, test_target)
-
         self.graphM = analysis.pvaM_graphs(self.pvaM)
 
-        # run the model 5 times and collect the metric stats as dictionary
-        # self.stats = analysis.replicate_model(self, 5)
-        self.regressor = params
+        self.regressor = self.params
 
     def store(self):
         """  Organize and store model inputs and outputs.  """
@@ -105,6 +102,7 @@ class MlModel:
         del att['stats']  # will unpack and add on
         del att['pvaM']  # do not want DF in dict
         del att['run_name']
+        del att['params']
         try:
             del att['varimp']  # don't need variable importance in our machine learning results record
             del att['impgraph']  # Don't need a graph object in our csv
@@ -121,7 +119,7 @@ class MlModel:
             f.close()
 
         # Path to output directory
-        output_directory = ''.join('%s\output' % os.getcwd())
+        output_directory = ''.join(['%s\output' % os.getcwd()])
         # Copy csv file to ouput directory
         shutil.copy(csvfile, output_directory)
 

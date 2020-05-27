@@ -37,7 +37,7 @@ jobs:
             conda activate mlapp
       - save_cache:
           paths:
-            - /root/repo/dependencies/envs/mlapp
+            - env_init/
           key: v2-condareqs-{{ checksum "env_init/mlapp.yml" }}
       # run tests!
       # this example uses Django's built-in test-runner

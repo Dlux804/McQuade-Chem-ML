@@ -43,8 +43,8 @@ jobs:
             pip install -r env_init/Requirements.txt
       - save_cache:
           paths:
-#            - /root/repo/dependencies/envs/mlapp
-            - "venv"
+            - /root/repo/dependencies/envs/mlapp
+            - venv
           key:
             - pipreq-{{ checksum "env_init/Requirements.txt" }}
 

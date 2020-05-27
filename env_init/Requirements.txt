@@ -1,4 +1,5 @@
 absl-py==0.9.0
+appdirs==1.4.4
 astor==0.8.0
 atomicwrites==1.4.0
 attrs==19.3.0
@@ -17,7 +18,9 @@ cycler==0.10.0
 decorator==4.4.2
 defusedxml==0.6.0
 descriptastorus==2.2.0.2
+distlib==0.3.0
 entrypoints==0.3
+filelock==3.0.12
 gast==0.2.2
 google-auth==1.14.1
 google-auth-oauthlib==0.4.1
@@ -108,6 +111,7 @@ testpath==0.4.4
 tornado==6.0.4
 traitlets==4.3.3
 urllib3==1.25.8
+virtualenv==20.0.21
 wcwidth==0.1.9
 webencodings==0.5.1
 Werkzeug==0.16.1

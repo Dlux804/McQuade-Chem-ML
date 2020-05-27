@@ -28,8 +28,8 @@ jobs:
             python3 -m venv env
             source env/bin/activate
             pip install -r env_init/Requirements.txt
-            pip install "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
-            pip install "git+https://github.com/darenr/scikit-optimize.git#egg=scikit-optimize"
+#            pip install "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
+#            pip install "git+https://github.com/darenr/scikit-optimize.git#egg=scikit-optimize"
       - save_cache:
           paths:
             - "venv"

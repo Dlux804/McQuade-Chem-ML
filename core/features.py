@@ -71,13 +71,6 @@ def featurize(df, model_name, num_feat=None):
     return df, num_feat, feat_time
 
 
-with misc.cd("../dataFiles"):
-    df = pd.read_csv("water-energy.csv")
-    featurize(df, 'rf', [0])
-
-
-
-
 def targets_features(df, exp, train=0.8, random = None):
     """Take in a data frame, the target column name (exp).
     Returns a numpy array with the target variable,

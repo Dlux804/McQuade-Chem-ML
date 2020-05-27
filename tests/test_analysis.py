@@ -11,7 +11,7 @@ import numpy as np
 # capture location of current file (/root/tests/)
 myPath = os.path.dirname(os.path.abspath(__file__))
 # add to system path the root dir with relative notation: /../ (go up one dir)
-sys.path.insert(0, myPath + '/../')
+# sys.path.insert(0, myPath + '/../')
 
 from main import ROOT_DIR
 

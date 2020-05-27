@@ -153,7 +153,7 @@ class MlModel:
 #     print('done.')
 #
 # # featurize data with rdkit2d
-# model1.featurization([4])
+# model1.featurization([0])
 # # print(model1.feat_meth)
 #
 #
@@ -161,7 +161,7 @@ class MlModel:
 # # # Run the model with hyperparameter optimization
 # model1.run(tune=False)
 # print("Input shape: ", model1.in_shape)
-
+#
 # print('Tune Time:', model1.tuneTime)
 
 #

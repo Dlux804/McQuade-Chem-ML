@@ -30,7 +30,7 @@ jobs:
             pip install -r env_init/Requirements.txt
       - save_cache:
           paths:
-            - venv
+            - "venv"
           key:
             - pipreq-{{ checksum "env_init/Requirements.txt" }}
 

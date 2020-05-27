@@ -31,12 +31,12 @@ jobs:
 
         # Install the necessary Python packages
         # activate conda env for future use
+        #            conda env create -f env_init/mlapp.yml
+        #            source /opt/conda/etc/profile.d/conda.sh
+        #            conda activate mlapp
       - run:
           name: Install dependencies
           command: |
-#            conda env create -f env_init/mlapp.yml
-#            source /opt/conda/etc/profile.d/conda.sh
-#            conda activate mlapp
             pip install virtualenv
             python3 -m venv env
             source env/bin/activate

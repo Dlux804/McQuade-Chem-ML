@@ -5,7 +5,7 @@ from time import time
 import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
 from core import features
-
+from rdkit.Chem import PandasTools
 
 def predict(regressor, train_features, test_features, train_target, test_target):
     """Fit model and predict target values.  Return data frame of actual and predicted
@@ -309,3 +309,85 @@ def pva_graphs(pva, model_name):
     # plt.savefig(model_name+'-' +'.png')
     # plt.show()
     return plt  # Can I store a graph as an attribute to a model?
+
+
+def plotter(X, Y, filename=None, xlabel='', ylabel=''):
+    """
+    General plotting function for creating an XY scatter plot.
+    Accepts x-axis data and y-axis data as (numpy or pd.Series or lists?)
+    Returns graph object.  If filename keyword is given, will save to file (PNG)
+    ____________________________
+    Keyword Arguments
+    filename:  None or string. Default = None.  Specify filename for saving to PNG file.  Do not include extension.
+    xlabel: string. Default = ''.  X-axis label.
+    ylabel: string. Default = ''.  Y-axis label.
+
+    """
+
+    plt.rcParams['figure.figsize'] = [12, 9]
+    plt.style.use('bmh')
+    fig, ax = plt.subplots()
+    plt.plot(X, Y, 'o')
+    # ax = plt.axes()
+    plt.xlabel(xlabel, fontsize=14)
+    plt.ylabel(ylabel, fontsize=14)
+    plt.title(filename)
+    # ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
+
+    if filename is not None:
+        plt.savefig(filename + '.png')
+
+    plt.show()
+
+
+def grid_image(df, filename, molobj=True, smi='smiles'):  # list of molecules to print and substructre to align
+    """
+    Creates and saves grid image of 2D drawings of molecules.
+    Accepts dataframe containing a column titled "Molecule" that contains RDKit molecule objects.
+    Accepts filename as string (without .png) for image file.
+    Returns nothing, saves file in current directory.
+    _____________________________
+    Keyword Arguments:
+    molobj=True, if RDKit MolObj column exists in df.  (Must be headed "Molecule")
+    smi='smiles', if molojb=False then use column titled smi to create MolObj column.
+
+     """
+
+    if not molobj:  # no molobj exists
+        PandasTools.AddMoleculeColumnToFrame(df, smi, 'Molecule', includeFingerprints=True)
+
+    # this code makes multiple images of n molecules.  May be prefered for large sets of molecules.
+
+    # mols = df['Molecule']
+    # # for every molecule
+    # for mol in mols:
+    #     # generate 2D structure
+    #     Chem.Compute2DCoords(mol)
+    #
+    # n = 250  # number of structures per image file
+    #
+    # total = len(mols)  # number of molecules being printed
+    #
+    # # break list into printable sections of size n
+    # mols = [mols[i: i + n] for i in range(0, total, n)]
+    # subcount = 1  # counter for how many sections needed
+    #
+    # for i in mols:  # for every sublist of n molecules do...
+    #     # make the images on grid
+    #     img = Draw.MolsToGridImage(i, molsPerRow=6, subImgSize=(1500, 900), legends=[str(x) for x in range(total)])
+    #
+    #     # Save a sub image
+    #     img.save('mole-grid-' + str(subcount) + '.png')
+    #     subcount = subcount + 1
+
+    # create images of molecules in dataframe
+    mol_image = PandasTools.FrameToGridImage(
+        df, column='Molecule',
+        molsPerRow=3, subImgSize=(800, 400),
+        legends=[str(i + 1) for i in range(len(df['Molecule']))]
+    )
+    mol_image.save(filename + '.png')  # shold use a better naming scheme to avoid overwrites.
+
+

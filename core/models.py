@@ -145,30 +145,30 @@ class MlModel:
 # This section is for troubleshooting and should be commented out when finished testing
 
 # change active directory
-# with misc.cd('../dataFiles/'):
-#     print('Now in:', os.getcwd())
-#     print('Initializing model...', end=' ', flush=True)
-#     # initiate model class with algorithm, dataset and target
-#     model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
-#     print('done.')
-#
-# # featurize data with rdkit2d
-# model1.featurization([0])
-# # print(model1.feat_meth)
-#
-#
-# #
-# # # Run the model with hyperparameter optimization
-# model1.run(tune=False)
-# print("Input shape: ", model1.in_shape)
-#
-# print('Tune Time:', model1.tuneTime)
+with misc.cd('../dataFiles/'):
+    print('Now in:', os.getcwd())
+    print('Initializing model...', end=' ', flush=True)
+    # initiate model class with algorithm, dataset and target
+    model1 = MlModel('nn', 'ESOL.csv', 'water-sol')
+    print('done.')
+
+# featurize data with rdkit2d
+model1.featurization([0])
+# print(model1.feat_meth)
+
 
 #
-#
-#
-# # Save results
-# model1.store()
+# # Run the model with hyperparameter optimization
+model1.run(tune=False)
+print("Input shape: ", model1.in_shape)
+
+print('Tune Time:', model1.tuneTime)
+
+
+
+
+# Save results
+model1.store()
 #
 #
 # # Must show() graph AFTER it has been saved.

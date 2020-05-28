@@ -19,31 +19,19 @@ def featurize(df, model_name, num_feat=None):
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']
 
-    # Remove un-normalized feature option depending on model type
-    if model_name == 'mlp' or model_name == 'knn':
-        feat_sets.remove('rdkit2d')
-        print(feat_sets)
-        if num_feat == None:  # ask for features
-            print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
-            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
-            num_feat = [int(x) for x in input(
-                'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
+    # Models require scaling.
+    if model_name in ['mlp', 'nn', 'knn']:
+        scale = True
 
-        selected_feat = [feat_sets[i] for i in num_feat]
-        print("You have selected the following featurizations: ", end="   ", flush=True)
-        print(*selected_feat, sep=', ')
 
-    # un-normalized features are OK
-    else:
-        feat_sets.remove('rdkit2dnormalized')
-        if num_feat == None:  # ask for features
-            print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
-            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
-            num_feat = [int(x) for x in input(
-                'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
-        selected_feat = [feat_sets[i] for i in num_feat]
-        print("You have selected the following featurizations: ", end="   ", flush=True)
-        print(*selected_feat, sep=', ')
+    if num_feat == None:  # ask for features
+        print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
+        [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
+        num_feat = [int(x) for x in input(
+            'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
+    selected_feat = [feat_sets[i] for i in num_feat]
+    print("You have selected the following featurizations: ", end="   ", flush=True)
+    print(*selected_feat, sep=', ')
 
     # Start timer
     start_feat = time()

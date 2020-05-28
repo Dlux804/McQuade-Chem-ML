@@ -15,7 +15,7 @@ from tensorflow import keras
 # import tensorflow as tf  # is this needed or just Keras?
 
 
-def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=[200]):
+def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=[200], drop=0.0):
     """
     Create neural network architecture and compile.  Accepts number of hiiden layers, number of neurons,
     learning rate, and input shape. Returns compiled model.
@@ -26,12 +26,17 @@ def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=[200]):
         learning_rate (float):  Model learning rate that is passed to model optimizer.  Smaller values are slower, High values
                         are prone to unstable training. Default = 0.001
         in_shape (integer): Input dimension should match number of features.  Default = 200 but should be overridden.
+        drop (float): Dropout probability.  1 means drop everything, 0 means drop nothing. Default = 0.
+                        Recommended = 0.2-0.6
     """
 
     model = keras.models.Sequential()
-    model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
+    model.add(keras.layers.Dropout(drop, input_shape=in_shape))  # use dropout layer as input.
+    # model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
     for layer in range(n_hidden):  # create hidden layers
         model.add(keras.layers.Dense(n_neuron, activation="relu"))
+        model.add(keras.layers.Dropout(drop))  # add dropout to model after the a dense layer
+
     model.add(keras.layers.Dense(1))  # output layer
     # TODO Add optimizer selection as keyword arg
     # optimizer = keras.optimizers.SGD(lr=learning_rate)  # this is a point to vary.  Dict could help call other ones.
@@ -50,8 +55,7 @@ def wrapKeras(build_func, in_shape):
     return keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_nn, in_shape=200)  # pass non-hyper params here
 
 
-
-def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50): # WHAT is expt? WHY use it?
+def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50):
     """
     Tunes hyper parameters of specified model.
 

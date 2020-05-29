@@ -7,6 +7,7 @@ import csv
 import os
 import subprocess
 import shutil
+from numpy.random import randint
 
 
 class MlModel:
@@ -18,7 +19,8 @@ class MlModel:
         self.algorithm = algorithm
         self.dataset = dataset
         self.target = target
-        self.data, self.smiles = ingest.load_smiles(self,dataset, drop)
+        self.data, self.smiles = ingest.load_smiles(self, dataset, drop)
+        self.random_seed = randint(low=1, high=50)  # This is more of an __init__ method
 
     def featurization(self, feats=None):
         """ Featurize molecules in dataset and stores results as attribute in class instance.
@@ -27,15 +29,15 @@ class MlModel:
         """
         self.data, self.feat_meth, self.feat_time = features.featurize(self.data, self.algorithm, feats)
 
-
     def run(self, tune=False):
         """ Runs machine learning model. Stores results as class attributes."""
 
         # store tune as attribute for cataloguing
         self.tuned = tune
 
+
         # Split data up. Set random seed here for graph comparison purposes.
-        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data, self.target, random=42)
+        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data, self.target, self.random_seed)
 
         # set the model specific regressor function from sklearn
         self.regressor = regressors.regressor(self.algorithm)
@@ -80,13 +82,12 @@ class MlModel:
         self.stats, self.pvaM, fits_time = analysis.replicate_multi(self.regressor, train_features, test_features, train_target, test_target)
         self.graphM = analysis.pvaM_graphs(self.pvaM)
 
-        self.regressor = self.params
+        self.regressor = self.params  # We want regressor to be stored as a dictionary with parameters, not a string
 
     def store(self):
         """  Organize and store model inputs and outputs.  """
 
         # create model file name
-
         csvfile = ''.join("%s.csv" % self.run_name)
 
         try:
@@ -102,7 +103,7 @@ class MlModel:
         del att['stats']  # will unpack and add on
         del att['pvaM']  # do not want DF in dict
         del att['run_name']
-        del att['params']
+        del att['params']  # Remove duplicates
         try:
             del att['varimp']  # don't need variable importance in our machine learning results record
             del att['impgraph']  # Don't need a graph object in our csv
@@ -139,12 +140,12 @@ class MlModel:
 
         # make folders for each run
         # put output files into new folder
-        filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # move for Windows system
-        # filesp = ''.join(['mv ./', self.run_name, '* ', self.run_name, '/'])  # mv for Linux system
+        # filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # move for Windows system
+        filesp = ''.join(['mv ./', self.run_name, '* ', self.run_name, '/'])  # mv for Linux system
         subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
-        movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # move for Windows system
-        # movepkl = ''.join(['mv ./', '.pkl', '* ', self.run_name, '/']) # mv for Linux system
+        # movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # move for Windows system
+        movepkl = ''.join(['mv ./', '.pkl', '* ', self.run_name, '/']) # mv for Linux system
         subprocess.Popen(movepkl, shell=True, stdout=subprocess.PIPE)  # run bash command
 
         # Move folder to output/

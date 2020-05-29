@@ -12,7 +12,7 @@ from skopt import BayesSearchCV
 from time import time
 from skopt import callbacks
 from core import name
-
+from numpy.random import randint
 
 def regressor(model, tune=False):
     """Returns model specific regressor function."""
@@ -61,11 +61,13 @@ def hyperTune(model, algorithm, dataset, feat_meth, tune,
 
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % run_name), compress=9)
 
-    deltay = callbacks.DeltaYStopper(0.01, 10)
+    delta = 0.1
+    n_best = 5
+    print("delta and n_best is {0} and {1}".format(delta, n_best))
+    deltay = callbacks.DeltaYStopper(delta, n_best)
 
     # Fit the Bayes search model
     bayes.fit(train_features, train_target, callback=[checkpoint_saver, deltay])
-    # bayes.fit(train_features, train_target, callback=[checkpoint_saver])
     tuned = bayes.best_params_
     tune_score = bayes.best_score_
 

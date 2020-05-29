@@ -12,7 +12,7 @@ from skopt import BayesSearchCV
 from time import time
 from skopt import callbacks
 from core import name
-from numpy.random import randint
+
 
 def regressor(model, tune=False):
     """Returns model specific regressor function."""

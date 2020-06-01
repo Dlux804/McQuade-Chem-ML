@@ -11,7 +11,6 @@ from sklearn.svm import SVR
 from skopt import BayesSearchCV
 from time import time
 from skopt import callbacks
-from core import name
 
 
 def regressor(model, tune=False):
@@ -29,8 +28,7 @@ def regressor(model, tune=False):
     return regressors[model]
 
 
-def hyperTune(model, algorithm, dataset, feat_meth, tune,
-              train_features, train_target, grid, folds, iters, jobs=-1):
+def hyperTune(model, train_features, train_target, grid, folds, iters, run_name, jobs=-1):
     """
     Tunes hyper parameters of specified model.
 
@@ -43,7 +41,7 @@ def hyperTune(model, algorithm, dataset, feat_meth, tune,
    NOTE: jobs has been depreciated since max processes in parallel for Bayes is the number of CV folds
 
     """
-    run_name = name.name(algorithm, dataset, feat_meth, tune)
+
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
 
@@ -60,9 +58,15 @@ def hyperTune(model, algorithm, dataset, feat_meth, tune,
     )
 
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % run_name), compress=9)
-
     delta = 0.1
     n_best = 5
+
+    """ Every optimization model in skopt saved all their scores in a built-in list. When called, DeltaYStopper will 
+    access this list and sort this list from lowest number to highest number. It then take the difference between the 
+    number in the n_best position and the first number and compare it to delta. If the difference is smaller or equal 
+    to delta, the optimization will be stopped.
+       """
+
     print("delta and n_best is {0} and {1}".format(delta, n_best))
     deltay = callbacks.DeltaYStopper(delta, n_best)
 
@@ -77,4 +81,4 @@ def hyperTune(model, algorithm, dataset, feat_meth, tune,
     print('Best Parameter Found After ', (stop_tune - start_tune), "sec\n")
     print('Best params achieve a test score of', tune_score, ':')
     print(tuned)
-    return tuned, tune_time, run_name
+    return tuned, tune_time

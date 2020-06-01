@@ -8,6 +8,7 @@ import os
 import subprocess
 import shutil
 from numpy.random import randint
+from core import name
 
 
 class MlModel:
@@ -35,9 +36,10 @@ class MlModel:
         # store tune as attribute for cataloguing
         self.tuned = tune
 
+        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)  # Create file name
 
         # Split data up. Set random seed here for graph comparison purposes.
-        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data, self.target, self.random_seed)
+        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data, self.target, random=self.random_seed)
 
         # set the model specific regressor function from sklearn
         self.regressor = regressors.regressor(self.algorithm)
@@ -58,10 +60,9 @@ class MlModel:
             param_grid = grid.make_grid(self.algorithm)
 
             # Run Hyper Tuning
-            self.params,  self.tuneTime, self.run_name = regressors.hyperTune(self.regressor(), self.algorithm, self.dataset,
-                                                                         self.feat_meth, self.tuned, train_features,
+            self.params,  self.tuneTime = regressors.hyperTune(self.regressor(), train_features,
                                                                          train_target, param_grid, folds, iters,
-                                                                         jobs=folds)
+                                                                         self.run_name, jobs=folds)
 
             # redefine regressor model with best parameters.
             self.regressor = self.regressor(**self.params)  # **dict will unpack a dictionary for use as keywrdargs

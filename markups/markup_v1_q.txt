@@ -1,0 +1,107 @@
+<ul class="graph-diagram-markup" data-internal-scale="3.76" data-external-scale="1">
+  <li class="node" data-node-id="0" data-x="-415.9809629700042" data-y="-34.72064208984375">
+    <span class="caption">ML_Model</span><dl class="properties"><dt>id</dt><dd>019312</dd><dt>date</dt><dd>2020/05/20-13:43:34,</dd><dt>feat_time</dt><dd>20s</dd><dt>train_time</dt><dd>400</dd><dt>test_time</dt><dd>30s</dd></dl></li>
+  <li class="node" data-node-id="1" data-x="-809.1629640407821" data-y="1.1848106140160155">
+    <span class="caption">DataSet</span><dl class="properties"><dt>data</dt><dd>ESOL.csv,</dd><dt>measurement</dt><dd>water-solubility,</dd><dt>source</dt><dd>moleculenet.ai</dd></dl></li>
+  <li class="node" data-node-id="2" data-x="-984.1156395445468" data-y="188.4729068837259">
+    <span class="caption">Nc1ccc(O)cc1</span><dl class="properties"><dt>SMILES</dt><dd>Nc1ccc(O)cc1,</dd><dt>water-solubility</dt><dd>-0.8</dd></dl></li>
+  <li class="node" data-node-id="3" data-x="-1292.5327148437502" data-y="-64.63110680202212">
+    <span class="caption">CC(C)(C)c1ccc(O)cc1</span>
+  </li>
+  <li class="node" data-node-id="4" data-x="-1185.2143705310862" data-y="275.02248592093633">
+    <span class="caption">Fragment001</span><dl class="properties"><dt>frag_smiles</dt><dd>(O)</dd><dt>frag_name</dt><dd>[alcohol, hydroxy]</dd></dl></li>
+  <li class="node" data-node-id="5" data-x="-33.76259614596096" data-y="-34.72064208984375">
+    <span class="caption">Algorithm A</span><dl class="properties"><dt>source</dt><dd>Tensorflow</dd><dt>Tuned</dt><dd>true</dd><dt>version</dt><dd>1.0.12</dd></dl></li>
+  <li class="node" data-node-id="7" data-x="-770.4993897798325" data-y="-393.4327402612451">
+    <span class="caption">RDKIT_2d</span><dl class="properties"><dt>num_features</dt><dd>200</dd></dl></li>
+  <li class="node" data-node-id="8" data-x="-282.40658560711694" data-y="-276.7817219001956">
+    <span class="caption">ECFP</span><dl class="properties"><dt>num_feature</dt><dd>2048</dd></dl></li>
+  <li class="node" data-node-id="9" data-x="-573.0617579949882" data-y="47.01625948440706">
+    <span class="caption">Random_Split</span><dl class="properties"><dt>test_percent</dt><dd>0.2</dd><dt>train_percent</dt><dd>0.8</dd><dt>random_seed</dt><dd>42</dd></dl></li>
+  <li class="node" data-node-id="10" data-x="-415.9809629700042" data-y="209.4274543395578">
+    <span class="caption">test_set</span><dl class="properties"><dt>size</dt><dd>226</dd><dt>RMSE</dt><dd>0.566</dd><dt>R2</dt><dd>0.92</dd></dl></li>
+  <li class="node" data-node-id="12" data-x="154.8498726110193" data-y="-64.63110680202212">
+    <span class="caption">BayesSearchCV</span><dl class="properties"><dt>num_cv</dt><dd>10</dd><dt>steps</dt><dd>100</dd><dt>threshold</dt><dd>0.01</dd><dt>delta</dt><dd>0.01</dd><dt>n_best</dt><dd>5</dd><dt>tuneTime</dt><dd>100sec</dd></dl></li>
+  <li class="node" data-node-id="13" data-x="-415.9809629700042" data-y="209.4274543395578">
+    <span class="caption">test_set</span><dl class="properties"><dt>size</dt><dd>226</dd><dt>RMSE</dt><dd>0.566</dd><dt>R2</dt><dd>0.92</dd></dl></li>
+  <li class="node" data-node-id="15" data-x="-748.7930156317273" data-y="-222.03229609856498">
+    <span class="caption">training_set</span>
+  </li>
+  <li class="node" data-node-id="16" data-x="-748.7930156317273" data-y="-222.03229609856498">
+    <span class="caption">training_set</span>
+  </li>
+  <li class="node" data-node-id="17" data-x="-748.7930156317273" data-y="-222.03229609856498">
+    <span class="caption">training_set</span><dl class="properties"><dt>size</dt><dd>902</dd></dl></li>
+  <li class="node" data-node-id="18" data-x="-1292.5327148437502" data-y="-64.63110680202212">
+    <span class="caption">CC(C)(C)c1ccc(O)cc1</span><dl class="properties"><dt>SMILES</dt><dd>CC(C)(C)c1ccc(O)cc1</dd><dt>logP</dt><dd>-2.41</dd></dl></li>
+  <li class="node" data-node-id="19" data-x="-573.0617579949882" data-y="47.01625948440706">
+    <span class="caption">Random_Split</span>
+  </li>
+  <li class="node" data-node-id="20" data-x="-1185.2143705310862" data-y="275.02248592093633">
+    <span class="caption">Fragment001</span>
+  </li>
+  <li class="node" data-node-id="21" data-x="-1292.5327148437502" data-y="-298.3145056159984">
+    <span class="caption">Fragment002</span><dl class="properties"><dt>frag_smiles</dt><dd>c1ccc(O)cc1</dd><dt>frag_name</dt><dd>[Phenol]</dd></dl></li>
+  <li class="node" data-node-id="22" data-x="-1292.5327148437502" data-y="-298.3145056159984">
+    <span class="caption">Fragment002</span>
+  </li>
+  <li class="node" data-node-id="23" data-x="-881.467809211319" data-y="343.78637373799535">
+    <span class="caption">Fragment003</span><dl class="properties"><dt>frag_ment</dt><dd>N</dd><dt>frag_name</dt><dd>[amine]</dd></dl></li>
+  <li class="node" data-node-id="25" data-x="-1292.5327148437502" data-y="-64.63110680202212">
+    <span class="caption">CC(C)(C)c1ccc(O)cc1</span>
+  </li>
+  <li class="node" data-node-id="26" data-x="-984.1156395445468" data-y="188.4729068837259">
+    <span class="caption">Nc1ccc(O)cc1</span>
+  </li>
+  <li class="relationship" data-from="0" data-to="1">
+    <span class="type">USES</span>
+  </li>
+  <li class="relationship" data-from="1" data-to="2">
+    <span class="type">CONTAINS_MOLECULE</span><dl class="properties"><dt>measured_value</dt><dd>-0.8</dd></dl></li>
+  <li class="relationship" data-from="1" data-to="3">
+    <span class="type">CONTAINS_MOLECULE</span><dl class="properties"><dt>measured_value</dt><dd>-2.41</dd></dl></li>
+  <li class="relationship" data-from="2" data-to="4">
+    <span class="type">HAS_FRAGMENT</span><dl class="properties"><dt>count</dt><dd>1</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="5">
+    <span class="type">USES_ALGORITHM</span><dl class="properties"><dt>param1</dt><dd>0.1</dd><dt>param2</dt><dd>dang</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="7">
+    <span class="type">USES_FEATURIZATION</span><dl class="properties"><dt>Feature_list</dt><dd>...</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="8">
+    <span class="type">USES_FEATURIZATION</span><dl class="properties"><dt>Feature_list</dt><dd>...</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="9">
+    <span class="type">USES_SPLIT</span>
+  </li>
+  <li class="relationship" data-from="9" data-to="10">
+    <span class="type">SPLITS_INTO</span>
+  </li>
+  <li class="relationship" data-from="10" data-to="2">
+    <span class="type">CONTAINS_MOLECULE</span><dl class="properties"><dt>predicted_value</dt><dd>-0.65</dd><dt>uncertainty</dt><dd>0.03</dd></dl></li>
+  <li class="relationship" data-from="5" data-to="12">
+    <span class="type">USES_TUNING</span>
+  </li>
+  <li class="relationship" data-from="0" data-to="10">
+    <span class="type">PREDICTS</span>
+  </li>
+  <li class="relationship" data-from="1" data-to="13"></li>
+  <li class="relationship" data-from="9" data-to="15">
+    <span class="type">SPLITS_INTO</span>
+  </li>
+  <li class="relationship" data-from="1" data-to="16"></li>
+  <li class="relationship" data-from="0" data-to="17">
+    <span class="type">TRAINS</span>
+  </li>
+  <li class="relationship" data-from="17" data-to="18">
+    <span class="type">CONTAINS_MOLECULE</span>
+  </li>
+  <li class="relationship" data-from="1" data-to="19">
+    <span class="type">USES_SPLIT</span>
+  </li>
+  <li class="relationship" data-from="18" data-to="20"></li>
+  <li class="relationship" data-from="18" data-to="21"></li>
+  <li class="relationship" data-from="2" data-to="22"></li>
+  <li class="relationship" data-from="2" data-to="23"></li>
+  <li class="relationship" data-from="7" data-to="25">
+    <span class="type">CALCULATES_DESCRIPTORS</span><dl class="properties"><dt>TPSA</dt><dd>20.23</dd><dt>BalabanJ</dt><dd>2.99</dd><dt>etc</dt><dd>...</dd></dl></li>
+  <li class="relationship" data-from="7" data-to="26">
+    <span class="type">CALCULATES_DESCRIPTORS</span><dl class="properties"><dt>TPSA</dt><dd>49.33</dd><dt>BalanceJ</dt><dd>2.74</dd><dt>etc</dt><dd>...</dd></dl></li>
+</ul>

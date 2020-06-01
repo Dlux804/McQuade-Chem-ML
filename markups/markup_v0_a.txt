@@ -1,0 +1,72 @@
+<ul class="graph-diagram-markup" data-internal-scale="3.89" data-external-scale="1">
+  <li class="node" data-node-id="0" data-x="-415.9809629700042" data-y="-34.72064208984375">
+    <span class="caption">ML_Model</span><dl class="properties"><dt>id</dt><dd>019312</dd><dt>date</dt><dd>YYYY/MM/DD-HH:MM:SS,</dd><dt>feat_time</dt><dd>144s</dd><dt>train_time</dt><dd>3600s</dd><dt>test_time</dt><dd>300s</dd></dl></li>
+  <li class="node" data-node-id="1" data-x="-883.228759765625" data-y="-34.72064208984375">
+    <span class="caption">DataSet</span><dl class="properties"><dt>n</dt><dd>16k,</dd><dt>measurement</dt><dd>logP,</dd><dt>source</dt><dd>moleculenet.ai</dd></dl></li>
+  <li class="node" data-node-id="2" data-x="-883.228759765625" data-y="209.4274543395578">
+    <span class="caption">Molecule_A</span><dl class="properties"><dt>SMILES</dt><dd>ccccc(=O)NC(O)CC,</dd><dt>logP</dt><dd>(true, #sources)</dd></dl></li>
+  <li class="node" data-node-id="3" data-x="-1144.5485758251093" data-y="-34.72064208984375">
+    <span class="caption">Molecule_B</span>
+  </li>
+  <li class="node" data-node-id="4" data-x="-1144.5485758251093" data-y="209.4274543395578">
+    <span class="caption">Fragment001</span><dl class="properties"><dt>frag_smiles</dt><dd>(O)</dd><dt>frag_name</dt><dd>[alcohol, hydroxy]</dd></dl></li>
+  <li class="node" data-node-id="5" data-x="-33.76259614596096" data-y="-34.72064208984375">
+    <span class="caption">Algorithm A</span><dl class="properties"><dt>source</dt><dd>Tensorflow</dd><dt>Tuned</dt><dd>true</dd><dt>version</dt><dd>1.0.12</dd></dl></li>
+  <li class="node" data-node-id="7" data-x="-738.4091311723763" data-y="-230.71466768704917">
+    <span class="caption">RDKIT_2d</span><dl class="properties"><dt>num_features</dt><dd>200</dd></dl></li>
+  <li class="node" data-node-id="8" data-x="-96.7538022757991" data-y="-230.71466768704917">
+    <span class="caption">ECFP</span><dl class="properties"><dt>num_feature</dt><dd>2048</dd></dl></li>
+  <li class="node" data-node-id="9" data-x="-637.5700499896864" data-y="93.6565330223248">
+    <span class="caption">Random_Split</span><dl class="properties"><dt>test_percent</dt><dd>0.2</dd><dt>train_percent</dt><dd>0.8</dd><dt>random_seed</dt><dd>42</dd></dl></li>
+  <li class="node" data-node-id="10" data-x="-415.9809629700042" data-y="209.4274543395578">
+    <span class="caption">test_set</span><dl class="properties"><dt>n</dt><dd>16k * 0.2</dd><dt>RMSE</dt><dd>0.566</dd><dt>R2</dt><dd>0.92</dd></dl></li>
+  <li class="node" data-node-id="11" data-x="-973.3965121779157" data-y="-298.3145056159984">
+    <span class="caption">TPSA</span>
+  </li>
+  <li class="node" data-node-id="12" data-x="146.69622504619215" data-y="-139.82671149159992">
+    <span class="caption">Tuning Alg</span><dl class="properties"><dt>num_cv</dt><dd>10</dd><dt>steps</dt><dd>100</dd><dt>threshold</dt><dd>0.01</dd></dl></li>
+  <li class="node" data-node-id="14" data-x="-415.9809629700042" data-y="-335.95665947605625">
+    <span class="caption">Features List</span><dl class="properties"><dt>num</dt><dd>2248</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="1">
+    <span class="type">USES</span>
+  </li>
+  <li class="relationship" data-from="1" data-to="2">
+    <span class="type">CONTAINS_MOLECULE</span><dl class="properties"><dt>measure_value</dt><dd>1.99</dd></dl></li>
+  <li class="relationship" data-from="1" data-to="3">
+    <span class="type">CONTAINS_MOLECULE</span>
+  </li>
+  <li class="relationship" data-from="2" data-to="4">
+    <span class="type">HAS_FRAGMENT</span><dl class="properties"><dt>count</dt><dd>1</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="5">
+    <span class="type">USES_ALGORITHM</span><dl class="properties"><dt>param1</dt><dd>0.1</dd><dt>param2</dt><dd>dang</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="7">
+    <span class="type">USES_FEATURIZATION</span>
+  </li>
+  <li class="relationship" data-from="0" data-to="8">
+    <span class="type">USES_FEATURIZATION</span>
+  </li>
+  <li class="relationship" data-from="0" data-to="9">
+    <span class="type">USES_SPLIT</span>
+  </li>
+  <li class="relationship" data-from="9" data-to="10"></li>
+  <li class="relationship" data-from="10" data-to="2">
+    <span class="type">CONTAINS_MOLECULE</span><dl class="properties"><dt>predicted_value</dt><dd>1.69</dd><dt>uncertainty</dt><dd>0.03</dd></dl></li>
+  <li class="relationship" data-from="5" data-to="12">
+    <span class="type">USES_TUNING</span>
+  </li>
+  <li class="relationship" data-from="0" data-to="10">
+    <span class="type">PREDICTS</span>
+  </li>
+  <li class="relationship" data-from="8" data-to="14">
+    <span class="type">CONTIBUTES_TO</span>
+  </li>
+  <li class="relationship" data-from="7" data-to="14">
+    <span class="type">CONTRIBUTES_TO</span>
+  </li>
+  <li class="relationship" data-from="0" data-to="14">
+    <span class="type">HAS_FEATURES</span><dl class="properties"><dt>scaled</dt><dd>true</dd><dt>scaling method</dt><dd>StandardScalar</dd></dl></li>
+  <li class="relationship" data-from="7" data-to="11">
+    <span class="type">CALCULATES</span><dl class="properties"><dt>method</dt><dd>N,O,S,P</dd></dl></li>
+  <li class="relationship" data-from="3" data-to="11">
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>1.66</dd></dl></li>
+</ul>

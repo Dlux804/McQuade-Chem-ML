@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
 from time import time
+from sklearn.preprocessing import StandardScaler
 
 # TODO: Add featurization timer
 def featurize(df, model_name, num_feat=None):
@@ -18,10 +19,6 @@ def featurize(df, model_name, num_feat=None):
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']
-
-    # Models require scaling.
-    if model_name in ['mlp', 'nn', 'knn']:
-        scale = True
 
 
     if num_feat == None:  # ask for features
@@ -61,14 +58,18 @@ def featurize(df, model_name, num_feat=None):
     return df, num_feat, feat_time
 
 
-def targets_features(df, exp, train=0.8, random = None):
-    """Take in a data frame, the target column name (exp).
+def targets_features(df, exp, test=0.2, val=None, random = None):
+    """
+    Take in a data frame, the target column name (exp).
     Returns a numpy array with the target variable,
     a numpy array (matrix) of feature variables,
     and a list of strings of the feature headers.
 
     Keyword Arguments
-    random -- Integer. Set random seed using in data splitting.  Default = None"""
+    random -- Integer. Set random seed using in data splitting.  Default = None
+    test -- Float(0.0-1.0).  Percent of data to be used for testing
+    val -- Float.  Percent of data to be used for validation.  Taken out of training data after test.
+    """
 
 
     # make array of target values
@@ -83,12 +84,43 @@ def targets_features(df, exp, train=0.8, random = None):
 
     # convert features to numpy
     featuresarr = np.array(features)
+    n_total = featuresarr.shape[0]
 
-    train_percent = train
-    test_percent = 1 - train_percent
+
     train_features, test_features, train_target, test_target = train_test_split(featuresarr, target,
-                                                                                test_size=test_percent,
+                                                                                test_size=test,
                                                                                random_state=random)  # what data to split and how to do it.
+    # scale the data.  This should not hurt but can help many models
+    scaler = StandardScaler()
+    train_features = scaler.fit_transform(train_features)
+    test_features = scaler.transform(test_features)
+
+    if val is not None:  # if validation data is requested.
+        # calculate percent of training to convert to val
+        b = val / (1-test)
+        train_features, val_features, train_target, val_target = train_test_split(train_features,
+                                                                                  train_target, test_size=b,
+                                                                                  random_state=random)
+        # scale the validation features too
+        val_features = scaler.transform(val_features)
+
+        n_total = featuresarr.shape[0]
+
+        n_train = train_features.shape[0]
+        ptrain = n_train / n_total * 100
+
+        n_test = test_features.shape[0]
+        ptest = n_test / n_total * 100
+
+        n_val = val_features.shape[0]
+        pval = n_val / n_total * 100
+
+        print('The dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
+                n_total, ptrain, pval, ptest))
+
+        return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
+
+
 
     # Uncomment this section to have data shape distribution printed.
 

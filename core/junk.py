@@ -12,8 +12,9 @@ class MlModel:
     """
     Class to set up and run machine learning algorithm.
     """
-    from .features import featurize
-    from .misc import foo
+    # from .features import featurize
+    # from .misc import foo
+    # from .ingest import load_smiles
 
     def __init__(self, algorithm, dataset, target, drop=True):
         """Requires: learning algorithm, dataset and target property's column name."""
@@ -21,9 +22,9 @@ class MlModel:
         self.dataset = dataset
         self.target = target
         self.data, self.smiles = ingest.load_smiles(self,dataset, drop)
-        foo()
 
-
+    def foobar(self):
+        self.loo = misc.foo(self, 'doodoo voodoo')
 
     def featurization(self, feats=None):
         """ Featurize molecules in dataset and stores results as attribute in class instance.
@@ -162,8 +163,10 @@ with misc.cd('../dataFiles/'):
     print('Initializing model...', end=' ', flush=True)
     # initiate model class with algorithm, dataset and target
     model1 = MlModel('nn', 'ESOL.csv', 'water-sol')
+
     print('done.')
 
+model1.foobar()
 # # featurize data with rdkit2d
 # model1.featurization([0])
 # # print(model1.feat_meth)
@@ -179,7 +182,7 @@ with misc.cd('../dataFiles/'):
 
 
 
-# Save results
+# # Save results
 # model1.store()
 #
 #

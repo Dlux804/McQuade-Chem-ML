@@ -103,7 +103,7 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, 
     return tuned, tune_time
 
 
-def regressor(model):
+def regressor(self):
     """Returns model specific regressor function."""
 
     # Create Dictionary of regressors to be called with self.algorithm as key.
@@ -115,4 +115,9 @@ def regressor(model):
         'mlp': MLPRegressor,
         'knn': KNeighborsRegressor
     }
+    if model in regressors.keys():
+        return regressors[model]
+    else:  # neural network
+        pass
+
     return regressors[model]

@@ -1,7 +1,8 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade research group.
 '''
-from core import ingest, features, grid, regressors, analysis
+
+from core import ingest, features, grid, regressors, analysis, name
 # from main import ROOT_DIR
 import csv
 import os
@@ -41,6 +42,9 @@ class MlModel:
         # Split data up. Set random seed here for graph comparison purposes.
         train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data, self.target, random=self.random_seed)
 
+        # store the shape of the input data
+        self.in_shape = train_features.shape[1]
+        print("shape:", self.in_shape)
         # set the model specific regressor function from sklearn
         self.regressor = regressors.regressor(self.algorithm)
 
@@ -164,15 +168,17 @@ class MlModel:
 #     # initiate model class with algorithm, dataset and target
 #     model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
 #     print('done.')
-
+#
 # # featurize data with rdkit2d
 # model1.featurization([0])
-# print(model1.feat_meth)
+# # print(model1.feat_meth)
 #
 #
-# # Run the model with hyperparameter optimization
-# model1.run(tune=True)
-
+# #
+# # # Run the model with hyperparameter optimization
+# model1.run(tune=False)
+# print("Input shape: ", model1.in_shape)
+#
 # print('Tune Time:', model1.tuneTime)
 
 #

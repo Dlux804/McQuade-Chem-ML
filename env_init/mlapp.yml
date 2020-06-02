@@ -11,11 +11,12 @@ dependencies:
   - pandas
   - rdkit
   - scikit-learn
+  - tensorflow
   - matplotlib
   - pytest
+  - pandas-flavor
 # For Barzilay MPNN
   - tqdm
-  - tensorflow
   - tensorboardX
   - gunicorn
   - pytorch

@@ -19,7 +19,6 @@ def main():
     if C == 'classification':
         # list of available classification learning algorithms
         learner = ['svc', 'knc']
-        #learner = ['knc']
         # list of available featurization methods
 
         feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]]

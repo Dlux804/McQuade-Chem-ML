@@ -60,7 +60,6 @@ def featurize(self, feat_meth=None):
     self.feat_meth = feat_meth
     self.feat_time = feat_time
 
-    # return df, feat_meth, feat_time
 
 
 def targets_features(self, test=0.2, val=None, random = None):
@@ -108,7 +107,7 @@ def targets_features(self, test=0.2, val=None, random = None):
 
 
     train_features, test_features, train_target, test_target = train_test_split(featuresarr, target,
-                                                                                test_size=test,
+                                                                                test_size=test_percent,
                                                                                random_state=random)  # what data to split and how to do it.
     # scale the data.  This should not hurt but can help many models
     scaler = StandardScaler()

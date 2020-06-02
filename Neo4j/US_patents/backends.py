@@ -4,6 +4,10 @@ import pathlib
 import pandas as pd
 from rdkit.Chem import rdChemReactions, Draw, MolFromSmiles, MolFromSmarts, MolToSmiles
 
+from rdkit import RDLogger
+
+RDLogger.DisableLog('rdApp.*')
+
 
 def clean_up_checker_files(path_to_directory):
     main_directories = os.listdir(path_to_directory)
@@ -18,42 +22,6 @@ def clean_up_checker_files(path_to_directory):
                     os.remove(file)
 
 
-def compress(uncompressed_smiles):
-    try:
-        m = hashlib.sha256()
-        m.update(uncompressed_smiles)
-        compressed_smiles = m.hexdigest()
-    except TypeError:
-        m = hashlib.sha256()
-        m.update(bytes(uncompressed_smiles, 'UTF-8'))
-        compressed_smiles = m.hexdigest()
-    return compressed_smiles
-
-
-def save_reaction_image(smiles, directory_location, svg=False):
-    if not os.path.exists(directory_location):
-        raise Exception('Directory not found')
-
-    compressed_smiles = compress(smiles)
-    rxn = rdChemReactions.ReactionFromSmarts(smiles)
-
-    if svg:
-        file_location = f'{directory_location}/{compressed_smiles}.svg'
-        rimage = Draw.ReactionToImage(rxn, useSVG=True)
-        text_file = open(file_location, "w+")
-        text_file.write(rimage)
-        text_file.close()
-        return file_location
-
-    file_location = f'{directory_location}/{compressed_smiles}.png'
-    if os.path.exists(file_location):
-        return file_location
-
-    rimage = Draw.ReactionToImage(rxn)
-    rimage.save(file_location)
-    return file_location
-
-
 def get_file_location():
     return str(pathlib.Path(__file__).parent.absolute())
 
@@ -61,6 +29,21 @@ def get_file_location():
 def __fgm__(smarts, mol):
     sub_mol = MolFromSmarts(smarts)
     return len(mol.GetSubstructMatches(sub_mol))
+
+
+def __cul__(lis):
+    temp = {}
+    for pair in lis:
+        number_of_matches = pair.split('|')[0]
+        group = pair.split('|')[1]
+        if group not in temp.keys():
+            temp[group] = number_of_matches
+        else:
+            temp[group] = int(temp[group]) + int(number_of_matches)
+    lis = []
+    for group, number_of_matches in temp.items():
+        lis.append(str(number_of_matches) + "|" + group)
+    return lis
 
 
 def get_functional_groups(smiles, fragments_df=None, as_dict=False):
@@ -82,42 +65,73 @@ def get_functional_groups(smiles, fragments_df=None, as_dict=False):
     return __cul__(groups)
 
 
-def __cul__(lis):
-    temp = {}
-    for pair in lis:
-        number_of_matches = pair.split('|')[0]
-        group = pair.split('|')[1]
-        if group not in temp.keys():
-            temp[group] = number_of_matches
+def __dts__(a, b):
+    lis_a = []
+    for group, num in a.items():
+        lis_a.append(f'{num}|{group}')
+    a = ','.join(lis_a)
+
+    lis_b = []
+    for group, num in b.items():
+        lis_b.append(f'{num}|{group}')
+    b = ','.join(lis_b)
+    return f'{a}>{b}'
+
+
+def __dod__(a, b):
+
+    a_dict = {}
+    for group, num in a.items():
+        if group in b.keys():
+            if num > b[group]:
+                a_dict[group] = num - b[group]
         else:
-            temp[group] = int(temp[group]) + int(number_of_matches)
-    lis = []
-    for group, number_of_matches in temp.items():
-        lis.append(str(number_of_matches) + "|" + group)
-    return lis
+            a_dict[group] = num
+
+    b_dict = {}
+    for group, num in b.items():
+        if group in a.keys():
+            if num > a[group]:
+                b_dict[group] = num - a[group]
+        else:
+            b_dict[group] = num
+
+    return a_dict, b_dict
 
 
-def map_rxn_functional_groups(reaction_smiles, difference_only=True):
+def get_compounds_functional_groups(compounds, fragments_df=None):
+    all_functional_groups = {}
+    for compound in compounds:
+        functional_groups = get_functional_groups(MolToSmiles(compound), fragments_df=fragments_df, as_dict=True)
+        if functional_groups:
+            for group, num in functional_groups.items():
+                if group in all_functional_groups.keys():
+                    all_functional_groups[group] = all_functional_groups[group] + num
+                else:
+                    all_functional_groups[group] = num
+    return all_functional_groups
+
+
+def map_rxn_functional_groups(reaction_smiles, difference_only=True, fragments_df=None):
     rxn = rdChemReactions.ReactionFromSmarts(reaction_smiles)
-    all_reactant_functional_groups = []
-    for reactant in rxn.GetReactants():
-        reactant_functional_groups = get_functional_groups(MolToSmiles(reactant))
-        for group in reactant_functional_groups:
-            all_reactant_functional_groups.append(group)
-    all_reactant_functional_groups = __cul__(all_reactant_functional_groups)
 
-    all_product_functional_groups = []
-    for product in rxn.GetProducts():
-        product_functional_groups = get_functional_groups(MolToSmiles(product))
-        for group in product_functional_groups:
-            all_product_functional_groups.append(group)
-    all_product_functional_groups = __cul__(all_product_functional_groups)
+    all_reactant_functional_groups = get_compounds_functional_groups(rxn.GetReactants(), fragments_df=fragments_df)
+    all_product_functional_groups = get_compounds_functional_groups(rxn.GetProducts(), fragments_df=fragments_df)
 
     if not difference_only:
-        return ','.join(all_reactant_functional_groups) + '>' + ','.join(all_product_functional_groups)
+        return __dts__(all_reactant_functional_groups, all_product_functional_groups)
 
-    a = all_reactant_functional_groups
-    b = all_product_functional_groups
-    all_reactant_functional_groups = [x for x in a if x not in b]
-    all_product_functional_groups = [x for x in b if x not in a]
-    return ','.join(all_reactant_functional_groups) + '>' + ','.join(all_product_functional_groups)
+    all_reactant_functional_groups, all_product_functional_groups = __dod__(all_reactant_functional_groups,
+                                                                            all_product_functional_groups)
+
+    return __dts__(all_reactant_functional_groups, all_product_functional_groups)
+
+
+def classify_reaction(reaction_smiles, fragments_df=None):
+    mapped_frags = map_rxn_functional_groups(reaction_smiles, fragments_df=fragments_df)
+    mapping_file = str(pathlib.Path(__file__).parent.absolute()) + '/datafiles/mapped_reactions.csv'
+    mapping_df = pd.read_csv(mapping_file)
+
+    classifiation = mapping_df.loc[mapping_df['mapped_groups'] == mapped_frags].to_dict('record')
+    if classifiation:
+        return classifiation[0]['reaction_class']

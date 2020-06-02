@@ -1,21 +1,17 @@
 Fragment,SMARTS
-Ester,[CX3](=O)[OX2H0]
-Carboxylic Acid,[CX3](=O)[OX2H1]
-Aldehyde,[CX3H1](=O)[C]
-Ketone,[C][CX3](=O)[C]
+Ester,[#6](=O)[OX2H0]
+Carboxylic Acid,[#6](=O)[OX2H1]
+Aldehyde,[CX3H1](=O)[#6]
+Ketone,[#6][CX3](=O)[#6]
 Acyl Halide,"[cX3,CX3](=[OX1])[F,Cl,Br,I]"
-Alkyl Halide,"[C,c;!$(C=O)][F,Cl,Br,I]"
-Ether,[C;!$(C=O)][OD2][CX4;!$(C=O)]
+Alkyl Halide,"[#6;!$(C=O)][F,Cl,Br,I]"
+Ether,[#6;!$(C=O)][OD2][#6;!$(C=O)]
 Amide,[NX3][CX3](=[OX1])[#6]
 Amine,"[NX3;H2,H1;!$(NC=O)]"
 Nitrile,[NX1]#[CX2]
 Nitrate,"[$([NX3](=[OX1])(=[OX1])O),$([NX3+]([OX1-])(=[OX1])O)]"
-Phenol,[OX2H][cX3]:[c]
+Phenol,[OX2H][cX3]
 Peroxide,"[OX2,OX1-][OX2,OX1-]"
 Thiol,[SX2H]
 Sulfide,[SX2H0]
-Alcohol,[C;!$(C=O)][OX2H]
-Arene,c
-Alky Carbon,C-C
-Alkene Carbon,C=C
-Alkyne Carbon,C#C
+Alcohol,[#6;!$(C=O)][OX2H]

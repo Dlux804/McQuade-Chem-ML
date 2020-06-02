@@ -1,0 +1,12 @@
+Fragment,SMARTS
+Alcohol,"[#6;!$(C=O)][OX2H]"
+Ketone,"[#6][CX3](=O)[#6]"
+Aldehyde,[CX3H1](=O)[#6]
+Alkyl Halide,"[#6;!$(C=O)][F,Cl,Br,I]"
+Primary Amine,"[NX3;H2;!$(NC=O)]"
+Secondary Amine,"[NX3;H1;!$(NC=O)]"
+Tertiary Amine,"[NX3;H0;!$(NC=O)]"
+Acetylene,"[CH1]#[*]"
+Alkyne Carbon,"[CH0]#[*]"
+Sulfonyl Halide,"[$([#16X4](=[OX1])(=[OX1])([#6])[F,Cl,Br,I]),$([#16X4+2]([OX1-])([OX1-])([#6])[F,Cl,Br,I])]"
+Sulfonic Ester,"[$([#16X4](=[OX1])(=[OX1])([#6])[OX2H0]),$([#16X4+2]([OX1-])([OX1-])([#6])[OX2H0])]"

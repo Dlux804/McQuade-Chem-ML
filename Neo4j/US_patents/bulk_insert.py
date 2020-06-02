@@ -10,7 +10,8 @@ from rdkit.Chem import MolToSmiles, MolFromSmiles, rdChemReactions
 from rdkit.Chem.Descriptors import MolWt
 import concurrent.futures as cf
 from Neo4j.US_patents.US_patents_xml_to_csv import US_grants_directory_to_csvs
-from Neo4j.US_patents.backends import clean_up_checker_files, save_reaction_image, get_functional_groups, get_file_location
+from Neo4j.US_patents.backends import clean_up_checker_files, save_reaction_image, get_functional_groups, \
+    get_file_location, map_rxn_functional_groups
 
 from rdkit import RDLogger
 
@@ -31,7 +32,8 @@ UNWIND $parameters as row
 MERGE (rxn:reaction {reaction_smiles: row.reaction_smiles})
 ON CREATE SET rxn.reactant_fragments = row.reactant_fragments, 
               rxn.product_fragments = row.product_fragments, rxn.sources = row.sources, rxn.insert_stages = row.stages,
-              rxn.reaction_image_location = row.reaction_image_location
+              rxn.reaction_image_location = row.reaction_image_location,
+              rxn.change_in_functional_groups = row.change_in_functional_groups
 
 FOREACH (reactant in row.reactants | 
          MERGE (com:compound {smiles: reactant.smiles}) 
@@ -200,7 +202,6 @@ def __main__(working_file):
     start_timer = timeit.default_timer()
 
     file_data = pd.read_csv(working_file)
-    graph = Graph()
 
     print(f"There are {len(file_data)} reactions in file")
 
@@ -209,6 +210,10 @@ def __main__(working_file):
     file_data['products'] = parallel_apply(file_data['products'], clean_up_compounds)
     file_data['solvents'] = parallel_apply(file_data['solvents'], clean_up_compounds)
     file_data['catalyst'] = parallel_apply(file_data['catalyst'], clean_up_compounds)
+
+    if insert_change_in_functional_groups:
+        file_data['change_in_functional_groups'] = parallel_apply(file_data['reaction_smiles'],
+                                                                  map_rxn_functional_groups)
 
     if save_reaction_images:
         file_data['reaction_image_location'] = parallel_apply(file_data['reaction_smiles'], save_reaction_image,
@@ -240,12 +245,14 @@ if __name__ == "__main__":
     US_patents_directory = '/home/user/Desktop/5104873'
     fragments_df = pd.read_csv(get_file_location() + '/datafiles/Function-Groups-SMARTS.csv')
     covert_xml_to_csv = False
-    clean_checker_files = False
+    clean_checker_files = True
     insert_compounds_with_functional_groups = True
+    insert_change_in_functional_groups = False
     log_time_needed = True
-    loading_bars = False
+    loading_bars = True
     save_reaction_images = False
     reaction_images_directory = None
+    graph = Graph()
 
     if not os.path.exists('Time_df.csv') and log_time_needed:
         df = pd.DataFrame(columns=['Number of Reactions', 'Time Needed (s)'])

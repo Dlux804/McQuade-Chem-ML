@@ -1,0 +1,5 @@
+reaction_class,mapped_groups
+Oxidation (Alcohol to ketone),"1|Alcohol>1|Ketone"
+N-Alkylation,"1|Alkyl Halide,1|Primary Amine>1|Secondary Amine"
+Sonogashia coupling,"1|Acetylene,1|Alkyl Halide>1|Alkyne Carbon"
+Schotten-Baumann (Sulfonic Ester),"1|Sulfonyl Halide,1|Secondary Amine>1|Tertiary Amine"

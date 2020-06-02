@@ -83,8 +83,6 @@ class MlModel:
         self.stats, self.pvaM, fits_time = analysis.replicate_multi(self.regressor, train_features, test_features, train_target, test_target)
         self.graphM = analysis.pvaM_graphs(self.pvaM)
 
-        self.regressor = self.params  # We want regressor to be stored as a dictionary with parameters, not a string
-
     def store(self):
         """  Organize and store model inputs and outputs.  """
 
@@ -104,7 +102,6 @@ class MlModel:
         del att['stats']  # will unpack and add on
         del att['pvaM']  # do not want DF in dict
         del att['run_name']
-        del att['params']  # Remove duplicates
         try:
             del att['varimp']  # don't need variable importance in our machine learning results record
             del att['impgraph']  # Don't need a graph object in our csv

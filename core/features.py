@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from time import time
 
-# TODO: Add featurization timer
+
 def featurize(df, model_name, num_feat=None):
     """
     Caclulate molecular features.
@@ -20,12 +20,12 @@ def featurize(df, model_name, num_feat=None):
                  'morganchiral3counts', 'atompaircounts']
 
     # Remove un-normalized feature option depending on model type
-    if model_name == 'mlp' or model_name == 'knn':
+    if model_name in ['knn', 'mlp', 'svr']:
         feat_sets.remove('rdkit2d')
         print(feat_sets)
         if num_feat == None:  # ask for features
             print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
-            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
+            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)]
             num_feat = [int(x) for x in input(
                 'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
 
@@ -38,7 +38,7 @@ def featurize(df, model_name, num_feat=None):
         feat_sets.remove('rdkit2dnormalized')
         if num_feat == None:  # ask for features
             print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
-            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
+            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)]
             num_feat = [int(x) for x in input(
                 'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
         selected_feat = [feat_sets[i] for i in num_feat]
@@ -66,6 +66,7 @@ def featurize(df, model_name, num_feat=None):
     features = pd.DataFrame(data, columns=columns)
     df = pd.concat([df, features], axis=1)
     df = df.dropna()
+    df = df.drop(list(df.filter(regex='_calculated')), axis=1)
 
     # remove the "RDKit2d_calculated = True" column(s)
     df = df.drop(list(df.filter(regex='_calculated')), axis=1)
@@ -118,3 +119,6 @@ def targets_features(df, exp, train=0.8, random = None):
     #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))
 
     return train_features, test_features, train_target, test_target, feature_list
+
+
+

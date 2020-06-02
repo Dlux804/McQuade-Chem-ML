@@ -1,8 +1,7 @@
-'''
+"""
 List of the different regressors associated with each learning algorithm.
 Employ the function dictionary to call regressor functions by model keyword.
-'''
-
+"""
 from sklearn.ensemble import AdaBoostRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.neighbors import KNeighborsRegressor
@@ -11,8 +10,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
 from skopt import BayesSearchCV
 from time import time
+from skopt import callbacks
 from tensorflow import keras
-# import tensorflow as tf  # is this needed or just Keras?
+
 
 
 def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=[200]):
@@ -51,7 +51,8 @@ def wrapKeras(build_func, in_shape):
 
 
 
-def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50): # WHAT is expt? WHY use it?
+
+def hyperTune(model, train_features, train_target, grid, folds, iters, run_name, jobs=-1, epochs = 50): # WHAT is expt? WHY use it?
     """
     Tunes hyper parameters of specified model.
 
@@ -64,6 +65,7 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, 
    NOTE: jobs has been depreciated since max processes in parallel for Bayes is the number of CV folds
 
     """
+
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
     if model == "nn":
@@ -85,8 +87,21 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, 
         cv=folds  # number of cross-val folds to use
     )
 
+    checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % run_name), compress=9)
+    delta = 0.1
+    n_best = 5
+
+    """ Every optimization model in skopt saved all their scores in a built-in list. When called, DeltaYStopper will 
+    access this list and sort this list from lowest number to highest number. It then take the difference between the 
+    number in the n_best position and the first number and compare it to delta. If the difference is smaller or equal 
+    to delta, the optimization will be stopped.
+       """
+
+    print("delta and n_best is {0} and {1}".format(delta, n_best))
+    deltay = callbacks.DeltaYStopper(delta, n_best)
+
     # Fit the Bayes search model
-    bayes.fit(train_features, train_target)
+    bayes.fit(train_features, train_target, callback=[checkpoint_saver, deltay])
     tuned = bayes.best_params_
     tune_score = bayes.best_score_
 

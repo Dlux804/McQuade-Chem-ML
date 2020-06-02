@@ -113,7 +113,7 @@ class MlModel:
             pass
         # del att['impgraph']
         att.update(self.stats)
-        # att.update(self.varimp)
+        #att.update(self.varimp)
         # Write contents of attributes dictionary to a CSV
         with open(csvfile, 'w') as f:  # Just use 'w' mode in Python 3.x
             w = csv.DictWriter(f, att.keys())
@@ -156,6 +156,28 @@ class MlModel:
         # movesp = 'move ./' + run_name + ' output/'
         #
         # subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
+
+
+    def classification_run(self):
+        # set the model specific classifier function from sklearn
+        self.classifier = Classifiers.classifier(self.algorithm)
+
+        x_train, x_test, y_train, y_test, feature_list = features.targets_features(self.data,self.target) # splits the data into a training set and a test set
+        random_model = self.classifier()
+        random_model.fit(x_train, y_train)
+
+        random_prediction = random_model.predict(x_test)
+
+        accuracy, confusion, classification, roc_auc_score = analysis.classification_metrics(random_prediction, y_test) # Evaluates model's performance on the test data
+        print()     # Formatting for terminal
+        print('Accuracy_score: ')
+        print(accuracy)
+        print('Confusion_matrix: ')
+        print(confusion)
+        print('Classification_report: ')
+        print(classification)
+        print('roc_auc_score: ')
+        print(roc_auc_score)
 
 
 

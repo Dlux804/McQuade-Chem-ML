@@ -309,3 +309,20 @@ def pva_graphs(pva, model_name):
     # plt.savefig(model_name+'-' +'.png')
     # plt.show()
     return plt  # Can I store a graph as an attribute to a model?
+
+
+
+# This function evaluates the classification model's performance on the test data using multiple different metrics.
+def classification_metrics(prediction, y_test):
+    from sklearn.metrics import classification_report
+    from sklearn.metrics import confusion_matrix
+    from sklearn.metrics import accuracy_score
+    from sklearn.metrics import roc_auc_score
+
+
+    accuracy = accuracy_score(prediction, y_test)
+    confusion = confusion_matrix(prediction, y_test)
+    classification = classification_report(prediction, y_test)
+    roc_auc_score = roc_auc_score(prediction, y_test)
+
+    return accuracy, confusion, classification, roc_auc_score

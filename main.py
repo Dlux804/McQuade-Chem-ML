@@ -12,66 +12,91 @@ def main():
     os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
 
-    # list of available learning algorithms
-    # learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
-    # learner = ['gdb', 'rf', 'ada', 'knn']
-    # learner = ['gdb']
-    learner = ['rf']
+    # Asking the user to decide between running classification models or regression models
+    C = str(input("Enter classification for classification, regression for regression: "))
 
-    # list of available featurization methods
-    # featurize = [[0], [0, 2], [0, 3], [0, 4], [0,5], [0, 6], [2], [3], [4], [5], [6]]
-    featurize = [[0], [1]]
-    # features for models that require normalized data (nn, svm)
-    # norm_featurize = [[1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [2], [3], [4], [5], [6]]
-    norm_featurize = [[0], [1], [1, 2], [1, 3]]
+    # Sets up learner, featurizations, and datasets for classification.
+    if C == 'classification':
+        # list of available classification learning algorithms
+        learner = ['svc', 'knc']
+        #learner = ['knc']
+        # list of available featurization methods
 
-    # data sets in dict. Key: Filename.csv , Value: Target column header
-    # sets = {
-    #     'Lipophilicity-ID.csv': 'exp',
-    #     'ESOL.csv': 'water-sol',
-    #     'water-energy.csv': 'expt',
-    #     'logP14k.csv': 'Kow',
-    #     'jak2_pic50.csv': 'pIC50'
-    # }
-    sets = {
-        'water-energy.csv': 'expt'
-    }
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]]
 
-    for alg in learner:  # loop over all learning algorithms
+        # classification data sets in dict. Key: Filename.csv , Value: Target column header
+        sets = {
+            'sider.csv': 'Injury, poisoning and procedural complications'
+        }
 
-        if alg in ['mlp', 'knn', 'svr']: # if the algorithm needs normalized data
-            feats = norm_featurize
-        else:
-            feats = featurize
+    # Sets up learner, featurizations, and data sets for regression
+    if C == 'regression':
+        # list of available regression learning algorithms
+        learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
+
+        # list of available featurization methods
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]]
+
+        # regression data sets in dict. Key: Filename.csv , Value: Target column header
+        sets = {
+            'Lipophilicity-ID.csv': 'exp',
+            'ESOL.csv': 'water-sol',
+            'water-energy.csv': 'expt',
+            'logP14k.csv': 'Kow',
+            'jak2_pic50.csv': 'pIC50'
+        }
+
+    for alg in learner: # loop over all learning algorithms
+        if alg == 'svc':
+            feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [1], [2], [3], [4]] # Removes atompaircounts featurization only when running svc, as this featurization breaks the svc model.
+        elif alg != 'svc':
+            feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]] # Insures that featurization options don't change for models running after svc in iteration.
 
         for method in feats:  # loop over the featurization methods
 
             for data, target in sets.items():  # loop over dataset dictionary
+                if C == 'regression':     # Runs the models/featurizations for regression
+                    with cd('dataFiles'):
 
-                # change active directory
-                with cd('dataFiles'):
+                        print('Now in:', os.getcwd())
+                        print('Initializing model...', end=' ', flush=True)
 
-                    print('Now in:', os.getcwd())
-                    print('Initializing model...', end=' ', flush=True)
+                        # initiate model class with algorithm, dataset and target
+                        model = models.MlModel(alg, data, target)
+                        print('done.')
 
-                    # initiate model class with algorithm, dataset and target
-                    model = models.MlModel(alg, data, target)
-                    print('done.')
+                    print('Model Type:', alg)
+                    print('Featurization:', method)
+                    print('Dataset:', data)
+                    print()
+                    # featurize molecules
+                    model.featurization(method)
+                    # run model
+                    model.run(tune=True)  # Bayes Opt
+                    # save results of model
+                    model.store()
 
-                print('Model Type:', alg)
-                print('Featurization:', method)
-                print('Dataset:', data)
-                print()
-                # featurize molecules
-                model.featurization(method)
 
-                # run model
-                model.run(tune=True) # Bayes Opt
 
-                # save results of model
-                model.store()
+                if C == 'classification':     # Runs the models/featurizations for classification
+                    # change active directory
+                    with cd('dataFiles'):
+                        print('Now in:', os.getcwd())
+                        print('Initializing model...', end=' ', flush=True)
 
-                
+                        # initiate model class with algorithm, dataset and target
+                        model = models.MlModel(alg, data, target, drop=False)  #drop=false so that extra columns aside from SMILES and target are not dropped.
+                        print('done.')
+
+                    print('Model Type:', alg)
+                    print('Featurization:', method)
+                    print('Dataset:', data)
+                    print()
+                    # featurize molecules
+                    model.featurization(method)
+                    # Runs classification model
+                    model.classification_run()
+
 if __name__ == "__main__":
     main()
 

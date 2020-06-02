@@ -61,7 +61,7 @@ def main():
                         print('Initializing model...', end=' ', flush=True)
 
                         # initiate model class with algorithm, dataset and target
-                        model = models.MlModel(alg, data, target)
+                        model = models.MlModel(alg, data, target, drop=True)
                         print('done.')
 
                     print('Model Type:', alg)

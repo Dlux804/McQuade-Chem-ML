@@ -2,7 +2,7 @@
 This code was written by Adam Luxon and team as part of the McQuade research group.
 '''
 
-from core import ingest, features, grid, regressors, analysis, name
+from core import ingest, features, grid, regressors, analysis, name, Classifiers
 # from main import ROOT_DIR
 import csv
 import os

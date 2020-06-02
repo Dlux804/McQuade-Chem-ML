@@ -63,7 +63,7 @@ def featurize(self, feat_meth=None):
     # return df, feat_meth, feat_time
 
 
-def targets_features(df, exp, test=0.2, val=None, random = None):
+def targets_features(self, test=0.2, val=None, random = None):
     """
     Take in a data frame, the target column name (exp).
     Returns a numpy array with the target variable,
@@ -76,20 +76,35 @@ def targets_features(df, exp, test=0.2, val=None, random = None):
     val -- Float.  Percent of data to be used for validation.  Taken out of training data after test.
     """
 
-
     # make array of target values
-    target = np.array(df[exp])  # exp input should be target variable string
+    target = np.array(self.data[self.target_name])
+
+
 
     # remove target from features
     # axis 1 is the columns.
-    features = df.drop([exp, 'smiles'], axis=1)
+    # features = df.drop([exp, 'smiles'], axis=1)
+    features = self.data.drop([self.target_name, 'smiles'], axis=1)
 
     # save list of strings of features
     feature_list = list(features.columns)
 
     # convert features to numpy
     featuresarr = np.array(features)
-    n_total = featuresarr.shape[0]
+    # n_total = featuresarr.shape[0]
+
+    # store to instance
+    self.feature_array = featuresarr
+    self.target_array = target
+    self.n_tot = self.feature_array.shape[0]
+    self.in_shape = self.feature_array.shape[1]
+
+    print("self.feature_array: ", self.feature_array)
+    print('self target array', self.target_array)
+    print('Total counts:', self.n_tot)
+    print('Feature input shape', self.in_shape)
+
+
 
 
     train_features, test_features, train_target, test_target = train_test_split(featuresarr, target,

@@ -19,7 +19,9 @@ class MlModel:  # TODO update documentation here
         """Requires: learning algorithm, dataset and target property's column name."""
         self.algorithm = algorithm
         self.dataset = dataset
-        self.target = target
+        self.target_name = target
+        # ingest data.  collect full data frame (self.data)
+        # collect pandas series of the SMILES (self.smiles_col)
         self.data, self.smiles_col = ingest.load_smiles(self,dataset, drop)
 
 
@@ -44,7 +46,7 @@ class MlModel:  # TODO update documentation here
         # Split data up. Set random seed here for graph comparison purposes.
         # TODO Collect and store the molecules in train, test and validation data sets
         if self.algorithm == 'nn':
-            train_features, test_features, val_features, train_target, test_target, val_target,  self.feature_list = features.targets_features(self.data, self.target, val=0.1, random=42)
+            train_features, test_features, val_features, train_target, test_target, val_target,  self.feature_list = features.targets_features(self, val=0.1, random=42)
 
         else:
             train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(
@@ -171,7 +173,7 @@ model1.featurize([0])
 #
 # #
 # # # Run the model with hyperparameter optimization
-# model1.run(tune=False)
+model1.run(tune=False)
 # print("Input shape: ", model1.in_shape)
 #
 # print('Tune Time:', model1.tuneTime)

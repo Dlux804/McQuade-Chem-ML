@@ -18,7 +18,7 @@ def load_smiles(self, file, drop=True):
     # rename the column with SMILES to 'smiles'
     csv = csv.rename(columns={smiles_col.name: "smiles"})
     if drop: # drop all extra columns
-        csv = csv[['smiles', self.target]]
+        csv = csv[['smiles', self.target_name]]
 
     return csv, smiles_col
 

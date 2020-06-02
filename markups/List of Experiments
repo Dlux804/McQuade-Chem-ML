@@ -1,0 +1,7 @@
+1. Should molecular descriptors be nodes or all compressed into a relationship.  I.e should TPSA be a node with a relationship to molecule with property of measuremnt. 
+Or a relationship between RDK2d and molecule with all descriptors in it.  
+
+2.  
+
+3. 
+

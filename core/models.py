@@ -8,29 +8,29 @@ import os
 import subprocess
 
 
-class MlModel:
+class MlModel:  # TODO update documentation here
     """
     Class to set up and run machine learning algorithm.
     """
-    from .features import featurize
-    from .misc import foo
+    from features import featurize  # imported function becomes instance method
+    # from .misc import foo
 
     def __init__(self, algorithm, dataset, target, drop=True):
         """Requires: learning algorithm, dataset and target property's column name."""
         self.algorithm = algorithm
         self.dataset = dataset
         self.target = target
-        self.data, self.smiles = ingest.load_smiles(self,dataset, drop)
-        foo()
+        self.data, self.smiles_col = ingest.load_smiles(self,dataset, drop)
 
 
 
-    def featurization(self, feats=None):
-        """ Featurize molecules in dataset and stores results as attribute in class instance.
-            Keyword arguments:
-            feats -- Features you want.  Default = None (requires user input)
-        """
-        self.data, self.feat_meth, self.feat_time = features.featurize(self.data, self.algorithm, feats)
+    # # this is unnecessary function.  Just make features.featurize an import and have it access/store to self.
+    # def featurization(self, feats=None):
+    #     """ Featurize molecules in dataset and stores results as attribute in class instance.
+    #         Keyword arguments:
+    #         feats -- Features you want.  Default = None (requires user input)
+    #     """
+    #     self.data, self.feat_meth, self.feat_time = features.featurize(self.data, self.algorithm, feats)
 
 
 
@@ -165,7 +165,7 @@ with misc.cd('../dataFiles/'):
     print('done.')
 
 # # featurize data with rdkit2d
-# model1.featurization([0])
+model1.featurize([0])
 # # print(model1.feat_meth)
 #
 #

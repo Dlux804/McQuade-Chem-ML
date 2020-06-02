@@ -6,27 +6,27 @@ from time import time
 from sklearn.preprocessing import StandardScaler
 
 # TODO: Add featurization timer
-def featurize(df, model_name, num_feat=None):
+def featurize(self, feat_meth=None):
     """
     Caclulate molecular features.
     Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
      and time to featurize.
 
     Keyword arguments:
-    num_feat -- Features you want by their numerical value.  Default = None (require user input)
+    feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
-
+    df = self.data
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']
 
 
-    if num_feat == None:  # ask for features
+    if feat_meth == None:  # ask for features
         print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
         [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
-        num_feat = [int(x) for x in input(
+        feat_meth = [int(x) for x in input(
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
-    selected_feat = [feat_sets[i] for i in num_feat]
+    selected_feat = [feat_sets[i] for i in feat_meth]
     print("You have selected the following featurizations: ", end="   ", flush=True)
     print(*selected_feat, sep=', ')
 
@@ -55,7 +55,12 @@ def featurize(df, model_name, num_feat=None):
     # remove the "RDKit2d_calculated = True" column(s)
     df = df.drop(list(df.filter(regex='_calculated')), axis=1)
 
-    return df, num_feat, feat_time
+    # store data back into the instance
+    self.data = df
+    self.feat_meth = feat_meth
+    self.feat_time = feat_time
+
+    # return df, feat_meth, feat_time
 
 
 def targets_features(df, exp, test=0.2, val=None, random = None):

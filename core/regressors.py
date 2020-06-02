@@ -55,7 +55,8 @@ def wrapKeras(build_func, in_shape):
     return keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_nn, in_shape=200)  # pass non-hyper params here
 
 
-def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50):
+# def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50):
+def hyperTune(self, jobs=-1, epochs=50):
     """
     Tunes hyper parameters of specified model.
 
@@ -66,6 +67,9 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, 
    Keyword arguments
    jobs: number of parallel processes to run.  (Default = -1 --> use all available cores)
    NOTE: jobs has been depreciated since max processes in parallel for Bayes is the number of CV folds
+
+   'neg_mean_squared_error',  # scoring function to use (RMSE)
+
 
     """
     print("Starting Hyperparameter tuning\n")
@@ -78,15 +82,15 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, 
 
     # set up Bayes Search
     bayes = BayesSearchCV(
-        estimator=model,  # what regressor to use
-        search_spaces=grid,  # hyper parameters to search through
-        fit_params= fit_params,
-        n_iter=iters,  # number of combos tried
+        estimator=self.regressor,  # what regressor to use
+        search_spaces=self.grid,  # hyper parameters to search through
+        fit_params= self.callbacks,
+        n_iter=self.opt_iter,  # number of combos tried
         random_state=42,  # random seed
         verbose=3,  # output print level
         scoring='neg_mean_squared_error',  # scoring function to use (RMSE)
-        n_jobs=folds,  # number of parallel jobs (max = folds)
-        cv=folds  # number of cross-val folds to use
+        n_jobs=self.cv_folds,  # number of parallel jobs (max = folds)
+        cv=self.cv_folds  # number of cross-val folds to use
     )
 
     # Fit the Bayes search model

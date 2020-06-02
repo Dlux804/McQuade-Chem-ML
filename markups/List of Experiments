@@ -7,5 +7,6 @@ B) tested with version XXX
 2.  How to relate RandomSplit node and Dataset.  A) no relationship  B) RandomSplit __SPLITS__ dataset  C) Dataset _USES_SPLIT_ Random split
 
 
-3. 
+3.   How to represent data featurization methods.  A) we combine the feature methods to have one total featurizeation node: rdkit --> featuremethod <--ECFP
+      B) Have no relationship between RDK and ECFP and no total featurization node 
 

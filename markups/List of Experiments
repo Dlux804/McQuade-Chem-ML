@@ -4,7 +4,8 @@ Or B) a relationship between RDK2d and molecule with all descriptors in it.
 A) testing with version XXX (put markdown ontology version here and Cypher import command version too)
 B) tested with version XXX
 
-2.  
+2.  How to relate RandomSplit node and Dataset.  A) no relationship  B) RandomSplit __SPLITS__ dataset  C) Dataset _USES_SPLIT_ Random split
+
 
 3. 
 

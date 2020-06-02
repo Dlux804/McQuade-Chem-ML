@@ -58,7 +58,7 @@ def impgraph(model_name, regressor, train_features, train_target, feature_list):
     # varimp.to_csv(exp + '-varimp.csv')
     # Importance Bar Graph
     plt.rcParams['figure.figsize'] = [15, 9]
-    print(varimp)
+    # print(varimp)
     # Set the style
     plt.style.use('bmh')
 
@@ -153,7 +153,7 @@ def replicate_model(self, n):
     mse = np.empty(n)
     rmse = np.empty(n)
     t = np.empty(n)
-    for i in range(0,n): # run model n times
+    for i in range(0, n): # run model n times
         train_features, test_features, train_target, test_target, feature_list = features.targets_features(self.data, self.target, random=None)
         pva , fit_time = predict(self.regressor, train_features, test_features, train_target, test_target)
 

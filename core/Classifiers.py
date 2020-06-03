@@ -1,6 +1,6 @@
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
-
+from sklearn.ensemble import RandomForestClassifier
 
 def classifier(model):
     """Returns model specific classifier function."""
@@ -10,5 +10,6 @@ def classifier(model):
     classifiers = {
         'svc': SVC,
         'knc': KNeighborsClassifier,
+        'rfc': RandomForestClassifier
     }
     return classifiers[model]

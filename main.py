@@ -13,12 +13,13 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # Asking the user to decide between running classification models or regression models
-    C = str(input("Enter classification for classification, regression for regression: "))
+    c = str(input("Enter c for classification, r for regression: "))
 
     # Sets up learner, featurizations, and datasets for classification.
-    if C == 'classification':
+    if c == 'c':
         # list of available classification learning algorithms
-        learner = ['svc', 'knc']
+        learner = ['svc', 'knc', 'rfc']
+
         # list of available featurization methods
 
         feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]]
@@ -29,7 +30,7 @@ def main():
         }
 
     # Sets up learner, featurizations, and data sets for regression
-    if C == 'regression':
+    if c == 'r':
         # list of available regression learning algorithms
         learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
 
@@ -54,7 +55,7 @@ def main():
         for method in feats:  # loop over the featurization methods
 
             for data, target in sets.items():  # loop over dataset dictionary
-                if C == 'regression':     # Runs the models/featurizations for regression
+                if c == 'r':     # Runs the models/featurizations for regression
                     with cd('dataFiles'):
 
                         print('Now in:', os.getcwd())
@@ -77,7 +78,7 @@ def main():
 
 
 
-                if C == 'classification':     # Runs the models/featurizations for classification
+                if c == 'c':     # Runs the models/featurizations for classification
                     # change active directory
                     with cd('dataFiles'):
                         print('Now in:', os.getcwd())

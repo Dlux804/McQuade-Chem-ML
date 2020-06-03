@@ -14,7 +14,7 @@ def represent_dataset():
     This representation follows the "Letters and Numbers" rule explained in naming_schemes_v2.pptx in the naming branch
     :return: Dictionary of dataset as key and their representation as value
     """
-    with misc.cd('C:/Users/brend/PycharmProjects/McQuade-Chem-ML4/dataFiles'):  # Access folder with all dataset
+    with misc.cd('./dataFiles'):  # Access folder with all dataset
         for roots, dirs, files in os.walk(os.getcwd()):
             data_dict = {}  # Dictionary of dataset and their first character
             for dataset in files:  # Loop through list of files

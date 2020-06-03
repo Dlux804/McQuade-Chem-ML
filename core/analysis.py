@@ -3,9 +3,8 @@ from matplotlib import cm
 import numpy as np
 from time import time
 import pandas as pd
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score, classification_report, confusion_matrix, accuracy_score, roc_auc_score
 from core import features
-
 
 def predict(regressor, train_features, test_features, train_target, test_target):
     """Fit model and predict target values.  Return data frame of actual and predicted
@@ -314,15 +313,10 @@ def pva_graphs(pva, model_name):
 
 # This function evaluates the classification model's performance on the test data using multiple different metrics.
 def classification_metrics(prediction, y_test):
-    from sklearn.metrics import classification_report
-    from sklearn.metrics import confusion_matrix
-    from sklearn.metrics import accuracy_score
-    from sklearn.metrics import roc_auc_score
-
 
     accuracy = accuracy_score(prediction, y_test)
     confusion = confusion_matrix(prediction, y_test)
     classification = classification_report(prediction, y_test)
-    roc_auc_score = roc_auc_score(prediction, y_test)
+    roc_auc = roc_auc_score(prediction, y_test)
 
-    return accuracy, confusion, classification, roc_auc_score
+    return accuracy, confusion, classification, roc_auc

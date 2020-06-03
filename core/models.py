@@ -2,7 +2,7 @@
 This code was written by Adam Luxon and team as part of the McQuade research group.
 '''
 
-from core import ingest, features, grid, regressors, analysis, name, Classifiers
+from core import ingest, features, grid, regressors, analysis, name, classifiers
 # from main import ROOT_DIR
 import csv
 import os
@@ -160,7 +160,7 @@ class MlModel:
 
     def classification_run(self):
         # set the model specific classifier function from sklearn
-        self.classifier = Classifiers.classifier(self.algorithm)
+        self.classifier = classifiers.classifier(self.algorithm)
 
         x_train, x_test, y_train, y_test, feature_list = features.targets_features(self.data,self.target) # splits the data into a training set and a test set
         random_model = self.classifier()

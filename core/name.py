@@ -105,8 +105,8 @@ def name(algorithm, dataset, feat_meth, tune=False):
     else:
         tune_string = str(0)  # Else, it will be 0
     now = datetime.now()
-    date_string = now.strftime("%y%m%d%H%M%S_")  # Get date and time string
-    run_name = ''.join([date_string, algorithm_string, dataset_string, feat_string, tune_string])  # Run name
+    date_string = now.strftime("_%Y%m%d-%H%M%S")  # Get date and time string
+    run_name = ''.join([algorithm_string, dataset_string, feat_string, tune_string, date_string])  # Run name
     date = now.strftime("%m/%d/%Y %H:%M:%S")
     print("Created {0} on {1}".format(run_name, date))
     return run_name

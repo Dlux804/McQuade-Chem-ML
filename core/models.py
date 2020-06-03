@@ -20,6 +20,7 @@ class MlModel:  # TODO update documentation here
     from regressors import get_regressor, hyperTune
     from grid import make_grid
     from train import train
+    from analysis import impgraph, pva_graph
     # from .misc import foo
 
     def __init__(self, algorithm, dataset, target, tune=False, opt_iter=10, cv=3):
@@ -61,12 +62,17 @@ class MlModel:  # TODO update documentation here
             # self.regressor = self.regressor()  # make it callable to match Tune = True case
             self.tune_time = None
 
-        self.train()
-        # Done tuning, time to fit and predict
 
+        # Done tuning, time to fit and predict
+        self.train()
+
+    def analyze(self):
         # # Variable importance for rf and gdb
-        # if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
-        #     self.impgraph, self.varimp = analysis.impgraph(self.algorithm, self.regressor, train_features, train_target, self.feature_list)
+        if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
+            self.impgraph()
+        # make predicted vs actual graph
+        self.pva_graph()
+
         # else:
         #     pass
         # # multipredict
@@ -160,6 +166,7 @@ with misc.cd('../dataFiles/'):
 model1.featurize([0])
 model1.data_split(val=0.1)
 model1.run()
+model1.analyze()
 import pprint
 
 

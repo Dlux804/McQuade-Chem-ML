@@ -78,7 +78,7 @@ class MlModel:
         # Done tuning, time to fit and predict
 
         # Variable importance for rf and gdb
-        if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
+        if self.algorithm in ['rf', 'gdb', 'rfc'] and self.feat_meth == [0]:
             self.impgraph, self.varimp = analysis.impgraph(self.algorithm, self.regressor, train_features, train_target, self.feature_list)
         else:
             pass

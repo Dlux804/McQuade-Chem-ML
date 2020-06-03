@@ -45,10 +45,10 @@ class MlModel:
         # Split data up. Set random seed here for graph comparison purposes.
         # TODO Collect and store the molecules in train, test and validation data sets
         if self.algorithm == 'nn':
-            train_features, test_features, val_features, train_target, test_target, val_target,  self.feature_list = features.targets_features(self.data, self.target, val=0.1, random=42)
+            train_features, test_features, val_features, train_target, test_target, val_target,  self.feature_list = features.data_split(self.data, self.target, val=0.1, random=42)
 
         else:
-            train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(
+            train_features, test_features, train_target, test_target, self.feature_list = features.data_split(
             self.data, self.target, val=0.1, random=42)
 
         # store the shape of the input data

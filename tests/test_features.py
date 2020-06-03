@@ -104,7 +104,7 @@ def test_targets_features():
         target = df['expt']  # Target column
         feature = df.drop(['expt', 'smiles'], axis=1)  # All feature columns
         # Split the data
-        train_features, test_features, train_target, test_target, feature_list = features.targets_features(df, 'expt')
+        train_features, test_features, train_target, test_target, feature_list = features.data_split(df, 'expt')
         # Test to see if we get a 20% split on test features
         assert np.round(test_features.shape[0] / feature.shape[0] * 100, -1) == 20.0
         # Test to see if we get a 20% split on test target

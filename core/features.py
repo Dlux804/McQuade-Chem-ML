@@ -62,7 +62,7 @@ def featurize(self, feat_meth=None):
 
 
 
-def targets_features(self, test=0.2, val=None, random = None):
+def data_split(self, test=0.2, val=0, random = None):
     """
     Take in a data frame, the target column name (exp).
     Returns a numpy array with the target variable,
@@ -76,17 +76,22 @@ def targets_features(self, test=0.2, val=None, random = None):
     """
 
     # make array of target values
-    target = np.array(self.data[self.target_name])
+    self.target_array = np.array(self.data[self.target_name])
+    self.test_percent = test
+    self.val_percent = val
+    self.train_percent = 1 - test - val
+
 
 
 
     # remove target from features
     # axis 1 is the columns.
     # features = df.drop([exp, 'smiles'], axis=1)
+    # TODO Collect and store the molecules in train, test and validation data sets
     features = self.data.drop([self.target_name, 'smiles'], axis=1)
 
     # save list of strings of features
-    feature_list = list(features.columns)
+    self.feature_list = list(features.columns)
 
     # convert features to numpy
     featuresarr = np.array(features)
@@ -94,50 +99,52 @@ def targets_features(self, test=0.2, val=None, random = None):
 
     # store to instance
     self.feature_array = featuresarr
-    self.target_array = target
     self.n_tot = self.feature_array.shape[0]
     self.in_shape = self.feature_array.shape[1]
 
-    print("self.feature_array: ", self.feature_array)
-    print('self target array', self.target_array)
-    print('Total counts:', self.n_tot)
-    print('Feature input shape', self.in_shape)
+    # print("self.feature_array: ", self.feature_array)
+    # print('self target array', self.target_array)
+    # print('Total counts:', self.n_tot)
+    # print('Feature input shape', self.in_shape)
 
 
 
 
-    train_features, test_features, train_target, test_target = train_test_split(featuresarr, target,
-                                                                                test_size=test_percent,
-                                                                               random_state=random)  # what data to split and how to do it.
+    self.train_features, self.test_features, self.train_target, self.test_target = train_test_split(self.feature_array, self.target_array,
+                                                                                test_size=self.test_percent,
+                                                                               random_state=self.random_seed)  # what data to split and how to do it.
     # scale the data.  This should not hurt but can help many models
+    # TODO add this an optional feature
     scaler = StandardScaler()
-    train_features = scaler.fit_transform(train_features)
-    test_features = scaler.transform(test_features)
+    self.scaler = scaler
+    self.train_features = scaler.fit_transform(self.train_features)
+    self.test_features = scaler.transform(self.test_features)
 
-    if val is not None:  # if validation data is requested.
+    if val > 0:  # if validation data is requested.
         # calculate percent of training to convert to val
         b = val / (1-test)
-        train_features, val_features, train_target, val_target = train_test_split(train_features,
-                                                                                  train_target, test_size=b,
-                                                                                  random_state=random)
+        self.train_features, self.val_features, self.train_target, self.val_target = train_test_split(self.train_features,
+                                                                                  self.train_target, test_size=b,
+                                                                                  random_state=self.random_seed)
         # scale the validation features too
-        val_features = scaler.transform(val_features)
+        self.val_features = scaler.transform(self.val_features)
 
-        n_total = featuresarr.shape[0]
+        n_total = self.n_tot
 
-        n_train = train_features.shape[0]
-        ptrain = n_train / n_total * 100
+        self.n_train = self.train_features.shape[0]
+        ptrain = self.n_train / n_total * 100
 
-        n_test = test_features.shape[0]
-        ptest = n_test / n_total * 100
 
-        n_val = val_features.shape[0]
-        pval = n_val / n_total * 100
+        self.n_test = self.test_features.shape[0]
+        ptest = self.n_test / n_total * 100
+
+        self.n_val = self.val_features.shape[0]
+        pval = self.n_val / n_total * 100
 
         print('The dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
                 n_total, ptrain, pval, ptest))
 
-        return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
+        # return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
 
 
 
@@ -156,4 +163,4 @@ def targets_features(self, test=0.2, val=None, random = None):
     # print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
     #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))
 
-    return train_features, test_features, train_target, test_target, feature_list
+    # return train_features, test_features, train_target, test_target, feature_list

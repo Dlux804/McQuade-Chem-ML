@@ -23,7 +23,7 @@ def train(self,n=5):
 
     pva_multi = pd.DataFrame([])
     pva_multi['actual'] = self.test_target
-    for i in tqdm(range(0, n)):  # run model n times
+    for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         start_time = time()
         self.regressor.fit(self.train_features, self.train_target)
 

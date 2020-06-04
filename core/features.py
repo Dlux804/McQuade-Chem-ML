@@ -2,8 +2,9 @@ from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
-from time import time
+from time import time, sleep
 from sklearn.preprocessing import StandardScaler
+from tqdm import tqdm
 
 # TODO: Add featurization timer
 def featurize(self, feat_meth=None):
@@ -29,9 +30,12 @@ def featurize(self, feat_meth=None):
     selected_feat = [feat_sets[i] for i in feat_meth]
     print("You have selected the following featurizations: ", end="   ", flush=True)
     print(*selected_feat, sep=', ')
+    print('Calculating features...')#, end=' ')#, flush=True)
+    sleep(1)
 
     # Start timer
     start_feat = time()
+
 
     # Use descriptastorus generator
     generator = MakeGenerator(selected_feat)
@@ -41,8 +45,9 @@ def featurize(self, feat_meth=None):
     for name, numpy_type in generator.GetColumns():
         columns.append(name)
     smi = df['smiles']
-    print('Calculating features...', end=' ', flush=True)
-    data = list(map(generator.process, smi))
+
+    smi2 = tqdm(smi, desc= "Featurizaiton")  # for progress bar
+    data = list(map(generator.process, smi2))
     print('Done.')
     stop_feat = time()
     feat_time = stop_feat - start_feat
@@ -54,6 +59,7 @@ def featurize(self, feat_meth=None):
 
     # remove the "RDKit2d_calculated = True" column(s)
     df = df.drop(list(df.filter(regex='_calculated')), axis=1)
+    df = df.drop(list(df.filter(regex='[lL]og[pP]')), axis=1)
 
     # store data back into the instance
     self.data = df

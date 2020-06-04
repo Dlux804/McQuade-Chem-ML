@@ -113,6 +113,7 @@ def pva_graph(self):
     plt.plot(lims, lims, 'k-', label='y=x')
     plt.plot([], [], ' ', label='R^2 = %.3f' % r2)
     plt.plot([], [], ' ', label='RMSE = %.3f' % rmse)
+    plt.plot([], [], ' ', label='MSE = %.3f' % mse)
     ax.set_aspect('equal')
     ax.set_xlim(lims)
     ax.set_ylim(lims)

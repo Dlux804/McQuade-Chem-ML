@@ -13,6 +13,7 @@ from time import time
 from skopt import callbacks
 from tensorflow import keras
 from tensorflow.keras.metrics import RootMeanSquaredError
+from tqdm import tqdm
 
 
 def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.0):
@@ -74,9 +75,16 @@ def get_regressor(self, params=None):
     else:  # neural network
         pass
 
+# for making a progress bar for skopt
+class tqdm_skopt(object):
+    def __init__(self, **kwargs):
+        self._bar = tqdm(**kwargs)
+
+    def __call__(self, res):
+        self._bar.update()
 
 # def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50):
-def hyperTune(self, epochs=50):
+def hyperTune(self, epochs=50,n_jobs=6):
     """
     Tunes hyper parameters of specified model.
 
@@ -105,9 +113,9 @@ def hyperTune(self, epochs=50):
         # fit_params= self.callbacks,
         n_iter=self.opt_iter,  # number of combos tried
         random_state=42,  # random seed
-        verbose=1,  # output print level
+        verbose=0,  # output print level
         scoring='neg_mean_squared_error',  # scoring function to use (RMSE)
-        n_jobs=self.cv_folds,  # number of parallel jobs (max = folds)
+        n_jobs=n_jobs,  # number of parallel jobs (max = folds)
         cv=self.cv_folds  # number of cross-val folds to use
     )
 
@@ -119,13 +127,13 @@ def hyperTune(self, epochs=50):
     access this list and sort this list from lowest number to highest number. It then take the difference between the 
     number in the n_best position and the first number and compare it to delta. If the difference is smaller or equal 
     to delta, the optimization will be stopped.
-       """
+    """
 
     # print("delta and n_best is {0} and {1}".format(self.cp_delta, self.cp_n_best))
     deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
 
     # Fit the Bayes search model
-    bayes.fit(self.train_features, self.train_target, callback=[checkpoint_saver, deltay])
+    bayes.fit(self.train_features, self.train_target, callback=[tqdm_skopt(total=self.opt_iter, desc="Bayesian Parameter Optimization"),checkpoint_saver, deltay])
     self.params = bayes.best_params_
     tune_score = bayes.best_score_
 

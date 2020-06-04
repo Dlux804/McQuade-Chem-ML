@@ -56,10 +56,10 @@ class MlModel:  # TODO update documentation here
 
         if self.tuned:  # Do hyperparameter tuning
             self.make_grid()
-            self.hyperTune()
+            self.hyperTune(n_jobs =6)
 
         else:  # Don't tune.
-            # self.regressor = self.regressor()  # make it callable to match Tune = True case
+            self.regressor = self.regressor()  # make it callable to match Tune = True case
             self.tune_time = None
 
 
@@ -159,12 +159,12 @@ with misc.cd('../dataFiles/'):
     print('Now in:', os.getcwd())
     print('Initializing model...', end=' ', flush=True)
     # initiate model class with algorithm, dataset and target
-    model1 = MlModel('rf', 'ESOL.csv', 'water-sol', tune=True, opt_iter=3)
+    model1 = MlModel('gdb', 'Lipophilicity-ID.csv', 'exp', tune=True, cv=3, opt_iter=25)
     print('done.')
 
 # # featurize data with rdkit2d
-model1.featurize([0])
-model1.data_split(val=0.1)
+model1.featurize([2])
+model1.data_split(val=0.0)
 model1.run()
 model1.analyze()
 import pprint

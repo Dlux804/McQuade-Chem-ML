@@ -1,7 +1,7 @@
 import pandas as pd
 from rdkit import Chem
 
-def load_smiles(self, file, drop=True):
+def load_smiles(self, file, drop):
     """ Find SMILES in CSV.  Return DataFrame and Series of SMILES.
 
     Keyword Arguments

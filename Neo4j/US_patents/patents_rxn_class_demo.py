@@ -1,7 +1,6 @@
 import pandas as pd
-from Neo4j.US_patents.backends import classify_reaction
-from Draw.drawer import save_reaction_image
-from rdkit import Chem
+from Neo4j.US_patents.backends import classify_reaction, map_rxn_functional_groups
+from Draw.drawer import save_reaction_image, save_rdkit_reaction_image
 
 reaction_smiles_dict = dict(
 
@@ -54,4 +53,6 @@ fragments_df = pd.read_csv('datafiles/rxn_map_groups.csv')
 
 for reaction_name, reaction_smiles in reaction_smiles_dict.items():
     classification = classify_reaction(reaction_smiles, fragments_df=fragments_df)
-    print(f'{reaction_name}: {classification}')
+    frags = map_rxn_functional_groups(reaction_smiles, fragments_df=fragments_df)
+    print(f'{reaction_name}: {classification}, [{frags}]')
+

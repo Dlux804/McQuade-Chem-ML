@@ -132,6 +132,6 @@ def classify_reaction(reaction_smiles, fragments_df=None):
     mapping_file = str(pathlib.Path(__file__).parent.absolute()) + '/datafiles/mapped_reactions.csv'
     mapping_df = pd.read_csv(mapping_file)
 
-    classifiation = mapping_df.loc[mapping_df['mapped_groups'] == mapped_frags].to_dict('record')
-    if classifiation:
-        return classifiation[0]['reaction_class']
+    classification = mapping_df.loc[mapping_df['mapped_groups'] == mapped_frags].to_dict('record')
+    if classification:
+        return classification[0]['reaction_class']

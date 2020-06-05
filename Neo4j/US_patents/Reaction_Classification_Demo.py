@@ -1,5 +1,5 @@
-
-from Neo4j.US_patents.backends import map_rxn_functional_groups
+import pandas as pd
+from Neo4j.US_patents.backends import map_rxn_functional_groups, classify_reaction
 from Draw.drawer import save_reaction_image, save_rdkit_reaction_image
 
 reaction_smiles_dict = dict(
@@ -72,7 +72,9 @@ reaction_smiles_dict = dict(
 
 )
 
+fragments_df = pd.read_csv('datafiles/rxn_map_groups.csv')
+
 for reaction_name, reaction_smiles in reaction_smiles_dict.items():
-    save_reaction_image(reaction_smiles, f'reactions/{reaction_name}.png')
-    frags = map_rxn_functional_groups(reaction_smiles, difference_only=True)
-    print(f'{reaction_name}: {frags}')
+    frags = map_rxn_functional_groups(reaction_smiles, fragments_df=fragments_df)
+    classification = classify_reaction(reaction_smiles, fragments_df=fragments_df)
+    print(f'{reaction_name}: {classification}, [{frags}]')

@@ -2,6 +2,8 @@ import json
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+
+
 class NumpyEncoder(json.JSONEncoder):
     """
     Modifies JSONEncoder to convert numpy arrays to lists first.
@@ -10,6 +12,7 @@ class NumpyEncoder(json.JSONEncoder):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
+
 
 def export_json(self):
     """
@@ -44,6 +47,7 @@ def export_json(self):
 
     json_name = self.run_name + '_attributes' + '.json'
     with open(json_name, 'w') as f:
+        # TODO fix param grid to be exported.  Current data type is unsupported
         # try:
         json.dump(d, f, cls=NumpyEncoder)
         # except TypeError:

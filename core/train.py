@@ -16,12 +16,12 @@ def train_reg(self,n=5):
     """
 
     print("Starting model training with {} replicates.\n".format(n), end=' ', flush=True)
-    # self.regressor.fit(self.train_features, self.train_target)
+
+    # empty arrays for storing replicated data
     r2 = np.empty(n)
     mse = np.empty(n)
     rmse = np.empty(n)
     t = np.empty(n)
-
 
     pva_multi = pd.DataFrame([])
     pva_multi['actual'] = self.test_target
@@ -45,10 +45,8 @@ def train_reg(self,n=5):
         # store as enumerated column for multipredict
         pva_multi['predicted' + str(i)] = predictions
         sleep(0.25)  # so progress bar can update
-    print('done after {:.1f} seconds'.format(t.sum()))
-    # done_time = time()
-    # fit_time = done_time - start_time
-    # t = fit_time
+    print('Done after {:.1f} seconds.'.format(t.sum()))
+
     pva_multi['pred_avg'] = pva.mean(axis=1)
     pva_multi['pred_std'] = pva.std(axis=1)
 
@@ -100,15 +98,17 @@ def train_cls(self, n=5):
         cls['actual'] = self.test_target
         cls['predicted'] = predictions
         acc[i] = accuracy_score(cls['actual'], cls['predicted'])
+        # TODO fix confusion matrix and classificaiton report metrics
         # conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
         # clsrep[i] = classification_report(cls['actual'], cls['predicted'])
         auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
         t[i] = fit_time
+
         # store as enumerated column for multipredict
         cls_multi['predicted' + str(i)] = predictions
         sleep(0.25)  # so progress bar can update
 
-    print('done after {:.1f} seconds'.format(t.sum()))
+    print('Done after {:.1f} seconds.'.format(t.sum()))
 
     stats = {
         'acc_raw': acc,

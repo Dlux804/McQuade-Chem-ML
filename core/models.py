@@ -21,51 +21,56 @@ class MlModel:  # TODO update documentation here
     from analysis import impgraph, pva_graph
     from classifiers import get_classifier
     from storage import export_json
-    # from .misc import foo
 
-    def __init__(self, algorithm, dataset,  target, task, tune=False, opt_iter=10, cv=3):
-        """Requires: learning algorithm, dataset and target property's column name."""
+
+    def __init__(self, algorithm, dataset,  target, task, feat_meth=[0], tune=False, opt_iter=10, cv=3, random = None):
+        """Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
+        optimization cycles for hyper tuning, and number of Cross Validation folds for tuning."""
         self.algorithm = algorithm
         self.dataset = dataset
         self.target_name = target
         self.task_type = task  # regression or classification
         # TODO Make task identificaiton automatic based on dataset.
-        # ingest data.  collect full data frame (self.data)
-        # collect pandas series of the SMILES (self.smiles_col)
-        self.data, self.smiles_series = ingest.load_smiles(self, dataset)
-        self.random_seed = randint(low=1, high=50)
+        self.feat_meth = feat_meth
+
+        if random is None:
+            self.random_seed = randint(low=1, high=50)
+        else:
+            self.random_seed = random
+
         self.opt_iter = opt_iter
         self.cv_folds = cv
         self.tuned = tune
-        if not tune:  # if no tuning, no optimization iterations or CV folds.
-            self.opt_iter = None
-            self.cv_folds = None
 
+        # ingest data.  collect full data frame (self.data)
+        # collect pandas series of the SMILES (self.smiles_col)
+        self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
-    # def featurization(self, feats=None):
-    #     """ Featurize molecules in dataset and stores results as attribute in class instance.
-    #         Keyword arguments:
-    #         feats -- Features you want.  Default = None (requires user input)
-    #     """
-    #     self.data, self.feat_meth, self.feat_time = features.featurize(self.data, self.algorithm, feats)
-
-    def run(self):
-        """ Runs machine learning model. Stores results as class attributes."""
-
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
         if self.task_type == 'regression':
             self.get_regressor()
 
         if self.task_type == 'classification':
             self.get_classifier()
 
+        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+
+        if not tune:  # if no tuning, no optimization iterations or CV folds.
+            self.opt_iter = None
+            self.cv_folds = None
+            self.regressor = self.regressor()  # make it callable to match Tune = True case
+            self.tune_time = None
+
+
+    def run(self):
+        """ Runs machine learning model. Stores results as class attributes."""
+
+        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+        # TODO naming scheme currently must be called after featurization declared--adjust for robust
+
+
         if self.tuned:  # Do hyperparameter tuning
             self.make_grid()
             self.hyperTune(n_jobs =6)
-
-        else:  # Don't tune.
-            self.regressor = self.regressor()  # make it callable to match Tune = True case
-            self.tune_time = None
 
 
         # Done tuning, time to fit and predict
@@ -75,6 +80,7 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'classification':
             self.train_cls()
 
+
     def analyze(self):
         # # Variable importance for rf and gdb
         if self.algorithm in ['rf', 'gdb', 'rfc'] and self.feat_meth == [0]:
@@ -82,13 +88,8 @@ class MlModel:  # TODO update documentation here
 
         # make predicted vs actual graph
         self.pva_graph()
+        # TODO Make classification graphing function
 
-        # else:
-        #     pass
-        # # multipredict
-        # # self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
-        # self.stats, self.pvaM, fits_time = analysis.replicate_multi(self.regressor, train_features, test_features, train_target, test_target)
-        # self.graphM = analysis.pvaM_graphs(self.pvaM)
 
     def store(self):
         """  Organize and store model inputs and outputs.  """
@@ -161,27 +162,6 @@ class MlModel:  # TODO update documentation here
         # subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
 
-    def classification_run(self):
-        # set the model specific classifier function from sklearn
-        self.classifier = classifiers.classifier(self.algorithm)
-
-        x_train, x_test, y_train, y_test, feature_list = features.targets_features(self.data,self.target) # splits the data into a training set and a test set
-        random_model = self.classifier()
-        random_model.fit(x_train, y_train)
-
-        random_prediction = random_model.predict(x_test)
-
-        accuracy, confusion, classification, roc_auc_score = analysis.classification_metrics(random_prediction, y_test) # Evaluates model's performance on the test data
-        print()     # Formatting for terminal
-        print('Accuracy_score: ')
-        print(accuracy)
-        print('Confusion_matrix: ')
-        print(confusion)
-        print('Classification_report: ')
-        print(classification)
-        print('roc_auc_score: ')
-        print(roc_auc_score)
-
 
 
 # This section is for troubleshooting and should be commented out when finished testing
@@ -198,32 +178,13 @@ with misc.cd('../dataFiles/'):
 model1.featurize([0])
 model1.data_split(val=0.0)
 model1.run()
-model1.analyze()
-model1.export_json()
+# model1.analyze()
+# model1.export_json()
 import pprint
 
 
 # print(dict(vars(model1)).keys())
 # pprint.pprint(dict(vars(model1)))
 # # print(model1.feat_meth)
-#
-#
-# #
-# # # Run the model with hyperparameter optimization
-# model1.run(tune=False)
-# print("Input shape: ", model1.in_shape)
-#
-# print('Tune Time:', model1.tuneTime)
 
-#
-#
-#
-# # Save results
-# model1.store()
-#
-#
-# # Must show() graph AFTER it has been saved.
-# # if show() is called before save, the save will be blank
-# # display PvA graph
-# model1.graphM.show()
 

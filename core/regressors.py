@@ -75,6 +75,7 @@ def get_regressor(self):
     else:  # neural network
         pass
 
+
 # for making a progress bar for skopt
 class tqdm_skopt(object):
     def __init__(self, **kwargs):
@@ -82,6 +83,7 @@ class tqdm_skopt(object):
 
     def __call__(self, res):
         self._bar.update()
+
 
 # def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50):
 def hyperTune(self, epochs=50,n_jobs=6):
@@ -120,7 +122,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
     )
 
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
-    self.cp_delta = 0.1
+    self.cp_delta = 0.1  # TODO delta should be dynamic to match target value scales.  Score scales with measurement
     self.cp_n_best = 5
 
     """ Every optimization model in skopt saved all their scores in a built-in list. When called, DeltaYStopper will 
@@ -145,7 +147,6 @@ def hyperTune(self, epochs=50,n_jobs=6):
     self.tune_time = stop_tune - start_tune
     print('Best Parameter Found After ', (stop_tune - start_tune), "sec\n")
     print('Best params achieve a test score of', tune_score, ':')
-    print(self.params)
-    # return tuned, tune_time
+    print('Model hyper paramters are:', self.params)
 
 

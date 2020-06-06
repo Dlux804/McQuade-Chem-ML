@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
 
-def featurize(self, feat_meth=None):
+def featurize(self):
     """
     Caclulate molecular features.
     Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
@@ -16,7 +16,9 @@ def featurize(self, feat_meth=None):
     Keyword arguments:
     feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
+    feat_meth = self.feat_meth
     df = self.data
+
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']
@@ -63,7 +65,6 @@ def featurize(self, feat_meth=None):
 
     # store data back into the instance
     self.data = df
-    self.feat_meth = feat_meth
     self.feat_time = feat_time
 
 
@@ -112,9 +113,6 @@ def data_split(self, test=0.2, val=0, random = None):
     # print('self target array', self.target_array)
     # print('Total counts:', self.n_tot)
     # print('Feature input shape', self.in_shape)
-
-
-
 
     self.train_features, self.test_features, self.train_target, self.test_target = train_test_split(self.feature_array, self.target_array,
                                                                                 test_size=self.test_percent,

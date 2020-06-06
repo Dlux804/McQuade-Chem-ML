@@ -209,14 +209,3 @@ def grid_image(df, filename, molobj=True, smi='smiles'):  # list of molecules to
     )
     mol_image.save(filename + '.png')  # shold use a better naming scheme to avoid overwrites.
 
-
-
-# This function evaluates the classification model's performance on the test data using multiple different metrics.
-def classification_metrics(prediction, y_test):
-
-    accuracy = accuracy_score(prediction, y_test)
-    confusion = confusion_matrix(prediction, y_test)
-    classification = classification_report(prediction, y_test)
-    roc_auc = roc_auc_score(prediction, y_test)
-
-    return accuracy, confusion, classification, roc_auc

@@ -1,15 +1,13 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade research group.
 '''
-from core import ingest, features, grid, regressors, analysis, name, misc
-# from main import ROOT_DIR
+from core import ingest, features, grid, regressors, analysis, name, misc, classifiers
 import csv
 import os
 import subprocess
 import shutil
 from numpy.random import randint
 from core import name
-import inspect
 
 
 class MlModel:  # TODO update documentation here
@@ -19,15 +17,19 @@ class MlModel:  # TODO update documentation here
     from features import featurize, data_split  # imported function becomes instance method
     from regressors import get_regressor, hyperTune
     from grid import make_grid
-    from train import train
+    from train import train_reg, train_cls
     from analysis import impgraph, pva_graph
+    from classifiers import get_classifier
+    from storage import export_json
     # from .misc import foo
 
-    def __init__(self, algorithm, dataset, target, tune=False, opt_iter=10, cv=3):
+    def __init__(self, algorithm, dataset,  target, task, tune=False, opt_iter=10, cv=3):
         """Requires: learning algorithm, dataset and target property's column name."""
         self.algorithm = algorithm
         self.dataset = dataset
         self.target_name = target
+        self.task_type = task  # regression or classification
+        # TODO Make task identificaiton automatic based on dataset.
         # ingest data.  collect full data frame (self.data)
         # collect pandas series of the SMILES (self.smiles_col)
         self.data, self.smiles_series = ingest.load_smiles(self, dataset)
@@ -51,8 +53,11 @@ class MlModel:  # TODO update documentation here
         """ Runs machine learning model. Stores results as class attributes."""
 
         self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+        if self.task_type == 'regression':
+            self.get_regressor()
 
-        self.get_regressor()
+        if self.task_type == 'classification':
+            self.get_classifier()
 
         if self.tuned:  # Do hyperparameter tuning
             self.make_grid()
@@ -64,12 +69,17 @@ class MlModel:  # TODO update documentation here
 
 
         # Done tuning, time to fit and predict
-        self.train()
+        if self.task_type == 'regression':
+            self.train_reg()
+
+        if self.task_type == 'classification':
+            self.train_cls()
 
     def analyze(self):
         # # Variable importance for rf and gdb
-        if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
+        if self.algorithm in ['rf', 'gdb', 'rfc'] and self.feat_meth == [0]:
             self.impgraph()
+
         # make predicted vs actual graph
         self.pva_graph()
 
@@ -151,6 +161,28 @@ class MlModel:  # TODO update documentation here
         # subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
 
+    def classification_run(self):
+        # set the model specific classifier function from sklearn
+        self.classifier = classifiers.classifier(self.algorithm)
+
+        x_train, x_test, y_train, y_test, feature_list = features.targets_features(self.data,self.target) # splits the data into a training set and a test set
+        random_model = self.classifier()
+        random_model.fit(x_train, y_train)
+
+        random_prediction = random_model.predict(x_test)
+
+        accuracy, confusion, classification, roc_auc_score = analysis.classification_metrics(random_prediction, y_test) # Evaluates model's performance on the test data
+        print()     # Formatting for terminal
+        print('Accuracy_score: ')
+        print(accuracy)
+        print('Confusion_matrix: ')
+        print(confusion)
+        print('Classification_report: ')
+        print(classification)
+        print('roc_auc_score: ')
+        print(roc_auc_score)
+
+
 
 # This section is for troubleshooting and should be commented out when finished testing
 
@@ -159,19 +191,20 @@ with misc.cd('../dataFiles/'):
     print('Now in:', os.getcwd())
     print('Initializing model...', end=' ', flush=True)
     # initiate model class with algorithm, dataset and target
-    model1 = MlModel('gdb', 'Lipophilicity-ID.csv', 'exp', tune=True, cv=3, opt_iter=25)
+    model1 = MlModel('rf', 'ESOL.csv', 'water-sol', 'regression', tune=True, cv=3, opt_iter=25)
     print('done.')
 
 # # featurize data with rdkit2d
-model1.featurize([2])
+model1.featurize([0])
 model1.data_split(val=0.0)
 model1.run()
 model1.analyze()
+model1.export_json()
 import pprint
 
 
-print(dict(vars(model1)).keys())
-pprint.pprint(dict(vars(model1)))
+# print(dict(vars(model1)).keys())
+# pprint.pprint(dict(vars(model1)))
 # # print(model1.feat_meth)
 #
 #

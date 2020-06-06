@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
+from time import time
 import pandas as pd
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score, classification_report, confusion_matrix, accuracy_score, roc_auc_score
 from rdkit.Chem import PandasTools
-
+from core import features
 
 # Feature importance graph
 def impgraph(self):
@@ -25,7 +26,7 @@ def impgraph(self):
     feature_importances = sorted(feature_importances, key=lambda x: x[1], reverse=True)
 
     # Print out the feature and importances
-    [print('Variable: {:20} Importance: {}'.format(*pair)) for pair in feature_importances]
+    # [print('Variable: {:20} Importance: {}'.format(*pair)) for pair in feature_importances]
 
     # prepare importance data for export and graphing
     indicies = (-importances2).argsort()
@@ -207,3 +208,15 @@ def grid_image(df, filename, molobj=True, smi='smiles'):  # list of molecules to
         legends=[str(i + 1) for i in range(len(df['Molecule']))]
     )
     mol_image.save(filename + '.png')  # shold use a better naming scheme to avoid overwrites.
+
+
+
+# This function evaluates the classification model's performance on the test data using multiple different metrics.
+def classification_metrics(prediction, y_test):
+
+    accuracy = accuracy_score(prediction, y_test)
+    confusion = confusion_matrix(prediction, y_test)
+    classification = classification_report(prediction, y_test)
+    roc_auc = roc_auc_score(prediction, y_test)
+
+    return accuracy, confusion, classification, roc_auc

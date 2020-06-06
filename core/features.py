@@ -6,7 +6,7 @@ from time import time, sleep
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
-# TODO: Add featurization timer
+
 def featurize(self, feat_meth=None):
     """
     Caclulate molecular features.
@@ -31,7 +31,7 @@ def featurize(self, feat_meth=None):
     print("You have selected the following featurizations: ", end="   ", flush=True)
     print(*selected_feat, sep=', ')
     print('Calculating features...')#, end=' ')#, flush=True)
-    sleep(1)
+    sleep(0.25)
 
     # Start timer
     start_feat = time()

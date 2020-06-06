@@ -56,9 +56,8 @@ def wrapKeras(build_func, in_shape):
     return keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_nn, in_shape=200)  # pass non-hyper params here
 
 
-def get_regressor(self, params=None):
-    """Returns model specific regressor function.
-    Accepts a dictionary of parameters to be passed to the regessor class. """
+def get_regressor(self):
+    """Returns model specific regressor function."""
 
     # Create Dictionary of regressors to be called with self.algorithm as key.
     skl_regs = {
@@ -71,6 +70,7 @@ def get_regressor(self, params=None):
     }
     if self.algorithm in skl_regs.keys():
             self.regressor = skl_regs[self.algorithm]
+            self.task_type = 'regression'
 
     else:  # neural network
         pass
@@ -114,7 +114,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
         n_iter=self.opt_iter,  # number of combos tried
         random_state=42,  # random seed
         verbose=0,  # output print level
-        scoring='neg_mean_squared_error',  # scoring function to use (RMSE)
+        scoring='neg_mean_squared_error',  # scoring function to use (RMSE)  #TODO needs update for Classification
         n_jobs=n_jobs,  # number of parallel jobs (max = folds)
         cv=self.cv_folds  # number of cross-val folds to use
     )
@@ -133,7 +133,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
     deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
 
     # Fit the Bayes search model
-    bayes.fit(self.train_features, self.train_target, callback=[tqdm_skopt(total=self.opt_iter, desc="Bayesian Parameter Optimization"),checkpoint_saver, deltay])
+    bayes.fit(self.train_features, self.train_target, callback=[tqdm_skopt(total=self.opt_iter,position=0, desc="Bayesian Parameter Optimization"),checkpoint_saver, deltay])
     self.params = bayes.best_params_
     tune_score = bayes.best_score_
 

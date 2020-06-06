@@ -2,10 +2,12 @@
 import numpy as np
 from time import time
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score
 import pandas as pd
 from tqdm import tqdm
+from time import sleep
 
-def train(self,n=5):
+def train_reg(self,n=5):
     """
     Function to train the model n times and collect basic statistics about results.
     :param self:
@@ -42,6 +44,7 @@ def train(self,n=5):
         t[i] = fit_time
         # store as enumerated column for multipredict
         pva_multi['predicted' + str(i)] = predictions
+        sleep(0.25)  # so progress bar can update
     print('done after {:.1f} seconds'.format(t.sum()))
     # done_time = time()
     # fit_time = done_time - start_time
@@ -69,3 +72,60 @@ def train(self,n=5):
     print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])
     print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
     print()
+
+def train_cls(self, n=5):
+    # set the model specific classifier function from sklearn
+
+    print("Starting model training with {} replicates.\n".format(n), end=' ', flush=True)
+    # self.regressor.fit(self.train_features, self.train_target)
+    acc = np.empty(n)
+    conf = np.empty(n)
+    clsrep = np.empty(n)
+    auc = np.empty(n)
+    t = np.empty(n)
+
+    cls_multi = pd.DataFrame([])
+    cls_multi['actual'] = self.test_target
+    for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
+        start_time = time()
+        self.regressor.fit(self.train_features, self.train_target)
+
+        # Make predictions
+        predictions = self.regressor.predict(self.test_features)
+        done_time = time()
+        fit_time = done_time - start_time
+
+        # Dataframe for replicate_model
+        cls = pd.DataFrame([], columns=['actual', 'predicted'])
+        cls['actual'] = self.test_target
+        cls['predicted'] = predictions
+        acc[i] = accuracy_score(cls['actual'], cls['predicted'])
+        # conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
+        # clsrep[i] = classification_report(cls['actual'], cls['predicted'])
+        auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
+        t[i] = fit_time
+        # store as enumerated column for multipredict
+        cls_multi['predicted' + str(i)] = predictions
+        sleep(0.25)  # so progress bar can update
+
+    print('done after {:.1f} seconds'.format(t.sum()))
+
+    stats = {
+        'acc_raw': acc,
+        'acc_avg': acc.mean(),
+        'acc_std': acc.std(),
+        # 'conf_raw': conf,
+        # 'conf_avg': conf.mean(),
+        # 'conf_std': conf.std(),
+        'clsrep_raw': clsrep,
+        'clsrep_avg': clsrep.mean(),
+        'clsrep_std': clsrep.std(),
+        'auc_raw': auc,
+        'auc_avg': auc.mean(),
+        'auc_std': auc.std(),
+        'time_raw': t,
+        'time_avg': t.mean(),
+        'time_std': t.std()
+    }
+    self.predictions = cls_multi
+    self.predictions_stats = stats

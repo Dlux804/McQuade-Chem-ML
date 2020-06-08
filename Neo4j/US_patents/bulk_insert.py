@@ -305,8 +305,8 @@ if __name__ == "__main__":
     params = dict(
         patents_directory='/home/user/Desktop/5104873',
         number_of_cups=4,
-        convert_xml_to_csv=False,
-        clean_checker_files=True,
+        convert_xml_to_csv=True,
+        clean_checker_files=False,
         insert_compounds_with_functional_groups=False,
         insert_change_in_functional_groups=False,
         loading_bars=True,

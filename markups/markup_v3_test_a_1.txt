@@ -88,16 +88,16 @@
   <li class="relationship" data-from="7" data-to="11">
     <span class="type">CALCULATES</span><dl class="properties"><dt>method</dt><dd>N,O,S,P</dd></dl></li>
   <li class="relationship" data-from="3" data-to="11">
-    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>20.33</dd></dl></li>
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>54.50</dd></dl></li>
   <li class="relationship" data-from="3" data-to="6">
-    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>2.99</dd></dl></li>
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>3.63</dd></dl></li>
   <li class="relationship" data-from="7" data-to="13">
     <span class="type">CALCULATES</span>
   </li>
   <li class="relationship" data-from="7" data-to="15">
     <span class="type">CALCULATES</span><dl class="properties"><dt>method</dt><dd>N,O,S,P</dd></dl></li>
   <li class="relationship" data-from="2" data-to="17">
-    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>49.33</dd></dl></li>
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>28.56</dd></dl></li>
   <li class="relationship" data-from="9" data-to="18"></li>
   <li class="relationship" data-from="18" data-to="19">
     <span class="type">CONTAINS_MOLECULES</span><dl class="properties"><dt>predicted_value</dt><dd>-2.3</dd><dt>uncertainty</dt><dd>0.01</dd></dl></li>
@@ -107,7 +107,7 @@
     <span class="type">CALCULATES</span>
   </li>
   <li class="relationship" data-from="2" data-to="22">
-    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>2.74</dd></dl></li>
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>1.05</dd></dl></li>
   <li class="relationship" data-from="2" data-to="25">
     <span class="type">HAS_FRAGMENT</span>
   </li>

@@ -23,8 +23,7 @@ def featurize(self):
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']
 
-
-    if feat_meth == None:  # ask for features
+    if feat_meth is None:  # ask for features
         print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
         [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
         feat_meth = [int(x) for x in input(
@@ -32,12 +31,11 @@ def featurize(self):
     selected_feat = [feat_sets[i] for i in feat_meth]
     print("You have selected the following featurizations: ", end="   ", flush=True)
     print(*selected_feat, sep=', ')
-    print('Calculating features...')#, end=' ')#, flush=True)
+    print('Calculating features...')
     sleep(0.25)
 
     # Start timer
     start_feat = time()
-
 
     # Use descriptastorus generator
     generator = MakeGenerator(selected_feat)
@@ -68,7 +66,6 @@ def featurize(self):
     self.feat_time = feat_time
 
 
-
 def data_split(self, test=0.2, val=0, random = None):
     """
     Take in a data frame, the target column name (exp).
@@ -87,9 +84,6 @@ def data_split(self, test=0.2, val=0, random = None):
     self.test_percent = test
     self.val_percent = val
     self.train_percent = 1 - test - val
-
-
-
 
     # remove target from features
     # axis 1 is the columns.
@@ -114,11 +108,14 @@ def data_split(self, test=0.2, val=0, random = None):
     # print('Total counts:', self.n_tot)
     # print('Feature input shape', self.in_shape)
 
-    self.train_features, self.test_features, self.train_target, self.test_target = train_test_split(self.feature_array, self.target_array,
+    # what data to split and how to do it.
+    self.train_features, self.test_features, self.train_target, self.test_target = train_test_split(self.feature_array,
+                                                                                                    self.target_array,
                                                                                 test_size=self.test_percent,
-                                                                               random_state=self.random_seed)  # what data to split and how to do it.
+                                                                               random_state=self.random_seed)
     # scale the data.  This should not hurt but can help many models
     # TODO add this an optional feature
+    # TODO add other scalers from sklearn
     scaler = StandardScaler()
     self.scaler = scaler
     self.train_features = scaler.fit_transform(self.train_features)
@@ -149,8 +146,6 @@ def data_split(self, test=0.2, val=0, random = None):
                 n_total, ptrain, pval, ptest))
 
         # return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
-
-
 
     # Uncomment this section to have data shape distribution printed.
 

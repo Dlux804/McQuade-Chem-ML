@@ -73,7 +73,7 @@ def represent_algorithm():
     return dictionary
 
 
-def name(algorithm, dataset, feat_meth, tune=False):
+def name(algorithm, dataset, feat_meth, tune=False):  # TODO refactor for self.attributes, store to self.name
     """
     Give a unique name to a machine learning run
     :param algorithm: Name of algorithm

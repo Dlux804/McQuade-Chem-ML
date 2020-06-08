@@ -75,7 +75,6 @@ def train_cls(self, n=5):
     # set the model specific classifier function from sklearn
 
     print("Starting model training with {} replicates.\n".format(n), end=' ', flush=True)
-    # self.regressor.fit(self.train_features, self.train_target)
     acc = np.empty(n)
     conf = np.empty(n)
     clsrep = np.empty(n)

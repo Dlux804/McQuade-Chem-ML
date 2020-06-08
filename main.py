@@ -8,6 +8,7 @@ import os
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
+
 def main():
     os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
@@ -69,6 +70,7 @@ def main():
                     print('Featurization:', method)
                     print('Dataset:', data)
                     print()
+                    # TODO update to match new version of models.py
                     # featurize molecules
                     model.featurization(method)
                     # run model
@@ -96,6 +98,7 @@ def main():
                     model.featurization(method)
                     # Runs classification model
                     model.classification_run()
+
 
 if __name__ == "__main__":
     main()

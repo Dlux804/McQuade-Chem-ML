@@ -22,7 +22,7 @@ def load_smiles(self, file, drop=True):
 
     return csv, smiles_col
 
-def resolveID(file,column):
+def resolveID(file,column):  # TODO Consider incorporation of this function in load_csv()
     """ Resolves chemical ID using cripy package from NCI.
     Accepts csv file path and name (as string) and string of column header to be resolved.
     Returns dataframe with added column containing smiles."""

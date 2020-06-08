@@ -14,7 +14,7 @@ def represent_dataset():
     This representation follows the "Letters and Numbers" rule explained in naming_schemes_v2.pptx in the naming branch
     :return: Dictionary of dataset as key and their representation as value
     """
-    with misc.cd('./dataFiles'):  # Access folder with all dataset
+    with misc.cd('../dataFiles'):  # Access folder with all dataset
         for roots, dirs, files in os.walk(os.getcwd()):
             data_dict = {}  # Dictionary of dataset and their first character
             for dataset in files:  # Loop through list of files
@@ -73,7 +73,7 @@ def represent_algorithm():
     return dictionary
 
 
-def name(algorithm, dataset, feat_meth, tune=False):
+def name(algorithm, dataset, feat_meth, tune=False):  # TODO refactor for self.attributes, store to self.name
     """
     Give a unique name to a machine learning run
     :param algorithm: Name of algorithm
@@ -105,8 +105,8 @@ def name(algorithm, dataset, feat_meth, tune=False):
     else:
         tune_string = str(0)  # Else, it will be 0
     now = datetime.now()
-    date_string = now.strftime("%y%m%d%H%M%S_")  # Get date and time string
-    run_name = ''.join([date_string, algorithm_string, dataset_string, feat_string, tune_string])  # Run name
+    date_string = now.strftime("_%Y%m%d-%H%M%S")  # Get date and time string
+    run_name = ''.join([algorithm_string, dataset_string, feat_string, tune_string, date_string])  # Run name
     date = now.strftime("%m/%d/%Y %H:%M:%S")
     print("Created {0} on {1}".format(run_name, date))
     return run_name

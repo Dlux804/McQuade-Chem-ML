@@ -2,48 +2,37 @@ from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
-from time import time
+from time import time, sleep
+from sklearn.preprocessing import StandardScaler
+from tqdm import tqdm
 
 
-def featurize(df, model_name, num_feat=None):
+def featurize(self):
     """
     Caclulate molecular features.
     Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
      and time to featurize.
 
     Keyword arguments:
-    num_feat -- Features you want by their numerical value.  Default = None (require user input)
+    feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
+    feat_meth = self.feat_meth
+    df = self.data
 
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']
 
-    # Remove un-normalized feature option depending on model type
-    if model_name in ['knn', 'mlp', 'svr', 'svc', 'knc', 'rfc']:
-        feat_sets.remove('rdkit2d')
-        print(feat_sets)
-        if num_feat == None:  # ask for features
-            print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
-            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)]
-            num_feat = [int(x) for x in input(
-                'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
-
-        selected_feat = [feat_sets[i] for i in num_feat]
-        print("You have selected the following featurizations: ", end="   ", flush=True)
-        print(*selected_feat, sep=', ')
-
-    # un-normalized features are OK
-    else:
-        feat_sets.remove('rdkit2dnormalized')
-        if num_feat == None:  # ask for features
-            print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
-            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)]
-            num_feat = [int(x) for x in input(
-                'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
-        selected_feat = [feat_sets[i] for i in num_feat]
-        print("You have selected the following featurizations: ", end="   ", flush=True)
-        print(*selected_feat, sep=', ')
+    if feat_meth is None:  # ask for features
+        print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
+        [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
+        feat_meth = [int(x) for x in input(
+            'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
+    selected_feat = [feat_sets[i] for i in feat_meth]
+    print("You have selected the following featurizations: ", end="   ", flush=True)
+    print(*selected_feat, sep=', ')
+    print('Calculating features...')
+    sleep(0.25)
 
     # Start timer
     start_feat = time()
@@ -56,8 +45,9 @@ def featurize(df, model_name, num_feat=None):
     for name, numpy_type in generator.GetColumns():
         columns.append(name)
     smi = df['smiles']
-    print('Calculating features...', end=' ', flush=True)
-    data = list(map(generator.process, smi))
+
+    smi2 = tqdm(smi, desc= "Featurizaiton")  # for progress bar
+    data = list(map(generator.process, smi2))
     print('Done.')
     stop_feat = time()
     feat_time = stop_feat - start_feat
@@ -66,42 +56,96 @@ def featurize(df, model_name, num_feat=None):
     features = pd.DataFrame(data, columns=columns)
     df = pd.concat([df, features], axis=1)
     df = df.dropna()
-    df = df.drop(list(df.filter(regex='_calculated')), axis=1)
 
     # remove the "RDKit2d_calculated = True" column(s)
     df = df.drop(list(df.filter(regex='_calculated')), axis=1)
+    df = df.drop(list(df.filter(regex='[lL]og[pP]')), axis=1)
 
-    return df, num_feat, feat_time
+    # store data back into the instance
+    self.data = df
+    self.feat_time = feat_time
 
 
-def targets_features(df, exp, train=0.8, random = None):
-    """Take in a data frame, the target column name (exp).
+def data_split(self, test=0.2, val=0, random = None):
+    """
+    Take in a data frame, the target column name (exp).
     Returns a numpy array with the target variable,
     a numpy array (matrix) of feature variables,
     and a list of strings of the feature headers.
 
     Keyword Arguments
-    random -- Integer. Set random seed using in data splitting.  Default = None"""
-
+    random -- Integer. Set random seed using in data splitting.  Default = None
+    test -- Float(0.0-1.0).  Percent of data to be used for testing
+    val -- Float.  Percent of data to be used for validation.  Taken out of training data after test.
+    """
 
     # make array of target values
-    target = np.array(df[exp])  # exp input should be target variable string
+    self.target_array = np.array(self.data[self.target_name])
+    self.test_percent = test
+    self.val_percent = val
+    self.train_percent = 1 - test - val
 
     # remove target from features
     # axis 1 is the columns.
-    features = df.drop([exp, 'smiles'], axis=1)
+    # features = df.drop([exp, 'smiles'], axis=1)
+    # TODO Collect and store the molecules in train, test and validation data sets
+    features = self.data.drop([self.target_name, 'smiles'], axis=1)
 
     # save list of strings of features
-    feature_list = list(features.columns)
+    self.feature_list = list(features.columns)
 
     # convert features to numpy
     featuresarr = np.array(features)
+    # n_total = featuresarr.shape[0]
 
-    train_percent = train
-    test_percent = 1 - train_percent
-    train_features, test_features, train_target, test_target = train_test_split(featuresarr, target,
-                                                                                test_size=test_percent,
-                                                                               random_state=random)  # what data to split and how to do it.
+    # store to instance
+    self.feature_array = featuresarr
+    self.n_tot = self.feature_array.shape[0]
+    self.in_shape = self.feature_array.shape[1]
+
+    # print("self.feature_array: ", self.feature_array)
+    # print('self target array', self.target_array)
+    # print('Total counts:', self.n_tot)
+    # print('Feature input shape', self.in_shape)
+
+    # what data to split and how to do it.
+    self.train_features, self.test_features, self.train_target, self.test_target = train_test_split(self.feature_array,
+                                                                                                    self.target_array,
+                                                                                test_size=self.test_percent,
+                                                                               random_state=self.random_seed)
+    # scale the data.  This should not hurt but can help many models
+    # TODO add this an optional feature
+    # TODO add other scalers from sklearn
+    scaler = StandardScaler()
+    self.scaler = scaler
+    self.train_features = scaler.fit_transform(self.train_features)
+    self.test_features = scaler.transform(self.test_features)
+
+    if val > 0:  # if validation data is requested.
+        # calculate percent of training to convert to val
+        b = val / (1-test)
+        self.train_features, self.val_features, self.train_target, self.val_target = train_test_split(self.train_features,
+                                                                                  self.train_target, test_size=b,
+                                                                                  random_state=self.random_seed)
+        # scale the validation features too
+        self.val_features = scaler.transform(self.val_features)
+
+        n_total = self.n_tot
+
+        self.n_train = self.train_features.shape[0]
+        ptrain = self.n_train / n_total * 100
+
+
+        self.n_test = self.test_features.shape[0]
+        ptest = self.n_test / n_total * 100
+
+        self.n_val = self.val_features.shape[0]
+        pval = self.n_val / n_total * 100
+
+        print('The dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
+                n_total, ptrain, pval, ptest))
+
+        # return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
 
     # Uncomment this section to have data shape distribution printed.
 
@@ -118,4 +162,4 @@ def targets_features(df, exp, train=0.8, random = None):
     # print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
     #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))
 
-    return train_features, test_features, train_target, test_target, feature_list
+    # return train_features, test_features, train_target, test_target, feature_list

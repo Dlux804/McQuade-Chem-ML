@@ -1,9 +1,7 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade research group.
 '''
-
-from core import ingest, features, grid, regressors, analysis, name, classifiers
-# from main import ROOT_DIR
+from core import ingest, features, grid, regressors, analysis, name, misc, classifiers
 import csv
 import os
 import subprocess
@@ -12,80 +10,86 @@ from numpy.random import randint
 from core import name
 
 
-class MlModel:
+class MlModel:  # TODO update documentation here
     """
     Class to set up and run machine learning algorithm.
     """
-    def __init__(self, algorithm, dataset, target, drop=True):
-        """Requires: learning algorithm, dataset and target property's column name."""
+    from features import featurize, data_split  # imported function becomes instance method
+    from regressors import get_regressor, hyperTune
+    from grid import make_grid
+    from train import train_reg, train_cls
+    from analysis import impgraph, pva_graph
+    from classifiers import get_classifier
+    from storage import export_json
+
+
+    def __init__(self, algorithm, dataset,  target, task, feat_meth=[0], tune=False, opt_iter=10, cv=3, random = None):
+        """Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
+        optimization cycles for hyper tuning, and number of Cross Validation folds for tuning."""
         self.algorithm = algorithm
         self.dataset = dataset
-        self.target = target
-        self.data, self.smiles = ingest.load_smiles(self, dataset, drop)
-        self.random_seed = randint(low=1, high=50)  # This is more of an __init__ method
+        self.target_name = target
+        self.task_type = task  # regression or classification
+        # TODO Make task identificaiton automatic based on dataset.
+        self.feat_meth = feat_meth
 
-    def featurization(self, feats=None):
-        """ Featurize molecules in dataset and stores results as attribute in class instance.
-            Keyword arguments:
-            feats -- Features you want.  Default = None (requires user input)
-        """
-        self.data, self.feat_meth, self.feat_time = features.featurize(self.data, self.algorithm, feats)
+        if random is None:
+            self.random_seed = randint(low=1, high=50)
+        else:
+            self.random_seed = random
 
-    def run(self, tune=False):
-        """ Runs machine learning model. Stores results as class attributes."""
-
-        # store tune as attribute for cataloguing
+        self.opt_iter = opt_iter
+        self.cv_folds = cv
         self.tuned = tune
 
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)  # Create file name
+        # ingest data.  collect full data frame (self.data)
+        # collect pandas series of the SMILES (self.smiles_col)
+        self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
-        # Split data up. Set random seed here for graph comparison purposes.
-        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data, self.target, random=self.random_seed)
+        if self.task_type == 'regression':
+            self.get_regressor()
 
-        # store the shape of the input data
-        self.in_shape = train_features.shape[1]
-        print("shape:", self.in_shape)
-        # set the model specific regressor function from sklearn
-        self.regressor = regressors.regressor(self.algorithm)
+        if self.task_type == 'classification':
+            self.get_classifier()
 
-        if tune:  # Do hyperparameter tuning
+        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
 
-            # ask for tuning variables (not recommended for high throughput)
-            # folds = int(input('Please state the number of folds for hyperparameter searching: '))
-            # iters = int(input('Please state the number of iterations for hyperparameter searching: '))
-            # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
-
-            # FIXME Unfortunate hard code deep in the program.
-            folds = 2
-            iters = 50
-            jobs = -1  # for bayes, max jobs = folds.
-
-            # Make parameter grid
-            param_grid = grid.make_grid(self.algorithm)
-
-            # Run Hyper Tuning
-            self.params,  self.tuneTime = regressors.hyperTune(self.regressor(), train_features,
-                                                                         train_target, param_grid, folds, iters,
-                                                                         self.run_name, jobs=folds)
-
-            # redefine regressor model with best parameters.
-            self.regressor = self.regressor(**self.params)  # **dict will unpack a dictionary for use as keywrdargs
-
-        else:  # Don't tune.
+        if not tune:  # if no tuning, no optimization iterations or CV folds.
+            self.opt_iter = None
+            self.cv_folds = None
             self.regressor = self.regressor()  # make it callable to match Tune = True case
-            self.tuneTime = None
+            self.tune_time = None
+
+
+    def run(self):
+        """ Runs machine learning model. Stores results as class attributes."""
+
+        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+        # TODO naming scheme currently must be called after featurization declared--adjust for robust
+
+
+        if self.tuned:  # Do hyperparameter tuning
+            self.make_grid()
+            self.hyperTune(n_jobs =6)
+
 
         # Done tuning, time to fit and predict
+        if self.task_type == 'regression':
+            self.train_reg()
 
-        # Variable importance for rf and gdb
+        if self.task_type == 'classification':
+            self.train_cls()
+
+
+    def analyze(self):
+        # # Variable importance for rf and gdb
         if self.algorithm in ['rf', 'gdb', 'rfc'] and self.feat_meth == [0]:
-            self.impgraph, self.varimp = analysis.impgraph(self.algorithm, self.regressor, train_features, train_target, self.feature_list)
-        else:
-            pass
-        # multipredict
-        # self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
-        self.stats, self.pvaM, fits_time = analysis.replicate_multi(self.regressor, train_features, test_features, train_target, test_target)
-        self.graphM = analysis.pvaM_graphs(self.pvaM)
+            self.impgraph()
+
+        # make predicted vs actual graph
+        self.pva_graph()
+        # TODO Make classification graphing function
+
 
     def store(self):
         """  Organize and store model inputs and outputs.  """
@@ -113,7 +117,7 @@ class MlModel:
             pass
         # del att['impgraph']
         att.update(self.stats)
-        #att.update(self.varimp)
+        # att.update(self.varimp)
         # Write contents of attributes dictionary to a CSV
         with open(csvfile, 'w') as f:  # Just use 'w' mode in Python 3.x
             w = csv.DictWriter(f, att.keys())
@@ -158,27 +162,6 @@ class MlModel:
         # subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
 
-    def classification_run(self):
-        # set the model specific classifier function from sklearn
-        self.classifier = classifiers.classifier(self.algorithm)
-
-        x_train, x_test, y_train, y_test, feature_list = features.targets_features(self.data,self.target) # splits the data into a training set and a test set
-        random_model = self.classifier()
-        random_model.fit(x_train, y_train)
-
-        random_prediction = random_model.predict(x_test)
-
-        accuracy, confusion, classification, roc_auc_score = analysis.classification_metrics(random_prediction, y_test) # Evaluates model's performance on the test data
-        print()     # Formatting for terminal
-        print('Accuracy_score: ')
-        print(accuracy)
-        print('Confusion_matrix: ')
-        print(confusion)
-        print('Classification_report: ')
-        print(classification)
-        print('roc_auc_score: ')
-        print(roc_auc_score)
-
 
 
 # This section is for troubleshooting and should be commented out when finished testing
@@ -188,30 +171,20 @@ class MlModel:
 #     print('Now in:', os.getcwd())
 #     print('Initializing model...', end=' ', flush=True)
 #     # initiate model class with algorithm, dataset and target
-#     model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
+#     model1 = MlModel('rf', 'ESOL.csv', 'water-sol', 'regression', tune=True, cv=3, opt_iter=25)
 #     print('done.')
 #
-# # featurize data with rdkit2d
-# model1.featurization([0])
-# # print(model1.feat_meth)
-#
-#
-# #
-# # # Run the model with hyperparameter optimization
-# model1.run(tune=False)
-# print("Input shape: ", model1.in_shape)
-#
-# print('Tune Time:', model1.tuneTime)
+# # # featurize data with rdkit2d
+# model1.featurize([0])
+# model1.data_split(val=0.0)
+# model1.run()
+# model1.analyze()
+# model1.export_json()
+import pprint
 
-#
-#
-#
-# # Save results
-# model1.store()
-#
-#
-# # Must show() graph AFTER it has been saved.
-# # if show() is called before save, the save will be blank
-# # display PvA graph
-# model1.graphM.show()
+
+# print(dict(vars(model1)).keys())
+# pprint.pprint(dict(vars(model1)))
+# # print(model1.feat_meth)
+
 

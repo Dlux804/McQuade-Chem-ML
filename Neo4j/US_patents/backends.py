@@ -1,11 +1,9 @@
 import os
-import hashlib
 import pathlib
 import pandas as pd
-from rdkit.Chem import rdChemReactions, Draw, MolFromSmiles, MolFromSmarts, MolToSmiles
+from rdkit.Chem import rdChemReactions, MolFromSmiles, MolFromSmarts, MolToSmiles
 
 from rdkit import RDLogger
-
 RDLogger.DisableLog('rdApp.*')
 
 

@@ -30,7 +30,7 @@
     <span class="caption">training_set</span>
   </li>
   <li class="node" data-node-id="17" data-x="-809.1629640407821" data-y="-174.94583200801478">
-    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>size</dt><dd>902</dd></dl></li>
+    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>size</dt><dd>902</dd><dt>random_seed</dt><dd>12</dd></dl></li>
   <li class="node" data-node-id="18" data-x="-1458.2047249002662" data-y="-108.2761458125773">
     <span class="caption">ClC(=C)Cl</span><dl class="properties"><dt>SMILES</dt><dd>ClC(=C)Cl</dd><dt>water-solubility</dt><dd>-1.64</dd></dl></li>
   <li class="node" data-node-id="19" data-x="-573.0617579949882" data-y="47.01625948440706">

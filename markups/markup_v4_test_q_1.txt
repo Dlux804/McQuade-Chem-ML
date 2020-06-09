@@ -17,11 +17,11 @@
     <span class="caption">ECFP</span><dl class="properties"><dt>name</dt><dd>ECFP</dd><dt>num_feature</dt><dd>2048</dd></dl></li>
   <li class="node" data-node-id="9" data-x="-573.0617579949882" data-y="47.01625948440706">
     <span class="caption">Random_Split</span><dl class="properties"><dt>name</dt><dd>Random_Split</dd><dt>test_percent</dt><dd>0.8</dd><dt>train_percent</dt><dd>0.2</dd><dt>random_seed</dt><dd>12</dd></dl></li>
-  <li class="node" data-node-id="10" data-x="-415.9809629700042" data-y="209.4274543395578">
-    <span class="caption">test_set</span><dl class="properties"><dt>size</dt><dd>226</dd><dt>RMSE</dt><dd>0.566</dd><dt>R2</dt><dd>0.92</dd></dl></li>
+  <li class="node" data-node-id="10" data-x="-415.9809629700042" data-y="214.63303892649265">
+    <span class="caption">test_set</span><dl class="properties"><dt>name</dt><dd>test_set</dd><dt>size</dt><dd>226</dd><dt>RMSE</dt><dd>0.492</dd><dt>R2</dt><dd>0.967</dd></dl></li>
   <li class="node" data-node-id="12" data-x="157.80319500131185" data-y="-64.63110680202212">
     <span class="caption">Tuning_Alg</span><dl class="properties"><dt>name</dt><dd>Tuning_Alg</dd><dt>algorithm</dt><dd>BayesSearchCV</dd><dt>num_cv</dt><dd>10</dd><dt>steps</dt><dd>100</dd><dt>threshold</dt><dd>0.01</dd><dt>delta</dt><dd>0.01</dd><dt>n_best</dt><dd>5</dd><dt>tuneTime</dt><dd>100sec</dd></dl></li>
-  <li class="node" data-node-id="13" data-x="-415.9809629700042" data-y="209.4274543395578">
+  <li class="node" data-node-id="13" data-x="-415.9809629700042" data-y="214.63303892649265">
     <span class="caption">test_set</span><dl class="properties"><dt>name</dt><dd>test_set</dd><dt>size</dt><dd>226</dd><dt>RMSE</dt><dd>0.492</dd><dt>R2</dt><dd>0.967</dd></dl></li>
   <li class="node" data-node-id="15" data-x="-809.1629640407821" data-y="-174.94583200801478">
     <span class="caption">training_set</span>

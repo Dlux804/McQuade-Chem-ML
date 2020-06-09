@@ -27,8 +27,7 @@
     <span class="caption">training_set</span>
   </li>
   <li class="node" data-node-id="16" data-x="-809.1629640407821" data-y="-174.94583200801478">
-    <span class="caption">training_set</span>
-  </li>
+    <span class="caption">training_set</span><dl class="properties"><dt>random_seed</dt><dd>12</dd><dt>name</dt><dd>training_set</dd></dl></li>
   <li class="node" data-node-id="17" data-x="-809.1629640407821" data-y="-174.94583200801478">
     <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>size</dt><dd>902</dd><dt>random_seed</dt><dd>12</dd></dl></li>
   <li class="node" data-node-id="18" data-x="-1458.2047249002662" data-y="-108.2761458125773">

@@ -68,7 +68,9 @@
   <li class="relationship" data-from="0" data-to="9">
     <span class="type">USES_SPLIT</span>
   </li>
-  <li class="relationship" data-from="9" data-to="10"></li>
+  <li class="relationship" data-from="9" data-to="10">
+    <span class="type">SPLITS_INTO</span>
+  </li>
   <li class="relationship" data-from="10" data-to="2">
     <span class="type">CONTAINS_MOLECULE</span><dl class="properties"><dt>predicted_value</dt><dd>1.69</dd><dt>uncertainty</dt><dd>0.03</dd></dl></li>
   <li class="relationship" data-from="5" data-to="12">
@@ -98,7 +100,9 @@
     <span class="type">CALCULATES</span><dl class="properties"><dt>method</dt><dd>N,O,S,P</dd></dl></li>
   <li class="relationship" data-from="2" data-to="17">
     <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>28.56</dd></dl></li>
-  <li class="relationship" data-from="9" data-to="18"></li>
+  <li class="relationship" data-from="9" data-to="18">
+    <span class="type">SPLITS_INTO</span>
+  </li>
   <li class="relationship" data-from="18" data-to="19">
     <span class="type">CONTAINS_MOLECULES</span><dl class="properties"><dt>predicted_value</dt><dd>-2.3</dd><dt>uncertainty</dt><dd>0.01</dd></dl></li>
   <li class="relationship" data-from="19" data-to="20">

@@ -28,15 +28,13 @@
     <span class="caption">training_set</span>
   </li>
   <li class="node" data-node-id="16" data-x="-809.1629640407821" data-y="-174.94583200801478">
-    <span class="caption">training_set</span>
-  </li>
+    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd></dl></li>
   <li class="node" data-node-id="17" data-x="-809.1629640407821" data-y="-174.94583200801478">
-    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>size</dt><dd>902</dd></dl></li>
+    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>size</dt><dd>902</dd><dt>random_seed</dt><dd>42</dd></dl></li>
   <li class="node" data-node-id="18" data-x="-1292.5327148437502" data-y="-64.63110680202212">
     <span class="caption">CC(C)(C)c1ccc(O)cc1</span><dl class="properties"><dt>SMILES</dt><dd>CC(C)(C)c1ccc(O)cc1</dd><dt>water-solubility</dt><dd>-2.41</dd></dl></li>
   <li class="node" data-node-id="19" data-x="-573.0617579949882" data-y="47.01625948440706">
-    <span class="caption">Random_Split</span>
-  </li>
+    <span class="caption">Random_Split</span><dl class="properties"><dt>name</dt><dd>Random_Split</dd><dt>test_percent</dt><dd>0.2</dd><dt>train_percent</dt><dd>0.8</dd><dt>random_seed</dt><dd>42</dd></dl></li>
   <li class="node" data-node-id="20" data-x="-1185.2143705310862" data-y="275.02248592093633">
     <span class="caption">Fragment001</span>
   </li>

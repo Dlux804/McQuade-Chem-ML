@@ -1,9 +1,9 @@
 <ul class="graph-diagram-markup" data-internal-scale="3.96" data-external-scale="1">
   <li class="node" data-node-id="0" data-x="-381.35430084090063" data-y="-34.72064208984375">
-    <span class="caption">ML_Model</span><dl class="properties"><dt>date</dt><dd>2020/06/08-14:02:30</dd><dt>feat_time</dt><dd>32s</dd><dt>name</dt><dd>ML_Model</dd><dt>test_time</dt><dd>65s</dd><dt>train_time</dt><dd>284s</dd></dl></li>
+    <span class="caption">ML_Model</span><dl class="properties"><dt>date</dt><dd>2020/06/08-14:20:34</dd><dt>feat_time</dt><dd>35s</dd><dt>name</dt><dd>ML_Model</dd><dt>test_time</dt><dd>95s</dd><dt>train_time</dt><dd>284s</dd></dl></li>
   <li class="node" data-node-id="1" data-x="-883.228759765625" data-y="3.1427543878539232">
     <span class="caption">DataSet</span><dl class="properties"><dt>name</dt><dd>DataSet</dd><dt>data</dt><dd>ESOL.csv,</dd><dt>measurement</dt><dd>water-solubility,</dd><dt>source</dt><dd>moleculenet.ai</dd></dl></li>
-  <li class="node" data-node-id="2" data-x="-883.228759765625" data-y="209.4274543395578">
+  <li class="node" data-node-id="2" data-x="-883.228759765625" data-y="229.89920061086468">
     <span class="caption">ClCCl</span><dl class="properties"><dt>SMILES</dt><dd>ClCCl,</dd><dt>water-solubility</dt><dd>-0.63</dd></dl></li>
   <li class="node" data-node-id="3" data-x="-1312.3443714488637" data-y="-34.72064208984375">
     <span class="caption">ClC(=C)Cl</span><dl class="properties"><dt>SMILES</dt><dd>ClC(=C)Cl</dd><dt>water-solubility</dt><dd>-1.64</dd></dl></li>
@@ -29,13 +29,12 @@
     <span class="caption">Features List</span><dl class="properties"><dt>name</dt><dd>Feature List</dd><dt>num</dt><dd>2248</dd></dl></li>
   <li class="node" data-node-id="15" data-x="-692.9143041087394" data-y="51.39774341157827">
     <span class="caption">TPSA</span><dl class="properties"><dt>name</dt><dd>TPSA</dd></dl></li>
-  <li class="node" data-node-id="16" data-x="-632.1587530579231" data-y="-139.82671149159992">
-    <span class="caption">training_set</span>
-  </li>
+  <li class="node" data-node-id="16" data-x="-632.1587530579231" data-y="-206.2718328714137">
+    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>random_seed</dt><dd>12</dd></dl></li>
   <li class="node" data-node-id="17" data-x="-692.9143041087394" data-y="51.39774341157827">
     <span class="caption">TPSA</span><dl class="properties"><dt>name</dt><dd>TPSA</dd></dl></li>
-  <li class="node" data-node-id="18" data-x="-632.1587530579231" data-y="-139.82671149159992">
-    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>size</dt><dd>902</dd></dl></li>
+  <li class="node" data-node-id="18" data-x="-632.1587530579231" data-y="-206.2718328714137">
+    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>size</dt><dd>902</dd><dt>random_seed</dt><dd>12</dd></dl></li>
   <li class="node" data-node-id="19" data-x="-1312.3443714488637" data-y="-34.72064208984375">
     <span class="caption">ClC(=C)Cl</span><dl class="properties"><dt>SMILES</dt><dd>ClC(=C)Cl</dd><dt>water-solubility</dt><dd>-1.64</dd></dl></li>
   <li class="node" data-node-id="20" data-x="-1247.0797678313297" data-y="229.89920061086468">

@@ -1,7 +1,7 @@
 <ul class="graph-diagram-markup" data-internal-scale="3.76" data-external-scale="1">
   <li class="node" data-node-id="0" data-x="-415.9809629700042" data-y="-64.63110680202212">
     <span class="caption">ML_Model</span><dl class="properties"><dt>date</dt><dd>2020/06/08-14:02:30</dd><dt>feat_time</dt><dd>32s</dd><dt>name</dt><dd>ML_Model</dd><dt>test_time</dt><dd>65s</dd><dt>train_time</dt><dd>284s</dd></dl></li>
-  <li class="node" data-node-id="1" data-x="-809.1629640407821" data-y="11.22174986975071">
+  <li class="node" data-node-id="1" data-x="-919.6892559083021" data-y="47.01625948440706">
     <span class="caption">DataSet</span><dl class="properties"><dt>name</dt><dd>DataSet</dd><dt>data</dt><dd>ESOL.csv,</dd><dt>measurement</dt><dd>water-solubility,</dd><dt>source</dt><dd>moleculenet.ai</dd></dl></li>
   <li class="node" data-node-id="2" data-x="-984.1156395445468" data-y="188.4729068837259">
     <span class="caption">ClCCl</span><dl class="properties"><dt>SMILES</dt><dd>ClCCl,</dd><dt>water-solubility</dt><dd>-0.63</dd></dl></li>
@@ -69,11 +69,9 @@
   <li class="relationship" data-from="0" data-to="10">
     <span class="type">PREDICTS</span>
   </li>
-  <li class="relationship" data-from="1" data-to="13"></li>
   <li class="relationship" data-from="9" data-to="15">
     <span class="type">SPLITS_INTO</span>
   </li>
-  <li class="relationship" data-from="1" data-to="16"></li>
   <li class="relationship" data-from="0" data-to="17">
     <span class="type">TRAINS</span>
   </li>

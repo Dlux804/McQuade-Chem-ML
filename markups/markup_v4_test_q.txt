@@ -78,11 +78,9 @@
   <li class="relationship" data-from="0" data-to="10">
     <span class="type">PREDICTS</span>
   </li>
-  <li class="relationship" data-from="1" data-to="13"></li>
   <li class="relationship" data-from="9" data-to="15">
     <span class="type">SPLITS_INTO</span>
   </li>
-  <li class="relationship" data-from="1" data-to="16"></li>
   <li class="relationship" data-from="0" data-to="17">
     <span class="type">TRAINS</span>
   </li>

@@ -1,43 +1,41 @@
 <ul class="graph-diagram-markup" data-internal-scale="3.96" data-external-scale="1">
   <li class="node" data-node-id="0" data-x="-381.35430084090063" data-y="-34.72064208984375">
-    <span class="caption">ML_Model</span><dl class="properties"><dt>date</dt><dd>2020/06/08-14:02:30</dd><dt>feat_time</dt><dd>32s</dd><dt>name</dt><dd>ML_Model</dd><dt>test_time</dt><dd>65s</dd><dt>train_time</dt><dd>284s</dd></dl></li>
+    <span class="caption">ML_Model</span><dl class="properties"><dt>date</dt><dd>2020/06/08-14:02:30</dd><dt>feat_time</dt><dd>32s</dd><dt>name</dt><dd>ML_Model</dd><dt>test_time</dt><dd>90s</dd><dt>train_time</dt><dd>1284s</dd></dl></li>
   <li class="node" data-node-id="1" data-x="-883.228759765625" data-y="3.1427543878539232">
     <span class="caption">DataSet</span><dl class="properties"><dt>name</dt><dd>DataSet</dd><dt>data</dt><dd>ESOL.csv,</dd><dt>measurement</dt><dd>water-solubility,</dd><dt>source</dt><dd>moleculenet.ai</dd></dl></li>
   <li class="node" data-node-id="2" data-x="-883.228759765625" data-y="209.4274543395578">
     <span class="caption">O=C1CCCN1</span><dl class="properties"><dt>SMILES</dt><dd>O=C1CCCN1,</dd><dt>water-solubility</dt><dd>-0.8</dd></dl></li>
-  <li class="node" data-node-id="3" data-x="-1312.3443714488637" data-y="-34.72064208984375">
+  <li class="node" data-node-id="3" data-x="-1247.0797678313297" data-y="-77.48121356718951">
     <span class="caption">CC(C)=CCCC(C)=CC(=O)</span><dl class="properties"><dt>SMILES</dt><dd>CC(C)=CCCC(C)=CC(=O)</dd><dt>water-solubility</dt><dd>-2.06</dd></dl></li>
   <li class="node" data-node-id="5" data-x="-2.3821412059357128" data-y="-34.72064208984375">
     <span class="caption">Algorithm_A</span><dl class="properties"><dt>name</dt><dd>GDB</dd><dt>source</dt><dd>sklearn</dd><dt>Tuned</dt><dd>true</dd><dt>version</dt><dd>0.23</dd></dl></li>
   <li class="node" data-node-id="6" data-x="-965.7007714592714" data-y="-184.54027307576794">
-    <span class="caption">BalabanJ</span>
-  </li>
-  <li class="node" data-node-id="7" data-x="-738.8719440200526" data-y="-350.4394769973152">
+    <span class="caption">BalabanJ</span><dl class="properties"><dt>name</dt><dd>BalabanJ</dd></dl></li>
+  <li class="node" data-node-id="7" data-x="-692.9143041087394" data-y="-350.4394769973152">
     <span class="caption">RDKIT_2d</span><dl class="properties"><dt>num_features</dt><dd>200</dd><dt>name</dt><dd>RDKit_2d</dd></dl></li>
   <li class="node" data-node-id="8" data-x="-96.7538022757991" data-y="-230.71466768704917">
     <span class="caption">ECFP</span><dl class="properties"><dt>name</dt><dd>ECFP</dd><dt>num_feature</dt><dd>2048</dd></dl></li>
-  <li class="node" data-node-id="9" data-x="-522.2829341230342" data-y="75.47459637103219">
+  <li class="node" data-node-id="9" data-x="-523.3019129740444" data-y="76.4935752220423">
     <span class="caption">Random_Split</span><dl class="properties"><dt>name</dt><dd>Random_Split</dd><dt>test_percent</dt><dd>0.1</dd><dt>train_percent</dt><dd>0.9</dd><dt>random_seed</dt><dd>30</dd></dl></li>
   <li class="node" data-node-id="10" data-x="-415.9809629700042" data-y="209.4274543395578">
     <span class="caption">test_set</span><dl class="properties"><dt>name</dt><dd>test_set</dd><dt>size</dt><dd>113</dd><dt>RMSE</dt><dd>0.635</dd><dt>R2</dt><dd>0.925</dd></dl></li>
-  <li class="node" data-node-id="11" data-x="-988.94071441148" data-y="-328.49141751647414">
+  <li class="node" data-node-id="11" data-x="-985.8837778584497" data-y="-350.4394769973152">
     <span class="caption">TPSA</span><dl class="properties"><dt>name</dt><dd>TPSA</dd></dl></li>
   <li class="node" data-node-id="12" data-x="156.43496991677296" data-y="-139.82671149159992">
     <span class="caption">Tuning_Alg</span><dl class="properties"><dt>name</dt><dd>Tuning_Alg</dd><dt>algorithm</dt><dd>BayesSearchCV</dd><dt>num_cv</dt><dd>10</dd><dt>steps</dt><dd>100</dd><dt>threshold</dt><dd>0.01</dd><dt>delta</dt><dd>0.01</dd><dt>n_best</dt><dd>5</dd><dt>tuneTime</dt><dd>1405sec</dd></dl></li>
   <li class="node" data-node-id="13" data-x="-965.7007714592714" data-y="-184.54027307576794">
     <span class="caption">BalabanJ</span><dl class="properties"><dt>name</dt><dd>BalabanJ</dd></dl></li>
-  <li class="node" data-node-id="14" data-x="-381.35430084090063" data-y="-350.4394769973152">
+  <li class="node" data-node-id="14" data-x="-381.35430084090063" data-y="-325.8149356857621">
     <span class="caption">Features List</span><dl class="properties"><dt>name</dt><dd>Feature List</dd><dt>num</dt><dd>2248</dd></dl></li>
   <li class="node" data-node-id="15" data-x="-692.9143041087394" data-y="51.39774341157827">
     <span class="caption">TPSA</span><dl class="properties"><dt>name</dt><dd>TPSA</dd></dl></li>
   <li class="node" data-node-id="16" data-x="-632.1587530579231" data-y="-139.82671149159992">
-    <span class="caption">training_set</span>
-  </li>
+    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>random_seed</dt><dd>30</dd></dl></li>
   <li class="node" data-node-id="17" data-x="-692.9143041087394" data-y="51.39774341157827">
     <span class="caption">TPSA</span><dl class="properties"><dt>name</dt><dd>TPSA</dd></dl></li>
   <li class="node" data-node-id="18" data-x="-632.1587530579231" data-y="-139.82671149159992">
-    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>size</dt><dd>1015</dd></dl></li>
-  <li class="node" data-node-id="19" data-x="-1312.3443714488637" data-y="-34.72064208984375">
+    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>size</dt><dd>1015</dd><dt>random_seed</dt><dd>30</dd></dl></li>
+  <li class="node" data-node-id="19" data-x="-1247.0797678313297" data-y="-77.48121356718951">
     <span class="caption">CC(C)=CCCC(C)=CC(=O)</span><dl class="properties"><dt>SMILES</dt><dd>CC(C)=CCCC(C)=CC(=O)</dd><dt>water-solubility</dt><dd>-2.06</dd></dl></li>
   <li class="node" data-node-id="20" data-x="-1247.0797678313297" data-y="229.89920061086468">
     <span class="caption">Fragment001</span><dl class="properties"><dt>frag_smiles</dt><dd>(=O)</dd><dt>frag_name</dt><dd>[aldehyde]</dd></dl></li>
@@ -90,16 +88,16 @@
   <li class="relationship" data-from="7" data-to="11">
     <span class="type">CALCULATES</span><dl class="properties"><dt>method</dt><dd>N,O,S,P</dd></dl></li>
   <li class="relationship" data-from="3" data-to="11">
-    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>54.50</dd></dl></li>
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>23.53</dd></dl></li>
   <li class="relationship" data-from="3" data-to="6">
-    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>3.63</dd></dl></li>
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>1.06</dd></dl></li>
   <li class="relationship" data-from="7" data-to="13">
     <span class="type">CALCULATES</span>
   </li>
   <li class="relationship" data-from="7" data-to="15">
     <span class="type">CALCULATES</span><dl class="properties"><dt>method</dt><dd>N,O,S,P</dd></dl></li>
   <li class="relationship" data-from="2" data-to="17">
-    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>28.56</dd></dl></li>
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>10.46</dd></dl></li>
   <li class="relationship" data-from="9" data-to="18">
     <span class="type">SPLITS_INTO</span>
   </li>
@@ -111,7 +109,7 @@
     <span class="type">CALCULATES</span>
   </li>
   <li class="relationship" data-from="2" data-to="22">
-    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>1.05</dd></dl></li>
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>3.98</dd></dl></li>
   <li class="relationship" data-from="2" data-to="25">
     <span class="type">HAS_FRAGMENT</span>
   </li>

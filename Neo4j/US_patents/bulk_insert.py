@@ -91,13 +91,13 @@ class InitPatentsIntoNeo4j:
 
         compound_constraint_check_string = """
                 CREATE CONSTRAINT unique_smiles
-                ON (n:compound)
+                ON (n:Compound)
                 ASSERT n.smiles IS UNIQUE
             """
         reaction_constraint_check_string = """
-                    CREATE CONSTRAINT unique_reaction_smiles
-                    ON (n:reaction)
-                    ASSERT n.reaction_smiles IS UNIQUE
+                    CREATE CONSTRAINT unique_reactionSmiles
+                    ON (n:Reaction)
+                    ASSERT n.reactionSmiles IS UNIQUE
                 """
         try:
             tx = graph.begin(autocommit=True)
@@ -129,6 +129,11 @@ class InitPatentsIntoNeo4j:
         if self.insert_change_in_functional_groups:
             file_data['change_in_functional_groups'] = self.parallel_apply(file_data['reaction_smiles'],
                                                                            map_rxn_functional_groups)
+
+        file_data['patent_index'] = self.parallel_apply(file_data['sources'], self.get_index)
+        file_data['reaction_details'] = self.parallel_apply(file_data['sources'], self.get_reaction_details)
+
+        file_data = file_data.drop(['sources', 'stages'], axis=1)
 
         reactions = []
         for index, row in file_data.iterrows():
@@ -238,11 +243,33 @@ class InitPatentsIntoNeo4j:
                 inchi = id_value
                 compound['inchi'] = inchi
 
+        chemical_names = compound['chemical_names']
+        compound['chemical_name'] = chemical_names[len(chemical_names) - 1]
+
+        appearances = compound['appearances']
+        if appearances:
+            compound['appearance'] = appearances[0]
+        else:
+            compound['appearance'] = None
+
         compound.pop('identifiers')
+        compound.pop('chemical_names')
+        compound.pop('appearances')
         if check:
             return compound
         else:
             return None
+
+    @staticmethod
+    def get_index(source):
+        source = ast.literal_eval(source)
+        return source[0]
+
+    @staticmethod
+    def get_reaction_details(source):
+        source = ast.literal_eval(source)
+        source.pop(0)
+        return " ".join(source)
 
     @staticmethod
     def __get_reaction_query__():
@@ -259,43 +286,41 @@ class InitPatentsIntoNeo4j:
         reaction_query = """
         
         UNWIND $parameters as row
-        MERGE (rxn:reaction {reaction_smiles: row.reaction_smiles})
-        ON CREATE SET rxn.reactant_fragments = row.reactant_fragments, 
-                      rxn.product_fragments = row.product_fragments, rxn.sources = row.sources, 
-                      rxn.insert_stages = row.stages,
-                      rxn.reaction_image_location = row.reaction_image_location,
-                      rxn.change_in_functional_groups = row.change_in_functional_groups
+        MERGE (rxn:Reaction {reactionSmiles: row.reaction_smiles})
+        ON CREATE SET rxn.reactionDetails = row.reaction_details,
+                      rxn.changeInFunctionalGroups = row.change_in_functional_groups,
+                      rxn.patentIndex = row.patent_index
         
         FOREACH (reactant in row.reactants | 
-                 MERGE (com:compound {smiles: reactant.smiles}) 
-                 ON CREATE SET com.chemical_names = reactant.chemical_names, com.appearances = reactant.appearances,
-                               com.inchi = reactant.inchi, com.molar_mass = reactant.molwt, 
-                               com.functional_groups = reactant.functional_groups
+                 MERGE (com:Compound {smiles: reactant.smiles}) 
+                 ON CREATE SET com.chemicalName = reactant.chemical_name, com.appearance = reactant.appearance,
+                               com.inchi = reactant.inchi, com.molarMass = reactant.molwt, 
+                               com.functionalGroups = reactant.functional_groups
                  MERGE (com)-[:reacts]->(rxn)
                 )
         
         FOREACH (solvent in row.solvents | 
-                 MERGE (com:compound {smiles: solvent.smiles})
-                 ON CREATE SET com.chemical_names = solvent.chemical_names, com.appearances = solvent.appearances,
-                               com.inchi = solvent.inchi, com.molar_mass = solvent.molwt, 
-                               com.functional_groups = solvent.functional_groups
-                 MERGE (com)-[:solvent_for]->(rxn)
+                 MERGE (com:Compound {smiles: solvent.smiles})
+                 ON CREATE SET com.chemicalName = solvent.chemical_name, com.appearance = solvent.appearance,
+                               com.inchi = solvent.inchi, com.molarMass = solvent.molwt, 
+                               com.functionalGroups = solvent.functional_groups
+                 MERGE (com)-[:solvates]->(rxn)
                 )
         
         FOREACH (catalyst in row.catalyst | 
-                 MERGE (com:compound {smiles: catalyst.smiles})
-                 ON CREATE SET com.chemical_names = catalyst.chemical_names, com.appearances = catalyst.appearances,
-                               com.inchi = catalyst.inchi, com.molar_mass = catalyst.molwt, 
-                               com.functional_groups = catalyst.functional_groups
-                 MERGE (com)-[:catalysis]->(rxn)
+                 MERGE (com:Compound {smiles: catalyst.smiles})
+                 ON CREATE SET com.chemicalName = catalyst.chemical_name, com.appearance = catalyst.appearance,
+                               com.inchi = catalyst.inchi, com.molarMass = catalyst.molwt, 
+                               com.functionalGroups = catalyst.functional_groups
+                 MERGE (com)-[:catalyzes]->(rxn)
                 )
         
         FOREACH (product in row.products | 
-                 MERGE (com:compound {smiles: product.smiles})
-                 ON CREATE SET com.chemical_names = product.chemical_names, com.appearances = product.appearances,
-                               com.inchi = product.inchi, com.molar_mass = product.molwt, 
-                               com.functional_groups = product.functional_groups
-                 MERGE (rxn)-[:reacts]->(com)
+                 MERGE (com:Compound {smiles: product.smiles})
+                 ON CREATE SET com.chemicalName = product.chemical_name, com.appearance = product.appearance,
+                               com.inchi = product.inchi, com.molarMass = product.molwt, 
+                               com.functionalGroups = product.functional_groups
+                 MERGE (rxn)-[:produces]->(com)
                 )   
         """
         return reaction_query
@@ -304,8 +329,8 @@ class InitPatentsIntoNeo4j:
 if __name__ == "__main__":
     params = dict(
         patents_directory='/home/user/Desktop/5104873',
-        number_of_cups=4,
-        convert_xml_to_csv=True,
+        number_of_cups=1,
+        convert_xml_to_csv=False,
         clean_checker_files=False,
         insert_compounds_with_functional_groups=False,
         insert_change_in_functional_groups=False,

@@ -1,0 +1,103 @@
+<ul class="graph-diagram-markup" data-internal-scale="3.96" data-external-scale="1">
+  <li class="node" data-node-id="0" data-x="-381.35430084090063" data-y="-34.72064208984375">
+    <span class="caption">ML_Model</span><dl class="properties"><dt>name</dt><dd>ML_Model</dd><dt>date</dt><dd>2020/06/10-14:43:34,</dd><dt>feat_time</dt><dd>24s</dd><dt>train_time</dt><dd>352</dd><dt>test_time</dt><dd>66s</dd></dl></li>
+  <li class="node" data-node-id="1" data-x="-888.1235326901831" data-y="4.366478444829932">
+    <span class="caption">DataSet</span><dl class="properties"><dt>name</dt><dd>DataSet</dd><dt>data</dt><dd>ESOL.csv,</dd><dt>measurement</dt><dd>water-solubility,</dd><dt>source</dt><dd>moleculenet.ai</dd></dl></li>
+  <li class="node" data-node-id="2" data-x="-988.94071441148" data-y="259.51074574975354">
+    <span class="caption">CNC(=O)ON=C(SC)C(=O)N(C)C</span><dl class="properties"><dt>SMILES</dt><dd>CNC(=O)ON=C(SC)C(=O)N(C)C</dd></dl></li>
+  <li class="node" data-node-id="3" data-x="-1343.064536971276" data-y="-77.48121356718951">
+    <span class="caption">CCSCCSP(=S)(OC)OC</span><dl class="properties"><dt>SMILES</dt><dd>CCSCCSP(=S)(OC)OC</dd></dl></li>
+  <li class="node" data-node-id="5" data-x="-2.3821412059357128" data-y="-34.72064208984375">
+    <span class="caption">Algorithm_A</span><dl class="properties"><dt>name</dt><dd>Algorithm_A</dd><dt>source</dt><dd>Tensorflow</dd><dt>Tuned</dt><dd>true</dd><dt>version</dt><dd>1.0.12</dd></dl></li>
+  <li class="node" data-node-id="6" data-x="-965.7007714592714" data-y="-184.54027307576794">
+    <span class="caption">BalabanJ</span><dl class="properties"><dt>name</dt><dd>BalabanJ</dd></dl></li>
+  <li class="node" data-node-id="7" data-x="-738.8719440200526" data-y="-372.0811870667597">
+    <span class="caption">RDKIT_2d</span><dl class="properties"><dt>num_features</dt><dd>200</dd><dt>name</dt><dd>RDKit_2d</dd></dl></li>
+  <li class="node" data-node-id="8" data-x="-84.85083707693546" data-y="-214.4833851349658">
+    <span class="caption">ECFP</span><dl class="properties"><dt>name</dt><dd>ECFP</dd><dt>num_feature</dt><dd>2048</dd></dl></li>
+  <li class="node" data-node-id="9" data-x="-500.6412240535898" data-y="83.04918256500315">
+    <span class="caption">Random_Split</span><dl class="properties"><dt>name</dt><dd>Random_Split</dd><dt>test_percent</dt><dd>0.3</dd><dt>train_percent</dt><dd>0.7</dd><dt>random_seed</dt><dd>3</dd></dl></li>
+  <li class="node" data-node-id="10" data-x="-428.96591502966334" data-y="231.9372199645578">
+    <span class="caption">test_set</span><dl class="properties"><dt>name</dt><dd>test_set</dd><dt>size</dt><dd>338</dd><dt>RMSE</dt><dd>0.624</dd><dt>R2</dt><dd>0.904</dd></dl></li>
+  <li class="node" data-node-id="11" data-x="-988.94071441148" data-y="-328.49141751647414">
+    <span class="caption">TPSA</span><dl class="properties"><dt>name</dt><dd>TPSA</dd></dl></li>
+  <li class="node" data-node-id="12" data-x="156.43496991677296" data-y="-139.82671149159992">
+    <span class="caption">Tuning_Alg</span><dl class="properties"><dt>name</dt><dd>Tuning_Alg</dd><dt>algorithm</dt><dd>BayesSearchCV</dd><dt>num_cv</dt><dd>10</dd><dt>steps</dt><dd>100</dd><dt>threshold</dt><dd>0.01</dd><dt>delta</dt><dd>0.01</dd><dt>n_best</dt><dd>5</dd><dt>tuneTime</dt><dd>100sec</dd></dl></li>
+  <li class="node" data-node-id="13" data-x="-965.7007714592714" data-y="-184.54027307576794">
+    <span class="caption">BalabanJ</span><dl class="properties"><dt>name</dt><dd>BalabanJ</dd></dl></li>
+  <li class="node" data-node-id="14" data-x="-381.35430084090063" data-y="-350.4394769973152">
+    <span class="caption">Features List</span><dl class="properties"><dt>name</dt><dd>Feature List</dd><dt>num</dt><dd>2248</dd></dl></li>
+  <li class="node" data-node-id="15" data-x="-692.9143041087394" data-y="51.39774341157827">
+    <span class="caption">TPSA</span><dl class="properties"><dt>name</dt><dd>TPSA</dd></dl></li>
+  <li class="node" data-node-id="16" data-x="-619.9217590948549" data-y="-117.80029498276156">
+    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>random_seed</dt><dd>3</dd></dl></li>
+  <li class="node" data-node-id="17" data-x="-692.9143041087394" data-y="51.39774341157827">
+    <span class="caption">TPSA</span><dl class="properties"><dt>name</dt><dd>TPSA</dd></dl></li>
+  <li class="node" data-node-id="18" data-x="-619.9217590948549" data-y="-117.80029498276156">
+    <span class="caption">training_set</span><dl class="properties"><dt>name</dt><dd>training_set</dd><dt>size</dt><dd>790</dd><dt>random_seed</dt><dd>3</dd></dl></li>
+  <li class="node" data-node-id="19" data-x="-1343.064536971276" data-y="-77.48121356718951">
+    <span class="caption">CCSCCSP(=S)(OC)OC</span><dl class="properties"><dt>SMILES</dt><dd>CCSCCSP(=S)(OC)OC</dd></dl></li>
+  <li class="node" data-node-id="21" data-x="-764.0910644531253" data-y="-77.48121356718951">
+    <span class="caption">BalabanJ</span><dl class="properties"><dt>name</dt><dd>BalabanJ</dd></dl></li>
+  <li class="node" data-node-id="22" data-x="-764.0910644531253" data-y="-77.48121356718951">
+    <span class="caption">BalabanJ</span><dl class="properties"><dt>name</dt><dd>BalabanJ</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="1">
+    <span class="type">USES</span>
+  </li>
+  <li class="relationship" data-from="1" data-to="2">
+    <span class="type">CONTAINS_MOLECULE</span><dl class="properties"><dt>measure_value</dt><dd>0.106</dd></dl></li>
+  <li class="relationship" data-from="1" data-to="3">
+    <span class="type">CONTAINS_MOLECULE</span><dl class="properties"><dt>measured_value</dt><dd>-3.091</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="5">
+    <span class="type">USES_ALGORITHM</span><dl class="properties"><dt>param1</dt><dd>0.1</dd><dt>param2</dt><dd>dang</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="7">
+    <span class="type">USES_FEATURIZATION</span>
+  </li>
+  <li class="relationship" data-from="0" data-to="8">
+    <span class="type">USES_FEATURIZATION</span>
+  </li>
+  <li class="relationship" data-from="0" data-to="9">
+    <span class="type">USES_SPLIT</span>
+  </li>
+  <li class="relationship" data-from="9" data-to="10"></li>
+  <li class="relationship" data-from="10" data-to="2">
+    <span class="type">CONTAINS_MOLECULE</span><dl class="properties"><dt>predicted_value</dt><dd>1.69</dd><dt>uncertainty</dt><dd>0.03</dd></dl></li>
+  <li class="relationship" data-from="5" data-to="12">
+    <span class="type">USES_TUNING</span>
+  </li>
+  <li class="relationship" data-from="0" data-to="10">
+    <span class="type">PREDICTS</span>
+  </li>
+  <li class="relationship" data-from="8" data-to="14">
+    <span class="type">CONTIBUTES_TO</span>
+  </li>
+  <li class="relationship" data-from="7" data-to="14">
+    <span class="type">CONTRIBUTES_TO</span>
+  </li>
+  <li class="relationship" data-from="0" data-to="14">
+    <span class="type">HAS_FEATURES</span><dl class="properties"><dt>scaled</dt><dd>true</dd><dt>scaling method</dt><dd>StandardScalar</dd></dl></li>
+  <li class="relationship" data-from="7" data-to="11">
+    <span class="type">CALCULATES</span><dl class="properties"><dt>method</dt><dd>N,O,S,P</dd></dl></li>
+  <li class="relationship" data-from="3" data-to="11">
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>45.98</dd></dl></li>
+  <li class="relationship" data-from="3" data-to="6">
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>1.94</dd></dl></li>
+  <li class="relationship" data-from="7" data-to="13">
+    <span class="type">CALCULATES</span>
+  </li>
+  <li class="relationship" data-from="7" data-to="15">
+    <span class="type">CALCULATES</span><dl class="properties"><dt>method</dt><dd>N,O,S,P</dd></dl></li>
+  <li class="relationship" data-from="2" data-to="17">
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>50.13</dd></dl></li>
+  <li class="relationship" data-from="9" data-to="18"></li>
+  <li class="relationship" data-from="18" data-to="19">
+    <span class="type">CONTAINS_MOLECULES</span><dl class="properties"><dt>predicted_value</dt><dd>-2.3</dd><dt>uncertainty</dt><dd>0.01</dd></dl></li>
+  <li class="relationship" data-from="7" data-to="21">
+    <span class="type">CALCULATES</span>
+  </li>
+  <li class="relationship" data-from="2" data-to="22">
+    <span class="type">HAS_DESCRIPTOR</span><dl class="properties"><dt>value</dt><dd>2.61</dd></dl></li>
+  <li class="relationship" data-from="0" data-to="16">
+    <span class="type">TRAINS</span>
+  </li>
+</ul>

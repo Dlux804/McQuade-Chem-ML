@@ -24,7 +24,7 @@ class MlModel:  # TODO update documentation here
 
 
 
-    def __init__(self, algorithm, dataset,  target, feat_meth=[0], tune=False, opt_iter=10, cv=3, random = None):
+    def __init__(self, algorithm, dataset,  target, feat_meth, tune=False, opt_iter=10, cv=3, random = None):
         """Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
         optimization cycles for hyper tuning, and number of Cross Validation folds for tuning."""
 

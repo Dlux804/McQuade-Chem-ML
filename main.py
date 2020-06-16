@@ -63,7 +63,7 @@ def main():
                         print('Initializing model...', end=' ', flush=True)
 
                         # initiate model class with algorithm, dataset and target
-                        model = models.MlModel(alg, data, target)
+                        model = models.MlModel(alg, data, target, method)
                         print('done.')
 
                     print('Model Type:', alg)
@@ -87,17 +87,15 @@ def main():
                         print('Initializing model...', end=' ', flush=True)
 
                         # initiate model class with algorithm, dataset and target
-                        model = models.MlModel(alg, data, target, drop=False)  #drop=false so that extra columns aside from SMILES and target are not dropped.
+                        model = models.MlModel(alg, data, target, method)
                         print('done.')
 
                     print('Model Type:', alg)
                     print('Featurization:', method)
                     print('Dataset:', data)
                     print()
-                    # featurize molecules
-                    model.featurization(method)
                     # Runs classification model
-                    model.classification_run()
+                    model.run()
 
 
 if __name__ == "__main__":

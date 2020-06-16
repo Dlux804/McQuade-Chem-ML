@@ -63,7 +63,7 @@ def main():
                         print('Initializing model...', end=' ', flush=True)
 
                         # initiate model class with algorithm, dataset and target
-                        model = models.MlModel(alg, data, target, drop=True)
+                        model = models.MlModel(alg, data, target)
                         print('done.')
 
                     print('Model Type:', alg)
@@ -72,9 +72,9 @@ def main():
                     print()
                     # TODO update to match new version of models.py
                     # featurize molecules
-                    model.featurization(method)
+                    #model.featurization(method)
                     # run model
-                    model.run(tune=True)  # Bayes Opt
+                    model.run()  # Bayes Opt
                     # save results of model
                     model.store()
 

@@ -23,6 +23,7 @@ class MlModel:  # TODO update documentation here
     from core.storage import export_json
 
 
+
     def __init__(self, algorithm, dataset,  target, feat_meth=[0], tune=False, opt_iter=10, cv=3, random = None):
         """Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
         optimization cycles for hyper tuning, and number of Cross Validation folds for tuning."""
@@ -78,6 +79,8 @@ class MlModel:  # TODO update documentation here
             self.make_grid()
             self.hyperTune(n_jobs =6)
 
+        features.featurize(self)
+        features.data_split(self)
 
         # Done tuning, time to fit and predict
         if self.task_type == 'regression':
@@ -111,10 +114,10 @@ class MlModel:  # TODO update documentation here
         # create dictionary of attributes
         att = dict(vars(self))  # makes copy so does not affect original attributes
         del att['data']  # do not want DF in dict
-        del att['smiles']  # do not want series in dict
-        del att['graphM']  # do not want graph object
-        del att['stats']  # will unpack and add on
-        del att['pvaM']  # do not want DF in dict
+        #del att['smiles']  # do not want series in dict
+        #del att['graphM']  # do not want graph object
+        #del att['stats']  # will unpack and add on
+        #del att['pvaM']  # do not want DF in dict
         del att['run_name']
         try:
             del att['varimp']  # don't need variable importance in our machine learning results record
@@ -122,7 +125,7 @@ class MlModel:  # TODO update documentation here
         except KeyError:
             pass
         # del att['impgraph']
-        att.update(self.stats)
+        #att.update(self.stats)
         # att.update(self.varimp)
         # Write contents of attributes dictionary to a CSV
         with open(csvfile, 'w') as f:  # Just use 'w' mode in Python 3.x
@@ -138,16 +141,16 @@ class MlModel:  # TODO update documentation here
 
         # save data frames
         self.data.to_csv(''.join("%s_data.csv" % self.run_name))
-        self.pvaM.to_csv(''.join("%s_predictions.csv" % self.run_name))
+        #self.pvaM.to_csv(''.join("%s_predictions.csv" % self.run_name))
 
         # save graphs
-        self.graphM.savefig(''.join("%s_PvAM" % self.run_name), transparent=True)
+        #self.graphM.savefig(''.join("%s_PvAM" % self.run_name), transparent=True)
         if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
             self.impgraph.savefig(''.join("%s_impgraph" % self.run_name), transparent=True)
             self.impgraph.close()
         else:
             pass
-        self.graphM.close()  # close to conserve memory when running many models.
+        #self.graphM.close()  # close to conserve memory when running many models.
         # self.graph.savefig(name+'PvA')
 
         # make folders for each run

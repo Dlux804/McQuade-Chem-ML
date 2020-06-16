@@ -79,8 +79,8 @@ class MlModel:  # TODO update documentation here
             self.make_grid()
             self.hyperTune(n_jobs =6)
 
-        features.featurize(self)
-        features.data_split(self)
+        features.featurize(self) # Featurize Molecules
+        features.data_split(self) # Split dataset
 
         # Done tuning, time to fit and predict
         if self.task_type == 'regression':
@@ -155,12 +155,12 @@ class MlModel:  # TODO update documentation here
 
         # make folders for each run
         # put output files into new folder
-        # filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # move for Windows system
-        filesp = ''.join(['mv ./', self.run_name, '* ', self.run_name, '/'])  # mv for Linux system
+        filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # move for Windows system
+        # filesp = ''.join(['mv ./', self.run_name, '* ', self.run_name, '/'])  # mv for Linux system
         subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
-        # movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # move for Windows system
-        movepkl = ''.join(['mv ./', '.pkl', '* ', self.run_name, '/']) # mv for Linux system
+        movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # move for Windows system
+        # movepkl = ''.join(['mv ./', '.pkl', '* ', self.run_name, '/']) # mv for Linux system
         subprocess.Popen(movepkl, shell=True, stdout=subprocess.PIPE)  # run bash command
 
         # Move folder to output/

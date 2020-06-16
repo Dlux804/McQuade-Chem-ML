@@ -71,10 +71,10 @@ def main():
                     print('Dataset:', data)
                     print()
                     # TODO update to match new version of models.py
-                    # featurize molecules
-                    #model.featurization(method)
+
                     # run model
                     model.run()  # Bayes Opt
+                    model.analyze() # Runs analysis on model
                     # save results of model
                     model.store()
 

@@ -79,7 +79,6 @@ class MlModel:  # TODO update documentation here
             self.make_grid()
             self.hyperTune(n_jobs =6)
 
-        features.featurize(self) # Featurize Molecules
         features.data_split(self) # Split dataset
 
         # Done tuning, time to fit and predict

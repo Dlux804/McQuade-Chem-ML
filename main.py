@@ -4,7 +4,7 @@
 from core import models
 from core.misc import cd
 import os
-
+from core.features import featurize
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
@@ -69,6 +69,7 @@ def main():
                     # TODO update to match new version of models.py
 
                     # run model
+                    model.featurize() # Featurize molecules
                     model.run()  # Bayes Opt
                     model.analyze() # Runs analysis on model
                     # save results of model
@@ -91,6 +92,7 @@ def main():
                     print('Dataset:', data)
                     print()
                     # Runs classification model
+                    model.featurize() # Featurize molecules
                     model.run()
 
 

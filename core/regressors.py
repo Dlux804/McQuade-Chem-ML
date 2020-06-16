@@ -12,10 +12,11 @@ from skopt import BayesSearchCV
 from time import time
 from skopt import callbacks
 from tensorflow import keras
+from tensorflow.keras.metrics import RootMeanSquaredError
+from tqdm import tqdm
 
 
-
-def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=[200]):
+def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.0):
     """
     Create neural network architecture and compile.  Accepts number of hiiden layers, number of neurons,
     learning rate, and input shape. Returns compiled model.
@@ -26,18 +27,23 @@ def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=[200]):
         learning_rate (float):  Model learning rate that is passed to model optimizer.  Smaller values are slower, High values
                         are prone to unstable training. Default = 0.001
         in_shape (integer): Input dimension should match number of features.  Default = 200 but should be overridden.
+        drop (float): Dropout probability.  1 means drop everything, 0 means drop nothing. Default = 0.
+                        Recommended = 0.2-0.6
     """
 
     model = keras.models.Sequential()
-    model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
+    model.add(keras.layers.Dropout(drop, input_shape=in_shape))  # use dropout layer as input.
+    # model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
     for layer in range(n_hidden):  # create hidden layers
         model.add(keras.layers.Dense(n_neuron, activation="relu"))
+        model.add(keras.layers.Dropout(drop))  # add dropout to model after the a dense layer
+
     model.add(keras.layers.Dense(1))  # output layer
     # TODO Add optimizer selection as keyword arg
     # optimizer = keras.optimizers.SGD(lr=learning_rate)  # this is a point to vary.  Dict could help call other ones.
     # optimizer = keras.optimizers.RMSprop(learning_rate=learning_rate)
     optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
-    model.compile(loss="mse", optimizer=optimizer, metrics=[tf.keras.metrics.RootMeanSquaredError(name='rmse')])
+    model.compile(loss="mse", optimizer=optimizer, metrics=[RootMeanSquaredError(name='rmse')])
     return model
 
 def wrapKeras(build_func, in_shape):
@@ -50,9 +56,37 @@ def wrapKeras(build_func, in_shape):
     return keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_nn, in_shape=200)  # pass non-hyper params here
 
 
+def get_regressor(self):
+    """Returns model specific regressor function."""
+
+    # Create Dictionary of regressors to be called with self.algorithm as key.
+    skl_regs = {
+        'ada': AdaBoostRegressor,
+        'rf': RandomForestRegressor,
+        'svr': SVR,
+        'gdb': GradientBoostingRegressor,
+        'mlp': MLPRegressor,
+        'knn': KNeighborsRegressor
+    }
+    if self.algorithm in skl_regs.keys():
+            self.regressor = skl_regs[self.algorithm]
+            self.task_type = 'regression'
+
+    else:  # neural network
+        pass
 
 
-def hyperTune(model, train_features, train_target, grid, folds, iters, run_name, jobs=-1, epochs = 50): # WHAT is expt? WHY use it?
+# for making a progress bar for skopt
+class tqdm_skopt(object):
+    def __init__(self, **kwargs):
+        self._bar = tqdm(**kwargs)
+
+    def __call__(self, res):
+        self._bar.update()
+
+
+# def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50):
+def hyperTune(self, epochs=50,n_jobs=6):
     """
     Tunes hyper parameters of specified model.
 
@@ -64,11 +98,11 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, run_name,
    jobs: number of parallel processes to run.  (Default = -1 --> use all available cores)
    NOTE: jobs has been depreciated since max processes in parallel for Bayes is the number of CV folds
 
+   'neg_mean_squared_error',  # scoring function to use (RMSE)
     """
-
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
-    if model == "nn":
+    if self.algorithm == "nn":
         fit_params = "callbacks"  # pseudo code.  add callbacks, epochs
         #  {'epochs': 50, 'callbacks': [chkpt_cb, stop_cb], 'validation_data': (val_features,val_target)}
     else:
@@ -76,54 +110,43 @@ def hyperTune(model, train_features, train_target, grid, folds, iters, run_name,
 
     # set up Bayes Search
     bayes = BayesSearchCV(
-        estimator=model,  # what regressor to use
-        search_spaces=grid,  # hyper parameters to search through
-        fit_params= fit_params,
-        n_iter=iters,  # number of combos tried
+        estimator=self.regressor(),  # what regressor to use
+        search_spaces=self.param_grid,  # hyper parameters to search through
+        # fit_params= self.callbacks,
+        n_iter=self.opt_iter,  # number of combos tried
         random_state=42,  # random seed
-        verbose=3,  # output print level
-        scoring='neg_mean_squared_error',  # scoring function to use (RMSE)
-        n_jobs=folds,  # number of parallel jobs (max = folds)
-        cv=folds  # number of cross-val folds to use
+        verbose=0,  # output print level
+        scoring='neg_mean_squared_error',  # scoring function to use (RMSE)  #TODO needs update for Classification
+        n_jobs=n_jobs,  # number of parallel jobs (max = folds)
+        cv=self.cv_folds  # number of cross-val folds to use
     )
 
-    checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % run_name), compress=9)
-    delta = 0.1
-    n_best = 5
+    checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
+    self.cp_delta = 0.1  # TODO delta should be dynamic to match target value scales.  Score scales with measurement
+    self.cp_n_best = 5
 
     """ Every optimization model in skopt saved all their scores in a built-in list. When called, DeltaYStopper will 
     access this list and sort this list from lowest number to highest number. It then take the difference between the 
     number in the n_best position and the first number and compare it to delta. If the difference is smaller or equal 
     to delta, the optimization will be stopped.
-       """
+    """
 
-    print("delta and n_best is {0} and {1}".format(delta, n_best))
-    deltay = callbacks.DeltaYStopper(delta, n_best)
+    # print("delta and n_best is {0} and {1}".format(self.cp_delta, self.cp_n_best))
+    deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
 
     # Fit the Bayes search model
-    bayes.fit(train_features, train_target, callback=[checkpoint_saver, deltay])
-    tuned = bayes.best_params_
+    bayes.fit(self.train_features, self.train_target, callback=[tqdm_skopt(total=self.opt_iter,position=0, desc="Bayesian Parameter Optimization"),checkpoint_saver, deltay])
+    self.params = bayes.best_params_
     tune_score = bayes.best_score_
+
+    # update the regressor with best parameters
+    self.regressor = self.regressor(**self.params)
 
     # Calculate time to tune parameters
     stop_tune = time()
-    tune_time = stop_tune - start_tune
+    self.tune_time = stop_tune - start_tune
     print('Best Parameter Found After ', (stop_tune - start_tune), "sec\n")
     print('Best params achieve a test score of', tune_score, ':')
-    print(tuned)
-    return tuned, tune_time
+    print('Model hyper paramters are:', self.params)
 
 
-def regressor(model):
-    """Returns model specific regressor function."""
-
-    # Create Dictionary of regressors to be called with self.algorithm as key.
-    regressors = {
-        'ada': AdaBoostRegressor,
-        'rf': RandomForestRegressor,
-        'svr': SVR,
-        'gdb': GradientBoostingRegressor,
-        'mlp': MLPRegressor,
-        'knn': KNeighborsRegressor
-    }
-    return regressors[model]

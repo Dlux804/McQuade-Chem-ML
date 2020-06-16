@@ -6,6 +6,13 @@
 from contextlib import contextmanager
 import os
 
+
+def foo(self, string):
+    print('\n', self.algorithm)
+    print(string)
+    return string
+
+
 @contextmanager
 def cd(newdir):
     """
@@ -30,3 +37,4 @@ with cd('/tmp'):
     raise Exception("There's no place like home.")
 # Directory is now back to '/home'.
 '''
+

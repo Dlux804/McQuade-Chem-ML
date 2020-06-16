@@ -35,7 +35,7 @@ def test_features_makegenerator(mock_makegenerator):
         # Read csv into dataframe
         df = pd.read_csv("water-energy.csv")
         # Call function featurize
-        df, num_feat, feat_time = features.featurize(df, 'rf', num_feat=[0])  # Call function featurize
+        df, num_feat, feat_time = features.featurize(df, 'rf', feat_meth=[0])  # Call function featurize
         # Test to see if MakeGenerator is called
         mock_makegenerator.assert_called()
         # Stop mock
@@ -55,9 +55,9 @@ def test_featurize_remove():
         # Read csv into dataframe
         df = pd.read_csv("water-energy.csv")
         # Call function featurize using nn
-        df1, num_feat1, feat_time1 = features.featurize(df, 'nn', num_feat=[0])
+        df1, num_feat1, feat_time1 = features.featurize(df, 'nn', feat_meth=[0])
         # Call function featurize using rf
-        df2, num_feat2, feat_time2 = features.featurize(df, 'rf', num_feat=[0])
+        df2, num_feat2, feat_time2 = features.featurize(df, 'rf', feat_meth=[0])
         # See if the two dataframes are the same
         assert df1.equals(df2) == True
 
@@ -77,13 +77,13 @@ def test_featurize():
         for i in model_name:
             # Exception with nn and knn
             if i == 'nn' or i == 'knn':
-                df, selected_feat, feat_time = features.featurize(df, i, num_feat=[0])  # Call function featurize
+                df, selected_feat, feat_time = features.featurize(df, i, feat_meth=[0])  # Call function featurize
                 # Test to see if df is a dataframe
                 assert type(df) == pd.DataFrame, 'Something is wrong, i can feel it'
                 # Test to see if the variable time is a number
                 assert type(feat_time) == float, 'Something is wrong, i can feel it'
             else:
-                df, selected_feat, feat_time = features.featurize(df, i, num_feat=[0])
+                df, selected_feat, feat_time = features.featurize(df, i, feat_meth=[0])
                 # Test to see if df is a dataframe
                 assert type(df) == pd.DataFrame, 'Something is wrong, i can feel it'
                 # Test to see if the variable time is a number
@@ -104,7 +104,7 @@ def test_targets_features():
         target = df['expt']  # Target column
         feature = df.drop(['expt', 'smiles'], axis=1)  # All feature columns
         # Split the data
-        train_features, test_features, train_target, test_target, feature_list = features.targets_features(df, 'expt')
+        train_features, test_features, train_target, test_target, feature_list = features.data_split(df, 'expt')
         # Test to see if we get a 20% split on test features
         assert np.round(test_features.shape[0] / feature.shape[0] * 100, -1) == 20.0
         # Test to see if we get a 20% split on test target

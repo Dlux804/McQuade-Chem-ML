@@ -70,7 +70,7 @@ def rf_paramgrid():
     }
     # Define parameter grid for skopt BayesSearchCV
     bayes_grid = {
-        'n_estimators': Integer(200, 2000),
+        'n_estimators': Integer(100, 2000),
         'max_features': Categorical(['auto', 'sqrt']),
         'max_depth': Integer(1, 30),
         'min_samples_split': Integer(2, 30),
@@ -237,7 +237,7 @@ def knn_paramgrid():
     return bayes_grid
 
 
-def make_grid(method):
+def make_grid(self):
     """ Dictionary containing all the grid functions. Can call specific function based off of dict key."""
     grids = {
         "ada" : ada_paramgrid,
@@ -247,7 +247,8 @@ def make_grid(method):
         'mlp': mlp_paramgrid,
         'knn': knn_paramgrid
     }
-    return grids[method]()
+    self.param_grid = grids[self.algorithm]()
+    # return grids[method]()
 
 
 

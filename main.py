@@ -4,9 +4,10 @@
 from core import models
 from core.misc import cd
 import os
-
+from core.features import featurize
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
+
 
 def main():
     os.chdir(ROOT_DIR)  # Start in root directory
@@ -22,7 +23,7 @@ def main():
 
         # list of available featurization methods
 
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]]
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]] # Change this to change which featurizations are being tested (for classification)
 
         # classification data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
@@ -35,7 +36,7 @@ def main():
         learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
 
         # list of available featurization methods
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]]
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]] # Change this to change which featurizations are being tested (for regression)
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
@@ -47,10 +48,6 @@ def main():
         }
 
     for alg in learner: # loop over all learning algorithms
-        if alg == 'svc':
-            feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [1], [2], [3], [4]] # Removes atompaircounts featurization only when running svc, as this featurization breaks the svc model.
-        elif alg != 'svc':
-            feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]] # Insures that featurization options don't change for models running after svc in iteration.
 
         for method in feats:  # loop over the featurization methods
 
@@ -62,17 +59,19 @@ def main():
                         print('Initializing model...', end=' ', flush=True)
 
                         # initiate model class with algorithm, dataset and target
-                        model = models.MlModel(alg, data, target, drop=True)
+                        model = models.MlModel(alg, data, target, method)
                         print('done.')
 
                     print('Model Type:', alg)
                     print('Featurization:', method)
                     print('Dataset:', data)
                     print()
-                    # featurize molecules
-                    model.featurization(method)
+                    # TODO update to match new version of models.py
+
                     # run model
-                    model.run(tune=True)  # Bayes Opt
+                    model.featurize() # Featurize molecules
+                    model.run()  # Bayes Opt
+                    model.analyze() # Runs analysis on model
                     # save results of model
                     model.store()
 
@@ -85,17 +84,17 @@ def main():
                         print('Initializing model...', end=' ', flush=True)
 
                         # initiate model class with algorithm, dataset and target
-                        model = models.MlModel(alg, data, target, drop=False)  #drop=false so that extra columns aside from SMILES and target are not dropped.
+                        model = models.MlModel(alg, data, target, method)
                         print('done.')
 
                     print('Model Type:', alg)
                     print('Featurization:', method)
                     print('Dataset:', data)
                     print()
-                    # featurize molecules
-                    model.featurization(method)
                     # Runs classification model
-                    model.classification_run()
+                    model.featurize() # Featurize molecules
+                    model.run()
+
 
 if __name__ == "__main__":
     main()

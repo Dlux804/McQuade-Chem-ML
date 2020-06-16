@@ -33,7 +33,7 @@ def setup():
         # Get feature. I use rdkit2d as it is fast to generate
         df, num_feat, feat_time = features.featurize(model_test.data, model_test.algorithm, [0])
         # Split the data
-        train_features, test_features, train_target, test_target, feature_list = features.targets_features(df, 'expt')
+        train_features, test_features, train_target, test_target, feature_list = features.data_split(df, 'expt')
         return train_features, test_features, train_target, test_target
 
 # # Mock the call that we want to test, which is RandomizedSearchCV

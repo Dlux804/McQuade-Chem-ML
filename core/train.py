@@ -98,8 +98,8 @@ def train_cls(self, n=5):
         cls['predicted'] = predictions
         acc[i] = accuracy_score(cls['actual'], cls['predicted'])
         # TODO fix confusion matrix and classificaiton report metrics
-        # conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
-        # clsrep[i] = classification_report(cls['actual'], cls['predicted'])
+        conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
+        clsrep[i] = classification_report(cls['actual'], cls['predicted'])
         auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
         t[i] = fit_time
 

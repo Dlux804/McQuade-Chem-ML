@@ -14,13 +14,13 @@ class MlModel:  # TODO update documentation here
     """
     Class to set up and run machine learning algorithm.
     """
-    from features import featurize, data_split  # imported function becomes instance method
-    from regressors import get_regressor, hyperTune
-    from grid import make_grid
-    from train import train_reg, train_cls
-    from analysis import impgraph, pva_graph
-    from classifiers import get_classifier
-    from storage import export_json
+    from core.features import featurize, data_split  # imported function becomes instance method
+    from core.regressors import get_regressor, hyperTune
+    from core.grid import make_grid
+    from core.train import train_reg, train_cls
+    from core.analysis import impgraph, pva_graph
+    from core.classifiers import get_classifier
+    from core.storage import export_json
 
 
     def __init__(self, algorithm, dataset,  target, task, feat_meth=[0], tune=False, opt_iter=10, cv=3, random = None):

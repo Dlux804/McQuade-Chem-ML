@@ -1,5 +1,6 @@
 import pandas as pd
 from rdkit import Chem
+import cirpy
 
 def load_smiles(self, file, drop=True):
     """ Find SMILES in CSV.  Return DataFrame and Series of SMILES.

@@ -76,8 +76,8 @@ def train_cls(self, n=5):
 
     print("Starting model training with {} replicates.\n".format(n), end=' ', flush=True)
     acc = np.empty(n)
-    conf = np.empty(n)
-    clsrep = np.empty(n)
+    #conf = np.empty(n)
+    #clsrep = np.empty(n)
     auc = np.empty(n)
     t = np.empty(n)
 
@@ -97,10 +97,19 @@ def train_cls(self, n=5):
         cls['actual'] = self.test_target
         cls['predicted'] = predictions
         acc[i] = accuracy_score(cls['actual'], cls['predicted'])
+        print()
+        print('Accuracy score for this run: ')
+        print(acc[i])
         # TODO fix confusion matrix and classificaiton report metrics
-        # conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
-        # clsrep[i] = classification_report(cls['actual'], cls['predicted'])
+        conf = confusion_matrix(cls['actual'], cls['predicted'])
+        print('Confusion matrix for this run: ')
+        print(conf)
+        clsrep = classification_report(cls['actual'], cls['predicted'])
+        print('Classification report for this run: ')
+        print(clsrep)
         auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
+        print('Roc_Auc score for this run: ')
+        print(auc[i])
         t[i] = fit_time
 
         # store as enumerated column for multipredict
@@ -113,12 +122,12 @@ def train_cls(self, n=5):
         'acc_raw': acc,
         'acc_avg': acc.mean(),
         'acc_std': acc.std(),
-        # 'conf_raw': conf,
+        'conf_raw': conf,
         # 'conf_avg': conf.mean(),
         # 'conf_std': conf.std(),
         'clsrep_raw': clsrep,
-        'clsrep_avg': clsrep.mean(),
-        'clsrep_std': clsrep.std(),
+       # 'clsrep_avg': clsrep.mean(),
+       # 'clsrep_std': clsrep.std(),
         'auc_raw': auc,
         'auc_avg': auc.mean(),
         'auc_std': auc.std(),

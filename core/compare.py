@@ -6,9 +6,9 @@ from time import time
 import pandas as pd
 import shutil
 import glob
-import misc
-import ingest
-import analysis
+from core import misc
+from core import ingest
+from core import analysis
 import cirpy
 from rdkit import Chem
 from rdkit.Chem import Draw
@@ -441,7 +441,7 @@ data = {
     # "pyridine_smi_3.csv" : "smiles"
 }
 # uncomment this xdf line to perform dataset overlap analysis
-xdf = moloverlap(data,2)
+#xdf = moloverlap(data,2)
 # analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
 
 

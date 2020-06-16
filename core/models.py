@@ -14,23 +14,30 @@ class MlModel:  # TODO update documentation here
     """
     Class to set up and run machine learning algorithm.
     """
-    from features import featurize, data_split  # imported function becomes instance method
-    from regressors import get_regressor, hyperTune
-    from grid import make_grid
-    from train import train_reg, train_cls
-    from analysis import impgraph, pva_graph
-    from classifiers import get_classifier
-    from storage import export_json
+    from core.features import featurize, data_split  # imported function becomes instance method
+    from core.regressors import get_regressor, hyperTune
+    from core.grid import make_grid
+    from core.train import train_reg, train_cls
+    from core.analysis import impgraph, pva_graph
+    from core.classifiers import get_classifier
+    from core.storage import export_json
 
 
-    def __init__(self, algorithm, dataset,  target, task, feat_meth=[0], tune=False, opt_iter=10, cv=3, random = None):
+
+    def __init__(self, algorithm, dataset,  target, feat_meth, tune=False, opt_iter=10, cv=3, random = None):
         """Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
         optimization cycles for hyper tuning, and number of Cross Validation folds for tuning."""
+
         self.algorithm = algorithm
         self.dataset = dataset
+
+        # Sets self.task_type based on which dataset is being used.
+        if self.dataset == 'sider.csv':
+            self.task_type = 'classification'
+        elif self.dataset == 'Lipophilicity-ID.csv' or self.dataset == 'ESOL.csv' or self.dataset == 'water-energy.csv' or self.dataset == 'logP14k.csv' or self.dataset == 'jak2_pic50.csv':
+            self.task_type = 'regression'
+
         self.target_name = target
-        self.task_type = task  # regression or classification
-        # TODO Make task identificaiton automatic based on dataset.
         self.feat_meth = feat_meth
 
         if random is None:
@@ -72,6 +79,7 @@ class MlModel:  # TODO update documentation here
             self.make_grid()
             self.hyperTune(n_jobs =6)
 
+        features.data_split(self) # Split dataset
 
         # Done tuning, time to fit and predict
         if self.task_type == 'regression':
@@ -105,10 +113,10 @@ class MlModel:  # TODO update documentation here
         # create dictionary of attributes
         att = dict(vars(self))  # makes copy so does not affect original attributes
         del att['data']  # do not want DF in dict
-        del att['smiles']  # do not want series in dict
-        del att['graphM']  # do not want graph object
-        del att['stats']  # will unpack and add on
-        del att['pvaM']  # do not want DF in dict
+        #del att['smiles']  # do not want series in dict
+        #del att['graphM']  # do not want graph object
+        #del att['stats']  # will unpack and add on
+        #del att['pvaM']  # do not want DF in dict
         del att['run_name']
         try:
             del att['varimp']  # don't need variable importance in our machine learning results record
@@ -116,7 +124,7 @@ class MlModel:  # TODO update documentation here
         except KeyError:
             pass
         # del att['impgraph']
-        att.update(self.stats)
+        #att.update(self.stats)
         # att.update(self.varimp)
         # Write contents of attributes dictionary to a CSV
         with open(csvfile, 'w') as f:  # Just use 'w' mode in Python 3.x
@@ -132,26 +140,26 @@ class MlModel:  # TODO update documentation here
 
         # save data frames
         self.data.to_csv(''.join("%s_data.csv" % self.run_name))
-        self.pvaM.to_csv(''.join("%s_predictions.csv" % self.run_name))
+        #self.pvaM.to_csv(''.join("%s_predictions.csv" % self.run_name))
 
         # save graphs
-        self.graphM.savefig(''.join("%s_PvAM" % self.run_name), transparent=True)
+        #self.graphM.savefig(''.join("%s_PvAM" % self.run_name), transparent=True)
         if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
             self.impgraph.savefig(''.join("%s_impgraph" % self.run_name), transparent=True)
             self.impgraph.close()
         else:
             pass
-        self.graphM.close()  # close to conserve memory when running many models.
+        #self.graphM.close()  # close to conserve memory when running many models.
         # self.graph.savefig(name+'PvA')
 
         # make folders for each run
         # put output files into new folder
-        # filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # move for Windows system
-        filesp = ''.join(['mv ./', self.run_name, '* ', self.run_name, '/'])  # mv for Linux system
+        filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # move for Windows system
+        # filesp = ''.join(['mv ./', self.run_name, '* ', self.run_name, '/'])  # mv for Linux system
         subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
-        # movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # move for Windows system
-        movepkl = ''.join(['mv ./', '.pkl', '* ', self.run_name, '/']) # mv for Linux system
+        movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # move for Windows system
+        # movepkl = ''.join(['mv ./', '.pkl', '* ', self.run_name, '/']) # mv for Linux system
         subprocess.Popen(movepkl, shell=True, stdout=subprocess.PIPE)  # run bash command
 
         # Move folder to output/

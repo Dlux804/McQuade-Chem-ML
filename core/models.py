@@ -23,14 +23,20 @@ class MlModel:  # TODO update documentation here
     from core.storage import export_json
 
 
-    def __init__(self, algorithm, dataset,  target, task, feat_meth=[0], tune=False, opt_iter=10, cv=3, random = None):
+    def __init__(self, algorithm, dataset,  target, feat_meth=[0], tune=False, opt_iter=10, cv=3, random = None):
         """Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
         optimization cycles for hyper tuning, and number of Cross Validation folds for tuning."""
+
         self.algorithm = algorithm
         self.dataset = dataset
+
+        # Sets self.task_type based on which dataset is being used.
+        if self.dataset == 'sider.csv':
+            self.task_type = 'classification'
+        elif self.dataset == 'Lipophilicity-ID.csv' or self.dataset == 'ESOL.csv' or self.dataset == 'water-energy.csv' or self.dataset == 'logP14k.csv' or self.dataset == 'jak2_pic50.csv':
+            self.task_type = 'regression'
+
         self.target_name = target
-        self.task_type = task  # regression or classification
-        # TODO Make task identificaiton automatic based on dataset.
         self.feat_meth = feat_meth
 
         if random is None:

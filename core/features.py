@@ -29,8 +29,6 @@ def featurize(model):
         feat_meth = [int(x) for x in input(
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
 
-    print(feat_sets, feat_meth)
-
     selected_feat = [feat_sets[i] for i in feat_meth]
     print("You have selected the following featurizations: ", end="   ", flush=True)
     print(*selected_feat, sep=', ')

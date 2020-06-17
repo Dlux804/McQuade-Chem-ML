@@ -8,6 +8,8 @@ from core import models
 from core.misc import cd
 from core.features import featurize, data_split  # imported function becomes instance method
 from core.storage import export_json, pickle_model, unpickle_model
+from core.regressors import hyperTune
+
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
@@ -103,31 +105,30 @@ def example_model():
 
     :return: None
     """
-    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):
+    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Create model object
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
         model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
-                         tune=False, cv=3, opt_iter=25)
+                         tune=True, cv=3, opt_iter=25)
         print('done.')
 
     # # featurize data with rdkit2d
     model1 = featurize(model1)
     model1 = data_split(model1, val=0.0)
-    # model1 = hyperTune(model1)
+    model1 = hyperTune(model1)  # hyperTune is pulled out of models.py
 
-    run_name = model1.run_name
+    run_name = model1.run_name  # Demo pickle before running model
     pickle_model(model=model1, run_name='output/' + run_name)
     model2 = unpickle_model(run_name='output/' + run_name)
 
     model2.run()
     model2.analyze(output=str(pathlib.Path(__file__).parent.absolute()) + '/output')
     model2.store(output=str(pathlib.Path(__file__).parent.absolute()) + '/output')
-    # export_json(model2)
+    # export_json(model2)  # Currently broken
 
-    pickle_model(model=model2, run_name='output/' + run_name)
+    pickle_model(model=model2, run_name='output/' + run_name)  # Demo pickle after running and analyzing data
     model3 = unpickle_model(run_name='output/' + run_name)
-
     model3.run()
 
 

@@ -3,12 +3,14 @@ from matplotlib import cm
 import numpy as np
 from time import time
 import pandas as pd
-from sklearn.metrics import mean_squared_error, r2_score, classification_report, confusion_matrix, accuracy_score, roc_auc_score
+from sklearn.metrics import mean_squared_error, r2_score, classification_report, confusion_matrix, accuracy_score, \
+    roc_auc_score
 from rdkit.Chem import PandasTools
 from core import features
 
+
 # Feature importance graph
-def impgraph(self):
+def impgraph(model):
     """
     Objective: Make a feature importance graph. I'm limiting this to only rf and gdb since only they have feature
     importance (I might need to double check on that). I'm also limiting this to only rdkit2d since the rest are only 0s
@@ -16,11 +18,11 @@ def impgraph(self):
     """
 
     # Get numerical feature importances
-    importances2 = self.regressor.feature_importances_  # used later for graph
+    importances2 = model.regressor.feature_importances_  # used later for graph
 
     # List of tuples with variable and importance
     feature_importances = [(feature, round(importance, 2)) for feature, importance in
-                               zip(self.feature_list, list(importances2))]
+                           zip(model.feature_list, list(importances2))]
 
     # Sort the feature importances by most important first
     feature_importances = sorted(feature_importances, key=lambda x: x[1], reverse=True)
@@ -31,7 +33,7 @@ def impgraph(self):
     # prepare importance data for export and graphing
     indicies = (-importances2).argsort()
     varimp = pd.DataFrame([], columns=['variable', 'importance'])
-    varimp['variable'] = [self.feature_list[i] for i in indicies]
+    varimp['variable'] = [model.feature_list[i] for i in indicies]
     varimp['importance'] = importances2[indicies]
 
     # Importance Bar Graph
@@ -50,14 +52,16 @@ def impgraph(self):
     # Axis labels and title
     plt.ylabel('Importance')
     plt.xlabel('Variable')
-    plt.title(self.run_name + ' Variable Importances')
+    plt.title(model.run_name + ' Variable Importances')
 
     # ax = plt.axes()
     ax.xaxis.grid(False)  # remove just xaxis grid
 
-    plt.savefig(self.run_name + '_importance-graph.png')
-    self.impgraph = plt
-    self.varimp = varimp
+    plt.savefig(model.run_name + '_importance-graph.png')
+    # impgraph = plt
+    varimp = varimp
+    # return impgraph, varimp
+    return varimp
 
 
 def pva_graph(self):
@@ -124,10 +128,11 @@ def pva_graph(self):
     fig.patch.set_facecolor('blue')  # Will change background color
     fig.patch.set_alpha(0.0)  # Makes background transparent
 
-    plt.savefig(self.run_name+'_' + 'PVA.png')
+    plt.savefig(self.run_name + '_' + 'PVA.png')
     # plt.show()
-    self.pva_graph = plt
+    pva_graph = plt
     # return plt
+    return pva_graph
 
 
 def plotter(x, y, filename=None, xlabel='', ylabel=''):
@@ -208,4 +213,3 @@ def grid_image(df, filename, molobj=True, smi='smiles'):  # list of molecules to
         legends=[str(i + 1) for i in range(len(df['Molecule']))]
     )
     mol_image.save(filename + '.png')  # shold use a better naming scheme to avoid overwrites.
-

@@ -9,7 +9,6 @@ class NumpyEncoder(json.JSONEncoder):
     """
     Modifies JSONEncoder to convert numpy arrays to lists first.
     """
-
     def default(self, obj):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
@@ -40,6 +39,7 @@ def export_json(self):
         if not isinstance(v, (int, float, dict, tuple, list, np.ndarray, bool, str, NoneType)):
             objs.append(k)
 
+
     objs = list(set(objs))
     print("Unsupported JSON Export Attributes:", objs)
     print("The following pandas attributes were exported to individual JSONs: ", dfs)
@@ -53,7 +53,6 @@ def export_json(self):
         json.dump(d, f, cls=NumpyEncoder)
         # except TypeError:
         #     print("Unsupported JSON export data type.")
-
 
 def pickle_model(model, run_name):
     with open(f'{run_name}.pkl', 'wb') as f:

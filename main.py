@@ -1,15 +1,11 @@
 
 # TODO: Make main function that asks user what models they would like to initiate
 
-import pathlib
-import os
-
 from core import models
 from core.misc import cd
-from core.features import featurize, data_split  # imported function becomes instance method
-from core.storage import export_json, pickle_model, unpickle_model
-from core.regressors import hyperTune
-
+from core.storage import pickle_model
+import os
+from core.features import featurize
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
@@ -36,7 +32,7 @@ def main():
         }
 
     # Sets up learner, featurizations, and data sets for regression
-    else:  # c == 'r'
+    if c == 'r':
         # list of available regression learning algorithms
         learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
 
@@ -58,7 +54,7 @@ def main():
 
             for data, target in sets.items():  # loop over dataset dictionary
                 if c == 'r':     # Runs the models/featurizations for regression
-                    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):
+                    with cd('dataFiles'):
 
                         print('Now in:', os.getcwd())
                         print('Initializing model...', end=' ', flush=True)
@@ -71,10 +67,14 @@ def main():
                     print('Featurization:', method)
                     print('Dataset:', data)
                     print()
+                    # TODO update to match new version of models.py
 
                     # run model
-                    model = featurize(model) # Featurize molecules
+                    model.featurize() # Featurize molecules
                     model.run()  # Bayes Opt
+
+                    pickle_model(model, 'test.pkl')
+
                     model.analyze() # Runs analysis on model
                     # save results of model
                     model.store()
@@ -94,44 +94,10 @@ def main():
                     print('Dataset:', data)
                     print()
                     # Runs classification model
-                    model = featurize(model)  # Featurize molecules
+                    model.featurize() # Featurize molecules
                     model.run()
 
 
-def example_model():
-    """
-    This model is for debugging, similiar to the lines at the bottom of models.py. This is meant
-    to show how the current workflow works, as well serves as an easy spot to de-bug issues.
-
-    :return: None
-    """
-    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Create model object
-        print('Now in:', os.getcwd())
-        print('Initializing model...', end=' ', flush=True)
-        # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
-                         tune=True, cv=3, opt_iter=25)
-        print('done.')
-
-    # # featurize data with rdkit2d
-    model1 = featurize(model1)
-    model1 = data_split(model1, val=0.0)
-    model1 = hyperTune(model1)  # hyperTune is pulled out of models.py
-
-    run_name = model1.run_name  # Demo pickle before running model
-    pickle_model(model=model1, run_name='output/' + run_name)
-    model2 = unpickle_model(run_name='output/' + run_name)
-
-    model2.run()
-    model2.analyze(output=str(pathlib.Path(__file__).parent.absolute()) + '/output')
-    model2.store(output=str(pathlib.Path(__file__).parent.absolute()) + '/output')
-    # export_json(model2)  # Currently broken
-
-    pickle_model(model=model2, run_name='output/' + run_name)  # Demo pickle after running and analyzing data
-    model3 = unpickle_model(run_name='output/' + run_name)
-    model3.run()
-
-
 if __name__ == "__main__":
-    # main()
-    example_model()
+    main()
+

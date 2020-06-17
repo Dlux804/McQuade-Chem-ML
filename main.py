@@ -74,8 +74,6 @@ def main():
                     model.featurize() # Featurize molecules
                     model.run()  # Bayes Opt
 
-                    pickle_model(model, 'test.pkl')
-
                     model.analyze() # Runs analysis on model
                     # save results of model
                     model.store()

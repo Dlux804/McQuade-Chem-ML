@@ -15,6 +15,7 @@ dependencies:
   - matplotlib
   - pytest
   - pandas-flavor
+  - CIRpy
 # For Barzilay MPNN
   - tqdm
   - tensorboardX

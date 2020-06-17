@@ -10,7 +10,6 @@ from numpy.random import randint
 from core import name
 
 from rdkit import RDLogger
-
 RDLogger.DisableLog('rdApp.*')
 
 

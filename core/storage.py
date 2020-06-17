@@ -54,11 +54,12 @@ def export_json(self):
         # except TypeError:
         #     print("Unsupported JSON export data type.")
 
-def pickle_model(model, run_name):
-    with open(f'{run_name}.pkl', 'wb') as f:
+
+def pickle_model(model, file_location):
+    with open(file_location, 'wb') as f:
         pickle.dump(model, f)
 
 
-def unpickle_model(run_name):
-    with open(f'{run_name}.pkl', 'rb') as f:
+def unpickle_model(file_location):
+    with open(file_location, 'rb') as f:
         return pickle.load(f)

@@ -3,8 +3,9 @@
 
 from core import models
 from core.misc import cd
-from core.storage import pickle_model
+from core.storage import pickle_model, unpickle_model
 import os
+import pathlib
 from core.features import featurize
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
@@ -98,6 +99,41 @@ def main():
                     model.run()
 
 
-if __name__ == "__main__":
-    main()
+def example_model():
+    """
+    This model is for debugging, similiar to the lines at the bottom of models.py. This is meant
+    to show how the current workflow works, as well serves as an easy spot to de-bug issues.
 
+    :return: None
+    """
+
+    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+        print('Now in:', os.getcwd())
+        print('Initializing model...', end=' ', flush=True)
+        # initiate model class with algorithm, dataset and target
+        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
+                         tune=False, cv=3, opt_iter=25)
+        print('done.')
+
+    with cd('output'):  # Have files output to output
+        # featurize data with rdkit2d
+        model1.featurize()
+        model1.data_split(val=0.0)
+
+        run_name = model1.run_name
+        pickle_model(model=model1, file_location=f'{run_name}.pkl')  # Demo pickle after featurize
+        model2 = unpickle_model(file_location=f'{run_name}.pkl')
+
+        model2.run()
+        model2.analyze()
+        model2.store()
+        # export_json(model2)
+
+        pickle_model(model=model2, file_location=f'{run_name}.pkl')  # Demo pickle after running and analyzing
+        model3 = unpickle_model(file_location=f'{run_name}.pkl')
+        model3.run()
+
+
+if __name__ == "__main__":
+    # main()
+    example_model()

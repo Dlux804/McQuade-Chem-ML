@@ -30,12 +30,12 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
-
+        self.regression_sets = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
         # Sets self.task_type based on which dataset is being used.
-        if self.dataset == 'sider.csv':
+        if self.dataset in self.regression_sets:
+            self.task_type ='regression'
+        else:
             self.task_type = 'classification'
-        elif self.dataset == 'Lipophilicity-ID.csv' or self.dataset == 'ESOL.csv' or self.dataset == 'water-energy.csv' or self.dataset == 'logP14k.csv' or self.dataset == 'jak2_pic50.csv':
-            self.task_type = 'regression'
 
         self.target_name = target
         self.feat_meth = feat_meth

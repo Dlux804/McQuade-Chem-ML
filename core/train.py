@@ -7,10 +7,11 @@ import pandas as pd
 from tqdm import tqdm
 from time import sleep
 
-def train_reg(self,n=5):
+
+def train_reg(model, n=5):
     """
     Function to train the model n times and collect basic statistics about results.
-    :param self:
+    :param model:
     :param n: number of replicates
     :return:
     """
@@ -24,19 +25,19 @@ def train_reg(self,n=5):
     t = np.empty(n)
 
     pva_multi = pd.DataFrame([])
-    pva_multi['actual'] = self.test_target
+    pva_multi['actual'] = model.test_target
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         start_time = time()
-        self.regressor.fit(self.train_features, self.train_target)
+        model.regressor.fit(model.train_features, model.train_target)
 
         # Make predictions
-        predictions = self.regressor.predict(self.test_features)
+        predictions = model.regressor.predict(model.test_features)
         done_time = time()
         fit_time = done_time - start_time
 
         # Dataframe for replicate_model
         pva = pd.DataFrame([], columns=['actual', 'predicted'])
-        pva['actual'] = self.test_target
+        pva['actual'] = model.test_target
         pva['predicted'] = predictions
         r2[i] = r2_score(pva['actual'], pva['predicted'])
         mse[i] = mean_squared_error(pva['actual'], pva['predicted'])
@@ -64,14 +65,17 @@ def train_reg(self,n=5):
         'time_avg': t.mean(),
         'time_std': t.std()
     }
-    self.predictions = pva_multi
-    self.predictions_stats = stats
+    predictions = pva_multi
+    predictions_stats = stats
 
     print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])
     print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
     print()
 
-def train_cls(self, n=5):
+    return predictions, predictions_stats
+
+
+def train_cls(model, n=5):
     # set the model specific classifier function from sklearn
 
     print("Starting model training with {} replicates.\n".format(n), end=' ', flush=True)
@@ -82,19 +86,19 @@ def train_cls(self, n=5):
     t = np.empty(n)
 
     cls_multi = pd.DataFrame([])
-    cls_multi['actual'] = self.test_target
+    cls_multi['actual'] = model.test_target
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         start_time = time()
-        self.regressor.fit(self.train_features, self.train_target)
+        model.regressor.fit(model.train_features, model.train_target)
 
         # Make predictions
-        predictions = self.regressor.predict(self.test_features)
+        predictions = model.regressor.predict(model.test_features)
         done_time = time()
         fit_time = done_time - start_time
 
         # Dataframe for replicate_model
         cls = pd.DataFrame([], columns=['actual', 'predicted'])
-        cls['actual'] = self.test_target
+        cls['actual'] = model.test_target
         cls['predicted'] = predictions
         acc[i] = accuracy_score(cls['actual'], cls['predicted'])
         print()
@@ -135,5 +139,7 @@ def train_cls(self, n=5):
         'time_avg': t.mean(),
         'time_std': t.std()
     }
-    self.predictions = cls_multi
-    self.predictions_stats = stats
+    predictions = cls_multi
+    predictions_stats = stats
+
+    return predictions, predictions_stats

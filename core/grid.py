@@ -34,6 +34,7 @@ def ada_paramgrid():
         'n_estimators': n_estimators,
         'learning_rate': learning_rate
     }
+
     # Define parameter grid for skopt BayesSearchCV
     bayes_grid = {
         # How to convert base_estimator?  # TODO Convert base_estimator to bayes compatible

@@ -4,6 +4,8 @@ import numpy as np
 from tqdm import tqdm
 import pickle
 
+from skopt.space.space import Integer, Categorical
+
 
 class NumpyEncoder(json.JSONEncoder):
     """
@@ -13,6 +15,21 @@ class NumpyEncoder(json.JSONEncoder):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
+
+
+def __clean_up_param_grid_item__(item):
+    # This function will pull attributes of out Integer and Categorical classes generated from skopt
+    d = dict(vars(item))  # Get attributes in sub-class
+    labels_to_pop = []
+    for label, item in d.items():
+        try:
+            dict(vars(item))  # Test if sub-sub attribute is also a class
+            labels_to_pop.append(label)  # If so remove it
+        except TypeError:
+            pass
+    for label in labels_to_pop:
+        d.pop(label)
+    return d
 
 
 def export_json(self):
@@ -30,7 +47,7 @@ def export_json(self):
     objs = []
     dfs = []
     for k, v in tqdm(d.items(), desc="Export to JSON", position=0):
-        print(k, type(v))
+
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
             objs.append(k)
             dfs.append(k)
@@ -39,6 +56,11 @@ def export_json(self):
         if not isinstance(v, (int, float, dict, tuple, list, np.ndarray, bool, str, NoneType)):
             objs.append(k)
 
+        if k == 'param_grid':  # Param grid does not behave properly,
+            new_param_grid_dict = {}
+            for label, item in d[k].items():
+                new_param_grid_dict[label] = __clean_up_param_grid_item__(item)  # Cleanup each item in param_gird dict
+            d[k] = new_param_grid_dict
 
     objs = list(set(objs))
     print("Unsupported JSON Export Attributes:", objs)
@@ -48,11 +70,7 @@ def export_json(self):
 
     json_name = self.run_name + '_attributes' + '.json'
     with open(json_name, 'w') as f:
-        # TODO fix param grid to be exported.  Current data type is unsupported
-        # try:
         json.dump(d, f, cls=NumpyEncoder)
-        # except TypeError:
-        #     print("Unsupported JSON export data type.")
 
 
 def pickle_model(model, file_location):

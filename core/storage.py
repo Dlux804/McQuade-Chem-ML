@@ -4,8 +4,6 @@ import numpy as np
 from tqdm import tqdm
 import pickle
 
-from skopt.space.space import Integer, Categorical
-
 
 class NumpyEncoder(json.JSONEncoder):
     """

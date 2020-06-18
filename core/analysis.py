@@ -56,7 +56,7 @@ def impgraph(self):
     ax.xaxis.grid(False)  # remove just xaxis grid
 
     plt.savefig(self.run_name + '_importance-graph.png')
-    self.impgraph = plt
+    # self.impgraph = plt
     self.varimp = varimp
 
 
@@ -126,7 +126,7 @@ def pva_graph(self):
 
     plt.savefig(self.run_name+'_' + 'PVA.png')
     # plt.show()
-    self.pva_graph = plt
+    # self.pva_graph = plt
     # return plt
 
 

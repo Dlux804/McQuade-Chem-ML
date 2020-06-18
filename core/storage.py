@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+import pickle
 
 
 class NumpyEncoder(json.JSONEncoder):
@@ -52,3 +53,13 @@ def export_json(self):
         json.dump(d, f, cls=NumpyEncoder)
         # except TypeError:
         #     print("Unsupported JSON export data type.")
+
+
+def pickle_model(model, file_location):
+    with open(file_location, 'wb') as f:
+        pickle.dump(model, f)
+
+
+def unpickle_model(file_location):
+    with open(file_location, 'rb') as f:
+        return pickle.load(f)

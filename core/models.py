@@ -9,6 +9,9 @@ import shutil
 from numpy.random import randint
 from core import name
 
+from rdkit import RDLogger
+RDLogger.DisableLog('rdApp.*')
+
 
 class MlModel:  # TODO update documentation here
     """
@@ -22,9 +25,7 @@ class MlModel:  # TODO update documentation here
     from core.classifiers import get_classifier
     from core.storage import export_json
 
-
-
-    def __init__(self, algorithm, dataset,  target, feat_meth, tune=False, opt_iter=10, cv=3, random = None):
+    def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
         optimization cycles for hyper tuning, and number of Cross Validation folds for tuning."""
 
@@ -59,7 +60,8 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'classification':
             self.get_classifier()
 
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
+                                  self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
 
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None
@@ -67,19 +69,16 @@ class MlModel:  # TODO update documentation here
             self.regressor = self.regressor()  # make it callable to match Tune = True case
             self.tune_time = None
 
-
     def run(self):
         """ Runs machine learning model. Stores results as class attributes."""
 
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
+                                  self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
         # TODO naming scheme currently must be called after featurization declared--adjust for robust
-
 
         if self.tuned:  # Do hyperparameter tuning
             self.make_grid()
-            self.hyperTune(n_jobs =6)
-
-        features.data_split(self) # Split dataset
+            self.hyperTune(n_jobs=6)
 
         # Done tuning, time to fit and predict
         if self.task_type == 'regression':
@@ -87,7 +86,6 @@ class MlModel:  # TODO update documentation here
 
         if self.task_type == 'classification':
             self.train_cls()
-
 
     def analyze(self):
         # # Variable importance for rf and gdb
@@ -97,7 +95,6 @@ class MlModel:  # TODO update documentation here
         # make predicted vs actual graph
         self.pva_graph()
         # TODO Make classification graphing function
-
 
     def store(self):
         """  Organize and store model inputs and outputs.  """
@@ -113,10 +110,10 @@ class MlModel:  # TODO update documentation here
         # create dictionary of attributes
         att = dict(vars(self))  # makes copy so does not affect original attributes
         del att['data']  # do not want DF in dict
-        #del att['smiles']  # do not want series in dict
-        #del att['graphM']  # do not want graph object
-        #del att['stats']  # will unpack and add on
-        #del att['pvaM']  # do not want DF in dict
+        # del att['smiles']  # do not want series in dict
+        # del att['graphM']  # do not want graph object
+        # del att['stats']  # will unpack and add on
+        # del att['pvaM']  # do not want DF in dict
         del att['run_name']
         try:
             del att['varimp']  # don't need variable importance in our machine learning results record
@@ -124,7 +121,7 @@ class MlModel:  # TODO update documentation here
         except KeyError:
             pass
         # del att['impgraph']
-        #att.update(self.stats)
+        # att.update(self.stats)
         # att.update(self.varimp)
         # Write contents of attributes dictionary to a CSV
         with open(csvfile, 'w') as f:  # Just use 'w' mode in Python 3.x
@@ -140,16 +137,16 @@ class MlModel:  # TODO update documentation here
 
         # save data frames
         self.data.to_csv(''.join("%s_data.csv" % self.run_name))
-        #self.pvaM.to_csv(''.join("%s_predictions.csv" % self.run_name))
+        # self.pvaM.to_csv(''.join("%s_predictions.csv" % self.run_name))
 
         # save graphs
-        #self.graphM.savefig(''.join("%s_PvAM" % self.run_name), transparent=True)
-        if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
-            self.impgraph.savefig(''.join("%s_impgraph" % self.run_name), transparent=True)
-            self.impgraph.close()
-        else:
-            pass
-        #self.graphM.close()  # close to conserve memory when running many models.
+        # self.graphM.savefig(''.join("%s_PvAM" % self.run_name), transparent=True)
+        # if self.algorithm in ['rf', 'gdb'] and self.feat_meth == [0]:
+        #     self.impgraph.savefig(''.join("%s_impgraph" % self.run_name), transparent=True)
+        #     self.impgraph.close()
+        # else:
+        #     pass
+        # self.graphM.close()  # close to conserve memory when running many models.
         # self.graph.savefig(name+'PvA')
 
         # make folders for each run
@@ -169,13 +166,10 @@ class MlModel:  # TODO update documentation here
         #
         # subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
-
-
-
 # This section is for troubleshooting and should be commented out when finished testing
 
-# change active directory
-# with misc.cd('../dataFiles/'):
+# # change active directory
+# with misc.cd('/dataFiles/'):
 #     print('Now in:', os.getcwd())
 #     print('Initializing model...', end=' ', flush=True)
 #     # initiate model class with algorithm, dataset and target
@@ -188,11 +182,9 @@ class MlModel:  # TODO update documentation here
 # model1.run()
 # model1.analyze()
 # model1.export_json()
-import pprint
+# import pprint
 
 
 # print(dict(vars(model1)).keys())
 # pprint.pprint(dict(vars(model1)))
 # # print(model1.feat_meth)
-
-

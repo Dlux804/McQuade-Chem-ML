@@ -76,7 +76,7 @@ def train_cls(self, n=5):
 
     print("Starting model training with {} replicates.\n".format(n), end=' ', flush=True)
     acc = np.empty(n)
-    #conf = np.empty(n)
+    conf = np.zeros((n,2,2))
     #clsrep = np.empty(n)
     auc = np.empty(n)
     t = np.empty(n)
@@ -97,19 +97,16 @@ def train_cls(self, n=5):
         cls['actual'] = self.test_target
         cls['predicted'] = predictions
         acc[i] = accuracy_score(cls['actual'], cls['predicted'])
-        print()
-        print('Accuracy score for this run: ')
-        print(acc[i])
+
         # TODO fix confusion matrix and classificaiton report metrics
-        conf = confusion_matrix(cls['actual'], cls['predicted'])
+        conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
+        print()
         print('Confusion matrix for this run: ')
-        print(conf)
+        print(conf[i])
         clsrep = classification_report(cls['actual'], cls['predicted'])
         print('Classification report for this run: ')
         print(clsrep)
         auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
-        print('Roc_Auc score for this run: ')
-        print(auc[i])
         t[i] = fit_time
 
         # store as enumerated column for multipredict
@@ -123,8 +120,8 @@ def train_cls(self, n=5):
         'acc_avg': acc.mean(),
         'acc_std': acc.std(),
         'conf_raw': conf,
-        # 'conf_avg': conf.mean(),
-        # 'conf_std': conf.std(),
+        'conf_avg': conf.mean(),
+        'conf_std': conf.std(),
         'clsrep_raw': clsrep,
        # 'clsrep_avg': clsrep.mean(),
        # 'clsrep_std': clsrep.std(),
@@ -137,3 +134,7 @@ def train_cls(self, n=5):
     }
     self.predictions = cls_multi
     self.predictions_stats = stats
+
+    print('Average accuracy score = %.3f' % stats['acc_avg'], '+- %.3f' % stats['acc_std'])
+    print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
+    print()

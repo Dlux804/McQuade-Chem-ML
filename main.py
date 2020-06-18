@@ -72,6 +72,7 @@ def main():
 
                     # run model
                     model.featurize() # Featurize molecules
+                    model.data_split()
                     model.run()  # Bayes Opt
 
                     model.analyze() # Runs analysis on model
@@ -94,6 +95,7 @@ def main():
                     print()
                     # Runs classification model
                     model.featurize() # Featurize molecules
+                    model.data_split()
                     model.run()
 
 
@@ -133,5 +135,5 @@ def example_model():
 
 
 if __name__ == "__main__":
-    # main()
-    example_model()
+    main()
+    # example_model()

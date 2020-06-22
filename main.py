@@ -7,6 +7,7 @@ from core.storage import pickle_model, unpickle_model
 import os
 import pathlib
 from core.features import featurize
+
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
@@ -25,7 +26,8 @@ def main():
 
         # list of available featurization methods
 
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]] # Change this to change which featurizations are being tested (for classification)
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
+                 [5]]  # Change this to change which featurizations are being tested (for classification)
 
         # classification data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
@@ -38,7 +40,8 @@ def main():
         learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
 
         # list of available featurization methods
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4], [5]] # Change this to change which featurizations are being tested (for regression)
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
+                 [5]]  # Change this to change which featurizations are being tested (for regression)
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
@@ -49,14 +52,13 @@ def main():
             'jak2_pic50.csv': 'pIC50'
         }
 
-    for alg in learner: # loop over all learning algorithms
+    for alg in learner:  # loop over all learning algorithms
 
         for method in feats:  # loop over the featurization methods
 
             for data, target in sets.items():  # loop over dataset dictionary
-                if c == 'r':     # Runs the models/featurizations for regression
+                if c == 'r':  # Runs the models/featurizations for regression
                     with cd('dataFiles'):
-
                         print('Now in:', os.getcwd())
                         print('Initializing model...', end=' ', flush=True)
 
@@ -75,11 +77,11 @@ def main():
                     model.data_split()
                     model.run()  # Bayes Opt
 
-                    model.analyze() # Runs analysis on model
+                    model.analyze()  # Runs analysis on model
                     # save results of model
                     model.store()
 
-                if c == 'c':     # Runs the models/featurizations for classification
+                if c == 'c':  # Runs the models/featurizations for classification
                     # change active directory
                     with cd('dataFiles'):
                         print('Now in:', os.getcwd())
@@ -116,22 +118,15 @@ def example_model():
         print('done.')
 
     with cd('output'):  # Have files output to output
-        # featurize data with rdkit2d
         model1.featurize()
         model1.data_split(val=0.0)
+        model1.run()
+        model1.analyze()
+        pickle_model(model1, file_location='dev.pkl')  # Create pickled model for faster testing
 
-        run_name = model1.run_name
-        pickle_model(model=model1, file_location=f'{run_name}.pkl')  # Demo pickle after featurize
-        model2 = unpickle_model(file_location=f'{run_name}.pkl')
-
-        model2.run()
-        model2.analyze()
-        model2.store()
-        # export_json(model2)
-
-        pickle_model(model=model2, file_location=f'{run_name}.pkl')  # Demo pickle after running and analyzing
-        model3 = unpickle_model(file_location=f'{run_name}.pkl')
-        model3.run()
+        model1 = unpickle_model(file_location='dev.pkl')
+        model1.export_json()
+        model1.store()
 
 
 if __name__ == "__main__":

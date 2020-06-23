@@ -175,19 +175,19 @@ class MlModel:  # TODO update documentation here
 # This section is for troubleshooting and should be commented out when finished testing
 
 # change active directory
-# with misc.cd('../dataFiles/'):
-#     print('Now in:', os.getcwd())
-#     print('Initializing model...', end=' ', flush=True)
-#     # initiate model class with algorithm, dataset and target
-#     model1 = MlModel('rf', 'ESOL.csv', 'water-sol', 'regression', tune=True, cv=3, opt_iter=25)
-#     print('done.')
-#
-# # # featurize data with rdkit2d
-# model1.featurize([0])
-# model1.data_split(val=0.0)
-# model1.run()
-# model1.analyze()
-# model1.export_json()
+with misc.cd('../dataFiles/'):
+    print('Now in:', os.getcwd())
+    print('Initializing model...', end=' ', flush=True)
+    # initiate model class with algorithm, dataset and target
+    model1 = MlModel('rf', 'ESOL.csv', 'water-sol', 'regression', tune=True, cv=3, opt_iter=25)
+    print('done.')
+
+# # featurize data with rdkit2d
+model1.featurize([0])
+model1.data_split(val=0.0)
+model1.run()
+model1.analyze()
+model1.export_json()
 import pprint
 
 

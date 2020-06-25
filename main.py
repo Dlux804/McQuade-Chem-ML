@@ -110,8 +110,8 @@ def example_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
-                                tune=True, cv=3, opt_iter=25)
+        model1 = models.MlModel(algorithm='gdb', dataset='logP14k.csv', target='Kow', feat_meth=[0, 2],
+                                tune=True, cv=3, opt_iter=50)
         print('done.')
 
     with cd('output'):  # Have files output to output
@@ -119,13 +119,36 @@ def example_model():
         model1.data_split(val=0.0)
         model1.run()
         model1.analyze()
-        pickle_model(model1, file_location='dev.pkl')  # Create pickled model for faster testing
+        model1.pickle_model()
+        # pickle_model(model1, file_location='dev.pkl')  # Create pickled model for faster testing
 
-        model1 = unpickle_model(file_location='dev.pkl')
+        # model1 = unpickle_model(file_location='dev.pkl')
         model1.export_json()
-        model1.store()
+        model1.org_files()
+        # model1.store()
+
+def example_load():
+    """
+    Example case of loading a model from a previous pickle and running an analysis on it.
+    :return:
+    """
+    from sklearn.metrics import mean_squared_error, r2_score
+    import numpy as np
+    model2 = unpickle_model('output/RE00_20200624-091038/RE00_20200624-091038.pkl')
+    model2.run()
+    # Make predictions
+    predictions = model2.regressor.predict(self.test_features)
+
+    # Dataframe for replicate_model
+    pva = pd.DataFrame([], columns=['actual', 'predicted'])
+    pva['actual'] = model2.test_target
+    pva['predicted'] = predictions
+    r2 = r2_score(pva['actual'], pva['predicted'])
+    mse = mean_squared_error(pva['actual'], pva['predicted'])
+    rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
 
 if __name__ == "__main__":
     # main()
     example_model()
+    # example_load()

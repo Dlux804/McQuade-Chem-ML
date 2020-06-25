@@ -237,6 +237,14 @@ def knn_paramgrid():
     }
     return bayes_grid
 
+def keras_paramgrid():
+    bayes_grid = {
+        'n_hidden': Integer(1, 10),
+        'n_neuron': Integer(50, 300),
+        'learning_rate': Real(0.0001, 0.1, 'log-uniform'),
+        'drop': Real(0.1, 0.8)
+        }
+
 
 def make_grid(self):
     """ Dictionary containing all the grid functions. Can call specific function based off of dict key."""

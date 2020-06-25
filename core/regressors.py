@@ -16,7 +16,7 @@ from tensorflow.keras.metrics import RootMeanSquaredError
 from tqdm import tqdm
 
 
-def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.0):
+def build_nn(self, n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.0):
     """
     Create neural network architecture and compile.  Accepts number of hiiden layers, number of neurons,
     learning rate, and input shape. Returns compiled model.
@@ -44,16 +44,18 @@ def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, dr
     # optimizer = keras.optimizers.RMSprop(learning_rate=learning_rate)
     optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
     model.compile(loss="mse", optimizer=optimizer, metrics=[RootMeanSquaredError(name='rmse')])
-    return model
+    self.regressor = model
+    # return model
 
-def wrapKeras(build_func, in_shape):
+
+def wrapKeras(self, build_func=build_nn, in_shape=self.in_shape):
     """
     Wraps up a Keras model to appear as sklearn Regressor for use in hyper parameter tuning.
     :param build_func: Callable function that builds Keras model.
     :param in_shape: Input dimension.  Must match number of features.
     :return: Regressor() like function for use with sklearn based optimization.
     """
-    return keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_nn, in_shape=200)  # pass non-hyper params here
+    self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=in_shape)  # pass non-hyper params here
 
 
 def get_regressor(self):
@@ -72,8 +74,12 @@ def get_regressor(self):
             self.regressor = skl_regs[self.algorithm]
             self.task_type = 'regression'
 
-    else:  # neural network
-        pass
+    if self.algorithm == 'nn':  # neural network
+        # compile nn model
+        build_nn(self)
+        # wrap it like a sklearn regressor
+        wrapKeras(self)
+
 
 
 # for making a progress bar for skopt
@@ -103,8 +109,16 @@ def hyperTune(self, epochs=50,n_jobs=6):
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
     if self.algorithm == "nn":
-        fit_params = "callbacks"  # pseudo code.  add callbacks, epochs
-        #  {'epochs': 50, 'callbacks': [chkpt_cb, stop_cb], 'validation_data': (val_features,val_target)}
+        # set a checkpoint file to save the model
+        chkpt_cb = keras.callbacks.ModelCheckpoint(self.run_name+'.h5', save_best_only=True)
+        # set up early stopping callback to avoid wasted resources
+        stop_cb = keras.callbacks.EarlyStopping(patience=10,  # number of epochs to wait for progress
+                                                restore_best_weights=True)
+
+        fit_params = {'epochs': 100,
+                      'callbacks': [chkpt_cb, stop_cb],
+                      'validation_data': (self.val_features,self.val_target)
+                      }
     else:
         fit_params = None
 
@@ -112,7 +126,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
     bayes = BayesSearchCV(
         estimator=self.regressor(),  # what regressor to use
         search_spaces=self.param_grid,  # hyper parameters to search through
-        # fit_params= self.callbacks,
+        fit_params= self.callbacks,
         n_iter=self.opt_iter,  # number of combos tried
         random_state=42,  # random seed
         verbose=0,  # output print level
@@ -122,8 +136,8 @@ def hyperTune(self, epochs=50,n_jobs=6):
     )
 
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
-    self.cp_delta = 0.1  # TODO delta should be dynamic to match target value scales.  Score scales with measurement
-    self.cp_n_best = 5
+    self.cp_delta = 0.05  # TODO delta should be dynamic to match target value scales.  Score scales with measurement
+    self.cp_n_best = 10
 
     """ Every optimization model in skopt saved all their scores in a built-in list. When called, DeltaYStopper will 
     access this list and sort this list from lowest number to highest number. It then take the difference between the 

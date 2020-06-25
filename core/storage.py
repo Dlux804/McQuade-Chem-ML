@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import pickle
+import os
+import subprocess
+import shutil
 
 
 class NumpyEncoder(json.JSONEncoder):
@@ -49,7 +52,8 @@ def export_json(self):
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
             objs.append(k)
             dfs.append(k)
-            getattr(self, k).to_json(path_or_buf=self.run_name + '_' + k + '.json')
+            v.to_csv(self.run_name + '_' + k + '.csv')
+            # getattr(self, k).to_json(path_or_buf=self.run_name + '_' + k + '.json')
 
         if not isinstance(v, (int, float, dict, tuple, list, np.ndarray, bool, str, NoneType)):
             objs.append(k)
@@ -71,11 +75,35 @@ def export_json(self):
         json.dump(d, f, cls=NumpyEncoder)
 
 
-def pickle_model(model, file_location):
-    with open(file_location, 'wb') as f:
-        pickle.dump(model, f)
+# def pickle_model(model, file_location):
+#     with open(file_location, 'wb') as f:
+#         pickle.dump(model, f)
+
+def pickle_model(self):
+    with open(self.run_name + '.pkl', 'wb') as f:
+        pickle.dump(self, f)
 
 
 def unpickle_model(file_location):
     with open(file_location, 'rb') as f:
         return pickle.load(f)
+
+
+def org_files(self):
+    try:
+        os.mkdir(self.run_name)
+    except OSError as e:
+        pass
+
+    # put output files into new folder
+    filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # move for Windows system
+    # filesp = ''.join(['mv ./', self.run_name, '* ', self.run_name, '/'])  # mv for Linux system
+    subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
+
+    movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # move for Windows system
+    # movepkl = ''.join(['mv ./', '.pkl', '* ', self.run_name, '/']) # mv for Linux system
+    subprocess.Popen(movepkl, shell=True, stdout=subprocess.PIPE)  # run bash command
+
+    # # move run folder to /output directory
+    # movesp = 'move ./' + self.run_name + ' output/'
+    # subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command

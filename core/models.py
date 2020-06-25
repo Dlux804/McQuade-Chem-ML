@@ -60,11 +60,7 @@ class MlModel:  # TODO update documentation here
         self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
         # get the specified learning algorithm
-        if self.task_type == 'regression':
-            self.get_regressor()
 
-        if self.task_type == 'classification':
-            self.get_classifier()
 
         self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
                                   self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
@@ -74,6 +70,17 @@ class MlModel:  # TODO update documentation here
             self.cv_folds = None
             self.regressor = self.regressor()  # make it callable to match Tune = True case
             self.tune_time = None
+
+    def reg(self):  # broke this out because input shape is needed for NN regressor to be defined.
+        """
+        Function to fetch regressor.  Should be called after featurization has occured and input shape defined.
+        :return:
+        """
+        if self.task_type == 'regression':
+            self.get_regressor()
+
+        if self.task_type == 'classification':
+            self.get_classifier()
 
     def run(self):
         """ Runs machine learning model. Stores results as class attributes."""

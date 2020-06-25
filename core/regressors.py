@@ -16,7 +16,7 @@ from tensorflow.keras.metrics import RootMeanSquaredError
 from tqdm import tqdm
 
 
-def build_nn(self, n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.0):
+def build_nn( n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.1):
     """
     Create neural network architecture and compile.  Accepts number of hiiden layers, number of neurons,
     learning rate, and input shape. Returns compiled model.
@@ -32,8 +32,8 @@ def build_nn(self, n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=2
     """
 
     model = keras.models.Sequential()
-    model.add(keras.layers.Dropout(drop, input_shape=in_shape))  # use dropout layer as input.
-    # model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
+    # model.add(keras.layers.Dropout(drop, input_shape=self.in_shape))  # use dropout layer as input.
+    model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
     for layer in range(n_hidden):  # create hidden layers
         model.add(keras.layers.Dense(n_neuron, activation="relu"))
         model.add(keras.layers.Dropout(drop))  # add dropout to model after the a dense layer
@@ -44,18 +44,18 @@ def build_nn(self, n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=2
     # optimizer = keras.optimizers.RMSprop(learning_rate=learning_rate)
     optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
     model.compile(loss="mse", optimizer=optimizer, metrics=[RootMeanSquaredError(name='rmse')])
-    self.regressor = model
-    # return model
+
+    return model
 
 
-def wrapKeras(self, build_func=build_nn, in_shape=self.in_shape):
+def wrapKeras(self, build_func=build_nn):
     """
     Wraps up a Keras model to appear as sklearn Regressor for use in hyper parameter tuning.
     :param build_func: Callable function that builds Keras model.
     :param in_shape: Input dimension.  Must match number of features.
     :return: Regressor() like function for use with sklearn based optimization.
     """
-    self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=in_shape)  # pass non-hyper params here
+    self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape)  # pass non-hyper params here
 
 
 def get_regressor(self):
@@ -76,7 +76,7 @@ def get_regressor(self):
 
     if self.algorithm == 'nn':  # neural network
         # compile nn model
-        build_nn(self)
+        # reg = build_nn(self)
         # wrap it like a sklearn regressor
         wrapKeras(self)
 
@@ -115,7 +115,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
         stop_cb = keras.callbacks.EarlyStopping(patience=10,  # number of epochs to wait for progress
                                                 restore_best_weights=True)
 
-        fit_params = {'epochs': 100,
+        self.fit_params = {'epochs': 100,
                       'callbacks': [chkpt_cb, stop_cb],
                       'validation_data': (self.val_features,self.val_target)
                       }
@@ -124,12 +124,12 @@ def hyperTune(self, epochs=50,n_jobs=6):
 
     # set up Bayes Search
     bayes = BayesSearchCV(
-        estimator=self.regressor(),  # what regressor to use
+        estimator=self.regressor,  # what regressor to use
         search_spaces=self.param_grid,  # hyper parameters to search through
-        fit_params= self.callbacks,
+        fit_params=self.fit_params,
         n_iter=self.opt_iter,  # number of combos tried
         random_state=42,  # random seed
-        verbose=0,  # output print level
+        verbose=1,  # output print level
         scoring='neg_mean_squared_error',  # scoring function to use (RMSE)  #TODO needs update for Classification
         n_jobs=n_jobs,  # number of parallel jobs (max = folds)
         cv=self.cv_folds  # number of cross-val folds to use

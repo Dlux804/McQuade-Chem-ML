@@ -244,6 +244,7 @@ def keras_paramgrid():
         'learning_rate': Real(0.0001, 0.1, 'log-uniform'),
         'drop': Real(0.1, 0.8)
         }
+    return bayes_grid
 
 
 def make_grid(self):
@@ -254,7 +255,8 @@ def make_grid(self):
         'svr': svr_paramgrid,
         'gdb': gdb_paramgrid,
         'mlp': mlp_paramgrid,
-        'knn': knn_paramgrid
+        'knn': knn_paramgrid,
+        'nn': keras_paramgrid
     }
     self.param_grid = grids[self.algorithm]()
     # return grids[method]()

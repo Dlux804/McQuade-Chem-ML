@@ -69,7 +69,6 @@ def main():
                     print('Featurization:', method)
                     print('Dataset:', data)
                     print()
-                    # TODO update to match new version of models.py
 
                     # run model
                     model.featurize()  # Featurize molecules
@@ -111,21 +110,37 @@ def example_model():
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
         model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
-                                tune=True, cv=3, opt_iter=25)
+                                tune=False, cv=3, opt_iter=25)
         print('done.')
 
     with cd('output'):  # Have files output to output
+        # model1.featurize()
+        # model1.data_split(val=0.0)
+        # pickle_model(model1, file_location='dev.pkl')
+        #
+        # model2 = unpickle_model(file_location='dev.pkl')
+        # model2.run()
+        # model2.analyze()
+        # pickle_model(model2, file_location='dev.pkl')  # Create pickled model for faster testing
+        #
+        # model3 = unpickle_model(file_location='dev.pkl')
+        # model3.export_json()
+        # model3.store()
+
         model1.featurize()
         model1.data_split(val=0.0)
         model1.run()
         model1.analyze()
-        pickle_model(model1, file_location='dev.pkl')  # Create pickled model for faster testing
-
-        model1 = unpickle_model(file_location='dev.pkl')
-        model1.export_json()
         model1.store()
+        model1.export_json()
+        return model1.run_name
 
 
 if __name__ == "__main__":
+    import json
+    import pandas as pd
+
     # main()
-    example_model()
+    run_name = example_model()
+    analysis_df = pd.read_json(f'output/{run_name}_predictions.json')
+    print(analysis_df)

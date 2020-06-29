@@ -47,6 +47,8 @@ def export_json(self):
     for k, v in tqdm(d.items(), desc="Export to JSON", position=0):
 
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
+            objs.append(k)
+            dfs.append(k)
             getattr(self, k).to_json(path_or_buf=self.run_name + '_' + k + '.json')
 
         if not isinstance(v, (int, float, dict, tuple, list, np.ndarray, bool, str, NoneType)):

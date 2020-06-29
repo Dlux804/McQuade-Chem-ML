@@ -46,7 +46,7 @@ def featurize(self):
         columns.append(name)
     smi = df['smiles']
 
-    smi2 = tqdm(smi, desc= "Featurizaiton")  # for progress bar
+    smi2 = tqdm(smi, desc= "Featurization")  # for progress bar
     data = list(map(generator.process, smi2))
     print('Done.')
     stop_feat = time()

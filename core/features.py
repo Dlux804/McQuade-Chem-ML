@@ -115,6 +115,7 @@ def data_split(self, test=0.2, val=0, random=None):
                                                                                         self.target_array,
                                                                                         test_size=self.test_percent,
                                                                                         random_state=self.random_seed)
+    # Define smiles that go with the different sets
     self.train_molecules, self.test_molecules, self.train_target, self.test_target = train_test_split(
                                                                                         self.molecules_array,
                                                                                         self.target_array,
@@ -137,6 +138,7 @@ def data_split(self, test=0.2, val=0, random=None):
                                                                                         self.train_target,
                                                                                         test_size=b,
                                                                                         random_state=self.random_seed)
+        # Define smiles that go with the different sets
         self.train_molecules, self.test_molecules, self.train_target, self.test_target = train_test_split(
                                                                                         self.train_molecules,
                                                                                         self.train_target,

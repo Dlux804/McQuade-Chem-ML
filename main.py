@@ -39,7 +39,7 @@ def main():
         learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
 
         # list of available featurization methods
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
+        feats = [[0], [0, 2], [0, 3], [0, 4], [0, 5], [2], [3], [4],
                  [5]]  # Change this to change which featurizations are being tested (for regression)
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
@@ -65,18 +65,28 @@ def main():
                         model = models.MlModel(alg, data, target, method)
                         print('done.')
 
-                    print('Model Type:', alg)
-                    print('Featurization:', method)
-                    print('Dataset:', data)
-                    print()
+                    try:  # Make a new directory with run name if not created already
+                        os.mkdir(f'output/{model.run_name}')
+                    except OSError:
+                        pass
 
-                    # run model
-                    model.featurize()  # Featurize molecules
-                    model.run()  # Bayes Opt
+                    with cd(f'output/{model.run_name}'):  # Switch to created directory to save results, temp solution
 
-                    model.analyze()  # Runs analysis on model
-                    # save results of model
-                    model.store()
+                        print('Model Type:', alg)
+                        print('Featurization:', method)
+                        print('Dataset:', data)
+                        print()
+
+                        # run model
+                        model.featurize()  # Featurize molecules
+                        model.data_split(val=0.0)  # Split molecules
+                        model.run()  # Bayes Opt
+                        pickle_model(model, file_location=f'{model.run_name}.pkl')
+                        model.analyze()  # Runs analysis on model
+                        # save results of model
+                        model.store()
+                        # save results in json format
+                        model.export_json()
 
                 if c == 'c':  # Runs the models/featurizations for classification
                     # change active directory
@@ -88,13 +98,20 @@ def main():
                         model = models.MlModel(alg, data, target, method)
                         print('done.')
 
-                    print('Model Type:', alg)
-                    print('Featurization:', method)
-                    print('Dataset:', data)
-                    print()
-                    # Runs classification model
-                    model.featurize()  # Featurize molecules
-                    model.run()
+                    try:  # Make a new directory with run name if not created already
+                        os.mkdir(f'output/{model.run_name}')
+                    except OSError:
+                        pass
+
+                    with cd(f'output/{model.run_name}'):  # Switch to created directory to save results
+
+                        print('Model Type:', alg)
+                        print('Featurization:', method)
+                        print('Dataset:', data)
+                        print()
+                        # Runs classification model
+                        model.featurize()  # Featurize molecules
+                        model.run()
 
 
 def example_model():
@@ -109,38 +126,25 @@ def example_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
+        model = models.MlModel(algorithm='ada', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0],
                                 tune=False, cv=3, opt_iter=25)
         print('done.')
 
-    with cd('output'):  # Have files output to output
-        # model1.featurize()
-        # model1.data_split(val=0.0)
-        # pickle_model(model1, file_location='dev.pkl')
-        #
-        # model2 = unpickle_model(file_location='dev.pkl')
-        # model2.run()
-        # model2.analyze()
-        # pickle_model(model2, file_location='dev.pkl')  # Create pickled model for faster testing
-        #
-        # model3 = unpickle_model(file_location='dev.pkl')
-        # model3.export_json()
-        # model3.store()
+    try:  # Make a new directory with run name if not created already
+        os.mkdir(f'output/{model.run_name}')
+    except OSError:
+        pass
 
-        model1.featurize()
-        model1.data_split(val=0.0)
-        model1.run()
-        model1.analyze()
-        model1.store()
-        model1.export_json()
-        return model1.run_name
+    with cd(f'output/{model.run_name}'):  # Have files output to output in run name
+        model.featurize()
+        model.data_split(val=0.0)
+        model.run()
+        pickle_model(model, file_location=f'{model.run_name}.pkl')
+        model.analyze()
+        model.store()
+        model.export_json()
 
 
 if __name__ == "__main__":
-    import json
-    import pandas as pd
-
-    # main()
-    run_name = example_model()
-    analysis_df = pd.read_json(f'output/{run_name}_predictions.json')
-    print(analysis_df)
+    main()
+    # example_model()

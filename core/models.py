@@ -33,7 +33,7 @@ class MlModel:  # TODO update documentation here
         self.dataset = dataset
 
         regression_datasets = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
-        classification_datasets = ['sider.csv']
+        classification_datasets = ['sider.csv']  # Add lists with regression datasets and classification datasets
 
         # Sets self.task_type based on which dataset is being used.
         if self.dataset in classification_datasets:

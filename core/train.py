@@ -24,7 +24,7 @@ def train_reg(self,n=5):
     t = np.empty(n)
 
     pva_multi = pd.DataFrame([])
-    pva_multi['smiles'] = self.test_molecules  # Save smiles
+    pva_multi['smiles'] = self.test_molecules  # Save smiles to predictions
     pva_multi['actual'] = self.test_target
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         start_time = time()
@@ -83,7 +83,7 @@ def train_cls(self, n=5):
     t = np.empty(n)
 
     cls_multi = pd.DataFrame([])
-    cls_multi['smiles'] = self.test_molecules  # Save smiles
+    cls_multi['smiles'] = self.test_molecules  # Save smiles to predictions
     cls_multi['actual'] = self.test_target
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         start_time = time()

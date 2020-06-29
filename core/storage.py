@@ -47,8 +47,6 @@ def export_json(self):
     for k, v in tqdm(d.items(), desc="Export to JSON", position=0):
 
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
-            objs.append(k)
-            dfs.append(k)
             getattr(self, k).to_json(path_or_buf=self.run_name + '_' + k + '.json')
 
         if not isinstance(v, (int, float, dict, tuple, list, np.ndarray, bool, str, NoneType)):
@@ -71,11 +69,11 @@ def export_json(self):
         json.dump(d, f, cls=NumpyEncoder)
 
 
-def pickle_model(model, file_location):
+def pickle_model(model, file_location):  # Pickle models, at any stage of model
     with open(file_location, 'wb') as f:
         pickle.dump(model, f)
 
 
-def unpickle_model(file_location):
+def unpickle_model(file_location):  # Unpickle model, re-run or continue running model
     with open(file_location, 'rb') as f:
         return pickle.load(f)

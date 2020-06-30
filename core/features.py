@@ -81,7 +81,7 @@ def data_split(self, test=0.2, val=0, random=None):
 
     # make array of target values
     self.target_array = np.array(self.data[self.target_name])
-    molecules_array = np.array(self.data['smiles'])  # Grab molecules array without storing as class attribute
+    molecules_array = np.array(self.data['smiles'])  # Grab molecules array
     self.test_percent = test
     self.val_percent = val
     self.train_percent = 1 - test - val

@@ -65,28 +65,21 @@ def main():
                         model = models.MlModel(alg, data, target, method)
                         print('done.')
 
-                    try:  # Make a new directory with run name if not created already
-                        os.mkdir(f'output/{model.run_name}')
-                    except OSError:
-                        pass
+                    print('Model Type:', alg)
+                    print('Featurization:', method)
+                    print('Dataset:', data)
+                    print()
 
-                    with cd(f'output/{model.run_name}'):  # Switch to created directory to save results, temp solution
-
-                        print('Model Type:', alg)
-                        print('Featurization:', method)
-                        print('Dataset:', data)
-                        print()
-
-                        # run model
-                        model.featurize()  # Featurize molecules
-                        model.data_split(val=0.0)  # Split molecules
-                        model.run()  # Bayes Opt
-                        pickle_model(model, file_location=f'{model.run_name}.pkl')
-                        model.analyze()  # Runs analysis on model
-                        # save results of model
-                        model.store()
-                        # save results in json format
-                        model.export_json()
+                    # run model
+                    model.featurize()  # Featurize molecules
+                    model.data_split(val=0.0)  # Split molecules
+                    model.run()  # Bayes Opt
+                    pickle_model(model, file_location=f'{model.run_name}.pkl')
+                    model.analyze()  # Runs analysis on model
+                    # save results of model
+                    model.store()
+                    # save results in json format
+                    model.export_json()
 
                 if c == 'c':  # Runs the models/featurizations for classification
                     # change active directory
@@ -98,20 +91,13 @@ def main():
                         model = models.MlModel(alg, data, target, method)
                         print('done.')
 
-                    try:  # Make a new directory with run name if not created already
-                        os.mkdir(f'output/{model.run_name}')
-                    except OSError:
-                        pass
-
-                    with cd(f'output/{model.run_name}'):  # Switch to created directory to save results
-
-                        print('Model Type:', alg)
-                        print('Featurization:', method)
-                        print('Dataset:', data)
-                        print()
-                        # Runs classification model
-                        model.featurize()  # Featurize molecules
-                        model.run()
+                    print('Model Type:', alg)
+                    print('Featurization:', method)
+                    print('Dataset:', data)
+                    print()
+                    # Runs classification model
+                    model.featurize()  # Featurize molecules
+                    model.run()
 
 
 def example_model():
@@ -126,25 +112,18 @@ def example_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model = models.MlModel(algorithm='ada', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0],
-                                tune=False, cv=3, opt_iter=25)
+        model = models.MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
+                                tune=False, cv=3, opt_iter=5)
         print('done.')
 
-    try:  # Make a new directory with run name if not created already
-        os.mkdir(f'output/{model.run_name}')
-    except OSError:
-        pass
-
-    with cd(f'output/{model.run_name}'):  # Have files output to output in run name
-        model.featurize()
-        model.data_split(val=0.0)
-        model.run()
-        pickle_model(model, file_location=f'{model.run_name}.pkl')
-        model.analyze()
-        model.store()
-        model.export_json()
+    model.featurize()
+    model.data_split(val=0.0)
+    model.run()
+    pickle_model(model, file_location=f'{model.run_name}.pkl')
+    model.store()
+    model.export_json()
 
 
 if __name__ == "__main__":
-    main()
-    # example_model()
+    # main()
+    example_model()

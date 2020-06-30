@@ -31,12 +31,15 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
-        self.regression_sets = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
+
+        regression_datasets = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
+        classification_datasets = ['sider.csv']  # Add lists with regression datasets and classification datasets
+
         # Sets self.task_type based on which dataset is being used.
-        if self.dataset in self.regression_sets:
-            self.task_type ='regression'
-        else:
+        if self.dataset in classification_datasets:
             self.task_type = 'classification'
+        elif self.dataset in regression_datasets:
+            self.task_type = 'regression'
 
         self.target_name = target
         self.feat_meth = feat_meth
@@ -89,6 +92,7 @@ class MlModel:  # TODO update documentation here
 
     def analyze(self):
         # # Variable importance for rf and gdb
+
         if self.algorithm in ['rf', 'gdb', 'rfc'] and self.feat_meth == [0]:
             self.impgraph()
 

@@ -69,12 +69,12 @@ def export_json(self):
             for label, item in d[k].items():
                 new_param_grid_dict[label] = __clean_up_param_grid_item__(item)  # Cleanup each item in param_gird dict
             d[k] = new_param_grid_dict
-        if k == 'fit_params':
+        if k == 'fit_params' and not isinstance(v, NoneType):
             # grab epochs and store, then remove fit_params
             # TODO update this to get early stopping criteria
             epochs = v['epochs']
             # update will change size, so delete to preserve size.
-            d.update({'epochs': epochs})
+            d.update({'max_epochs': epochs})
             del d[k]
 
 
@@ -108,7 +108,6 @@ def org_files(self, zip_only=False):
 
     # put output files into new folder
     filesp = ''.join(['move ./', self.run_name, '*.* ', self.run_name, '/'])  # move for Windows system
-    print("File move command: \n", filesp)
     # filesp = ''.join(['mv ./', self.run_name, '*.* ', self.run_name, '/'])  # mv for Linux system
     subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 

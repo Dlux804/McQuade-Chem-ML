@@ -64,10 +64,16 @@ def wrapKeras(self, build_func=build_nn):
     :param in_shape: Input dimension.  Must match number of features.
     :return: Regressor() like function for use with sklearn based optimization.
     """
-    self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape)  # pass non-hyper params here
+
+    # pass non-hyper params here
+    if hasattr(self, 'params'):
+        self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape,
+                                                                    **self.params)
+    else:
+        self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape)
 
 
-def get_regressor(self):
+def get_regressor(self, call=False):
     """Returns model specific regressor function."""
 
     # Create Dictionary of regressors to be called with self.algorithm as key.
@@ -80,8 +86,14 @@ def get_regressor(self):
         'knn': KNeighborsRegressor
     }
     if self.algorithm in skl_regs.keys():
-            self.regressor = skl_regs[self.algorithm]()
-            self.task_type = 'regression'
+        self.task_type = 'regression'
+        if call:
+            self.regressor = skl_regs[self.algorithm]
+        else:
+            if hasattr(self, 'params'):
+                self.regressor = skl_regs[self.algorithm](**self.params)
+            else:
+                self.regressor = skl_regs[self.algorithm]()
 
     if self.algorithm == 'nn':  # neural network
         # compile nn model
@@ -98,7 +110,6 @@ def get_regressor(self):
                            'validation_data': (self.val_features, self.val_target)
                            }
         wrapKeras(self)
-
 
 
 # for making a progress bar for skopt
@@ -128,16 +139,17 @@ def hyperTune(self, epochs=50,n_jobs=6):
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
     if self.algorithm == "nn":
-        # set a checkpoint file to save the model
-        chkpt_cb = keras.callbacks.ModelCheckpoint(self.run_name+'.h5', save_best_only=True)
-        # set up early stopping callback to avoid wasted resources
-        stop_cb = keras.callbacks.EarlyStopping(patience=10,  # number of epochs to wait for progress
-                                                restore_best_weights=True)
-
-        self.fit_params = {'epochs': 100,
-                      'callbacks': [chkpt_cb, stop_cb],
-                      'validation_data': (self.val_features,self.val_target)
-                            }
+        n_jobs = 1
+        # # set a checkpoint file to save the model
+        # chkpt_cb = keras.callbacks.ModelCheckpoint(self.run_name+'.h5', save_best_only=True)
+        # # set up early stopping callback to avoid wasted resources
+        # stop_cb = keras.callbacks.EarlyStopping(patience=10,  # number of epochs to wait for progress
+        #                                         restore_best_weights=True)
+        #
+        # self.fit_params = {'epochs': 100,
+        #               'callbacks': [chkpt_cb, stop_cb],
+        #               'validation_data': (self.val_features,self.val_target)
+        #                     }
     else:
         self.fit_params = None
 
@@ -155,6 +167,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
     )
     if self.algorithm != 'nn':  # non keras model
         checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
+        # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
         self.cp_delta = 0.05  # TODO delta should be dynamic to match target value scales.  Score scales with measurement
         self.cp_n_best = 10
 
@@ -176,9 +189,11 @@ def hyperTune(self, epochs=50,n_jobs=6):
     tune_score = bayes.best_score_
 
     # update the regressor with best parameters
-    # self.regressor = self.regressor(**self.params)
-    self.get_regressor()
-    self.regressor = self.regressor(**self.params)
+    self.get_regressor(call=False)
+    # print(self.regressor.get_params)
+    # if self.algorithm != 'nn':
+    #     # only necessary for sklearn
+    #     self.regressor = self.regressor(**self.params)
 
 
     # Calculate time to tune parameters

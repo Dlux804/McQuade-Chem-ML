@@ -130,20 +130,21 @@ def data_split(self, test=0.2, val=0, random = None):
         # scale the validation features too
         self.val_features = scaler.transform(self.val_features)
 
-        n_total = self.n_tot
-
-        self.n_train = self.train_features.shape[0]
-        ptrain = self.n_train / n_total * 100
-
-
-        self.n_test = self.test_features.shape[0]
-        ptest = self.n_test / n_total * 100
-
         self.n_val = self.val_features.shape[0]
-        pval = self.n_val / n_total * 100
+        pval = self.n_val / self.n_tot * 100
 
-        print('The dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
-                n_total, ptrain, pval, ptest))
+    else:
+        pval = 0
+
+    self.n_train = self.train_features.shape[0]
+    ptrain = self.n_train / self.n_tot * 100
+
+    self.n_test = self.test_features.shape[0]
+    ptest = self.n_test / self.n_tot * 100
+
+    print()
+    print('Dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
+            self.n_tot, ptrain, pval, ptest))
 
         # return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
 

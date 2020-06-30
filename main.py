@@ -5,6 +5,7 @@ from core.misc import cd
 from core.storage import pickle_model, unpickle_model
 import os
 import pathlib
+from time import sleep
 from core.features import featurize
 
 # Creating a global variable to be imported from all other models
@@ -110,8 +111,8 @@ def example_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='nn', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
-                                tune=True, cv=3, opt_iter=50)
+        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
+                                tune=True, cv=3, opt_iter=5)
         print('done.')
 
     with cd('output'):  # Have files output to output
@@ -120,12 +121,15 @@ def example_model():
         model1.reg()
         model1.run()
         model1.analyze()
-        model1.pickle_model()
+        # model1.pickle_model()
         # pickle_model(model1, file_location='dev.pkl')  # Create pickled model for faster testing
 
         # model1 = unpickle_model(file_location='dev.pkl')
         model1.export_json()
-        model1.org_files()
+        model1.org_files(zip_only=True)
+        # sleep(5)  # give org_files() time to move things, otherwise zip fails.
+        # model1.zip_files()
+
         # model1.store()
 
 def example_load():

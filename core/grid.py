@@ -9,6 +9,10 @@ from sklearn import tree
 # from sklearn.ensemble import AdaBoostRegressor
 # from sklearn.neural_network import MLPRegressor
 # from sklearn.neighbors import KNeighborsRegressor
+from numpy.ma import MaskedArray
+import sklearn.utils.fixes
+#
+sklearn.utils.fixes.MaskedArray = MaskedArray
 from skopt.space import Real, Integer, Categorical, Space
 
 

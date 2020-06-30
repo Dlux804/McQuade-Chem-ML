@@ -68,7 +68,7 @@ class MlModel:  # TODO update documentation here
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None
             self.cv_folds = None
-            self.regressor = self.regressor()  # make it callable to match Tune = True case
+            # self.regressor = self.regressor()  # make it callable to match Tune = True case
             self.tune_time = None
 
     def reg(self):  # broke this out because input shape is needed for NN regressor to be defined.
@@ -85,13 +85,13 @@ class MlModel:  # TODO update documentation here
     def run(self):
         """ Runs machine learning model. Stores results as class attributes."""
 
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
-                                  self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+        # self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
+        #                           self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
         # TODO naming scheme currently must be called after featurization declared--adjust for robust
 
         if self.tuned:  # Do hyperparameter tuning
             self.make_grid()
-            self.hyperTune(n_jobs=6)
+            self.hyperTune(n_jobs=8)
 
         # Done tuning, time to fit and predict
         if self.task_type == 'regression':

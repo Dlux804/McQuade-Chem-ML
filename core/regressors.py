@@ -8,13 +8,22 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
-from skopt import BayesSearchCV
 from time import time
-from skopt import callbacks
 from tensorflow import keras
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tqdm import tqdm
 
+# monkey patch to fix skopt and sklearn.  Requires downgrade to sklearn 0.23
+from numpy.ma import MaskedArray
+import sklearn.utils.fixes
+#
+sklearn.utils.fixes.MaskedArray = MaskedArray
+
+import skopt
+from skopt import BayesSearchCV
+from skopt import callbacks
+
+# end monkey patch
 
 def build_nn( n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.1):
     """
@@ -71,13 +80,23 @@ def get_regressor(self):
         'knn': KNeighborsRegressor
     }
     if self.algorithm in skl_regs.keys():
-            self.regressor = skl_regs[self.algorithm]
+            self.regressor = skl_regs[self.algorithm]()
             self.task_type = 'regression'
 
     if self.algorithm == 'nn':  # neural network
         # compile nn model
         # reg = build_nn(self)
         # wrap it like a sklearn regressor
+        # set a checkpoint file to save the model
+        chkpt_cb = keras.callbacks.ModelCheckpoint( self.run_name + '.h5', save_best_only=True)
+        # set up early stopping callback to avoid wasted resources
+        stop_cb = keras.callbacks.EarlyStopping(patience=10,  # number of epochs to wait for progress
+                                                restore_best_weights=True)
+
+        self.fit_params = {'epochs': 100,
+                           'callbacks': [chkpt_cb, stop_cb],
+                           'validation_data': (self.val_features, self.val_target)
+                           }
         wrapKeras(self)
 
 
@@ -118,9 +137,9 @@ def hyperTune(self, epochs=50,n_jobs=6):
         self.fit_params = {'epochs': 100,
                       'callbacks': [chkpt_cb, stop_cb],
                       'validation_data': (self.val_features,self.val_target)
-                      }
+                            }
     else:
-        fit_params = None
+        self.fit_params = None
 
     # set up Bayes Search
     bayes = BayesSearchCV(
@@ -129,32 +148,38 @@ def hyperTune(self, epochs=50,n_jobs=6):
         fit_params=self.fit_params,
         n_iter=self.opt_iter,  # number of combos tried
         random_state=42,  # random seed
-        verbose=1,  # output print level
+        verbose=3,  # output print level
         scoring='neg_mean_squared_error',  # scoring function to use (RMSE)  #TODO needs update for Classification
         n_jobs=n_jobs,  # number of parallel jobs (max = folds)
         cv=self.cv_folds  # number of cross-val folds to use
     )
+    if self.algorithm != 'nn':  # non keras model
+        checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
+        self.cp_delta = 0.05  # TODO delta should be dynamic to match target value scales.  Score scales with measurement
+        self.cp_n_best = 10
 
-    checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
-    self.cp_delta = 0.05  # TODO delta should be dynamic to match target value scales.  Score scales with measurement
-    self.cp_n_best = 10
+        """ Every optimization model in skopt saved all their scores in a built-in list. When called, DeltaYStopper will
+        access this list and sort this list from lowest number to highest number. It then take the difference between the
+        number in the n_best position and the first number and compare it to delta. If the difference is smaller or equal
+        to delta, the optimization will be stopped.
+        """
 
-    """ Every optimization model in skopt saved all their scores in a built-in list. When called, DeltaYStopper will 
-    access this list and sort this list from lowest number to highest number. It then take the difference between the 
-    number in the n_best position and the first number and compare it to delta. If the difference is smaller or equal 
-    to delta, the optimization will be stopped.
-    """
+        # print("delta and n_best is {0} and {1}".format(self.cp_delta, self.cp_n_best))
+        deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
 
-    # print("delta and n_best is {0} and {1}".format(self.cp_delta, self.cp_n_best))
-    deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
+        # Fit the Bayes search model
+        bayes.fit(self.train_features, self.train_target, callback=[tqdm_skopt(total=self.opt_iter,position=0, desc="Bayesian Parameter Optimization"),checkpoint_saver, deltay])
+    else:  # nn
+        bayes.fit(self.train_features, self.train_target, callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization")])
 
-    # Fit the Bayes search model
-    bayes.fit(self.train_features, self.train_target, callback=[tqdm_skopt(total=self.opt_iter,position=0, desc="Bayesian Parameter Optimization"),checkpoint_saver, deltay])
     self.params = bayes.best_params_
     tune_score = bayes.best_score_
 
     # update the regressor with best parameters
+    # self.regressor = self.regressor(**self.params)
+    self.get_regressor()
     self.regressor = self.regressor(**self.params)
+
 
     # Calculate time to tune parameters
     stop_tune = time()

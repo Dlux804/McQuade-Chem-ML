@@ -5,7 +5,11 @@ from tqdm import tqdm
 import pickle
 import os
 import subprocess
+from core.misc import cd
+from pprint import pprint
+from time import sleep
 import shutil
+import zipfile
 
 
 class NumpyEncoder(json.JSONEncoder):
@@ -45,9 +49,11 @@ def export_json(self):
     print("Model attributes are being exported to JSON format...")
     NoneType = type(None)  # weird but necessary decalartion for isinstance() to work on None
     d = dict(vars(self))  # create dict of model attributes
+    # pprint(d)
     objs = []
     dfs = []
     for k, v in tqdm(d.items(), desc="Export to JSON", position=0):
+        # print('Attribute {} is of type {}'.format(k, type(v)))
 
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
             objs.append(k)
@@ -63,10 +69,19 @@ def export_json(self):
             for label, item in d[k].items():
                 new_param_grid_dict[label] = __clean_up_param_grid_item__(item)  # Cleanup each item in param_gird dict
             d[k] = new_param_grid_dict
+        if k == 'fit_params':
+            # grab epochs and store, then remove fit_params
+            # TODO update this to get early stopping criteria
+            epochs = v['epochs']
+            # update will change size, so delete to preserve size.
+            d.update({'epochs': epochs})
+            del d[k]
+
+
 
     objs = list(set(objs))
     print("Unsupported JSON Export Attributes:", objs)
-    print("The following pandas attributes were exported to individual JSONs: ", dfs)
+    print("The following pandas attributes were exported to individual CSVs: ", dfs)
     for k in objs:
         del d[k]
 
@@ -74,10 +89,6 @@ def export_json(self):
     with open(json_name, 'w') as f:
         json.dump(d, f, cls=NumpyEncoder)
 
-
-# def pickle_model(model, file_location):
-#     with open(file_location, 'wb') as f:
-#         pickle.dump(model, f)
 
 def pickle_model(self):
     with open(self.run_name + '.pkl', 'wb') as f:
@@ -89,21 +100,26 @@ def unpickle_model(file_location):
         return pickle.load(f)
 
 
-def org_files(self):
+def org_files(self, zip_only=False):
     try:
         os.mkdir(self.run_name)
     except OSError as e:
         pass
 
     # put output files into new folder
-    filesp = ''.join(['move ./', self.run_name, '* ', self.run_name, '/'])  # move for Windows system
-    # filesp = ''.join(['mv ./', self.run_name, '* ', self.run_name, '/'])  # mv for Linux system
+    filesp = ''.join(['move ./', self.run_name, '*.* ', self.run_name, '/'])  # move for Windows system
+    print("File move command: \n", filesp)
+    # filesp = ''.join(['mv ./', self.run_name, '*.* ', self.run_name, '/'])  # mv for Linux system
     subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
 
-    movepkl = ''.join(['move ./', '.pkl', '* ', self.run_name, '/'])  # move for Windows system
-    # movepkl = ''.join(['mv ./', '.pkl', '* ', self.run_name, '/']) # mv for Linux system
-    subprocess.Popen(movepkl, shell=True, stdout=subprocess.PIPE)  # run bash command
+    # zip the output folder to save space
+    path = os.getcwd()
+    base = self.run_name
+    zipdir = path+'\\'+base
+    print('Zipping output to {}'.format(base+'.zip'))
+    sleep(3)  # need to give time for files to move before zip.
+    shutil.make_archive(base, 'zip', zipdir)
 
-    # # move run folder to /output directory
-    # movesp = 'move ./' + self.run_name + ' output/'
-    # subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
+    if zip_only:  # remove unzipped folder to avoid duplicates
+        rmdir = 'rmdir ' + self.run_name + ' /s/q'
+        subprocess.Popen(rmdir, shell=True, stdout=subprocess.PIPE)  # run bash command

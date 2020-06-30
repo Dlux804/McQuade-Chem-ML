@@ -2,4 +2,3 @@
 !output/
 output/*
 core/nn_opt.ipynb
-.idea/*

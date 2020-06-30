@@ -81,7 +81,7 @@ def data_split(self, test=0.2, val=0, random=None):
 
     # make array of target values
     self.target_array = np.array(self.data[self.target_name])
-    self.molecules_array = np.array(self.data['smiles'])  # Grab molecules array
+    molecules_array = np.array(self.data['smiles'])  # Grab molecules array without storing as class attribute
     self.test_percent = test
     self.val_percent = val
     self.train_percent = 1 - test - val
@@ -117,7 +117,7 @@ def data_split(self, test=0.2, val=0, random=None):
                                                                                         random_state=self.random_seed)
     # Define smiles that go with the different sets
     self.train_molecules, self.test_molecules, self.train_target, self.test_target = train_test_split(
-                                                                                        self.molecules_array,
+                                                                                        molecules_array,
                                                                                         self.target_array,
                                                                                         test_size=self.test_percent,
                                                                                         random_state=self.random_seed)

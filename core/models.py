@@ -33,13 +33,14 @@ class MlModel:  # TODO update documentation here
         self.dataset = dataset
 
         regression_datasets = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
-        classification_datasets = ['sider.csv']  # Add lists with regression datasets and classification datasets
-
+        classification_datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']  # Add lists with regression datasets and classification datasets
+        multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
         # Sets self.task_type based on which dataset is being used.
         if self.dataset in classification_datasets:
             self.task_type = 'classification'
         elif self.dataset in regression_datasets:
             self.task_type = 'regression'
+
 
         self.target_name = target
         self.feat_meth = feat_meth
@@ -55,7 +56,11 @@ class MlModel:  # TODO update documentation here
 
         # ingest data.  collect full data frame (self.data)
         # collect pandas series of the SMILES (self.smiles_col)
-        self.data, self.smiles_series = ingest.load_smiles(self, dataset)
+
+        if self.dataset in multi_label_classification_datasets:
+            self.data, self.smiles_series = ingest.load_smiles(self, dataset, drop = False) # Makes drop = False for multi-target classification
+        else:
+            self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
         if self.task_type == 'regression':
             self.get_regressor()

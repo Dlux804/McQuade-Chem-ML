@@ -33,7 +33,6 @@ def featurize(self):
     print(*selected_feat, sep=', ')
     print('Calculating features...')
     sleep(0.25)
-
     # Start timer
     start_feat = time()
 
@@ -53,8 +52,8 @@ def featurize(self):
     feat_time = stop_feat - start_feat
 
     # make dataframe of all features
-    features = pd.DataFrame(data, columns=columns)
-    df = pd.concat([df, features], axis=1)
+    self.features = pd.DataFrame(data, columns=columns)
+    df = pd.concat([df, self.features], axis=1)
     df = df.dropna()
 
     # remove the "RDKit2d_calculated = True" column(s)
@@ -86,17 +85,23 @@ def data_split(self, test=0.2, val=0, random=None):
     self.val_percent = val
     self.train_percent = 1 - test - val
 
-    # remove target from features
+    # remove targets from features
     # axis 1 is the columns.
-    # features = df.drop([exp, 'smiles'], axis=1)
     # TODO Collect and store the molecules in train, test and validation data sets
-    features = self.data.drop([self.target_name, 'smiles'], axis=1)
+    if self.task_type == 'classification':
+        for i in self.target_name:
+            self.features = self.data.drop([i, 'smiles'], axis=1)\
+
+    if self.task_type == 'regression':
+        self.features = self.data.drop([self.target_name, 'smiles'], axis=1)
+
+
 
     # save list of strings of features
-    self.feature_list = list(features.columns)
+    self.feature_list = list(self.features.columns)
 
     # convert features to numpy
-    featuresarr = np.array(features)
+    featuresarr = np.array(self.features)
     # n_total = featuresarr.shape[0]
 
     # store to instance

@@ -22,10 +22,11 @@ def main():
     if c == 'c':
         # list of available classification learning algorithms
         learner = ['svc', 'knc', 'rf']
-        #learner = ['rf'] # Use this line to test specific models instead of iterating
+        #learner = [] # Use this line to test specific models instead of iterating
 
-        datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
-        #datasets = ['sider.csv'] # Use this line to test specific data sets instead of having to iterate
+
+        #datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
+        datasets = ['sider.csv'] # Use this line to test specific data sets instead of having to iterate
 
     # Sets up learner, featurizations, and data sets for regression
     if c == 'r':
@@ -90,9 +91,9 @@ def main():
                 if c == 'c':
                     for data in datasets:
 
-                        # The following if statements allow for multi-label classification by iterating through each target column depending on the data set. Please provide feedback for ways to make this more intuitive and less cluttered.
+                        # The following if statements allow for multi-label classification
                         if data == 'sider.csv':
-                            targets = ['Hepatobiliary disorders', 'Metabolism and nutrition disorders', 'Product issues', 'Eye disorders', 'Investigations', 'Gastrointestinal disorders',
+                            targets = ['Hepatobiliary disorders', 'Metabolism and nutrition disorders', 'Product issues', 'Eye disorders', 'Investigations', 'Musculoskeletal and connective tissue disorders', 'Gastrointestinal disorders',
                                        'Social circumstances', 'Immune system disorders', 'Reproductive system and breast disorders', 'Neoplasms benign, malignant and unspecified (incl cysts and polyps)',
                                        'General disorders and administration site conditions', 'Endocrine disorders', 'Surgical and medical procedures', 'Vascular disorders', 'Blood and lymphatic system disorders',
                                        'Skin and subcutaneous tissue disorders', 'Congenital, familial and genetic disorders', 'Infections and infestations', 'Respiratory, thoracic and mediastinal disorders',
@@ -107,25 +108,30 @@ def main():
                         if data == 'bace.csv':
                             targets = ['Class']
 
-                        for target in targets:   # Loops through different targets for each data set (multi target classification)
+                        if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
+                            pass
+                        else:
                             # change active directory
                             with cd('dataFiles'):
                                 print('Now in:', os.getcwd())
                                 print('Initializing model...', end=' ', flush=True)
 
                                 # initiate model class with algorithm, dataset and target
-                                model = models.MlModel(alg, data, target, method)
+                                model = models.MlModel(alg, data, targets, method)
                                 print('done.')
 
                             print('Model Type:', alg)
                             print('Featurization:', method)
                             print('Dataset:', data)
-                            print('Target:', target)
+                            print('Target(s):', targets)
                             print()
                             # Runs classification model
                             model.featurize()  # Featurize molecules
                             model.data_split()
                             model.run()  # Runs the models/featurizations for classification
+
+
+
 
 
                         # loop over dataset dictionary

@@ -2,10 +2,12 @@
 import numpy as np
 from time import time
 from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score, multilabel_confusion_matrix, f1_score
+from sklearn.model_selection import cross_val_predict
 import pandas as pd
 from tqdm import tqdm
 from time import sleep
+
 
 def train_reg(self,n=5):
     """
@@ -81,11 +83,13 @@ def train_cls(self, n=5):
     #clsrep = np.empty(n)
     auc = np.empty(n)
     t = np.empty(n)
+    f1_score1 = np.empty(n)
 
     cls_multi = pd.DataFrame([])
     cls_multi['smiles'] = self.test_molecules  # Save smiles to predictions
-    cls_multi['actual'] = self.test_target
+#    cls_multi['actual'] = self.test_target
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
+        print()
         start_time = time()
         self.regressor.fit(self.train_features, self.train_target)
 
@@ -93,27 +97,40 @@ def train_cls(self, n=5):
         predictions = self.regressor.predict(self.test_features)
         done_time = time()
         fit_time = done_time - start_time
+        if self.dataset == 'sider.csv' or self.dataset == 'clintox.csv': # Contains multi-label evaluation methods, since sider data set and clintox data set are done with multi-target classification.
+            conf = multilabel_confusion_matrix(self.test_target, predictions)
+            print("Confusion matrix for each individual label (see key above, labeled as 'target(s):'): ")
+            print(conf)
+            print()
 
-        # Dataframe for replicate_model
-        cls = pd.DataFrame([], columns=['actual', 'predicted'])
-        cls['actual'] = self.test_target
-        cls['predicted'] = predictions
-        acc[i] = accuracy_score(cls['actual'], cls['predicted'])
+            RF_pred = cross_val_predict(self.regressor, self.train_features, self.train_target, cv=3)
+            f1_score1[i] = f1_score(self.train_target, RF_pred, average="macro")
 
-        # TODO fix confusion matrix and classificaiton report metrics
-        conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
-        print()
-        print('Confusion matrix for this run: ')
-        print(conf[i])
-        clsrep = classification_report(cls['actual'], cls['predicted'])
-        print('Classification report for this run: ')
-        print(clsrep)
-        auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
-        t[i] = fit_time
+            print()
+            auc[i] = roc_auc_score(self.test_target, predictions)
+            sleep(0.25)
+        else:  # Contains single-label evaluation methods
+            # Dataframe for replicate_model
+            cls = pd.DataFrame([], columns=['actual', 'predicted'])
+            cls['actual'] = self.test_target
+            cls['predicted'] = predictions
+            acc[i] = accuracy_score(cls['actual'], cls['predicted'])
 
-        # store as enumerated column for multipredict
-        cls_multi['predicted' + str(i)] = predictions
-        sleep(0.25)  # so progress bar can update
+            # TODO fix confusion matrix and classificaiton report metrics
+            conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
+            print()
+            print('Confusion matrix for this run: ')
+            print(conf[i])
+
+            clsrep = classification_report(cls['actual'], cls['predicted'])
+            print('Classification report for this run: ')
+            print(clsrep)
+            auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
+            t[i] = fit_time
+
+            # store as enumerated column for multipredict
+            cls_multi['predicted' + str(i)] = predictions
+            sleep(0.25)  # so progress bar can update
 
     print('Done after {:.1f} seconds.'.format(t.sum()))
 
@@ -124,19 +141,32 @@ def train_cls(self, n=5):
         'conf_raw': conf,
         'conf_avg': conf.mean(),
         'conf_std': conf.std(),
-        'clsrep_raw': clsrep,
-       # 'clsrep_avg': clsrep.mean(),
-       # 'clsrep_std': clsrep.std(),
+       # 'clsrep_raw': clsrep,
+        # 'clsrep_avg': clsrep.mean(),
+        # 'clsrep_std': clsrep.std(),
         'auc_raw': auc,
         'auc_avg': auc.mean(),
         'auc_std': auc.std(),
         'time_raw': t,
         'time_avg': t.mean(),
-        'time_std': t.std()
+        'time_std': t.std(),
+        'f1_score_raw': f1_score1,
+        'f1_score_avg': f1_score1.mean(),
+        'f1_score_std': f1_score1.std()
     }
     self.predictions = cls_multi
     self.predictions_stats = stats
 
-    print('Average accuracy score = %.3f' % stats['acc_avg'], '+- %.3f' % stats['acc_std'])
-    print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
-    print()
+    if self.dataset == 'sider.csv' or self.dataset == 'clintox.csv':
+        print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
+        print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
+        print()
+    else:
+        print('Average accuracy score = %.3f' % stats['acc_avg'], '+- %.3f' % stats['acc_std'])
+        print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
+        print()
+
+
+
+
+

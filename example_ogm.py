@@ -56,8 +56,8 @@ ah = Relationship(pn, "OWNS", hn)
 g.create(ah)
 
 # Grab & Print
-query = """MATCH (a:Person {name:'Pete'})-[:OWNS]->(n)
-           RETURN labels(n) as labels, n.name as name"""
-data = g.evaluate(query)
-for asset in data:
-    print(asset)
+# query = """MATCH (a:Person {name:'Pete'})-[:OWNS]->(n)
+#            RETURN labels(n) as labels, n.name as name"""
+# data = g.evaluate(query)
+# for asset in data:
+#     print(asset)

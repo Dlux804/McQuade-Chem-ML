@@ -6,10 +6,9 @@ import pickle
 import os
 import subprocess
 from core.misc import cd
-from pprint import pprint
+
 from time import sleep
 import shutil
-import zipfile
 
 
 class NumpyEncoder(json.JSONEncoder):
@@ -46,21 +45,21 @@ def export_json(self):
     :param self:
     :return: writes json file
     """
+
     print("Model attributes are being exported to JSON format...")
-    NoneType = type(None)  # weird but necessary decalartion for isinstance() to work on None
+    NoneType = type(None)  # weird but necessary declaration for isinstance() to work on None
     d = dict(vars(self))  # create dict of model attributes
-    # pprint(d)
-    objs = []
+    objs = []  # empty lists to capture excepted attributes
     dfs = []
     for k, v in tqdm(d.items(), desc="Export to JSON", position=0):
-        # print('Attribute {} is of type {}'.format(k, type(v)))
 
+        # grab pandas related objects for export to csv
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
             objs.append(k)
             dfs.append(k)
             v.to_csv(self.run_name + '_' + k + '.csv')
-            # getattr(self, k).to_json(path_or_buf=self.run_name + '_' + k + '.json')
 
+        # grab non-Java compatible attributes
         if not isinstance(v, (int, float, dict, tuple, list, np.ndarray, bool, str, NoneType)):
             objs.append(k)
 
@@ -77,13 +76,12 @@ def export_json(self):
             d.update({'max_epochs': epochs})
             del d[k]
 
-
-
+    # reduce list of exceptions to unique entries
     objs = list(set(objs))
     print("Unsupported JSON Export Attributes:", objs)
     print("The following pandas attributes were exported to individual CSVs: ", dfs)
     for k in objs:
-        del d[k]
+        del d[k]  # remove prior to export
 
     json_name = self.run_name + '_attributes' + '.json'
     with open(json_name, 'w') as f:
@@ -91,16 +89,37 @@ def export_json(self):
 
 
 def pickle_model(self):
+    """
+    Stores model class instance as a .pkl file.  File sizes may be quite large (>100MB)
+    :param self:
+    :return:
+    """
+
     with open(self.run_name + '.pkl', 'wb') as f:
         pickle.dump(self, f)
 
 
 def unpickle_model(file_location):
+    """
+    Loads model from previously saved .pkl file.
+    :param file_location:
+    :return:
+    """
+
     with open(file_location, 'rb') as f:
         return pickle.load(f)
 
 
 def org_files(self, zip_only=False):
+    """
+    Organize output files of model into an individual folder. Creates zip of folder.
+    If zip_only == True then non-zipped folder will be deleted.
+    :param self:
+    :param zip_only: Boolean.  Deletes unzipped folder from directory.
+    :return:
+    """
+
+    # make directory for run outputs
     try:
         os.mkdir(self.run_name)
     except OSError as e:

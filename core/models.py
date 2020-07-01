@@ -29,8 +29,10 @@ class MlModel:  # TODO update documentation here
     from core.storage import export_json, org_files, pickle_model, unpickle_model
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
-        """Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
-        optimization cycles for hyper tuning, and number of Cross Validation folds for tuning."""
+        """
+        Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
+        optimization cycles for hyper tuning, and number of Cross Validation folds for tuning.
+        """
 
         self.algorithm = algorithm
         self.dataset = dataset
@@ -41,7 +43,8 @@ class MlModel:  # TODO update documentation here
         elif self.dataset in rds:
             self.task_type = 'regression'
         else:
-            raise Exception('{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
+            raise Exception(
+                '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
 
         self.target_name = target
         self.feat_meth = feat_meth
@@ -59,16 +62,12 @@ class MlModel:  # TODO update documentation here
         # collect pandas series of the SMILES (self.smiles_col)
         self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
-        # get the specified learning algorithm
-
-
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
-                                  self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+        # define run name used to save all outputs of model
+        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)
 
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None
             self.cv_folds = None
-            # self.regressor = self.regressor()  # make it callable to match Tune = True case
             self.tune_time = None
 
     def reg(self):  # broke this out because input shape is needed for NN regressor to be defined.
@@ -77,15 +76,13 @@ class MlModel:  # TODO update documentation here
         :return:
         """
         if self.task_type == 'regression':
-            self.get_regressor(call=False)
+            self.get_regressor(call=False) # returns instantiated model estimator
 
         if self.task_type == 'classification':
             self.get_classifier()
 
     def run(self):
         """ Runs machine learning model. Stores results as class attributes."""
-
-        # TODO naming scheme currently must be called after featurization declared--adjust for robust
 
         if self.tuned:  # Do hyperparameter tuning
             self.make_grid()
@@ -99,7 +96,7 @@ class MlModel:  # TODO update documentation here
             self.train_cls()
 
     def analyze(self):
-        # # Variable importance for rf and gdb
+        # Variable importance for tree based estimators
         if self.algorithm in ['rf', 'gdb', 'rfc'] and self.feat_meth == [0]:
             self.impgraph()
 

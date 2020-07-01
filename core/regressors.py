@@ -31,10 +31,10 @@ def build_nn( n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, d
     learning rate, and input shape. Returns compiled model.
 
     Keyword Arguments:
-        n_hidden (integer): Number of hidden layers with n_neurons to be added to model, excludes input and output layer. Default = 2
+        n_hidden (integer): Number of hidden layers added to model, excludes input and output layer. Default = 2
         n_neuron (integer): Number of neurons to add to each hidden layer. Default = 50
-        learning_rate (float):  Model learning rate that is passed to model optimizer.  Smaller values are slower, High values
-                        are prone to unstable training. Default = 0.001
+        learning_rate (float):  Model learning rate that is passed to model optimizer.
+                                Smaller values are slower, High values are prone to unstable training. Default = 0.001
         in_shape (integer): Input dimension should match number of features.  Default = 200 but should be overridden.
         drop (float): Dropout probability.  1 means drop everything, 0 means drop nothing. Default = 0.
                         Recommended = 0.2-0.6
@@ -48,7 +48,7 @@ def build_nn( n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, d
         model.add(keras.layers.Dropout(drop))  # add dropout to model after the a dense layer
 
     model.add(keras.layers.Dense(1))  # output layer
-    # TODO Add optimizer selection as keyword arg
+    # TODO Add optimizer selection as keyword arg for tuning
     # optimizer = keras.optimizers.SGD(lr=learning_rate)  # this is a point to vary.  Dict could help call other ones.
     # optimizer = keras.optimizers.RMSprop(learning_rate=learning_rate)
     optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
@@ -66,15 +66,22 @@ def wrapKeras(self, build_func=build_nn):
     """
 
     # pass non-hyper params here
+    # if model has been tuned, it should have 'parrams' attribute
+    # create regressor instance with tuned parameters
     if hasattr(self, 'params'):
         self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape,
                                                                     **self.params)
+
+    # has not been tuned and no params have been supplied, so use default.
     else:
         self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape)
 
 
 def get_regressor(self, call=False):
-    """Returns model specific regressor function."""
+    """
+    Returns model specific regressor function.
+    Optional argument to create callable or instantiated instance.
+    """
 
     # Create Dictionary of regressors to be called with self.algorithm as key.
     skl_regs = {
@@ -87,28 +94,32 @@ def get_regressor(self, call=False):
     }
     if self.algorithm in skl_regs.keys():
         self.task_type = 'regression'
+
+        # if want callable regressor
         if call:
             self.regressor = skl_regs[self.algorithm]
+
+        # return instance with either default or tuned params
         else:
-            if hasattr(self, 'params'):
+            if hasattr(self, 'params'):  # has been tuned
                 self.regressor = skl_regs[self.algorithm](**self.params)
-            else:
+            else:  # use default params
                 self.regressor = skl_regs[self.algorithm]()
 
     if self.algorithm == 'nn':  # neural network
-        # compile nn model
-        # reg = build_nn(self)
-        # wrap it like a sklearn regressor
+
         # set a checkpoint file to save the model
         chkpt_cb = keras.callbacks.ModelCheckpoint( self.run_name + '.h5', save_best_only=True)
         # set up early stopping callback to avoid wasted resources
         stop_cb = keras.callbacks.EarlyStopping(patience=10,  # number of epochs to wait for progress
                                                 restore_best_weights=True)
 
+        # params to pass to Keras fit method that don't match sklearn params
         self.fit_params = {'epochs': 100,
                            'callbacks': [chkpt_cb, stop_cb],
                            'validation_data': (self.val_features, self.val_target)
                            }
+        # wrap regressor like a sklearn regressor
         wrapKeras(self)
 
 
@@ -139,19 +150,9 @@ def hyperTune(self, epochs=50,n_jobs=6):
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
     if self.algorithm == "nn":
-        n_jobs = 1
-        # # set a checkpoint file to save the model
-        # chkpt_cb = keras.callbacks.ModelCheckpoint(self.run_name+'.h5', save_best_only=True)
-        # # set up early stopping callback to avoid wasted resources
-        # stop_cb = keras.callbacks.EarlyStopping(patience=10,  # number of epochs to wait for progress
-        #                                         restore_best_weights=True)
-        #
-        # self.fit_params = {'epochs': 100,
-        #               'callbacks': [chkpt_cb, stop_cb],
-        #               'validation_data': (self.val_features,self.val_target)
-        #                     }
+        n_jobs = 1  # nn cannot run hyper tuning in parallel while using GPU.
     else:
-        self.fit_params = None
+        self.fit_params = None  # sklearn models don't need fit params
 
     # set up Bayes Search
     bayes = BayesSearchCV(
@@ -168,33 +169,36 @@ def hyperTune(self, epochs=50,n_jobs=6):
     if self.algorithm != 'nn':  # non keras model
         checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
         # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
-        self.cp_delta = 0.05  # TODO delta should be dynamic to match target value scales.  Score scales with measurement
+        self.cp_delta = 0.05  # TODO delta should be dynamic to scale with target value
         self.cp_n_best = 10
 
-        """ Every optimization model in skopt saved all their scores in a built-in list. When called, DeltaYStopper will
-        access this list and sort this list from lowest number to highest number. It then take the difference between the
-        number in the n_best position and the first number and compare it to delta. If the difference is smaller or equal
-        to delta, the optimization will be stopped.
+        """ 
+        Every optimization model in skopt saved all their scores in a built-in list.
+        When called, DeltaYStopper will access this list and sort this list from lowest number to highest number.
+        It then take the difference between the number in the n_best position and the first number and
+        compares it to delta. If the difference is smaller or equal to delta, the optimization will be stopped.
         """
 
         # print("delta and n_best is {0} and {1}".format(self.cp_delta, self.cp_n_best))
         deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
 
-        # Fit the Bayes search model
-        bayes.fit(self.train_features, self.train_target, callback=[tqdm_skopt(total=self.opt_iter,position=0, desc="Bayesian Parameter Optimization"),checkpoint_saver, deltay])
-    else:  # nn
-        bayes.fit(self.train_features, self.train_target, callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization")])
+        # Fit the Bayes search model, use early stopping
+        bayes.fit(self.train_features,
+                  self.train_target,
+                  callback=[tqdm_skopt(total=self.opt_iter,position=0, desc="Bayesian Parameter Optimization"),
+                                                                    checkpoint_saver,
+                                                                    deltay])
+    else:  # nn no early stopping
+        bayes.fit(self.train_features,
+                  self.train_target,
+                  callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization")])
 
+    # collect best parameters from tuning
     self.params = bayes.best_params_
     tune_score = bayes.best_score_
 
     # update the regressor with best parameters
     self.get_regressor(call=False)
-    # print(self.regressor.get_params)
-    # if self.algorithm != 'nn':
-    #     # only necessary for sklearn
-    #     self.regressor = self.regressor(**self.params)
-
 
     # Calculate time to tune parameters
     stop_tune = time()

@@ -46,7 +46,7 @@ def featurize(self):
         columns.append(name)
     smi = df['smiles']
 
-    smi2 = tqdm(smi, desc= "Featurizaiton")  # for progress bar
+    smi2 = tqdm(smi, desc="Featurizaiton")  # for progress bar
     data = list(map(generator.process, smi2))
     print('Done.')
     stop_feat = time()
@@ -66,7 +66,7 @@ def featurize(self):
     self.feat_time = feat_time
 
 
-def data_split(self, test=0.2, val=0, random = None):
+def data_split(self, test=0.2, val=0, random=None):
     """
     Take in a data frame, the target column name (exp).
     Returns a numpy array with the target variable,
@@ -81,6 +81,7 @@ def data_split(self, test=0.2, val=0, random = None):
 
     # make array of target values
     self.target_array = np.array(self.data[self.target_name])
+    molecules_array = np.array(self.data['smiles'])  # Grab molecules array
     self.test_percent = test
     self.val_percent = val
     self.train_percent = 1 - test - val
@@ -109,10 +110,18 @@ def data_split(self, test=0.2, val=0, random = None):
     # print('Feature input shape', self.in_shape)
 
     # what data to split and how to do it.
-    self.train_features, self.test_features, self.train_target, self.test_target = train_test_split(self.feature_array,
-                                                                                                    self.target_array,
-                                                                                test_size=self.test_percent,
-                                                                               random_state=self.random_seed)
+    self.train_features, self.test_features, self.train_target, self.test_target = train_test_split(
+                                                                                        self.feature_array,
+                                                                                        self.target_array,
+                                                                                        test_size=self.test_percent,
+                                                                                        random_state=self.random_seed)
+    # Define smiles that go with the different sets
+    self.train_molecules, self.test_molecules, self.train_target, self.test_target = train_test_split(
+                                                                                        molecules_array,
+                                                                                        self.target_array,
+                                                                                        test_size=self.test_percent,
+                                                                                        random_state=self.random_seed)
+
     # scale the data.  This should not hurt but can help many models
     # TODO add this an optional feature
     # TODO add other scalers from sklearn
@@ -123,10 +132,18 @@ def data_split(self, test=0.2, val=0, random = None):
 
     if val > 0:  # if validation data is requested.
         # calculate percent of training to convert to val
-        b = val / (1-test)
-        self.train_features, self.val_features, self.train_target, self.val_target = train_test_split(self.train_features,
-                                                                                  self.train_target, test_size=b,
-                                                                                  random_state=self.random_seed)
+        b = val / (1 - test)
+        self.train_features, self.val_features, self.train_target, self.val_target = train_test_split(
+                                                                                        self.train_features,
+                                                                                        self.train_target,
+                                                                                        test_size=b,
+                                                                                        random_state=self.random_seed)
+        # Define smiles that go with the different sets
+        self.train_molecules, self.test_molecules, self.train_target, self.test_target = train_test_split(
+                                                                                        self.train_molecules,
+                                                                                        self.train_target,
+                                                                                        test_size=b,
+                                                                                        random_state=self.random_seed)
         # scale the validation features too
         self.val_features = scaler.transform(self.val_features)
 

@@ -49,11 +49,11 @@ def main():
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
+            'Lipophilicity-ID.csv': 'exp',
             'ESOL.csv': 'water-sol',
-            'Lipophilicity-ID.csv': 'exp'
-            # 'water-energy.csv': 'expt',
-            # 'logP14k.csv': 'Kow',
-            # 'jak2_pic50.csv': 'pIC50'
+            'water-energy.csv': 'expt',
+            'logP14k.csv': 'Kow',
+            'jak2_pic50.csv': 'pIC50'
         }
 
     for alg in learner:  # loop over all learning algorithms
@@ -62,6 +62,7 @@ def main():
 
             for data, target in sets.items():  # loop over dataset dictionary
                 if c == 'r':  # Runs the models/featurizations for regression
+
 
                     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
                         print('Model Type:', alg)

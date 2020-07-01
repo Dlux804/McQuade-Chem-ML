@@ -166,32 +166,33 @@ def hyperTune(self, epochs=50,n_jobs=6):
         n_jobs=n_jobs,  # number of parallel jobs (max = folds)
         cv=self.cv_folds  # number of cross-val folds to use
     )
-    if self.algorithm != 'nn':  # non keras model
-        checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
-        # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
-        self.cp_delta = 0.05  # TODO delta should be dynamic to scale with target value
-        self.cp_n_best = 10
+    # if self.algorithm != 'nn':  # non keras model
+    checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
+    # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
+    self.cp_delta = 0.05  # TODO delta should be dynamic to scale with target value
+    self.cp_n_best = 5
 
-        """ 
-        Every optimization model in skopt saved all their scores in a built-in list.
-        When called, DeltaYStopper will access this list and sort this list from lowest number to highest number.
-        It then take the difference between the number in the n_best position and the first number and
-        compares it to delta. If the difference is smaller or equal to delta, the optimization will be stopped.
-        """
+    """ 
+    Every optimization model in skopt saved all their scores in a built-in list.
+    When called, DeltaYStopper will access this list and sort this list from lowest number to highest number.
+    It then take the difference between the number in the n_best position and the first number and
+    compares it to delta. If the difference is smaller or equal to delta, the optimization will be stopped.
+    """
 
-        # print("delta and n_best is {0} and {1}".format(self.cp_delta, self.cp_n_best))
-        deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
+    # print("delta and n_best is {0} and {1}".format(self.cp_delta, self.cp_n_best))
+    deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
 
-        # Fit the Bayes search model, use early stopping
-        bayes.fit(self.train_features,
-                  self.train_target,
-                  callback=[tqdm_skopt(total=self.opt_iter,position=0, desc="Bayesian Parameter Optimization"),
-                                                                    checkpoint_saver,
-                                                                    deltay])
-    else:  # nn no early stopping
-        bayes.fit(self.train_features,
-                  self.train_target,
-                  callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization")])
+    # Fit the Bayes search model, use early stopping
+    bayes.fit(self.train_features,
+              self.train_target,
+              callback=[tqdm_skopt(total=self.opt_iter,position=0, desc="Bayesian Parameter Optimization"),
+                        checkpoint_saver,
+                        deltay]
+              )
+    # else:  # nn no early stopping
+    #     bayes.fit(self.train_features,
+    #               self.train_target,
+    #               callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization")])
 
     # collect best parameters from tuning
     self.params = bayes.best_params_

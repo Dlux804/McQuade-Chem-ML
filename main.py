@@ -39,21 +39,21 @@ def main():
     if c == 'r':
         # list of available regression learning algorithms
         learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-        learner = ['rf', 'gdb', 'nn']
+        learner = ['gdb', 'nn']
 
 
         # list of available featurization methods
         feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
                  [5]]
-        feats = [[0], [0, 2]]  # Change this to change which featurizations are being tested (for regression)
+        feats = [[0]]#, [0, 2]]  # Change this to change which featurizations are being tested (for regression)
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
-            'Lipophilicity-ID.csv': 'exp',
             'ESOL.csv': 'water-sol',
-            'water-energy.csv': 'expt',
-            'logP14k.csv': 'Kow',
-            'jak2_pic50.csv': 'pIC50'
+            # 'Lipophilicity-ID.csv': 'exp',
+            # 'water-energy.csv': 'expt',
+            # 'logP14k.csv': 'Kow',
+            # 'jak2_pic50.csv': 'pIC50'
         }
 
     for alg in learner:  # loop over all learning algorithms
@@ -72,7 +72,7 @@ def main():
                         print('Initializing model...', end=' ', flush=True)
                         # initiate model class with algorithm, dataset and target
                         model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                tune=False, cv=3, opt_iter=5)
+                                                tune=True, cv=3, opt_iter=25)
                         print('Done.\n')
 
                     with cd('output'):  # Have files output to output
@@ -122,9 +122,13 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='nn', dataset='logP14k.csv', target='Kow', feat_meth=[0, 2],
-                                tune=True, cv=10, opt_iter=50)
+        model1 = models.MlModel(algorithm='nn', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
+                                tune=True, cv=5, opt_iter=50)
         print('done.')
+        print('Model Type:', model1.algorithm)
+        print('Featurization:', model1.feat_meth)
+        print('Dataset:', model1.dataset)
+        print()
 
     with cd('output'):  # Have files output to output
         model1.featurize()
@@ -132,18 +136,12 @@ def single_model():
         model1.reg()
         model1.run()
         model1.analyze()
-        if model1.algorithm != 'nn':
+        if model1.algorithm != 'nn':  # issues pickling NN models
             model1.pickle_model()
 
-        # pickle_model(model1, file_location='dev.pkl')  # Create pickled model for faster testing
-
-        # model1 = unpickle_model(file_location='dev.pkl
         model1.export_json()
         model1.org_files(zip_only=True)
-        # sleep(5)  # give org_files() time to move things, otherwise zip fails.
-        # model1.zip_files()
 
-        # model1.store()
 
 def example_load():
     """

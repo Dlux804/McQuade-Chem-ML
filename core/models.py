@@ -63,8 +63,7 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'classification':
             self.get_classifier()
 
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
-                                  self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+        self.run_name = name.name(self)  # Create file nameprint(dict(vars(model1)).keys())
 
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None
@@ -75,8 +74,8 @@ class MlModel:  # TODO update documentation here
     def run(self):
         """ Runs machine learning model. Stores results as class attributes."""
 
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
-                                  self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+        # self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
+        #                           self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
         # TODO naming scheme currently must be called after featurization declared--adjust for robust
 
         if self.tuned:  # Do hyperparameter tuning

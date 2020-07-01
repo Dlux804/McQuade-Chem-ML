@@ -39,7 +39,7 @@ def main():
         learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
 
         # list of available featurization methods
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
+        feats = [[0], [0, 2], [0, 3], [0, 4], [0, 5], [2], [3], [4],
                  [5]]  # Change this to change which featurizations are being tested (for regression)
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
@@ -69,15 +69,17 @@ def main():
                     print('Featurization:', method)
                     print('Dataset:', data)
                     print()
-                    # TODO update to match new version of models.py
 
                     # run model
                     model.featurize()  # Featurize molecules
+                    model.data_split(val=0.0)  # Split molecules
                     model.run()  # Bayes Opt
-
+                    pickle_model(model, file_location=f'{model.run_name}.pkl')
                     model.analyze()  # Runs analysis on model
                     # save results of model
                     model.store()
+                    # save results in json format
+                    model.export_json()
 
                 if c == 'c':  # Runs the models/featurizations for classification
                     # change active directory
@@ -110,20 +112,16 @@ def example_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
-                                tune=True, cv=3, opt_iter=25)
+        model = models.MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
+                                tune=False, cv=3, opt_iter=5)
         print('done.')
 
-    with cd('output'):  # Have files output to output
-        model1.featurize()
-        model1.data_split(val=0.0)
-        model1.run()
-        model1.analyze()
-        pickle_model(model1, file_location='dev.pkl')  # Create pickled model for faster testing
-
-        model1 = unpickle_model(file_location='dev.pkl')
-        model1.export_json()
-        model1.store()
+    model.featurize()
+    model.data_split(val=0.0)
+    model.run()
+    pickle_model(model, file_location=f'{model.run_name}.pkl')
+    model.store()
+    model.export_json()
 
 
 if __name__ == "__main__":

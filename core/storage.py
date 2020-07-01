@@ -71,11 +71,11 @@ def export_json(self):
         json.dump(d, f, cls=NumpyEncoder)
 
 
-def pickle_model(model, file_location):
+def pickle_model(model, file_location):  # Pickle models, at any stage of model
     with open(file_location, 'wb') as f:
         pickle.dump(model, f)
 
 
-def unpickle_model(file_location):
+def unpickle_model(file_location):  # Unpickle model, re-run or continue running model
     with open(file_location, 'rb') as f:
         return pickle.load(f)

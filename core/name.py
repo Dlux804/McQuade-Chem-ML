@@ -73,40 +73,36 @@ def represent_algorithm():
     return dictionary
 
 
-def name(algorithm, dataset, feat_meth, tune=False):  # TODO refactor for self.attributes, store to self.name
+def name(self):
     """
     Give a unique name to a machine learning run
-    :param algorithm: Name of algorithm
-    :param dataset: Name of dataset
-    :param feat_meth: List of feature method
-    :param tune: Tune or not
     :return: A unique name to a machine learning run
     """
     algorithm_dict = represent_algorithm()  # Get dictionary of algorithm and their string representation
     dataset_dict = represent_dataset()  # Get dictionary of dataset and their string representation
-    if algorithm in algorithm_dict.keys():  # If the input algorithm is supported
-        algorithm_string = algorithm_dict[algorithm]  # Get the string representation
+    if self.algorithm in algorithm_dict.keys():  # If the input algorithm is supported
+        algorithm_string = algorithm_dict[self.algorithm]  # Get the string representation
     else:  # If it is not supported, give an error
         raise ValueError("The algorithm of your choice is not supported in our current workflow. Please use the "
                          "algorithms offered in grid.py ")
-    if dataset in dataset_dict.keys():  # If input dataset is one that we have
-        dataset_string = dataset_dict[dataset]  # Get the string representation
+    if self.dataset in dataset_dict.keys():  # If input dataset is one that we have
+        dataset_string = dataset_dict[self.dataset]  # Get the string representation
     else:  # If new dataset
         count = 2
-        if dataset[:-4][0] in dataset_dict.values():  # If this dataset has the same first character as existing ones
+        if self.dataset[:-4][0] in dataset_dict.values():  # If this dataset has the same first character as existing ones
             print("Duplicate First letter in input. Adding last and second to last characters")
             # Add first, last and second to last just to be safe
-            dataset_string = ''.join([dataset[:-4][0], dataset[:-4][-count:]])
+            dataset_string = ''.join([self.dataset[:-4][0], self.dataset[:-4][-count:]])
         else:  # If this dataset has a unique first character (compared to what we have in dataFiles)
-            dataset_string = dataset[:-4][0]  # Dataset string will be its first character
-    feat_string = ''.join(map(str, feat_meth))
-    if tune:
+            dataset_string = self.dataset[:-4][0]  # Dataset string will be its first character
+    feat_string = ''.join(map(str, self.feat_meth))
+    if self.tuned:
         tune_string = str(1)  # If the model is tuned, tune string will be 1
     else:
         tune_string = str(0)  # Else, it will be 0
     now = datetime.now()
     date_string = now.strftime("_%Y%m%d-%H%M%S")  # Get date and time string
-    run_name = ''.join([algorithm_string, dataset_string, feat_string, tune_string, date_string])  # Run name
-    date = now.strftime("%m/%d/%Y %H:%M:%S")
-    print("Created {0} on {1}".format(run_name, date))
-    return run_name
+    self.run_name = ''.join([algorithm_string, dataset_string, feat_string, tune_string, date_string])  # Run name
+    self.date = now.strftime("%m/%d/%Y %H:%M:%S")
+    print("Created {0} on {1}".format(self.run_name, self.date))
+    # return run_name

@@ -34,7 +34,6 @@ def featurize(self):
     print(*selected_feat, sep=', ')
     print('Calculating features...')
     sleep(0.25)
-
     # Start timer
     start_feat = time()
 
@@ -47,7 +46,7 @@ def featurize(self):
         columns.append(name)
     smi = df['smiles']
 
-    smi2 = tqdm(smi, desc="Featurizaiton")  # for progress bar
+    smi2 = tqdm(smi, desc= "Featurization")  # for progress bar
     data = list(map(generator.process, smi2))
     print('Done.')
     stop_feat = time()
@@ -91,10 +90,16 @@ def data_split(self, test=0.2, val=0, random=None):
     self.val_percent = val
     self.train_percent = 1 - test - val
 
-    # remove target from features
+    # remove targets from features
     # axis 1 is the columns.
-    # features = df.drop([exp, 'smiles'], axis=1)
-    features = self.data.drop([self.target_name, 'smiles'], axis=1)
+
+    # TODO Collect and store the molecules in train, test and validation data sets
+    if self.task_type == 'classification':
+        self.target_name.extend(["smiles"])
+        features = self.data.drop(self.target_name, axis=1)
+
+    if self.task_type == 'regression':
+        features = self.data.drop([self.target_name, 'smiles'], axis=1)
 
     # save list of strings of features
     self.feature_list = list(features.columns)

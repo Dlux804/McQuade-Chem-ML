@@ -90,7 +90,7 @@ def data_split(self, test=0.2, val=0, random=None):
     # TODO Collect and store the molecules in train, test and validation data sets
     if self.task_type == 'classification':
         for i in self.target_name:
-            features = self.data.drop([i, 'smiles'], axis=1)\
+            features = self.data.drop([i, 'smiles'], axis=1)
 
     if self.task_type == 'regression':
         features = self.data.drop([self.target_name, 'smiles'], axis=1)

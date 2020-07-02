@@ -172,9 +172,10 @@ def data_split(self, test=0.2, val=0, random=None):
                 return 'train'
             else:
                 return 'val'
-
         df = self.data
         df['in_set'] = df['smiles'].apply(__fetch_set__)
+
+        # Move in_set to in front of the dataframe
         cols = list(df.columns)
         cols.remove('in_set')
         df = df[['in_set', *cols]]

@@ -8,6 +8,7 @@ import subprocess
 import shutil
 from numpy.random import randint
 from core import name
+from core import to_neo4j
 
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
@@ -27,7 +28,6 @@ class MlModel:  # TODO update documentation here
     from core.analysis import impgraph, pva_graph
     from core.classifiers import get_classifier
     from core.storage import export_json, org_files, pickle_model, unpickle_model
-
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """
         Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
@@ -35,8 +35,9 @@ class MlModel:  # TODO update documentation here
         """
 
         self.algorithm = algorithm
-        self.dataset = dataset
+        to_neo4j.algorithm(self)
 
+        self.dataset = dataset
         # Sets self.task_type based on which dataset is being used.
         if self.dataset in cds:
             self.task_type = 'classification'
@@ -62,14 +63,8 @@ class MlModel:  # TODO update documentation here
         # collect pandas series of the SMILES (self.smiles_col)
         self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
-        if self.task_type == 'regression':
-            self.get_regressor()
-
-        if self.task_type == 'classification':
-            self.get_classifier()
-
-        self.run_name = name.name(self)  # Create file nameprint(dict(vars(model1)).keys())
-
+        # define run name used to save all outputs of model
+        self.run_name = name.name(self)
 
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None

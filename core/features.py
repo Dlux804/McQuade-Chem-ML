@@ -33,7 +33,6 @@ def featurize(self):
     print(*selected_feat, sep=', ')
     print('Calculating features...')
     sleep(0.25)
-
     # Start timer
     start_feat = time()
 
@@ -46,7 +45,7 @@ def featurize(self):
         columns.append(name)
     smi = df['smiles']
 
-    smi2 = tqdm(smi, desc="Featurizaiton")  # for progress bar
+    smi2 = tqdm(smi, desc= "Featurization")  # for progress bar
     data = list(map(generator.process, smi2))
     print('Done.')
     stop_feat = time()
@@ -79,8 +78,6 @@ def data_split(self, test=0.2, val=0, random=None):
     val -- Float.  Percent of data to be used for validation.  Taken out of training data after test.
     """
 
-    print("Splitting and sorting data...")
-
     # make array of target values
     self.target_array = np.array(self.data[self.target_name])
     molecules_array = np.array(self.data['smiles'])  # Grab molecules array
@@ -88,10 +85,17 @@ def data_split(self, test=0.2, val=0, random=None):
     self.val_percent = val
     self.train_percent = 1 - test - val
 
-    # remove target from features
+    # remove targets from features
     # axis 1 is the columns.
-    # features = df.drop([exp, 'smiles'], axis=1)
-    features = self.data.drop([self.target_name, 'smiles'], axis=1)
+    # TODO Collect and store the molecules in train, test and validation data sets
+    if self.task_type == 'classification':
+        self.target_name.extend(["smiles"])
+        features = self.data.drop(self.target_name, axis=1)
+
+    if self.task_type == 'regression':
+        features = self.data.drop([self.target_name, 'smiles'], axis=1)
+
+
 
     # save list of strings of features
     self.feature_list = list(features.columns)
@@ -112,16 +116,16 @@ def data_split(self, test=0.2, val=0, random=None):
 
     # what data to split and how to do it.
     self.train_features, self.test_features, self.train_target, self.test_target = train_test_split(
-                                                                                        self.feature_array,
-                                                                                        self.target_array,
-                                                                                        test_size=self.test_percent,
-                                                                                        random_state=self.random_seed)
+                                                                                                    self.feature_array,
+                                                                                                    self.target_array,
+                                                                                                    test_size=self.test_percent,
+                                                                                                    random_state=self.random_seed)
     # Define smiles that go with the different sets
     self.train_molecules, self.test_molecules, temp_train_target, temp_test_target = train_test_split(
-                                                                                        molecules_array,
-                                                                                        self.target_array,
-                                                                                        test_size=self.test_percent,
-                                                                                        random_state=self.random_seed)
+                                                                                                    molecules_array,
+                                                                                                    self.target_array,
+                                                                                                    test_size=self.test_percent,
+                                                                                                    random_state=self.random_seed)
 
     # scale the data.  This should not hurt but can help many models
     # TODO add this an optional feature
@@ -135,51 +139,35 @@ def data_split(self, test=0.2, val=0, random=None):
         # calculate percent of training to convert to val
         b = val / (1 - test)
         self.train_features, self.val_features, self.train_target, self.val_target = train_test_split(
-                                                                                        self.train_features,
-                                                                                        self.train_target,
-                                                                                        test_size=b,
-                                                                                        random_state=self.random_seed)
+                                                                                                    self.train_features,
+                                                                                                    self.train_target,
+                                                                                                    test_size=b,
+                                                                                                    random_state=self.random_seed)
         # Define smiles that go with the different sets
-        self.train_molecules, self.val_molecules, temp_train_target, temp_val_target = train_test_split(
-                                                                                        self.train_molecules,
-                                                                                        temp_train_target,
-                                                                                        test_size=b,
-                                                                                        random_state=self.random_seed)
-
+        # Use temp dummy variables for splitting molecules up the same way
+        temp_train_molecules, self.val_molecules, temp_train_target, temp_val_target = train_test_split(
+                                                                                                    self.train_molecules,
+                                                                                                    temp_train_target,
+                                                                                                    test_size=b,
+                                                                                                    random_state=self.random_seed)
         # scale the validation features too
         self.val_features = scaler.transform(self.val_features)
 
-        n_total = self.n_tot
-
-        self.n_train = self.train_features.shape[0]
-        ptrain = self.n_train / n_total * 100
-
-        self.n_test = self.test_features.shape[0]
-        ptest = self.n_test / n_total * 100
-
         self.n_val = self.val_features.shape[0]
-        pval = self.n_val / n_total * 100
+        pval = self.n_val / self.n_tot * 100
 
-        print(
-            'The dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
-                n_total, ptrain, pval, ptest))
+    else:
+        pval = 0
 
-        # Add which molecules are test and training molecules
-        def __fetch_set__(smiles):
-            if smiles in self.test_molecules:
-                return 'test'
-            elif smiles in self.train_molecules:
-                return 'train'
-            else:
-                return 'val'
-        df = self.data
-        df['in_set'] = df['smiles'].apply(__fetch_set__)
+    self.n_train = self.train_features.shape[0]
+    ptrain = self.n_train / self.n_tot * 100
 
-        # Move in_set to in front of the dataframe
-        cols = list(df.columns)
-        cols.remove('in_set')
-        df = df[['in_set', *cols]]
-        self.data = df
+    self.n_test = self.test_features.shape[0]
+    ptest = self.n_test / self.n_tot * 100
+
+    print()
+    print('Dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
+            self.n_tot, ptrain, pval, ptest))
 
         # return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
 

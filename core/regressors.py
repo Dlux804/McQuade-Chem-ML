@@ -25,6 +25,7 @@ from skopt import callbacks
 
 # end monkey patch
 
+
 def build_nn( n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.1):
     """
     Create neural network architecture and compile.  Accepts number of hiiden layers, number of neurons,
@@ -41,8 +42,9 @@ def build_nn( n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, d
     """
 
     model = keras.models.Sequential()
-    # model.add(keras.layers.Dropout(drop, input_shape=self.in_shape))  # use dropout layer as input.
-    model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
+    # use dropout layer as input.
+    model.add(keras.layers.Dropout(drop, input_shape=(in_shape,)))  # in_shape should be iterable (tuple)
+    # model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
     for layer in range(n_hidden):  # create hidden layers
         model.add(keras.layers.Dense(n_neuron, activation="relu"))
         model.add(keras.layers.Dropout(drop))  # add dropout to model after the a dense layer
@@ -60,8 +62,8 @@ def build_nn( n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, d
 def wrapKeras(self, build_func=build_nn):
     """
     Wraps up a Keras model to appear as sklearn Regressor for use in hyper parameter tuning.
+    :param self: For use in MLmodel class instance.
     :param build_func: Callable function that builds Keras model.
-    :param in_shape: Input dimension.  Must match number of features.
     :return: Regressor() like function for use with sklearn based optimization.
     """
 
@@ -109,7 +111,7 @@ def get_regressor(self, call=False):
     if self.algorithm == 'nn':  # neural network
 
         # set a checkpoint file to save the model
-        chkpt_cb = keras.callbacks.ModelCheckpoint( self.run_name + '.h5', save_best_only=True)
+        chkpt_cb = keras.callbacks.ModelCheckpoint(self.run_name + '.h5', save_best_only=True)
         # set up early stopping callback to avoid wasted resources
         stop_cb = keras.callbacks.EarlyStopping(patience=10,  # number of epochs to wait for progress
                                                 restore_best_weights=True)
@@ -185,7 +187,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
     # Fit the Bayes search model, use early stopping
     bayes.fit(self.train_features,
               self.train_target,
-              callback=[tqdm_skopt(total=self.opt_iter,position=0, desc="Bayesian Parameter Optimization"),
+              callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization"),
                         checkpoint_saver,
                         deltay]
               )

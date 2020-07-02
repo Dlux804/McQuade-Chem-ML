@@ -15,11 +15,9 @@ import sklearn.utils.fixes
 sklearn.utils.fixes.MaskedArray = MaskedArray
 from skopt.space import Real, Integer, Categorical, Space
 
-
-
-
 # the hyper parameter grid needs to be a bit differetn for skopt
 # See https://scikit-optimize.github.io/notebooks/hyperparameter-optimization.html for some help
+
 
 def ada_paramgrid():
     """ Defines hyper parameters for adaboost """
@@ -94,12 +92,13 @@ def svr_paramgrid():
     # Penalty parameter C of the error term.
     Cs = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 100]
 
-    # epsilon-tube within which no penalty is associated in the training loss function with points predicted within a distance epsilon from the actual value
-    epsilon = [0.1,0.2,0.3,0.4, 0.5,0.6]
+    # epsilon-tube within which no penalty is associated in the training loss function
+    # with points predicted within a distance epsilon from the actual value
+    epsilon = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
 
     #  Kernel coefficient for 'rbf', 'poly' and 'sigmoid'.
 
-    gammas = [0.001, 0.005 ,0.01, 0.05 ,0.1, 0.5, 1]
+    gammas = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1]
 
     # Degree of the polynomial kernel function ('poly')
     degrees = [1,2,3,4,5]
@@ -138,10 +137,10 @@ def gdb_paramgrid():
     max_depth = [int(x) for x in np.linspace(1, 25, num = 24, endpoint=True)]
 
     # Minimum number of samples required to split a node
-    min_samples_split = [int(x) for x in np.linspace(2, 30, num = 10, endpoint=True)]
+    min_samples_split = [int(x) for x in np.linspace(2, 30, num=10, endpoint=True)]
 
     # Minimum number of samples required at each leaf node
-    min_samples_leaf = [int(x) for x in np.linspace(2, 30, num = 10, endpoint=True)]
+    min_samples_leaf = [int(x) for x in np.linspace(2, 30, num=10, endpoint=True)]
 
     # learning rate
     learning_rate = [0.001,0.005,0.01,0.05,0.1,0.5,1]
@@ -173,7 +172,7 @@ def mlp_paramgrid():
     # define variables to include in parameter grid for scikit-learn CV functions
 
     # Number of hidden layers
-    hidden_layer_sizes = [(100,), (100,50,100), (50,100,50), (np.random.randint(low = 50, high = 100, size = 10))]
+    hidden_layer_sizes = [(100,), (100, 50 ,100), (50,100,50), (np.random.randint(low = 50, high = 100, size = 10))]
 
     # Activation function for the hidden layer.
     activation = ['logistic', 'tanh', 'relu']
@@ -240,6 +239,7 @@ def knn_paramgrid():
         'p': Integer(1, 5)
     }
     return bayes_grid
+
 
 def keras_paramgrid():
     bayes_grid = {

@@ -11,12 +11,15 @@ import platform
 from time import sleep
 import shutil
 from rdkit.Chem import MolFromSmiles, MolToMolBlock
+import xml.etree.cElementTree as ET
+from lxml import etree
 
 
 class NumpyEncoder(json.JSONEncoder):
     """
     Modifies JSONEncoder to convert numpy arrays to lists first.
     """
+
     def default(self, obj):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
@@ -127,6 +130,7 @@ def org_files(self, zip_only=False):
     :param zip_only: Boolean.  Deletes unzipped folder from directory.
     :return:
     """
+    system = platform.system()  # Find what system user is on
 
     # make directory for run outputs
     try:
@@ -135,7 +139,6 @@ def org_files(self, zip_only=False):
         pass
 
     # put output files into new folder
-    system = platform.system()
     if system == "Windows":
         filesp = ''.join(['move ./', self.run_name, '*.* ', self.run_name, '/'])  # move for Windows system
     else:
@@ -145,8 +148,8 @@ def org_files(self, zip_only=False):
     # zip the output folder to save space
     path = os.getcwd()
     base = self.run_name
-    zipdir = path+'/'+base
-    print('Zipping output to {}'.format(base+'.zip'))
+    zipdir = path + '/' + base
+    print('Zipping output to {}'.format(base + '.zip'))
     sleep(3)  # need to give time for files to move before zip.
     shutil.make_archive(base, 'zip', zipdir)
 
@@ -170,31 +173,22 @@ def QsarDB_export(self):
         os.chdir(new_dir)
         return cur_dir
 
-    cur_dir = mkd(f'{self.run_name}_qdb')
+    def __root_to_xml__(root, file):
+        tree = ET.ElementTree(root)
+        tree.write(file)
+        parser = etree.XMLParser(resolve_entities=False, strip_cdata=False)
+        document = etree.parse(file, parser)
+        document.write(file, pretty_print=True, encoding='utf-8')
 
-    # Gather all data (without validation data), testing data, and training data
-    testing_data = []
-    training_data = []
-    data_dicts = []
-    training_counter = 0
-    testing_counter = 0
-    for compound in self.data.to_dict('records'):
-        smiles = compound['smiles']
+    def __get_compound_set__(smiles):
         if smiles in self.test_molecules:
-            compound['id'] = f'V{testing_counter}'
-            testing_counter = testing_counter + 1
-            testing_data.append(compound)
-            data_dicts.append(compound)
+            return 'TE'
         if smiles in self.train_molecules:
-            compound['id'] = f'T{training_counter}'
-            training_counter = training_counter + 1
-            training_data.append(compound)
-            data_dicts.append(compound)
-    data_df = pd.DataFrame(data_dicts)
+            return 'TR'
+        else:
+            return 'V'
 
-    # Work on compounds directory
-    main_dir = mkd('compounds')
-    for compound in data_dicts:
+    def __compound_to_dir__(compound):
         compounds_dir = mkd(f'{compound["id"]}')
         with open('smiles', 'w') as f:
             f.write(compound["smiles"])
@@ -202,24 +196,97 @@ def QsarDB_export(self):
             mol = MolFromSmiles(compound["smiles"])
             f.write(MolToMolBlock(mol))
         os.chdir(compounds_dir)
+        comp = ET.SubElement(root, "Compound")
+        ET.SubElement(comp, "Id").text = compound["id"]
+        ET.SubElement(comp, "Cargos").text = "smiles molfile"
+
+    # Get current directory, change in qdb directory
+    cur_dir = mkd(f'{self.run_name}_qdb')
+
+    # Gather all data (without validation data), testing data, and training data
+    data_df = self.data
+    data_df['id'] = data_df['smiles'].apply(__get_compound_set__)
+    data_df = data_df.sort_values(by=['id'])
+    data_df = data_df.reset_index(drop=True)
+    data_df['id'] = data_df['id'] + '_' + data_df.index.astype(str)
+
+    # Create archive.xml
+    root = ET.Element("Archive", xmlns="http://www.qsardb.org/QDB")
+    ET.SubElement(root, "Name").text = "No Names available yet"
+    ET.SubElement(root, "Description").text = "Give our workflow a fancy description"
+    __root_to_xml__(root, "archive.xml")
+
+    # Work on compounds directory
+    main_dir = mkd('compounds')
+    root = ET.Element("CompoundRegistry", xmlns="http://www.qsardb.org/QDB")
+    data_df.apply(__compound_to_dir__, axis=1)
+    __root_to_xml__(root, "compounds.xml")
     os.chdir(main_dir)
 
     # Work on descriptors directory
     main_dir = mkd('descriptors')
-    non_descriptors_columns = ['smiles', 'id', self.target_name]
+    non_descriptors_columns = ['smiles', 'id', 'in_set', self.target_name]
+    root = ET.Element("DescriptorRegistry", xmlns="http://www.qsardb.org/QDB")
     for col in data_df.columns:
         if col not in non_descriptors_columns:
             descriptors_dir = mkd(col)
             descriptor_df = data_df[['id', col]]
             descriptor_df.to_csv('values', sep='\t', index=False)
             os.chdir(descriptors_dir)
+            desc = ET.SubElement(root, "Descriptor")
+            ET.SubElement(desc, "Id").text = col
+            ET.SubElement(desc, "Cargos").text = "values"
+            ET.SubElement(desc, "Name").text = "No Names available yet"
+    __root_to_xml__(root, "descriptors.xml")
     os.chdir(main_dir)
 
     # Work on properties directory
     main_dir = mkd('properties')
-    mkd(f'{self.target_name}')
+    prop_dir = mkd(f'{self.target_name}')
     properties_df = data_df[['id', self.target_name]]
     properties_df.to_csv('values', sep='\t', index=False)
+    os.chdir(prop_dir)
+    root = ET.Element("PropertyRegistry", xmlns="http://www.qsardb.org/QDB")
+    prop = ET.SubElement(root, "Property")
+    ET.SubElement(prop, "Id").text = self.target_name
+    ET.SubElement(prop, "Name").text = "No Names available yet"
+    ET.SubElement(prop, "Cargos").text = "values"
+    __root_to_xml__(root, "properties.xml")
     os.chdir(main_dir)
 
     # Work on predictions
+    main_dir = mkd('predictions')
+    pred_dir = mkd(f'{self.algorithm}_test')
+    predictions_df = data_df.merge(self.predictions, on='smiles', how='inner')[['id', 'pred_avg']]
+    predictions_df.to_csv('values', sep='\t', index=False)
+    os.chdir(pred_dir)
+    root = ET.Element("PredictionRegistry", xmlns="http://www.qsardb.org/QDB")
+    pred = ET.SubElement(root, "Prediction")
+    ET.SubElement(pred, "Id").text = f"{self.algorithm}_Test"
+    ET.SubElement(pred, "Name").text = "Testing Set"
+    ET.SubElement(pred, "Cargos").text = "values"
+    ET.SubElement(pred, "ModelId").text = self.algorithm
+    ET.SubElement(pred, "Type").text = "testing"
+    ET.SubElement(pred, "Application").text = "Python 3"
+    __root_to_xml__(root, "predictions.xml")
+    os.chdir(main_dir)
+
+    # Work on models
+    main_dir = mkd('models')
+    model_dir = mkd(self.algorithm)
+    with open('bibtex', 'w') as f:  # Holding for writing bibtex later on
+        pass
+    with open('pmml', 'w') as f:  # Holding to better understand ppml
+        pass
+    os.chdir(model_dir)
+    root = ET.Element("ModelRegistry", xmlns="http://www.qsardb.org/QDB")
+    model = ET.SubElement(root, "Model")
+    ET.SubElement(model, "Id").text = self.algorithm
+    ET.SubElement(model, "Name").text = "No Names available yet"
+    ET.SubElement(model, "Cargos").text = "pmml bibtex"
+    ET.SubElement(model, "PropertyId").text = self.target_name
+    __root_to_xml__(root, "models.xml")
+    os.chdir(main_dir)
+
+    # Switch back to original directory
+    os.chdir(cur_dir)

@@ -26,7 +26,7 @@ class MlModel:  # TODO update documentation here
     from core.train import train_reg, train_cls
     from core.analysis import impgraph, pva_graph
     from core.classifiers import get_classifier
-    from core.storage import store, org_files, pickle_model, unpickle_model
+    from core.storage import store, org_files, pickle_model, unpickle_model, QsarDB_export
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """

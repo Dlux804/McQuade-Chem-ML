@@ -68,6 +68,7 @@ def featurize(self):
     self.feat_name = selected_feat
     # print(self.feat_name)
 
+
 def data_split(self, test=0.2, val=0, random=None):
     """
     Take in a data frame, the target column name (exp).

@@ -14,7 +14,7 @@ def QsarDB_export(self):
     """
 
     # Define function for less code to change between directories
-    def mkd(new_dir):
+    def __mkd__(new_dir):
         cur_dir = os.getcwd()
         try:
             os.mkdir(new_dir)
@@ -42,7 +42,7 @@ def QsarDB_export(self):
 
     # Crate compound directories with mod-files and smiles files
     def __compound_to_dir__(compound):
-        compounds_dir = mkd(f'{compound["id"]}')
+        compounds_dir = __mkd__(f'{compound["id"]}')
         with open('smiles', 'w') as f:
             f.write(compound["smiles"])
         with open('molfile', 'w') as f:
@@ -54,7 +54,7 @@ def QsarDB_export(self):
         ET.SubElement(comp, "Cargos").text = "smiles molfile"
 
     # Get current directory, change in qdb directory
-    cur_dir = mkd(f'{self.run_name}_qdb')
+    cur_dir = __mkd__(f'{self.run_name}_qdb')
 
     # Gather all data (without validation data), testing data, and training data
     data_df = self.data
@@ -70,19 +70,19 @@ def QsarDB_export(self):
     __root_to_xml__(root, "archive.xml")
 
     # Work on compounds directory
-    main_dir = mkd('compounds')
+    main_dir = __mkd__('compounds')
     root = ET.Element("CompoundRegistry", xmlns="http://www.qsardb.org/QDB")
     data_df.apply(__compound_to_dir__, axis=1)
     __root_to_xml__(root, "compounds.xml")
     os.chdir(main_dir)
 
     # Work on descriptors directory
-    main_dir = mkd('descriptors')
+    main_dir = __mkd__('descriptors')
     non_descriptors_columns = ['smiles', 'id', 'in_set', self.target_name]
     root = ET.Element("DescriptorRegistry", xmlns="http://www.qsardb.org/QDB")
     for col in data_df.columns:
         if col not in non_descriptors_columns:
-            descriptors_dir = mkd(col)
+            descriptors_dir = __mkd__(col)
             descriptor_df = data_df[['id', col]]
             descriptor_df.to_csv('values', sep='\t', index=False)
             os.chdir(descriptors_dir)
@@ -94,8 +94,8 @@ def QsarDB_export(self):
     os.chdir(main_dir)
 
     # Work on properties directory
-    main_dir = mkd('properties')
-    prop_dir = mkd(f'{self.target_name}')
+    main_dir = __mkd__('properties')
+    prop_dir = __mkd__(f'{self.target_name}')
     properties_df = data_df[['id', self.target_name]]
     properties_df.to_csv('values', sep='\t', index=False)
     os.chdir(prop_dir)
@@ -108,8 +108,8 @@ def QsarDB_export(self):
     os.chdir(main_dir)
 
     # Work on predictions
-    main_dir = mkd('predictions')
-    pred_dir = mkd(f'{self.algorithm}_test')
+    main_dir = __mkd__('predictions')
+    pred_dir = __mkd__(f'{self.algorithm}_test')
     predictions_df = data_df.merge(self.predictions, on='smiles', how='inner')[['id', 'pred_avg']]
     predictions_df.to_csv('values', sep='\t', index=False)
     os.chdir(pred_dir)
@@ -125,8 +125,8 @@ def QsarDB_export(self):
     os.chdir(main_dir)
 
     # Work on models
-    main_dir = mkd('models')
-    model_dir = mkd(self.algorithm)
+    main_dir = __mkd__('models')
+    model_dir = __mkd__(self.algorithm)
     with open('bibtex', 'w') as f:  # Holding for writing bibtex later on
         pass
     with open('pmml', 'w') as f:  # Holding to better understand ppml

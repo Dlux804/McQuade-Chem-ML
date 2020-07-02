@@ -52,8 +52,8 @@ def featurize(self):
     feat_time = stop_feat - start_feat
 
     # make dataframe of all features
-    self.features = pd.DataFrame(data, columns=columns)
-    df = pd.concat([df, self.features], axis=1)
+    features = pd.DataFrame(data, columns=columns)
+    df = pd.concat([df, features], axis=1)
     df = df.dropna()
 
     # remove the "RDKit2d_calculated = True" column(s)
@@ -90,18 +90,18 @@ def data_split(self, test=0.2, val=0, random=None):
     # TODO Collect and store the molecules in train, test and validation data sets
     if self.task_type == 'classification':
         for i in self.target_name:
-            self.features = self.data.drop([i, 'smiles'], axis=1)\
+            features = self.data.drop([i, 'smiles'], axis=1)\
 
     if self.task_type == 'regression':
-        self.features = self.data.drop([self.target_name, 'smiles'], axis=1)
+        features = self.data.drop([self.target_name, 'smiles'], axis=1)
 
 
 
     # save list of strings of features
-    self.feature_list = list(self.features.columns)
+    self.feature_list = list(features.columns)
 
     # convert features to numpy
-    featuresarr = np.array(self.features)
+    featuresarr = np.array(features)
     # n_total = featuresarr.shape[0]
 
     # store to instance

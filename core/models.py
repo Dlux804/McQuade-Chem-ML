@@ -13,7 +13,7 @@ from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
 
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
-cds = ['sider.csv']
+cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
 
 
 class MlModel:  # TODO update documentation here
@@ -36,7 +36,7 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
-
+        multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
         # Sets self.task_type based on which dataset is being used.
         if self.dataset in cds:
             self.task_type = 'classification'
@@ -45,6 +45,7 @@ class MlModel:  # TODO update documentation here
         else:
             raise Exception(
                 '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
+
 
         self.target_name = target
         self.feat_meth = feat_meth
@@ -60,7 +61,11 @@ class MlModel:  # TODO update documentation here
 
         # ingest data.  collect full data frame (self.data)
         # collect pandas series of the SMILES (self.smiles_col)
-        self.data, self.smiles_series = ingest.load_smiles(self, dataset)
+
+        if self.dataset in multi_label_classification_datasets:
+            self.data, self.smiles_series = ingest.load_smiles(self, dataset, drop = False) # Makes drop = False for multi-target classification
+        else:
+            self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
         # define run name used to save all outputs of model
         self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)
@@ -103,3 +108,4 @@ class MlModel:  # TODO update documentation here
         # make predicted vs actual graph
         self.pva_graph()
         # TODO Make classification graphing function
+

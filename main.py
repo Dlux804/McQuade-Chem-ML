@@ -124,7 +124,9 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='ada', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0, 2],
+        # model1 = models.MlModel(algorithm='nn', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
+        #                         tune=False, cv=5, opt_iter=50)
+        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
                                 tune=False, cv=5, opt_iter=50)
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -142,7 +144,8 @@ def single_model():
             model1.pickle_model()
 
         model1.store()
-        model1.org_files(zip_only=True)
+        model1.org_files(zip_only=False)
+        model1.QsarDB_export()
 
 
 def example_load():

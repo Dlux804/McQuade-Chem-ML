@@ -13,7 +13,7 @@ from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
 
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
-cds = ['sider.csv']
+cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
 
 
 class MlModel:  # TODO update documentation here
@@ -37,8 +37,6 @@ class MlModel:  # TODO update documentation here
         self.algorithm = algorithm
         self.dataset = dataset
 
-        regression_datasets = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
-        classification_datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']  # Add lists with regression datasets and classification datasets
         multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
         # Sets self.task_type based on which dataset is being used.
         if self.dataset in cds:

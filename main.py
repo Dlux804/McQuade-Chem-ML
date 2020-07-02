@@ -64,38 +64,35 @@ def main():
                  [5], [6]]
         for method in feats:  # loop over the featurization methods
 
-            for data, target in sets.items():  # loop over dataset dictionary
+
                 if c == 'r':  # Runs the models/featurizations for regression
+                    for data, target in sets.items(): # loop over dataset dictionary
+                        with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+                            print('Model Type:', alg)
+                            print('Featurization:', method)
+                            print('Dataset:', data)
+                            print()
+                            print('Initializing model...', end=' ', flush=True)
+                            # initiate model class with algorithm, dataset and target
+                            model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
+                                                    tune=True, cv=3, opt_iter=25)
+                            print('Done.\n')
 
+                        with cd('dataFiles'):  # Have files output to output
+                            model1.featurize()
+                            if alg == 'nn':
+                                val = 0.1
+                            else:
+                                val = 0.0
+                            model1.data_split(val=val)
+                            model1.reg()
+                            model1.run()
+                            model1.analyze()
+                            if model1.algorithm != 'nn':
+                                model1.pickle_model()
 
-                    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
-                        print('Model Type:', alg)
-                        print('Featurization:', method)
-                        print('Dataset:', data)
-                        print()
-                        print('Initializing model...', end=' ', flush=True)
-                        # initiate model class with algorithm, dataset and target
-                        model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                tune=True, cv=3, opt_iter=25)
-                        print('Done.\n')
-
-                    with cd('output'):  # Have files output to output
-                        model1.featurize()
-                        if alg == 'nn':
-                            val = 0.1
-                        else:
-                            val = 0.0
-                        model1.data_split(val=val)
-                        model1.reg()
-                        model1.run()
-                        model1.analyze()
-                        if model1.algorithm != 'nn':
-                            model1.pickle_model()
-
-                        model1.export_json()
-                        model1.org_files(zip_only=True)
-
-
+                            model1.export_json()
+                            model1.org_files(zip_only=True)
 
                 if c == 'c':
                     for data in datasets:
@@ -137,6 +134,7 @@ def main():
                             # Runs classification model
                             model.featurize()  # Featurize molecules
                             model.data_split()
+                            model.reg()
                             model.run()  # Runs the models/featurizations for classification
 
 

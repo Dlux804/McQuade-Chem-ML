@@ -30,7 +30,11 @@ def train_reg(self,n=5):
     pva_multi['actual'] = self.test_target
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         start_time = time()
-        self.regressor.fit(self.train_features, self.train_target)
+
+        if self.algorithm == 'nn':  # needs fit_params to set epochs and callback
+            self.regressor.fit(self.train_features, self.train_target, **self.fit_params)
+        else:
+            self.regressor.fit(self.train_features, self.train_target)
 
         # Make predictions
         predictions = self.regressor.predict(self.test_features)

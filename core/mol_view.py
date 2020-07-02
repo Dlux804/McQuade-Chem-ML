@@ -50,7 +50,7 @@ def mol_svg(smi, filename=None, filepath='./', molSize=(450,150)):
 
 
 # specify smiles here.  Could re-write to accept CLI input.
-smi = 'O=C(Cl)Oc1cccc(CCl)c1'
+smi = 'CC(C)O'
 # rewrite smiles to canonical non-kelu
 smi = canon_smi(smi)
 mol_view(smi)

@@ -1,5 +1,5 @@
 '''
-This code was written by Adam Luxon and team as part of the McQuade research group.
+This code was written by Adam Luxon and team as part of the McQuade and Ferri research groups.
 '''
 from core import ingest, features, grid, regressors, analysis, name, misc, classifiers
 import csv
@@ -12,6 +12,9 @@ from core import name
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
 
+rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
+cds = ['sider.csv']
+
 
 class MlModel:  # TODO update documentation here
     """
@@ -23,11 +26,13 @@ class MlModel:  # TODO update documentation here
     from core.train import train_reg, train_cls
     from core.analysis import impgraph, pva_graph
     from core.classifiers import get_classifier
-    from core.storage import export_json
+    from core.storage import export_json, org_files, pickle_model, unpickle_model
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
-        """Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
-        optimization cycles for hyper tuning, and number of Cross Validation folds for tuning."""
+        """
+        Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
+        optimization cycles for hyper tuning, and number of Cross Validation folds for tuning.
+        """
 
         self.algorithm = algorithm
         self.dataset = dataset
@@ -36,10 +41,13 @@ class MlModel:  # TODO update documentation here
         classification_datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']  # Add lists with regression datasets and classification datasets
         multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
         # Sets self.task_type based on which dataset is being used.
-        if self.dataset in classification_datasets:
+        if self.dataset in cds:
             self.task_type = 'classification'
-        elif self.dataset in regression_datasets:
+        elif self.dataset in rds:
             self.task_type = 'regression'
+        else:
+            raise Exception(
+                '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
 
 
         self.target_name = target
@@ -62,31 +70,31 @@ class MlModel:  # TODO update documentation here
         else:
             self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
-        if self.task_type == 'regression':
-            self.get_regressor()
-
-        if self.task_type == 'classification':
-            self.get_classifier()
-
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
-                                  self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
+        # define run name used to save all outputs of model
+        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)
 
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None
             self.cv_folds = None
-            self.regressor = self.regressor()  # make it callable to match Tune = True case
             self.tune_time = None
+
+    def reg(self):  # broke this out because input shape is needed for NN regressor to be defined.
+        """
+        Function to fetch regressor.  Should be called after featurization has occured and input shape defined.
+        :return:
+        """
+        if self.task_type == 'regression':
+            self.get_regressor(call=False) # returns instantiated model estimator
+
+        if self.task_type == 'classification':
+            self.get_classifier()
 
     def run(self):
         """ Runs machine learning model. Stores results as class attributes."""
 
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth,
-                                  self.tuned)  # Create file nameprint(dict(vars(model1)).keys())
-        # TODO naming scheme currently must be called after featurization declared--adjust for robust
-
         if self.tuned:  # Do hyperparameter tuning
             self.make_grid()
-            self.hyperTune(n_jobs=6)
+            self.hyperTune(n_jobs=8)
 
         # Done tuning, time to fit and predict
         if self.task_type == 'regression':
@@ -96,8 +104,7 @@ class MlModel:  # TODO update documentation here
             self.train_cls()
 
     def analyze(self):
-        # # Variable importance for rf and gdb
-
+        # Variable importance for tree based estimators
         if self.algorithm in ['rf', 'gdb', 'rfc'] and self.feat_meth == [0]:
             self.impgraph()
 

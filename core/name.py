@@ -78,6 +78,7 @@ def name(self):
     Give a unique name to a machine learning run
     :return: A unique name to a machine learning run
     """
+
     algorithm_dict = represent_algorithm()  # Get dictionary of algorithm and their string representation
     dataset_dict = represent_dataset()  # Get dictionary of dataset and their string representation
     if self.algorithm in algorithm_dict.keys():  # If the input algorithm is supported
@@ -102,7 +103,9 @@ def name(self):
         tune_string = str(0)  # Else, it will be 0
     now = datetime.now()
     date_string = now.strftime("_%Y%m%d-%H%M%S")  # Get date and time string
-    self.run_name = ''.join([algorithm_string, dataset_string, feat_string, tune_string, date_string])  # Run name
-    self.date = now.strftime("%m/%d/%Y %H:%M:%S")
+    run_name = ''.join([algorithm_string, dataset_string, feat_string, tune_string, date_string])  # Run name
+    date_str = now.strftime("%m/%d/%Y %H:%M:%S")
+    self.run_name = run_name
+    self.date = date_str
     print("Created {0} on {1}".format(self.run_name, self.date))
-    # return run_name
+    return run_name

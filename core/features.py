@@ -79,6 +79,8 @@ def data_split(self, test=0.2, val=0, random=None):
     val -- Float.  Percent of data to be used for validation.  Taken out of training data after test.
     """
 
+    print("Splitting and sorting data...")
+
     # make array of target values
     self.target_array = np.array(self.data[self.target_name])
     molecules_array = np.array(self.data['smiles'])  # Grab molecules array
@@ -89,7 +91,6 @@ def data_split(self, test=0.2, val=0, random=None):
     # remove target from features
     # axis 1 is the columns.
     # features = df.drop([exp, 'smiles'], axis=1)
-    # TODO Collect and store the molecules in train, test and validation data sets
     features = self.data.drop([self.target_name, 'smiles'], axis=1)
 
     # save list of strings of features
@@ -164,18 +165,16 @@ def data_split(self, test=0.2, val=0, random=None):
                 n_total, ptrain, pval, ptest))
 
         # Add which molecules are test and training molecules
-        temp_dicts = []
-        for index, row in self.data.iterrows():
-            compound = dict(row)
-            smiles = compound['smiles']
-            if smiles in self.train_molecules:
-                compound['in_set'] = 'train'
-            elif smiles in self.test_molecules:
-                compound['in_set'] = 'test'
+        def __fetch_set__(smiles):
+            if smiles in self.test_molecules:
+                return 'test'
+            elif smiles in self.train_molecules:
+                return 'train'
             else:
-                compound['in_set'] = 'val'
-            temp_dicts.append(compound)
-        df = pd.DataFrame(temp_dicts)
+                return 'val'
+
+        df = self.data
+        df['in_set'] = df['smiles'].apply(__fetch_set__)
         cols = list(df.columns)
         cols.remove('in_set')
         df = df[['in_set', *cols]]

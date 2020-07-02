@@ -8,6 +8,8 @@ import pathlib
 from time import sleep
 from core.features import featurize
 
+import pandas as pd
+
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
@@ -88,7 +90,7 @@ def main():
                         if model1.algorithm != 'nn':
                             model1.pickle_model()
 
-                        model1.export_json()
+                        model1.store()
                         model1.org_files(zip_only=True)
 
                 if c == 'c':  # Runs the models/featurizations for classification
@@ -122,15 +124,15 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='nn', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
-                                tune=True, cv=5, opt_iter=50)
+        model1 = models.MlModel(algorithm='ada', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0, 2],
+                                tune=False, cv=5, opt_iter=50)
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)
         print('Dataset:', model1.dataset)
         print()
 
-    with cd('output'):  # Have files output to output
+    with cd(f'output'):  # Have files output to output
         model1.featurize()
         model1.data_split(val=0.1)
         model1.reg()
@@ -139,7 +141,7 @@ def single_model():
         if model1.algorithm != 'nn':  # issues pickling NN models
             model1.pickle_model()
 
-        model1.export_json()
+        model1.store()
         model1.org_files(zip_only=True)
 
 
@@ -153,7 +155,7 @@ def example_load():
     model2 = unpickle_model('output/RE00_20200624-091038/RE00_20200624-091038.pkl')
     model2.run()
     # Make predictions
-    predictions = model2.regressor.predict(self.test_features)
+    predictions = model2.regressor.predict(model2.test_features)
 
     # Dataframe for replicate_model
     pva = pd.DataFrame([], columns=['actual', 'predicted'])

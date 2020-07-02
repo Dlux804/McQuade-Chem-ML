@@ -7,6 +7,7 @@ import pandas as pd
 from tqdm import tqdm
 from time import sleep
 
+
 def train_reg(self,n=5):
     """
     Function to train the model n times and collect basic statistics about results.
@@ -75,6 +76,7 @@ def train_reg(self,n=5):
     print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])
     print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
     print()
+
 
 def train_cls(self, n=5):
     # set the model specific classifier function from sklearn

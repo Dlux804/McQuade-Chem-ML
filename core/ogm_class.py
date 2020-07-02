@@ -3,7 +3,7 @@ Objective: The goal of this script is to create py2neo's graph classes so that w
 graphs in Neo4j
 """
 
-# from py2neo import Graph, Relationship
+from py2neo import Graph, ogm
 from py2neo.ogm import GraphObject, Property, RelatedFrom, RelatedTo, Label
 
 
@@ -15,16 +15,19 @@ class TuningAlg(GraphObject):
     n_best = Property()
     steps = Property()
     Uses_Tuning = RelatedFrom("Algorithm")
+    name = Property()
 
 
 class FeatureList(GraphObject):
     num = Property()
+    name = Property()
 
 
 class TrainingSet(GraphObject):
     size = Property()
     Splits_Into = RelatedFrom("RandomSplit")
     Contains = RelatedTo("Molecules")
+    name = Property()
 
 
 class MlModel(GraphObject):
@@ -38,6 +41,7 @@ class MlModel(GraphObject):
     Uses = RelatedTo("Dataset")
     Predicts = RelatedTo("TestSet")
     Uses_Featurization = RelatedTo("Features")
+    name = Property()
 
 
 class Dataset(GraphObject):
@@ -45,6 +49,7 @@ class Dataset(GraphObject):
     data = Property()
     measurement = Property()
     Contains_Molecules = RelatedTo("Molecules")
+    name = Property()
 
 
 class Algorithm(GraphObject):
@@ -52,6 +57,7 @@ class Algorithm(GraphObject):
     tuned = Property()
     name = Property()
     version = Property()
+    name = Property()
 
 
 class RandomSplit(GraphObject):
@@ -59,6 +65,7 @@ class RandomSplit(GraphObject):
     train_percent = Property()
     random_seed = Property()
     Splits_Into = RelatedTo("TestSet")
+    name = Property()
 
 
 class TestSet(GraphObject):
@@ -66,17 +73,28 @@ class TestSet(GraphObject):
     MSE = Property()
     R2 = Property()
     size = Property()
-
-
-class Features(GraphObject):
     name = Property()
 
-    def __init__(self, feature_name):
-        feature_name = Label(''.join(feature_name))
+
+class FeatureMethod(GraphObject):
+    num_features = Property()
+    Calculates = RelatedTo("Features")
+    name = Property()
+
+    # def __init__(self, feature_name):
+    #     feature_name = Label(''.join(feature_name))
 
 
 class Molecules(GraphObject):
     SMILES = Property()
     target = Property()
+    Has_Descriptor = RelatedTo("Features")
+
+
+
+
+
+
+
 
 

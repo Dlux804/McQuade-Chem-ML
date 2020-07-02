@@ -53,21 +53,23 @@ def store(self):
     d = dict(vars(self))  # create dict of model attributes
     objs = []  # empty lists to capture excepted attributes
     dfs = []
-    np_arrays = []
     for k, v in tqdm(d.items(), desc="Export to JSON", position=0):
 
         # grab pandas related objects for export to csv
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
-            objs.append(k)
-            dfs.append(k)
-            v.to_csv(self.run_name + '_' + k + '.csv')
+            if k != "smiles_series":
+                objs.append(k)
+                dfs.append(k)
+                v.to_csv(self.run_name + '_' + k + '.csv')
+            else:
+                objs.append(k)
 
         # grab non-Java compatible attributes
         if not isinstance(v, (int, float, dict, tuple, list, np.ndarray, bool, str, NoneType)):
             objs.append(k)
 
-        if isinstance(v, np.ndarray):
-            np_arrays.append(k)
+        if isinstance(v, np.ndarray):  # Do not store numpy arrays in attributes.json
+            objs.append(k)
 
         if k == 'param_grid':  # Param grid does not behave properly,
             new_param_grid_dict = {}
@@ -85,13 +87,10 @@ def store(self):
 
     # reduce list of exceptions to unique entries
     objs = list(set(objs))
-    print("Unsupported JSON Export Attributes:", objs)
+    print("Attributes were not exported to JSON:", objs)
     print("The following pandas attributes were exported to individual CSVs: ", dfs)
-    print("The following numpy attributes were not exported: ", np_arrays)
     for k in objs:
         del d[k]  # remove prior to export
-    for k in np_arrays:
-        del d[k]  # remove numpy arrays
 
     json_name = self.run_name + '_attributes' + '.json'
     with open(json_name, 'w') as f:
@@ -155,8 +154,10 @@ def org_files(self, zip_only=False):
         if system == "Windows":
             rmdir = 'rmdir ' + self.run_name + ' /s/q'
             subprocess.Popen(rmdir, shell=True, stdout=subprocess.PIPE)  # run bash command
-        else:
-            subprocess.Popen(self.run_name, shell=True, stdout=subprocess.PIPE)  # run bash command
+        else:  # Directory is not properly deleted on Linux with above code
+            rmdir = os.getcwd() + '/' + self.run_name
+            shutil.rmtree(rmdir, ignore_errors=True)
+
 
 def QsarDB_export(self):
     # Define function for less code to change between directories

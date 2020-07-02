@@ -20,12 +20,12 @@ def cd(newdir):
     It will revert to previous directory when finished with loop.
     """
     prevdir = os.getcwd()
-    print('Previous PATH:', prevdir)
+    # print('Previous PATH:', prevdir)
     os.chdir(os.path.expanduser(newdir))
     try:
         yield
     finally:
-        print('Switching back to previous PATH:', prevdir)
+        # print('Switching back to previous PATH:', prevdir)
         os.chdir(prevdir)
 
 # Example usage

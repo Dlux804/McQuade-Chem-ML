@@ -5,6 +5,7 @@ from core.misc import cd
 from core.storage import pickle_model, unpickle_model
 import os
 import pathlib
+from time import sleep
 from core.features import featurize
 
 # Creating a global variable to be imported from all other models
@@ -16,7 +17,8 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # Asking the user to decide between running classification models or regression models
-    c = str(input("Enter c for classification, r for regression: "))
+    # c = str(input("Enter c for classification, r for regression: "))
+    c = 'r'
 
     # Sets up learner, featurizations, and datasets for classification.
     if c == 'c':
@@ -36,19 +38,22 @@ def main():
     # Sets up learner, featurizations, and data sets for regression
     if c == 'r':
         # list of available regression learning algorithms
-        learner = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn']
+        learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
+        learner = ['gdb', 'nn']
+
 
         # list of available featurization methods
-        feats = [[0], [0, 2], [0, 3], [0, 4], [0, 5], [2], [3], [4],
-                 [5]]  # Change this to change which featurizations are being tested (for regression)
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
+                 [5]]
+        feats = [[0]]#, [0, 2]]  # Change this to change which featurizations are being tested (for regression)
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
-            'Lipophilicity-ID.csv': 'exp',
             'ESOL.csv': 'water-sol',
-            'water-energy.csv': 'expt',
-            'logP14k.csv': 'Kow',
-            'jak2_pic50.csv': 'pIC50'
+            # 'Lipophilicity-ID.csv': 'exp',
+            # 'water-energy.csv': 'expt',
+            # 'logP14k.csv': 'Kow',
+            # 'jak2_pic50.csv': 'pIC50'
         }
 
     for alg in learner:  # loop over all learning algorithms
@@ -57,29 +62,34 @@ def main():
 
             for data, target in sets.items():  # loop over dataset dictionary
                 if c == 'r':  # Runs the models/featurizations for regression
-                    with cd('dataFiles'):
-                        print('Now in:', os.getcwd())
+
+
+                    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+                        print('Model Type:', alg)
+                        print('Featurization:', method)
+                        print('Dataset:', data)
+                        print()
                         print('Initializing model...', end=' ', flush=True)
-
                         # initiate model class with algorithm, dataset and target
-                        model = models.MlModel(alg, data, target, method)
-                        print('done.')
+                        model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
+                                                tune=True, cv=3, opt_iter=25)
+                        print('Done.\n')
 
-                    print('Model Type:', alg)
-                    print('Featurization:', method)
-                    print('Dataset:', data)
-                    print()
+                    with cd('output'):  # Have files output to output
+                        model1.featurize()
+                        if alg == 'nn':
+                            val = 0.1
+                        else:
+                            val = 0.0
+                        model1.data_split(val=val)
+                        model1.reg()
+                        model1.run()
+                        model1.analyze()
+                        if model1.algorithm != 'nn':
+                            model1.pickle_model()
 
-                    # run model
-                    model.featurize()  # Featurize molecules
-                    model.data_split(val=0.0)  # Split molecules
-                    model.run()  # Bayes Opt
-                    pickle_model(model, file_location=f'{model.run_name}.pkl')
-                    model.analyze()  # Runs analysis on model
-                    # save results of model
-                    model.store()
-                    # save results in json format
-                    model.export_json()
+                        model1.export_json()
+                        model1.org_files(zip_only=True)
 
                 if c == 'c':  # Runs the models/featurizations for classification
                     # change active directory
@@ -100,7 +110,7 @@ def main():
                     model.run()
 
 
-def example_model():
+def single_model():
     """
     This model is for debugging, similiar to the lines at the bottom of models.py. This is meant
     to show how the current workflow works, as well serves as an easy spot to de-bug issues.
@@ -112,18 +122,49 @@ def example_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model = models.MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                                tune=False, cv=3, opt_iter=5)
+        model1 = models.MlModel(algorithm='nn', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
+                                tune=True, cv=5, opt_iter=50)
         print('done.')
+        print('Model Type:', model1.algorithm)
+        print('Featurization:', model1.feat_meth)
+        print('Dataset:', model1.dataset)
+        print()
 
-    model.featurize()
-    model.data_split(val=0.0)
-    model.run()
-    pickle_model(model, file_location=f'{model.run_name}.pkl')
-    model.store()
-    model.export_json()
+    with cd('output'):  # Have files output to output
+        model1.featurize()
+        model1.data_split(val=0.1)
+        model1.reg()
+        model1.run()
+        model1.analyze()
+        if model1.algorithm != 'nn':  # issues pickling NN models
+            model1.pickle_model()
+
+        model1.export_json()
+        model1.org_files(zip_only=True)
+
+
+def example_load():
+    """
+    Example case of loading a model from a previous pickle and running an analysis on it.
+    :return:
+    """
+    from sklearn.metrics import mean_squared_error, r2_score
+    import numpy as np
+    model2 = unpickle_model('output/RE00_20200624-091038/RE00_20200624-091038.pkl')
+    model2.run()
+    # Make predictions
+    predictions = model2.regressor.predict(self.test_features)
+
+    # Dataframe for replicate_model
+    pva = pd.DataFrame([], columns=['actual', 'predicted'])
+    pva['actual'] = model2.test_target
+    pva['predicted'] = predictions
+    r2 = r2_score(pva['actual'], pva['predicted'])
+    mse = mean_squared_error(pva['actual'], pva['predicted'])
+    rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
 
 if __name__ == "__main__":
     # main()
-    example_model()
+    single_model()
+    # example_load()

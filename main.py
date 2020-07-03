@@ -10,7 +10,6 @@ from core.features import featurize
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
-
 def main():
     os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
@@ -136,14 +135,6 @@ def main():
                             model.reg()
                             model.run()  # Runs the models/featurizations for classification
 
-
-
-
-
-                        # loop over dataset dictionary
-
-
-
 def single_model():
     """
     This model is for debugging, similiar to the lines at the bottom of models.py. This is meant
@@ -156,7 +147,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
+        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
                                 tune=False, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -165,12 +156,13 @@ def single_model():
         print()
     with cd('output'):  # Have files output to output
         model1.featurize()
-        # model1.to_neo4j()
 
-        # model1.data_split(val=0.1)
-        # model1.reg()
-        # model1.run()
-        # model1.analyze()
+        model1.data_split(val=0.1)
+        model1.reg()
+        model1.run()
+        model1.analyze()
+        model1.to_neo4j()
+
         # if model1.algorithm != 'nn':  # issues pickling NN models
         #     model1.pickle_model()
         #
@@ -200,6 +192,6 @@ def single_model():
 
 
 if __name__ == "__main__":
-    main()
-    # single_model()
+    # main()
+    single_model()
     # example_load()

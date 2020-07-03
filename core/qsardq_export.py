@@ -2,9 +2,11 @@ import os
 from rdkit.Chem import MolFromSmiles, MolToMolBlock
 import xml.etree.cElementTree as ET
 from lxml import etree
+import shutil
+import pathlib
 
 
-def QsarDB_export(self):
+def QsarDB_export(self, zip=False):
     """
     :param self:
     :return:
@@ -143,3 +145,8 @@ def QsarDB_export(self):
 
     # Switch back to original directory
     os.chdir(cur_dir)
+
+    if zip:
+        shutil.make_archive((os.getcwd() + '/ ' + f'{self.run_name}_qdb'), 'zip',
+                            os.getcwd(), f'{self.run_name}_qdb')
+        shutil.rmtree(f'{self.run_name}_qdb', ignore_errors=True)

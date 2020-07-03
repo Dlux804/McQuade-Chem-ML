@@ -8,6 +8,7 @@ import subprocess
 import shutil
 from numpy.random import randint
 from core import name
+from core.to_neo4j import nodes, relationships, calculate
 from core import to_neo4j
 
 from rdkit import RDLogger
@@ -35,7 +36,6 @@ class MlModel:  # TODO update documentation here
         """
 
         self.algorithm = algorithm
-
         self.dataset = dataset
         multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
         # Sets self.task_type based on which dataset is being used.
@@ -110,3 +110,7 @@ class MlModel:  # TODO update documentation here
         self.pva_graph()
         # TODO Make classification graphing function
 
+    def to_neo4j(self):
+        calculate(self)
+        nodes(self)
+        relationships(self)

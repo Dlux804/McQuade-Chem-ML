@@ -141,7 +141,6 @@ def main():
                         # loop over dataset dictionary
 
 
-
 def single_model():
     """
     This model is for debugging, similiar to the lines at the bottom of models.py. This is meant
@@ -154,7 +153,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
+        model1 = models.MlModel(algorithm='ada', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0, 2],
                                 tune=False, cv=5, opt_iter=50)
         print('done.')
         print('Model Type:', model1.algorithm)

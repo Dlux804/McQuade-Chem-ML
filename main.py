@@ -172,7 +172,7 @@ def single_model():
 
         model1.store()
         model1.org_files(zip_only=True)
-        model1.QsarDB_export(zip=True)
+        model1.QsarDB_export(zip_output=True)
 
 
 def example_load():

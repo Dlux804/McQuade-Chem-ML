@@ -3,9 +3,10 @@ Objective: The goal of this script is to create graphs in Neo4j directly from th
 """
 
 from core import models, misc
-from py2neo import Graph, Node
+from py2neo import Graph, Node, NodeMatcher, Database
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
+from tqdm import tqdm
 
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
@@ -31,6 +32,7 @@ def nodes(self):
     """
     Create Neo4j nodes. Merge them if they already exist
     """
+    print("Creating Nodes for %s" % self.run_name)
     training_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list = prep(self)
     # Make algorithm node
     if self.algorithm == "nn":
@@ -95,16 +97,25 @@ def nodes(self):
         pass
 
     # Make nodes for all the SMILES
-    for smi, target in zip(smiles_list, list(self.target_array)):
-        mol = Node("SMILES", SMILES=smi, measurement=target)
-        g.merge(mol, "SMILES", "SMILES")
+    for smiles, target in zip(smiles_list, list(self.target_array)):
+        record = g.run("""MATCH (n:SMILES {SMILES:"%s"}) RETURN n""" % smiles)
+        if len(list(record)) > 0:
+            print(f"This SMILES, {smiles}, already exist. Updating its relationship")
+            g.evaluate("match (mol:SMILES {SMILES: $smiles}) set mol.measurement = mol.measurement + $target, "
+                       "mol.dataset = mol.dataset + $dataset",
+                       parameters={'smiles': smiles, 'target': target, 'dataset': self.dataset})
+        else:
+            mol = Node("SMILES", SMILES=smiles)
+            g.merge(mol, "SMILES", "SMILES")
+            g.evaluate("match (mol:SMILES {SMILES: $smiles}) set mol.measurement = [$target],"
+                       "mol.dataset = [$dataset]",
+                       parameters={'smiles': smiles, 'target': target, 'dataset': self.dataset})
 
-    # print(self.train_molecules)
-    # print(type(self.train_molecules))
 def relationships(self):
     """
     Create relationships in Neo4j
     """
+    print("Creating relationships...")
     training_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list = prep(self)
 
     # Merge RandomSplit node
@@ -182,19 +193,6 @@ def relationships(self):
     df = self.data.loc[:, 'BalabanJ':'qed']
     columns = list(df.columns)
 
-    # Create nodes and relationships between features, feature methods and SMILES
-    for column in columns:
-        # Create nodes for features
-        features = Node(column, name=column)
-        g.merge(features, column, "name")
-        # Merge relationship
-        g.evaluate(""" match (rdkit2d:FeatureMethod {feature:"rdkit2d"}), (feat:%s) 
-                   merge (rdkit2d)-[:CALCULATES]->(feat)""" % column)
-        for mol, value in zip(smiles_list, list(df[column])):
-            g.run("match (smile:SMILES {SMILES:$mol}), (feat:%s)"
-                  "merge (smile)-[:HAS_DESCRIPTOR {value:$value}]->(feat)" % column,
-                  parameters={'mol': mol, 'value': value})
-
     # Connect TrainSet with its molecules
     for train_smiles in list(self.train_molecules):
         g.evaluate("match (smile:SMILES {SMILES:$mol}), (trainset:TrainSet {trainsize: $training_size})"
@@ -215,3 +213,24 @@ def relationships(self):
                        parameters={'mol': val_smiles, 'val_size': val_size})
     else:
         pass
+
+    # Create nodes and relationships between features, feature methods and SMILES
+    for column in tqdm(columns, desc="Creating relationships between SMILES and features"):
+        # Create nodes for features
+        features = Node(column, name=column)
+        # Merge relationship
+        g.merge(features, column, "name")
+        rdkit2d = "rdkit2d"
+        g.evaluate("""match (rdkit2d:FeatureMethod {feature:"%s"}), (feat:%s) 
+                    merge (rdkit2d)-[:CALCULATES]->(feat)""" % (column, rdkit2d))
+        for mol, value in zip(smiles_list, list(df[column])):
+            g.run("match (smile:SMILES {SMILES:$mol}), (feat:%s)"
+                  "merge (smile)-[:HAS_DESCRIPTOR {value:$value}]->(feat)" % column,
+                  parameters={'mol': mol, 'value': value})
+
+    # Merge "SPLITS_INTO" relationship between RandomSplit and TrainSet
+    g.evaluate("""MATCH (:RandomSplit)-[r:SPLITS_INTO]-(:TrainSet {trainsize:%d})
+                WITH r.name AS name, COLLECT(r) AS rell, COUNT(*) AS count
+                WHERE count > 1
+                CALL apoc.refactor.mergeRelationships(rell) YIELD rel
+                RETURN rel""" % training_size)

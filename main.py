@@ -19,7 +19,8 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # Asking the user to decide between running classification models or regression models
-    c = str(input("Enter c for classification, r for regression: "))
+    # c = str(input("Enter c for classification, r for regression: "))
+    c = "r"
 
     # Sets up learner and datasets for classification.
     if c == 'c':
@@ -35,21 +36,20 @@ def main():
     if c == 'r':
         # list of available regression learning algorithms
         learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-        learner = ['gdb', 'nn']
+        # learner = ['gdb', 'knn', 'rf', 'nn', ]
 
 
         # list of available featurization methods
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
-                 [5]]
-        feats = [[0]]#, [0, 2]]  # Change this to change which featurizations are being tested (for regression)
+        feats = [[0], [1], [2], [3], [5], [0, 1], [0, 2], [0, 3], [0, 5]]
+        # feats = [[0], [2], [4], [0, 2], [0, 4]]  # Change this to change which featurizations are being tested
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
             'ESOL.csv': 'water-sol',
-            # 'Lipophilicity-ID.csv': 'exp',
+            'Lipophilicity-ID.csv': 'exp',
             # 'water-energy.csv': 'expt',
             # 'logP14k.csv': 'Kow',
-            # 'jak2_pic50.csv': 'pIC50'
+            'jak2_pic50.csv': 'pIC50'
         }
 
     for alg in learner:  # loop over all learning algorithms
@@ -93,7 +93,7 @@ def main():
                             if model1.algorithm != 'nn':
                                 model1.pickle_model()
 
-                            model1.export_json()
+                            model1.store()
                             model1.org_files(zip_only=True)
 
                 if c == 'c':
@@ -197,6 +197,6 @@ def example_load():
 
 
 if __name__ == "__main__":
-    # main()
-    single_model()
+    main()
+    # single_model()
     # example_load()

@@ -20,7 +20,7 @@ def featurize(self):
     df = self.data
 
     # available featurization options
-    feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
+    feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']
 
     if feat_meth is None:  # ask for features

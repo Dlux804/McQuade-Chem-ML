@@ -93,8 +93,11 @@ def store(self):
 
     json_name = self.run_name + '_attributes' + '.json'
     with open(json_name, 'w') as f:
-        json.dump(d, f, cls=NumpyEncoder)
-
+        try:
+            json.dump(d, f, cls=NumpyEncoder)
+        except TypeError as e:
+            print("There is some type error in what you are trying to store as JSON.")
+            print(e)
 
 def pickle_model(self):
     """

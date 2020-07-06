@@ -78,6 +78,7 @@ def train_reg(self,n=5):
     print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
     print()
 
+
 def train_cls(self, n=5):
     # set the model specific classifier function from sklearn
 

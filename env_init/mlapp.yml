@@ -1,6 +1,8 @@
 name: mlapp
 channels:
   - defaults
+  - rdkit
+  - conda-forge
 dependencies:
   - matplotlib
   - pandas
@@ -15,6 +17,7 @@ dependencies:
   - py2neo
   - mock
   - tqdm
+  - lxml
   - pip:
       - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
       - "git+https://github.com/swansonk14/chemprop.git"

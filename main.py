@@ -7,8 +7,12 @@ import os
 import pathlib
 from time import sleep
 from core.features import featurize
+
+import pandas as pd
+
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
+
 
 def main():
     os.chdir(ROOT_DIR)  # Start in root directory
@@ -73,7 +77,7 @@ def main():
                             print('Initializing model...', end=' ', flush=True)
                             # initiate model class with algorithm, dataset and target
                             model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                    tune=False, cv=3, opt_iter=25)
+                                                    tune=True, cv=3, opt_iter=25)
                             print('Done.\n')
 
                         with cd('dataFiles'):  # Have files output to output
@@ -134,60 +138,62 @@ def main():
                             model.data_split()
                             model.reg()
                             model.run()  # Runs the models/featurizations for classification
+                        # loop over dataset dictionary
+
 
 def single_model():
     """
     This model is for debugging, similiar to the lines at the bottom of models.py. This is meant
     to show how the current workflow works, as well serves as an easy spot to de-bug issues.
+
     :return: None
     """
-    from core import ogm_class
 
     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='svr', dataset='ESOL-short.csv', target='water-sol', feat_meth=[0],
-                                tune=False, cv=2, opt_iter=2)
+        model1 = models.MlModel(algorithm='ada', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0, 2],
+                                tune=False, cv=5, opt_iter=50)
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)
         print('Dataset:', model1.dataset)
         print()
+
     with cd('output'):  # Have files output to output
         model1.featurize()
-
-        model1.data_split(val=0.0)
+        model1.data_split(val=0.1)
         model1.reg()
         model1.run()
-        # model1.analyze()
-        # if model1.algorithm != 'nn':  # issues pickling NN models
-        #     model1.pickle_model()
-        # #
-        # model1.export_json()
-        # model1.org_files(zip_only=True)
-        model1.to_neo4j()
+        model1.analyze()
+        if model1.algorithm != 'nn':  # issues pickling NN models
+            model1.pickle_model()
+
+        model1.store()
+        model1.org_files(zip_only=True)
+        model1.QsarDB_export(zip_output=True)
 
 
-# def example_load():
-#     """
-#     Example case of loading a model from a previous pickle and running an analysis on it.
-#     :return:
-#     """
-#     from sklearn.metrics import mean_squared_error, r2_score
-#     import numpy as np
-#     model2 = unpickle_model('output/RE00_20200624-091038/RE00_20200624-091038.pkl')
-#     model2.run()
-#     # Make predictions
-#     predictions = model2.regressor.predict(self.test_features)
-#
-#     # Dataframe for replicate_model
-#     pva = pd.DataFrame([], columns=['actual', 'predicted'])
-#     pva['actual'] = model2.test_target
-#     pva['predicted'] = predictions
-#     r2 = r2_score(pva['actual'], pva['predicted'])
-#     mse = mean_squared_error(pva['actual'], pva['predicted'])
-#     rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
+def example_load():
+    """
+    Example case of loading a model from a previous pickle and running an analysis on it.
+    :return:
+    """
+    from sklearn.metrics import mean_squared_error, r2_score
+    import numpy as np
+    model2 = unpickle_model('output/RE00_20200624-091038/RE00_20200624-091038.pkl')
+    model2.run()
+    # Make predictions
+    predictions = model2.regressor.predict(model2.test_features)
+
+    # Dataframe for replicate_model
+    pva = pd.DataFrame([], columns=['actual', 'predicted'])
+    pva['actual'] = model2.test_target
+    pva['predicted'] = predictions
+    r2 = r2_score(pva['actual'], pva['predicted'])
+    mse = mean_squared_error(pva['actual'], pva['predicted'])
+    rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
 
 if __name__ == "__main__":

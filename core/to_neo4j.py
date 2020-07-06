@@ -88,6 +88,7 @@ def nodes(self):
         g.merge(mol, "SMILES", "SMILES")
     # g.evaluate(merge)
 
+
 def relationships(self):
     training_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list = prep(self)
 
@@ -178,8 +179,8 @@ def relationships(self):
                    merge (rdkit2d)-[:CALCULATES]->(feat)""" % column)
         for mol, value in zip(smiles_list, list(df[column])):
             g.run("match (smile:SMILES {SMILES:$mol}), (feat:%s)"
-                       "merge (smile)-[:HAS_DESCRIPTOR {value:$value}]->(feat)" % column,
-                       parameters={'mol': mol, 'value': value})
+                  "merge (smile)-[:HAS_DESCRIPTOR {value:$value}]->(feat)" % column,
+                  parameters={'mol': mol, 'value': value})
 
 
 

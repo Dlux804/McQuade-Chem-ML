@@ -1,6 +1,8 @@
 name: mlapp
 channels:
   - defaults
+  - rdkit
+  - conda-forge
 dependencies:
   - matplotlib
   - pandas

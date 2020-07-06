@@ -8,13 +8,13 @@ import subprocess
 import shutil
 from numpy.random import randint
 from core import name
-from core.to_neo4j import nodes, relationships, prep
-from core import to_neo4j
+from core.to_neo4j import nodes, relationships
 
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
 
-rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'ESOL-short.csv']
+rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'ESOL-short.csv',
+       'Lipo-short.csv']
 cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
 
 
@@ -30,7 +30,6 @@ class MlModel:  # TODO update documentation here
     from core.classifiers import get_classifier
     from core.storage import store, org_files, pickle_model, unpickle_model
     from core.qsardq_export import QsarDB_export
-
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """

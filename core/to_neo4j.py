@@ -1,7 +1,5 @@
 """
-Objective: The goal of this script is - by working in conjunction with ogm_class.py - create graphs in Neo4j using model
-instance
-
+Objective: The goal of this script is to create graphs in Neo4j directly from the pipeline using class instances
 """
 
 from core import ogm_class, models, misc

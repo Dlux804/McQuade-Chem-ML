@@ -17,16 +17,18 @@ def prep(self):
     """
     Calculate Node's properties that can't be obtained directly from the pipeline
     """
-    smiles_list = list(self.data['smiles'])
-    val_size = len(self.target_array) * self.val_percent
-    training_size = len(self.target_array) * self.train_percent
-    test_size = len(self.target_array) * self.test_percent
+    smiles_list = list(self.data['smiles']) # List of all SMILES
+    val_size = len(self.target_array) * self.val_percent  # Amount of molecules in validate dataset
+    train_size = len(self.target_array) * self.train_percent  # Amount of molecules in train dataset
+    test_size = len(self.target_array) * self.test_percent  # Amount of molecules in test dataset
     pva = self.predictions
-    r2 = r2_score(pva['actual'], pva['pred_avg'])
-    mse = mean_squared_error(pva['actual'], pva['pred_avg'])
-    rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))
-    feature_length = len(self.feature_list)
-    return training_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list
+    predicted = list(pva['pred_avg'])  # List of predicted value for test molecules
+    test_mol = list(pva['smiles'])  # List of test molecules
+    r2 = r2_score(pva['actual'], pva['pred_avg'])  # r2 values
+    mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
+    rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
+    feature_length = len(self.feature_list)  # Total amount of features
+    return train_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list, predicted, test_mol
 
 
 def nodes(self):
@@ -34,7 +36,7 @@ def nodes(self):
     Create Neo4j nodes. Merge them if they already exist
     """
     print("Creating Nodes for %s" % self.run_name)
-    training_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list = prep(self)
+    train_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list, predicted, test_mol = prep(self)
     # Make algorithm node
     if self.algorithm == "nn":
         algor = Node("Algorithm", name=self.algorithm, source="Keras", tuned=self.tuned)
@@ -73,7 +75,7 @@ def nodes(self):
     g.merge(feature_list, "FeatureList", "num")
 
     # Make TrainSet node
-    training_set = Node("TrainSet", trainsize=training_size, name="TrainSet")
+    training_set = Node("TrainSet", trainsize=train_size, name="TrainSet")
     g.merge(training_set, "TrainSet",  "trainsize")
 
     # Make dataset node
@@ -118,7 +120,7 @@ def relationships(self):
     Create relationships in Neo4j
     """
     print("Creating relationships...")
-    training_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list = prep(self)
+    train_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list, predicted, test_mol = prep(self)
 
     # Merge RandomSplit node
     g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, "
@@ -157,7 +159,7 @@ def relationships(self):
     # MLModel to TrainingSet
     g.evaluate("match (trainset:TrainSet {trainsize: $training_size}), (model:MLModel {name: $run_name})"
                "merge (model)-[:TRAINS]->(trainset)",
-               parameters={'training_size': training_size, 'run_name': self.run_name})
+               parameters={'training_size': train_size, 'run_name': self.run_name})
 
     # MLModel to TestSet
     g.evaluate("match (testset:TestSet {testsize: $test_size, RMSE: $rmse}), (model:MLModel {name: $run_name})"
@@ -184,7 +186,7 @@ def relationships(self):
                "(trainset:TrainSet {trainsize: $training_size})"
                "merge (trainset)<-[:SPLITS_INTO]-(split)-[:SPLITS_INTO]->(testset)",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
-                           'test_size': test_size, 'rmse': rmse, 'training_size': training_size})
+                           'test_size': test_size, 'rmse': rmse, 'training_size': train_size})
     # RandomSplit to Validation
     g.evaluate("match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent}), "
                "(validate:ValidateSet {valsize: $val_size}) merge (split)-[:SPLITS_INTO]->(validate)",
@@ -199,13 +201,13 @@ def relationships(self):
     for train_smiles in list(self.train_molecules):
         g.evaluate("match (smile:SMILES {SMILES:$mol}), (trainset:TrainSet {trainsize: $training_size})"
                    "merge (smile)-[:CONTAINS_MOLECULES]->(trainset)",
-                   parameters={'mol': train_smiles, 'training_size': training_size})
+                   parameters={'mol': train_smiles, 'training_size': train_size})
 
     # Connect TestSet with its molecules
-    for test_smiles in list(self.test_molecules):
-        g.evaluate("match (smile:SMILES {SMILES:$mol}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})"
-                   "merge (smile)-[:CONTAINS_MOLECULES]->(testset)",
-                   parameters={'mol': test_smiles, 'test_size': test_size, 'rmse': rmse})
+    for test_smiles, predict in zip(test_mol, predicted):
+        g.evaluate("match (smiles:SMILES {SMILES:$mol}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})"
+                   "merge (testset)-[:CONTAINS_MOLECULES {predicted_value: $predicted}]->(smiles)",
+                   parameters={'mol': test_smiles, 'test_size': test_size, 'rmse': rmse, 'predicted': predicted})
 
     # Connect ValidateSet with its molecules
     if self.val_percent > 0:
@@ -235,4 +237,4 @@ def relationships(self):
                 WITH r.name AS name, COLLECT(r) AS rell, COUNT(*) AS count
                 WHERE count > 1
                 CALL apoc.refactor.mergeRelationships(rell) YIELD rel
-                RETURN rel""" % training_size)
+                RETURN rel""" % train_size)

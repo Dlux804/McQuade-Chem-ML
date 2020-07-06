@@ -3,12 +3,12 @@ from rdkit.Chem import MolFromSmiles, MolToMolBlock
 import xml.etree.cElementTree as ET
 from lxml import etree
 import shutil
-import pathlib
 
 
-def QsarDB_export(self, zip=False):
+def QsarDB_export(self, zip_output=False):
     """
-    :param self:
+    :param zip_output: Weather to zip output folder
+    :param self: Model Object
     :return:
 
     Purpose of this is to export our models in a format that complies with the QsarDB requirements.
@@ -146,7 +146,7 @@ def QsarDB_export(self, zip=False):
     # Switch back to original directory
     os.chdir(cur_dir)
 
-    if zip:
+    if zip_output:
         shutil.make_archive((os.getcwd() + '/ ' + f'{self.run_name}_qdb'), 'zip',
                             os.getcwd(), f'{self.run_name}_qdb')
         shutil.rmtree(f'{self.run_name}_qdb', ignore_errors=True)

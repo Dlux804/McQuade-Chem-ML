@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+# TODO Add Molecular Fragments
 
 
 def prep(self):
@@ -89,8 +90,8 @@ def nodes(self):
     testset = Node("TestSet", name="TestSet", RMSE=rmse, mse=mse, r2=r2, testsize=test_size)
     g.merge(testset, "TestSet", "RMSE")
 
-    if self.val_percent > 0:
     # Make ValidateSet node
+    if self.val_percent > 0:
         valset = Node("ValidateSet", name="ValidateSet", valsize=val_size)
         g.merge(valset, "ValidateSet", "valsize")
     else:
@@ -110,6 +111,7 @@ def nodes(self):
             g.evaluate("match (mol:SMILES {SMILES: $smiles}) set mol.measurement = [$target],"
                        "mol.dataset = [$dataset]",
                        parameters={'smiles': smiles, 'target': target, 'dataset': self.dataset})
+
 
 def relationships(self):
     """

@@ -14,7 +14,9 @@ g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
 
 def prep(self):
-    """"""
+    """
+    Calculate Node's properties that can't be obtained directly from the pipeline
+    """
     smiles_list = list(self.data['smiles'])
     val_size = len(self.target_array) * self.val_percent
     training_size = len(self.target_array) * self.train_percent
@@ -28,7 +30,9 @@ def prep(self):
 
 
 def nodes(self):
-    """"""
+    """
+    Create Neo4j nodes. Merge them if they already exist
+    """
     training_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list = prep(self)
     # Make algorithm node
     if self.algorithm == "nn":
@@ -58,16 +62,20 @@ def nodes(self):
         #                         steps=self.opt_iter)
         # g.create(tuning_algorithm)
 
+    # Make MLModel nodes
     model = Node("MLModel", name=self.run_name, feat_time=self.feat_time, date=self.date, train_time=self.tune_time,
                  test_time=self.predictions_stats["time_avg"])
     g.create(model)
 
+    # Make FeatureList node
     feature_list = Node("FeatureList", name="FeatureList", num=len(self.feature_list))
     g.merge(feature_list, "FeatureList", "num")
 
+    # Make TrainSet node
     training_set = Node("TrainSet", trainsize=training_size, name="TrainSet")
     g.merge(training_set, "TrainSet",  "trainsize")
 
+    # Make dataset node
     dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)
     g.merge(dataset, "DataSet", "data")
 
@@ -77,27 +85,30 @@ def nodes(self):
                        val_percent=self.val_percent)
     g.create(randomsplit)
 
+    # Make TestSet node
     testset = Node("TestSet", name="TestSet", RMSE=rmse, mse=mse, r2=r2, testsize=test_size)
     g.merge(testset, "TestSet", "RMSE")
 
+    # Make ValidateSet node
     valset = Node("ValidateSet", name="ValidateSet", valsize=val_size)
     g.merge(valset, "ValidateSet", "valsize")
 
+    # Make nodes for all the SMILES
     for smi, target in zip(smiles_list, list(self.target_array)):
         mol = Node("SMILES", SMILES=smi, measurement=target)
         g.merge(mol, "SMILES", "SMILES")
-    # g.evaluate(merge)
 
 
 def relationships(self):
+    """
+    Create relationships in Neo4j
+    """
     training_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list = prep(self)
 
     # Merge RandomSplit node
     g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test and n.train_percent as train, "
                "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
                "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
-#
-# """")
 
     # # MLModel to Algorithm
     g.evaluate("match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})"

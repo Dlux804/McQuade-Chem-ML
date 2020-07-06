@@ -87,16 +87,20 @@ def nodes(self):
     testset = Node("TestSet", name="TestSet", RMSE=rmse, mse=mse, r2=r2, testsize=test_size)
     g.merge(testset, "TestSet", "RMSE")
 
+    if self.val_percent > 0:
     # Make ValidateSet node
-    valset = Node("ValidateSet", name="ValidateSet", valsize=val_size)
-    g.merge(valset, "ValidateSet", "valsize")
+        valset = Node("ValidateSet", name="ValidateSet", valsize=val_size)
+        g.merge(valset, "ValidateSet", "valsize")
+    else:
+        pass
 
     # Make nodes for all the SMILES
     for smi, target in zip(smiles_list, list(self.target_array)):
         mol = Node("SMILES", SMILES=smi, measurement=target)
         g.merge(mol, "SMILES", "SMILES")
 
-
+    # print(self.train_molecules)
+    # print(type(self.train_molecules))
 def relationships(self):
     """
     Create relationships in Neo4j
@@ -191,5 +195,23 @@ def relationships(self):
                   "merge (smile)-[:HAS_DESCRIPTOR {value:$value}]->(feat)" % column,
                   parameters={'mol': mol, 'value': value})
 
+    # Connect TrainSet with its molecules
+    for train_smiles in list(self.train_molecules):
+        g.evaluate("match (smile:SMILES {SMILES:$mol}), (trainset:TrainSet {trainsize: $training_size})"
+                   "merge (smile)-[:CONTAINS_MOLECULES]->(trainset)",
+                   parameters={'mol': train_smiles, 'training_size': training_size})
 
+    # Connect TestSet with its molecules
+    for test_smiles in list(self.test_molecules):
+        g.evaluate("match (smile:SMILES {SMILES:$mol}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})"
+                   "merge (smile)-[:CONTAINS_MOLECULES]->(testset)",
+                   parameters={'mol': test_smiles, 'test_size': test_size, 'rmse': rmse})
 
+    # Connect ValidateSet with its molecules
+    if self.val_percent > 0:
+        for val_smiles in list(self.val_molecules):
+            g.evaluate("match (smile:SMILES {SMILES:$mol}), (validate:ValidateSet {valsize: $val_size})"
+                       "merge (smile)-[:CONTAINS_MOLECULES]->(validate)",
+                       parameters={'mol': val_smiles, 'val_size': val_size})
+    else:
+        pass

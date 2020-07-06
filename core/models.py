@@ -111,5 +111,6 @@ class MlModel:  # TODO update documentation here
         # TODO Make classification graphing function
 
     def to_neo4j(self):
-        nodes(self)
-        relationships(self)
+        # Create Neo4j graphs from pipeline
+        nodes(self)  # Create nodes
+        relationships(self)  # Create relationships

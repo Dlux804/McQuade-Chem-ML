@@ -104,7 +104,7 @@ def relationships(self):
     training_size, test_size, pva, r2, mse, rmse, feature_length, val_size, smiles_list = prep(self)
 
     # Merge RandomSplit node
-    g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test and n.train_percent as train, "
+    g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, "
                "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
                "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
 

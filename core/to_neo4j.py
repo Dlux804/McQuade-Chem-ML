@@ -2,7 +2,7 @@
 Objective: The goal of this script is to create graphs in Neo4j directly from the pipeline using class instances
 """
 
-from core import ogm_class, models, misc
+from core import models, misc
 from py2neo import Graph, Node
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np

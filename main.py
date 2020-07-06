@@ -73,7 +73,7 @@ def main():
                             print('Initializing model...', end=' ', flush=True)
                             # initiate model class with algorithm, dataset and target
                             model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                    tune=True, cv=3, opt_iter=25)
+                                                    tune=False, cv=3, opt_iter=25)
                             print('Done.\n')
 
                         with cd('dataFiles'):  # Have files output to output
@@ -147,7 +147,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
+        model1 = models.MlModel(algorithm='svr', dataset='ESOL-short.csv', target='water-sol', feat_meth=[0],
                                 tune=False, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -157,17 +157,16 @@ def single_model():
     with cd('output'):  # Have files output to output
         model1.featurize()
 
-        model1.data_split(val=0.1)
+        model1.data_split(val=0.0)
         model1.reg()
         model1.run()
-        model1.analyze()
-        model1.to_neo4j()
-
+        # model1.analyze()
         # if model1.algorithm != 'nn':  # issues pickling NN models
         #     model1.pickle_model()
-        #
+        # #
         # model1.export_json()
         # model1.org_files(zip_only=True)
+        model1.to_neo4j()
 
 
 # def example_load():

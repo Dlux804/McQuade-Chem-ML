@@ -3,48 +3,17 @@ Objective: Create Neo4j graphs from files inside of "output"
 """
 import pandas as pd
 import os
-from core import cypher_neo4j
+from core import json_cypher
 from py2neo import Graph
 from zipfile import ZipFile
 from core import misc
 import json
 
-query_line = """ 
-    UNWIND $parameters as rows
-    merge (data_algor:data_algorithms {data_algorithm: rows.algorithm})
-"""
 
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
 
-def rotated(array_2d):
-    """
-    Flip list 90 degrees to the left
-    :param array_2d:
-    :return: a list that is turned 90 degrees to the left
-    """
-    list_of_tuples = zip(*reversed(array_2d[::-1]))
-    return [list(elem) for elem in list_of_tuples]
-
-
-def value_to_list(df, headers):
-    """
-    Put every value in the dataframe into a list
-    :param df:
-    :param headers:
-    :return:
-    """
-    col_list = []
-    for col in headers:
-        column = df[col].tolist()
-        new_col = [[col] for col in column]
-        col_list.append(new_col)
-    rotate_list = list(rotated(col_list))
-    df = pd.DataFrame.from_records(rotate_list, columns=headers)
-    return df
-
-
-def access_ouput():
+def attributes_neo4j():
     """
 
     :return:
@@ -65,46 +34,30 @@ def access_ouput():
                                     data = json.loads(read_json.decode("utf-8"))  # Decode json before loading
                                     df_normalize = pd.json_normalize(data)  # Normalizing json data into dataframe
                                     data_list = list(df_normalize.T.to_dict().values())
+                                    # feature length
                                     feature_length = len(df_normalize['feature_list'])
+                                    # test time
                                     test_time = df_normalize["predictions_stats.time_avg"]
+                                    # train size
                                     train_size = len(df_normalize['target_array']) * df_normalize['train_percent']
+                                    # test size
                                     test_size = len(df_normalize['target_array']) * df_normalize['test_percent']
-                                    algorithm = str(df_normalize['algorithm'])
-                                    print(algorithm)
-                                    tuned = str(df_normalize['tuned'])
-                                    print(tuned)
-                                    g.evaluate(cypher_neo4j.non_loop_nodes(feature_length, test_time, train_size,
-                                                                              test_size),
-                                               parameters={'parameters': data_list})
-                                    g.evaluate(cypher_neo4j.if_nodes(algorithm, tuned),
-                                               parameters={'parameters': data_list})
-                            #         header = df_normalize.columns.tolist()
-                            #         df_list = value_to_list(df_normalize, header)
-                            #         print(df_list)
-                            #         parameter = []
-                            #         for index, row in df_list.iterrows():
-                            #             # print("Row number:", index)
-                            #             # parameter.append(dict(row))
-                            #             tx = g.begin()
-                            #             tx.evaluate(query_line)
-                            #             # if index % 20000 == 0 and index > 0:
-                            # if csv_str in file:
-                            #     with zip.open(file) as csv_file:
-                            #         df = pd.read_csv(csv_file)
-                            #         df_data = df[['algorithm', 'dataset']]
-                            #         print(df_data)
-                                    # header = df.columns.tolist()
-                                    # df_list = value_to_list(df, header)
-                                    # print(df_list)
-                                    # parameter = []
-                                    # for index, row in df_list.iterrows():
-                                    #     # print("Row number:", index)
-                                    #     parameter.append(dict(row))
-                                    #
-                                    #     tx = g.begin(autocommit=True)
-                                    #     tx.evaluate(query_line)
-                                #     df = pd.DataFrame(d)
-                                # print(df)
+                                    algorithm = str(df_normalize['algorithm'])  # algorithm
+                                    # validation size
+                                    val_size = len(df_normalize['target_array']) * df_normalize['val_percent']
+                                    tuned = str(df_normalize['tuned'])  # tuned or not
+                                    feat_name = list(df_normalize['feat_name'])  # feature method
+                                    # train_molecules = list(df_normalize['train_molcules'])
+                                    # test_molecules = list(df_normalize['test_molecules'])
+                                    # smiles_list = list(self.data['smiles'])  # List of all SMILES
+                                    json_cypher.non_loop_graph(data_list, feature_length, test_time, train_size,
+                                                               test_size)
+                                    json_cypher.if_nodes(data_list, algorithm, tuned, float(val_size))
+                                    json_cypher.feature_method_node(feat_name, feature_length)
+                                    json_cypher.train_test_molecules(train_molecules, test_molecules)
 
 
-access_ouput()
+attributes_neo4j()
+
+
+

@@ -64,7 +64,7 @@ def featurize(self):
     # store data back into the instance
     self.data = df
     self.feat_time = feat_time
-    self.feat_name = selected_feat
+    self.feat_method = selected_feat
     # print(self.feat_name)
 
 

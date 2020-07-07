@@ -46,9 +46,9 @@ def nodes(self):
         g.merge(algor, "Algorithm", "name")
 
     # Make FeatureMethod node
-    for feat in self.feat_name:
-        feature_name = Node("FeatureMethod", feature=feat, name=feat)
-        g.merge(feature_name, "FeatureMethod", "feature")
+    for feat in self.feat_method:
+        feature_method = Node("FeatureMethod", feature=feat, name=feat)
+        g.merge(feature_method, "FeatureMethod", "feature")
 
     # Make Tuner node
     if self.tuned:
@@ -130,8 +130,8 @@ def relationships(self):
 
     # # MLModel to Algorithm
     g.evaluate("match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})"
-               "merge (model)-[:USES_ALGORITHM]->(algor)",
-               parameters={'algorithm': self.algorithm, 'run_name': self.run_name})
+               "merge (model)-[:USES_ALGORITHM {params: $params}]->(algor)",
+               parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'params': self.params})
 
     # Algorithm to TuningAlg
     if self.tuned:
@@ -151,11 +151,12 @@ def relationships(self):
                parameters={'feat_length': feature_length, 'run_name': self.run_name})
 
     # MLModel to RandomSplit
-    g.evaluate("match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent}), "
+    g.evaluate("match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, "
+               "random_seed: $random_seed}), "
                "(model:MLModel {name: $run_name})"
                "merge (model)-[:USES_SPLIT]->(split)",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
-                           'run_name': self.run_name})
+                           'run_name': self.run_name, 'random_seed': self.random_seed})
 
     # MLModel to TrainingSet
     g.evaluate("match (trainset:TrainSet {trainsize: $training_size}), (model:MLModel {name: $run_name})"
@@ -173,12 +174,12 @@ def relationships(self):
                parameters={'val_size': val_size, 'run_name': self.run_name})
 
     # MLModel to feature method, FeatureList to feature method
-    for feat in self.feat_name:
-        g.evaluate("match (feat_method:FeatureMethod {feature: $feat}), (model:MLModel {name: $run_name}) "
-                   "merge (model)-[:USES_FEATURIZATION]->(feat_method)",
+    for feat in self.feat_method:
+        g.evaluate("match (method:FeatureMethod {feature: $feat}), (model:MLModel {name: $run_name}) "
+                   "merge (model)-[:USES_FEATURIZATION]->(method)",
                    parameters={'feat': feat, 'run_name': self.run_name})
-        g.evaluate("match (feat_method:FeatureMethod {feature: $feat}), (featurelist:FeatureList {num: $feat_length}) "
-                   "merge (feat_method)-[:CONTRIBUTES_TO]->(featurelist)",
+        g.evaluate("match (method:FeatureMethod {feature: $feat}), (featurelist:FeatureList {num: $feat_length}) "
+                   "merge (method)-[:CONTRIBUTES_TO]->(featurelist)",
                    parameters={'feat': feat, 'feat_length': feature_length})
 
     # RandomSplit to TrainSet and TestSet
@@ -189,10 +190,11 @@ def relationships(self):
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
                            'test_size': test_size, 'rmse': rmse, 'training_size': train_size})
     # RandomSplit to Validation
-    g.evaluate("match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent}), "
+    g.evaluate("match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, "
+               "random_seed: $random_seed}), "
                "(validate:ValidateSet {valsize: $val_size}) merge (split)-[:SPLITS_INTO]->(validate)",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
-                           'val_size': val_size})
+                           'val_size': val_size, 'random_seed': self.random_seed})
 
     # Only create Features for rdkit2d method
     df = self.data.loc[:, 'BalabanJ':'qed']
@@ -225,9 +227,8 @@ def relationships(self):
         features = Node(column, name=column)
         # Merge relationship
         g.merge(features, column, "name")
-        rdkit2d = "rdkit2d"
-        g.evaluate("""match (rdkit2d:FeatureMethod {feature:"%s"}), (feat:%s) 
-                    merge (rdkit2d)-[:CALCULATES]->(feat)""" % (column, rdkit2d))
+        g.evaluate("""match (rdkit2d:FeatureMethod {feature:"rdkit2d"}), (feat:%s) 
+                    merge (rdkit2d)-[:CALCULATES]->(feat)""" % column)
         for mol, value in zip(smiles_list, list(df[column])):
             g.run("match (smile:SMILES {SMILES:$mol}), (feat:%s)"
                   "merge (smile)-[:HAS_DESCRIPTOR {value:$value}]->(feat)" % column,

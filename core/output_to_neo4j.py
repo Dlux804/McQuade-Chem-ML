@@ -3,7 +3,7 @@ Objective: Create Neo4j graphs from files inside of "output"
 """
 import pandas as pd
 import os
-import pathlib
+from core import cypher_neo4j
 from py2neo import Graph
 from zipfile import ZipFile
 from core import misc
@@ -44,18 +44,6 @@ def value_to_list(df, headers):
     return df
 
 
-def get_batches(lst, batch_size=100):
-    return [(i, lst[i:i + batch_size]) for i in range(0, len(lst), batch_size)]
-
-
-def run_neo_query(data, query):
-    batches = get_batches(data)
-
-    for index, batch in batches:
-        print('[Batch: %s] Will add %s node to Graph' % (index, len(batch)))
-        g.run(query, rows=batch, parameters={'parameters': data})
-
-
 def access_ouput():
     """
 
@@ -70,18 +58,26 @@ def access_ouput():
                     with ZipFile(f, 'r') as zip:
                         file_list = zip.namelist()
                         json_str = "_attributes.json"
-                        csv_str = "_predictions.csv"
                         for file in file_list:
                             if json_str in file:
                                 with zip.open(file) as json_file:  # Open file in zip
                                     read_json = json_file.read()  # Load in read function
                                     data = json.loads(read_json.decode("utf-8"))  # Decode json before loading
                                     df_normalize = pd.json_normalize(data)  # Normalizing json data into dataframe
-                                    # df_data = df_normalize[['algorithm', 'dataset']]
                                     data_list = list(df_normalize.T.to_dict().values())
-                                    # tx = g.begin()
-                                    g.evaluate(query_line, parameters={'parameters': data_list})
-
+                                    feature_length = len(df_normalize['feature_list'])
+                                    test_time = df_normalize["predictions_stats.time_avg"]
+                                    train_size = len(df_normalize['target_array']) * df_normalize['train_percent']
+                                    test_size = len(df_normalize['target_array']) * df_normalize['test_percent']
+                                    algorithm = str(df_normalize['algorithm'])
+                                    print(algorithm)
+                                    tuned = str(df_normalize['tuned'])
+                                    print(tuned)
+                                    g.evaluate(cypher_neo4j.non_loop_nodes(feature_length, test_time, train_size,
+                                                                              test_size),
+                                               parameters={'parameters': data_list})
+                                    g.evaluate(cypher_neo4j.if_nodes(algorithm, tuned),
+                                               parameters={'parameters': data_list})
                             #         header = df_normalize.columns.tolist()
                             #         df_list = value_to_list(df_normalize, header)
                             #         print(df_list)

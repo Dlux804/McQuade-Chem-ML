@@ -56,7 +56,8 @@ def nodes(self):
                             tuneTime=self.tune_time, delta=self.cp_delta, n_best=self.cp_n_best, steps=self.opt_iter)
         g.merge(tuning_algorithm, "TuningAlg", "algorithm")
     else:
-        pass  # If not tuned
+        tuning_algorithm = Node("NotTuned", name="NotTuned")
+        g.merge(tuning_algorithm, "NotTuned", "name")
 
         # self.cp_delta = "Not tuned"
         # self.cp_n_best = "Not tuned"

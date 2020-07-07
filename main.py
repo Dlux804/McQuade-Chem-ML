@@ -153,8 +153,8 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='ada', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0, 2],
-                                tune=False, cv=5, opt_iter=50)
+        model1 = models.MlModel(algorithm='ada', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0],
+                                tune=False, cv=5, opt_iter=5)
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)

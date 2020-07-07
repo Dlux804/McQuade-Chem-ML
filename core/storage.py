@@ -22,19 +22,40 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
+def __clean_up_params__(params):
+    if isinstance(params, tuple):  # Check is a tuple
+        params = list(params)
+        new_params = []
+        for param in params:
+            try:
+                new_params.append(dict(vars(param)))  # Make sure item in tuple is a class
+            except TypeError:
+                new_params.append(param)
+        return new_params
+    else:
+        return params
+
+
 def __clean_up_param_grid_item__(item):
     # This function will pull attributes of out Integer and Categorical classes generated from skopt
-    d = dict(vars(item))  # Get attributes in sub-class
-    labels_to_pop = []
+
+    if isinstance(item, tuple):  # Test if tuple of classes
+        return __clean_up_params__(item)
+
+    try:  # Test if item is actually a class
+        d = dict(vars(item))  # Get attributes in sub-class
+    except TypeError:
+        return item
+
+    new_d = {}
     for label, item in d.items():
         try:
             dict(vars(item))  # Test if sub-sub attribute is also a class
-            labels_to_pop.append(label)  # If so remove it
         except TypeError:
-            pass
-    for label in labels_to_pop:
-        d.pop(label)
-    return d
+            new_d[label] = item
+        if isinstance(item, tuple):  # Test if tuple of classes
+            new_d[label] = __clean_up_params__(item)
+    return new_d
 
 
 def store(self):
@@ -70,7 +91,7 @@ def store(self):
         if isinstance(v, np.ndarray):  # Do not store numpy arrays in attributes.json
             objs.append(k)
 
-        if k == 'param_grid':  # Param grid does not behave properly,
+        if k == 'param_grid' or k == 'params':  # Param grid does not behave properly,
             new_param_grid_dict = {}
             for label, item in d[k].items():
                 new_param_grid_dict[label] = __clean_up_param_grid_item__(item)  # Cleanup each item in param_gird dict
@@ -94,7 +115,6 @@ def store(self):
     json_name = self.run_name + '_attributes' + '.json'
     with open(json_name, 'w') as f:
         json.dump(d, f, cls=NumpyEncoder)
-
 
 def pickle_model(self):
     """
@@ -156,3 +176,4 @@ def org_files(self, zip_only=False):
         else:  # Directory is not properly deleted on Linux with above code
             rmdir = os.getcwd() + '/' + self.run_name
             shutil.rmtree(rmdir, ignore_errors=True)
+

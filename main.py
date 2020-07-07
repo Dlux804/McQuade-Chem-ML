@@ -155,6 +155,7 @@ def single_model():
         # initiate model class with algorithm, dataset and target
         model1 = models.MlModel(algorithm='ada', dataset='ESOL-short.csv', target='water-sol', feat_meth=[0],
                                 tune=False, cv=2, opt_iter=2)
+
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)

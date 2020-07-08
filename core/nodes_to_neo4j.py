@@ -18,10 +18,7 @@ def prep(self):
     Calculate Node's properties that can't be obtained directly from the pipeline
     """
     smiles_list = list(self.data['smiles'])  # List of all SMILES
-    canonical_smiles = fragments.canonical_smiles(smiles_list)  # SMILES to Canonical
-    val_size = len(self.target_array) * self.val_percent  # Amount of molecules in validate dataset
-    train_size = len(self.target_array) * self.train_percent  # Amount of molecules in train dataset
-    test_size = len(self.target_array) * self.test_percent  # Amount of molecules in test dataset
+    canonical_smiles = fragments.canonical_smiles(smiles_list)
     pva = self.predictions
     predicted = list(pva['pred_avg'])  # List of predicted value for test molecules
     test_mol = list(pva['smiles'])  # List of test molecules
@@ -29,7 +26,7 @@ def prep(self):
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
     feature_length = len(self.feature_list)  # Total amount of features
-    return train_size, test_size, pva, r2, mse, rmse, feature_length, val_size, canonical_smiles, predicted, test_mol
+    return r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol
 
 
 def nodes(self):
@@ -37,8 +34,8 @@ def nodes(self):
     Create Neo4j nodes. Merge them if they already exist
     """
     print("Creating Nodes for %s" % self.run_name)
-    train_size, test_size, pva, r2, mse, rmse, feature_length, val_size, canonical_smiles, \
-                                                                                        predicted, test_mol = prep(self)
+    r2, mse, rmse, feature_length, smiles_list, predicted, test_mol = prep(self)
+
     # Make algorithm node
     if self.algorithm == "nn":
         algor = Node("Algorithm", name=self.algorithm, source="Keras", tuned=self.tuned)
@@ -48,7 +45,7 @@ def nodes(self):
         g.merge(algor, "Algorithm", "name")
 
     # Make FeatureMethod node
-    for feat in self.feat_method_name:
+    for feat in self.feat_method:
         feature_method = Node("FeatureMethod", feature=feat, name=feat)
         g.merge(feature_method, "FeatureMethod", "feature")
 
@@ -72,8 +69,8 @@ def nodes(self):
     g.merge(feature_list, "FeatureList", "num")
 
     # Make TrainSet node
-    training_set = Node("TrainSet", trainsize=train_size, name="TrainSet")
-    g.merge(training_set, "TrainSet",  "trainsize")
+    training_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet")
+    g.merge(training_set, "TrainSet", "trainsize")
 
     # Make dataset node
     dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)
@@ -86,21 +83,21 @@ def nodes(self):
     g.create(randomsplit)
 
     # Make TestSet node
-    testset = Node("TestSet", name="TestSet", RMSE=rmse, mse=mse, r2=r2, testsize=test_size)
+    testset = Node("TestSet", name="TestSet", RMSE=rmse, mse=mse, r2=r2, testsize=self.n_test)
     g.merge(testset, "TestSet", "RMSE")
 
     # Make ValidateSet node
     if self.val_percent > 0:
-        valset = Node("ValidateSet", name="ValidateSet", valsize=val_size)
+        valset = Node("ValidateSet", name="ValidateSet", valsize=self.n_val)
         g.merge(valset, "ValidateSet", "valsize")
     else:
         pass
 
     # Make nodes for all the SMILES
-    for smiles, target in zip(canonical_smiles, list(self.target_array)):
+    for smiles, target in zip(smiles_list, list(self.target_array)):
         record = g.run("""MATCH (n:SMILES {SMILES:"%s"}) RETURN n""" % smiles)
         if len(list(record)) > 0:
-            print(f"This SMILES, {smiles}, already exists. Updating its properties and relationships")
+            print(f"This SMILES, {smiles}, already exist. Updating its properties and relationships")
             g.evaluate("match (mol:SMILES {SMILES: $smiles}) set mol.measurement = mol.measurement + $target, "
                        "mol.dataset = mol.dataset + $dataset",
                        parameters={'smiles': smiles, 'target': target, 'dataset': self.dataset})

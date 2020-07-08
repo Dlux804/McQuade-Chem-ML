@@ -3,7 +3,7 @@ Objective: The goal of this script is to create relationships in Neo4j directly 
 """
 
 from py2neo import Graph, Node
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error
 import numpy as np
 from tqdm import tqdm
 from core import fragments
@@ -17,18 +17,13 @@ def prep(self):
     Calculate Node's properties that can't be obtained directly from the pipeline
     """
     smiles_list = list(self.data['smiles'])  # List of all SMILES
-    canonical_smiles = fragments.canonical_smiles(smiles_list)  # SMILES to Canonical
-    val_size = len(self.target_array) * self.val_percent  # Amount of molecules in validate dataset
-    train_size = len(self.target_array) * self.train_percent  # Amount of molecules in train dataset
-    test_size = len(self.target_array) * self.test_percent  # Amount of molecules in test dataset
+    canonical_smiles = fragments.canonical_smiles(smiles_list)
     pva = self.predictions
     predicted = list(pva['pred_avg'])  # List of predicted value for test molecules
     test_mol = list(pva['smiles'])  # List of test molecules
-    r2 = r2_score(pva['actual'], pva['pred_avg'])  # r2 values
-    mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
     feature_length = len(self.feature_list)  # Total amount of features
-    return train_size, test_size, pva, r2, mse, rmse, feature_length, val_size, canonical_smiles, predicted, test_mol
+    return rmse, feature_length, canonical_smiles, predicted, test_mol
 
 
 def relationships(self):
@@ -36,8 +31,7 @@ def relationships(self):
     Create relationships in Neo4j
     """
     print("Creating relationships...")
-    train_size, test_size, pva, r2, mse, rmse, feature_length, val_size, canonical_smiles, \
-                                                                                        predicted, test_mol = prep(self)
+    rmse, feature_length, canonical_smiles, predicted, test_mol = prep(self)
 
     # Merge RandomSplit node
     g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, "
@@ -84,17 +78,17 @@ def relationships(self):
     # MLModel to TrainingSet
     g.evaluate("match (trainset:TrainSet {trainsize: $training_size}), (model:MLModel {name: $run_name})"
                "merge (model)-[:TRAINS]->(trainset)",
-               parameters={'training_size': train_size, 'run_name': self.run_name})
+               parameters={'training_size': self.n_train, 'run_name': self.run_name})
 
     # MLModel to TestSet
     g.evaluate("match (testset:TestSet {testsize: $test_size, RMSE: $rmse}), (model:MLModel {name: $run_name})"
                "merge (model)-[:PREDICTS]->(testset)",
-               parameters={'test_size': test_size, 'rmse': rmse, 'run_name': self.run_name})
+               parameters={'test_size': self.n_test, 'rmse': rmse, 'run_name': self.run_name})
 
     # MLModel to ValidateSet
     g.evaluate("match (validate:ValidateSet {valsize: $val_size}), (model:MLModel {name: $run_name})"
                "merge (model)-[:VALIDATE]->(validate)",
-               parameters={'val_size': val_size, 'run_name': self.run_name})
+               parameters={'val_size': self.n_val, 'run_name': self.run_name})
 
     # MLModel to feature method, FeatureList to feature method
     for feat in self.feat_method_name:
@@ -111,13 +105,13 @@ def relationships(self):
                "(trainset:TrainSet {trainsize: $training_size})"
                "merge (trainset)<-[:SPLITS_INTO]-(split)-[:SPLITS_INTO]->(testset)",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
-                           'test_size': test_size, 'rmse': rmse, 'training_size': train_size})
+                           'test_size': self.n_test, 'rmse': rmse, 'training_size': self.n_train})
     # RandomSplit to Validation
     g.evaluate("match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, "
                "random_seed: $random_seed}), "
                "(validate:ValidateSet {valsize: $val_size}) merge (split)-[:SPLITS_INTO]->(validate)",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
-                           'val_size': val_size, 'random_seed': self.random_seed})
+                           'val_size': self.n_val, 'random_seed': self.random_seed})
 
     # Only create Features for rdkit2d method
     df = self.data.loc[:, 'BalabanJ':'qed']
@@ -127,20 +121,20 @@ def relationships(self):
     for train_smiles in list(self.train_molecules):
         g.evaluate("match (smile:SMILES {SMILES:$mol}), (trainset:TrainSet {trainsize: $training_size})"
                    "merge (smile)-[:CONTAINS_MOLECULES]->(trainset)",
-                   parameters={'mol': train_smiles, 'training_size': train_size})
+                   parameters={'mol': train_smiles, 'training_size': self.n_train})
 
     # Connect TestSet with its molecules
     for test_smiles, predict in zip(test_mol, predicted):
         g.evaluate("match (smiles:SMILES {SMILES:$mol}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})"
                    "merge (testset)-[:CONTAINS_MOLECULES {predicted_value: $predicted}]->(smiles)",
-                   parameters={'mol': test_smiles, 'test_size': test_size, 'rmse': rmse, 'predicted': predict})
+                   parameters={'mol': test_smiles, 'test_size': self.n_test, 'rmse': rmse, 'predicted': predict})
 
     # Connect ValidateSet with its molecules
     if self.val_percent > 0:
         for val_smiles in list(self.val_molecules):
             g.evaluate("match (smile:SMILES {SMILES:$mol}), (validate:ValidateSet {valsize: $val_size})"
                        "merge (smile)-[:CONTAINS_MOLECULES]->(validate)",
-                       parameters={'mol': val_smiles, 'val_size': val_size})
+                       parameters={'mol': val_smiles, 'val_size': self.n_val})
     else:
         pass
 
@@ -162,4 +156,4 @@ def relationships(self):
                 WITH r.name AS name, COLLECT(r) AS rell, COUNT(*) AS count
                 WHERE count > 1
                 CALL apoc.refactor.mergeRelationships(rell) YIELD rel
-                RETURN rel""" % train_size)
+                RETURN rel""" % self.n_train)

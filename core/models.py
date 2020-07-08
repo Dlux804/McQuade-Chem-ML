@@ -10,7 +10,7 @@ from numpy.random import randint
 from core import name
 from core.nodes_to_neo4j import nodes
 from core.rel_to_neo4j import relationships
-from core.fragments import self_smiles, canonical_smiles, generate_fragments
+from core.fragments import self_smiles, canonical_smiles, fragments_to_neo
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
 
@@ -117,5 +117,5 @@ class MlModel:  # TODO update documentation here
         # Create Neo4j graphs from pipeline
         nodes(self)  # Create nodes
         relationships(self)  # Create relationships
-        a = canonical_smiles(self_smiles(self))
-        print(''.join(next(a)))
+        smiles = canonical_smiles(self_smiles(self))
+        fragments_to_neo(smiles)

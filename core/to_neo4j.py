@@ -104,7 +104,7 @@ def nodes(self):
     for smiles, target in zip(smiles_list, list(self.target_array)):
         record = g.run("""MATCH (n:SMILES {SMILES:"%s"}) RETURN n""" % smiles)
         if len(list(record)) > 0:
-            print(f"This SMILES, {smiles}, already exist. Updating its relationship")
+            print(f"This SMILES, {smiles}, already exist. Updating its properties and relationships")
             g.evaluate("match (mol:SMILES {SMILES: $smiles}) set mol.measurement = mol.measurement + $target, "
                        "mol.dataset = mol.dataset + $dataset",
                        parameters={'smiles': smiles, 'target': target, 'dataset': self.dataset})
@@ -127,12 +127,18 @@ def relationships(self):
     g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, "
                "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
                "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
-
-    # # MLModel to Algorithm
-    g.evaluate("match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})"
-               "merge (model)-[:USES_ALGORITHM {params: $params}]->(algor)",
-               parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'params': self.params})
-
+    #
+    if self.tuned:
+        # MLModel to Algorithm
+        param_dict = dict(self.params)
+        for key in param_dict:
+            g.evaluate("match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})"
+                       "merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = $params" % key,
+                       parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'params': param_dict[key]})
+    else:
+        g.evaluate("match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})"
+                   "merge (model)-[r:USES_ALGORITHM]->(algor)",
+                   parameters={'algorithm': self.algorithm, 'run_name': self.run_name})
     # Algorithm to TuningAlg
     if self.tuned:
         g.evaluate("match (tuning_alg:TuningAlg {tuneTime: $tune_time}), (algor:Algorithm {name: $algorithm})"
@@ -210,7 +216,7 @@ def relationships(self):
     for test_smiles, predict in zip(test_mol, predicted):
         g.evaluate("match (smiles:SMILES {SMILES:$mol}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})"
                    "merge (testset)-[:CONTAINS_MOLECULES {predicted_value: $predicted}]->(smiles)",
-                   parameters={'mol': test_smiles, 'test_size': test_size, 'rmse': rmse, 'predicted': predicted})
+                   parameters={'mol': test_smiles, 'test_size': test_size, 'rmse': rmse, 'predicted': predict})
 
     # Connect ValidateSet with its molecules
     if self.val_percent > 0:

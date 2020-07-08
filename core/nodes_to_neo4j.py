@@ -5,7 +5,7 @@ Objective: The goal of this script is to create nodes in Neo4j directly from the
 from py2neo import Graph, Node
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
-from rdkit import Chem
+from core import fragments
 
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
@@ -18,7 +18,7 @@ def prep(self):
     Calculate Node's properties that can't be obtained directly from the pipeline
     """
     smiles_list = list(self.data['smiles'])  # List of all SMILES
-    canonical_smiles = list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
+    canonical_smiles = fragments.canonical_smiles(smiles_list)  # SMILES to Canonical
     val_size = len(self.target_array) * self.val_percent  # Amount of molecules in validate dataset
     train_size = len(self.target_array) * self.train_percent  # Amount of molecules in train dataset
     test_size = len(self.target_array) * self.test_percent  # Amount of molecules in test dataset
@@ -48,7 +48,7 @@ def nodes(self):
         g.merge(algor, "Algorithm", "name")
 
     # Make FeatureMethod node
-    for feat in self.feat_method:
+    for feat in self.feat_method_name:
         feature_method = Node("FeatureMethod", feature=feat, name=feat)
         g.merge(feature_method, "FeatureMethod", "feature")
 
@@ -100,7 +100,7 @@ def nodes(self):
     for smiles, target in zip(canonical_smiles, list(self.target_array)):
         record = g.run("""MATCH (n:SMILES {SMILES:"%s"}) RETURN n""" % smiles)
         if len(list(record)) > 0:
-            print(f"This SMILES, {smiles}, already exist. Updating its properties and relationships")
+            print(f"This SMILES, {smiles}, already exists. Updating its properties and relationships")
             g.evaluate("match (mol:SMILES {SMILES: $smiles}) set mol.measurement = mol.measurement + $target, "
                        "mol.dataset = mol.dataset + $dataset",
                        parameters={'smiles': smiles, 'target': target, 'dataset': self.dataset})

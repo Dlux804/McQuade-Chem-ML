@@ -165,9 +165,36 @@ def data_split(self, test=0.2, val=0, random=None):
         self.n_test = self.test_features.shape[0]
         ptest = self.n_test / n_total * 100
 
-        self.n_val = self.val_features.shape[0]
-        pval = self.n_val / n_total * 100
+    # Logic to seperate data in test/train/val
+    def __fetch_set__(smiles):
+        if smiles in self.test_molecules:
+            return 'test'
+        elif smiles in self.train_molecules:
+            return 'train'
+        else:
+            return 'val'
 
-        print(
-            'The dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
-                n_total, ptrain, pval, ptest))
+    self.data['in_set'] = self.data['smiles'].apply(__fetch_set__)
+    cols = list(self.data.columns)
+    cols.remove('in_set')
+    self.data = self.data[['in_set', *cols]]
+
+        # return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
+
+    # Uncomment this section to have data shape distribution printed.
+
+    # print('Total Feature Shape:', features.shape)
+    # print('Total Target Shape', target.shape)
+    # print()
+    # print('Training Features Shape:', train_features.shape)
+    # print('Training Target Shape:', train_target.shape)
+    # print()
+    # print('Test Features Shape:', test_features.shape)
+    # print('Test Target Shape:', test_target.shape)
+    # print()
+    #
+    # print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
+    #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))
+    #     print(
+    #         'The dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
+    #             n_total, ptrain, pval, ptest))

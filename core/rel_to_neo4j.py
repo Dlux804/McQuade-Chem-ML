@@ -6,7 +6,7 @@ from py2neo import Graph, Node
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 from tqdm import tqdm
-from rdkit import Chem
+from core import fragments
 
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
@@ -17,7 +17,7 @@ def prep(self):
     Calculate Node's properties that can't be obtained directly from the pipeline
     """
     smiles_list = list(self.data['smiles'])  # List of all SMILES
-    canonical_smiles = list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
+    canonical_smiles = fragments.canonical_smiles(smiles_list)  # SMILES to Canonical
     val_size = len(self.target_array) * self.val_percent  # Amount of molecules in validate dataset
     train_size = len(self.target_array) * self.train_percent  # Amount of molecules in train dataset
     test_size = len(self.target_array) * self.test_percent  # Amount of molecules in test dataset
@@ -97,7 +97,7 @@ def relationships(self):
                parameters={'val_size': val_size, 'run_name': self.run_name})
 
     # MLModel to feature method, FeatureList to feature method
-    for feat in self.feat_method:
+    for feat in self.feat_method_name:
         g.evaluate("match (method:FeatureMethod {feature: $feat}), (model:MLModel {name: $run_name}) "
                    "merge (model)-[:USES_FEATURIZATION]->(method)",
                    parameters={'feat': feat, 'run_name': self.run_name})

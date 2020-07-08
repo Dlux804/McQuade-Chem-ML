@@ -169,6 +169,20 @@ def data_split(self, test=0.2, val=0, random=None):
     print('Dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
             self.n_tot, ptrain, pval, ptest))
 
+    # Logic to seperate data in test/train/val
+    def __fetch_set__(smiles):
+        if smiles in self.test_molecules:
+            return 'test'
+        elif smiles in self.train_molecules:
+            return 'train'
+        else:
+            return 'val'
+
+    self.data['in_set'] = self.data['smiles'].apply(__fetch_set__)
+    cols = list(self.data.columns)
+    cols.remove('in_set')
+    self.data = self.data[['in_set', *cols]]
+
         # return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
 
     # Uncomment this section to have data shape distribution printed.

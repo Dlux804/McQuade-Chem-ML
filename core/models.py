@@ -8,7 +8,8 @@ import subprocess
 import shutil
 from numpy.random import randint
 from core import name
-from core.to_neo4j import nodes, relationships
+from core.nodes_to_neo4j import nodes
+from core.rel_to_neo4j import relationships
 
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')

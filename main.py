@@ -29,7 +29,7 @@ def main():
 
 
         #datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
-        datasets = ['sider.csv'] # Use this line to test specific data sets instead of having to iterate
+        datasets = ['clintox.csv'] # Use this line to test specific data sets instead of having to iterate
 
     # Sets up learner, featurizations, and data sets for regression
     if c == 'r':
@@ -197,6 +197,6 @@ def example_load():
 
 
 if __name__ == "__main__":
-    # main()
-    single_model()
+     main()
+    #single_model()
     # example_load()

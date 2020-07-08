@@ -62,6 +62,7 @@ def featurize(self):
     # store data back into the instance
     self.data = df
     self.feat_time = feat_time
+    self.feat_method_name = selected_feat
 
 
 def data_split(self, test=0.2, val=0, random=None):

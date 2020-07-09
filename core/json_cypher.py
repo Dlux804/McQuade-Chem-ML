@@ -1,5 +1,5 @@
 """
-Objective: Create Cypher lines that import data from input files to Neo4j graphs
+Objective: Create Cypher lines that import data from _attributes.json files to Neo4j graphs
 """
 
 from py2neo import Graph, Node
@@ -7,51 +7,34 @@ from py2neo import Graph, Node
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
 
-def non_loop_graph(data_list, feature_length, test_time, train_size, test_size):
-    """
-
-    :param data_list:
-    :param feature_length:
-    :param test_time:
-    :param train_size:
-    :param test_size:
-    :return:
-    """
-    # TODO: Add test_time, r2, rmse, mse
+def non_loop_graph(data_list, df_from_attributes):
+    """"""
+    feature_length = len(df_from_attributes['feature_list'])  # feature length
+    test_time = df_from_attributes["predictions_stats.time_avg"]  # test time
     query_line = """ 
         UNWIND $parameters as rows
 
         merge (model:MLModel {name:rows.run_name, feat_time:rows.feat_time, date:rows.date, train_time:rows.tune_time,
                                 test_time:%f})
         merge (featurelist:FeatureList {name:"FeatureList", num:%d})
-        merge (trainset:TrainSet {trainsize:%f, name:"TrainSet"})
-        merge (testset:TestSet {name:"TestSet", testsize:%f})
-        merge (dataset:DataSet {name:"Dataset", source:"Moleculenet", data:rows.dataset, measurement:rows.target_name})
+        merge (dataset:DataSet {name:"Dataset", source:"Moleculenet", data:rows.dataset, target_col:rows.target_name})
         merge (randomsplit:RandomSplit {name:"RandomSplit", test_percent:rows.test_percent,
                        train_percent:rows.train_percent, random_seed:rows.random_seed,
                        val_percent:rows.val_percent})
         merge (model)-[:USES_DATASET]->(dataset)
         merge (model)-[:USES_FEATURES]->(featurelist)
         merge (model)-[:USES_SPLIT]->(randomsplit)
-        merge (model)-[:TRAINS]->(trainset)
-        merge (model)-[:TRAINS]->(testset)
-        merge (trainset)<-[:SPLITS_INTO]-(randomsplit)-[:SPLITS_INTO]->(testset)
         
-    """ % (feature_length, test_time, train_size, test_size)
+    """ % (feature_length, test_time)
 
     g.evaluate(query_line, parameters={'parameters': data_list})
 
 
-def if_nodes(data_list, algorithm, tuned, val_size):
-    """
-
-    :param data_list:
-    :param algorithm:
-    :param tuned:
-    :param val_size:
-    :return:
-    """
+def if_nodes(data_list, df_from_attributes):
+    """"""
     # Algorithm
+    algorithm = str(df_from_attributes['algorithm'])  # algorithm
+    tuned = str(df_from_attributes['tuned'])  # tuned or not
     if algorithm == "nn":
         algorithm_line = """
         UNWIND $parameters as rows
@@ -64,7 +47,7 @@ def if_nodes(data_list, algorithm, tuned, val_size):
         UNWIND $parameters as rows
         match (model:MLModel {name:rows.run_name, feat_time:rows.feat_time, date:rows.date, train_time:rows.tune_time})
         merge (algor:Algorithm {name: rows.algorithm, source: "sklearn", tuned: rows.tuned})
-        merge (model)-[:USES_ALGORITHM {rows.params}]->(algor)
+        merge (model)-[:USES_ALGORITHM]->(algor)
                 """
     g.evaluate(algorithm_line, parameters={'parameters': data_list})
 
@@ -86,26 +69,12 @@ def if_nodes(data_list, algorithm, tuned, val_size):
         merge (algor)-[:USES_TUNING]->(tuningalg)
         """
     g.evaluate(tune_line, parameters={'parameters': data_list})
-    print(val_size)
-
-    # Validation
-    if val_size > 0.0:
-        val_line = """
-        UNWIND $parameters as rows
-        match (model:MLModel {name:rows.run_name, feat_time:rows.feat_time, date:rows.date, train_time:rows.tune_time}),
-        (randomsplit:RandomSplit {name:"RandomSplit", test_percent:rows.test_percent,
-                       train_percent:rows.train_percent, random_seed:rows.random_seed})
-        merge (validate:ValidateSet {name:"ValidateSet", valsize:%f})
-        merge (model)-[:VALIDATE]->(validate)
-        merge (randomsplit)-[:SPLITS_INTO]->(validate)
-        
-        """ % val_size
-    else:
-        pass
 
 
-def feature_method_node(feat_name, feature_length):
+def feature_method_node(df_from_attributes):
     """"""
+    feat_name = list(df_from_attributes['feat_method_name'])  # feature method
+    feature_length = len(df_from_attributes['feature_list'])  # feature length
     for feat in feat_name:
         feature_method = """
         UNWIND $parameters as rows

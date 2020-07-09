@@ -45,7 +45,7 @@ def nodes(self):
         g.merge(algor, "Algorithm", "name")
 
     # Make FeatureMethod node
-    for feat in self.feat_method:
+    for feat in self.feat_method_name:
         feature_method = Node("FeatureMethod", feature=feat, name=feat)
         g.merge(feature_method, "FeatureMethod", "feature")
 
@@ -69,8 +69,8 @@ def nodes(self):
     g.merge(feature_list, "FeatureList", "num")
 
     # Make TrainSet node
-    training_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet")
-    g.merge(training_set, "TrainSet", "trainsize")
+    train_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet")
+    g.merge(train_set, "TrainSet", "trainsize")
 
     # Make dataset node
     dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)

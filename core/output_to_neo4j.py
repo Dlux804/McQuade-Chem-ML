@@ -7,7 +7,7 @@ from py2neo import Graph
 from zipfile import ZipFile
 from core import misc
 import json
-from core import data_nodes_to_neo4j, data_rel_to_neo4j, prep_from_outputs
+from core import output_nodes_to_neo4j, output_rel_to_neo4j, prep_from_outputs
 
 # TODO: Add documentation
 
@@ -68,8 +68,8 @@ def output_to_neo4j():
         df_from_predictions = next(predictions_csv_generator)
         prep = prep_from_outputs.Prep(df_from_attributes, df_from_predictions, df_from_data)
         # print(prep.n_test)
-        data_nodes_to_neo4j.nodes(prep)
-        data_rel_to_neo4j.relationships(prep)
+        output_nodes_to_neo4j.nodes(prep)
+        output_rel_to_neo4j.relationships(prep)
 
 # output_to_neo4j()
 

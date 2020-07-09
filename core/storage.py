@@ -11,6 +11,7 @@ import platform
 from time import sleep
 import shutil
 
+
 class NumpyEncoder(json.JSONEncoder):
     """
     Modifies JSONEncoder to convert numpy arrays to lists first.
@@ -119,6 +120,7 @@ def store(self):
     json_name = self.run_name + '_attributes' + '.json'
     with open(json_name, 'w') as f:
         json.dump(d, f, cls=NumpyEncoder)
+
 
 def pickle_model(self):
     """

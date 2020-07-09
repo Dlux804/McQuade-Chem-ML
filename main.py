@@ -28,8 +28,8 @@ def main():
         #learner = [] # Use this line to test specific models instead of iterating
 
 
-        #datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
-        datasets = ['sider.csv'] # Use this line to test specific data sets instead of having to iterate
+        datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'bace.csv']
+        #datasets = ['clintox.csv'] # Use this line to test specific data sets instead of having to iterate
 
     # Sets up learner, featurizations, and data sets for regression
     if c == 'r':
@@ -98,7 +98,6 @@ def main():
 
                 if c == 'c':
                     for data in datasets:
-
                         # The following if statements allow for multi-label classification
                         if data == 'sider.csv':
                             targets = ['Hepatobiliary disorders', 'Metabolism and nutrition disorders', 'Product issues', 'Eye disorders', 'Investigations', 'Musculoskeletal and connective tissue disorders', 'Gastrointestinal disorders',
@@ -110,11 +109,9 @@ def main():
                         if data == 'clintox.csv':
                             targets = ['FDA_APPROVED', 'CT_TOX']
                         if data == 'BBBP.csv':
-                            targets = ['p_np']
-                        if data == 'HIV.csv':
-                            targets = ['HIV_active']
+                            targets = 'p_np'
                         if data == 'bace.csv':
-                            targets = ['Class']
+                            targets = 'Class'
 
                         if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
                             pass
@@ -199,6 +196,6 @@ def example_load():
 
 
 if __name__ == "__main__":
-    # main()
-    single_model()
+     main()
+    #single_model()
     # example_load()

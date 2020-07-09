@@ -2,11 +2,12 @@
 Objective: The goal of this script is to create relationships in Neo4j directly from the pipeline using class instances
 """
 
-from py2neo import Graph, Node
+from py2neo import Graph
 from sklearn.metrics import mean_squared_error
 import numpy as np
-from tqdm import tqdm
 from core import fragments
+
+# TODO: Add documentation
 
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
@@ -137,19 +138,6 @@ def relationships(self):
                        parameters={'mol': val_smiles, 'val_size': self.n_val})
     else:
         pass
-
-    # Create nodes and relationships between features, feature methods and SMILES
-    for column in tqdm(columns, desc="Creating relationships between SMILES and features"):
-        # Create nodes for features
-        features = Node(column, name=column)
-        # Merge relationship
-        g.merge(features, column, "name")
-        g.evaluate("""match (rdkit2d:FeatureMethod {feature:"rdkit2d"}), (feat:%s) 
-                    merge (rdkit2d)-[:CALCULATES]->(feat)""" % column)
-        for mol, value in zip(canonical_smiles, list(df[column])):
-            g.run("match (smile:SMILES {SMILES:$mol}), (feat:%s)"
-                  "merge (smile)-[:HAS_DESCRIPTOR {value:$value}]->(feat)" % column,
-                  parameters={'mol': mol, 'value': value})
 
     # Merge "SPLITS_INTO" relationship between RandomSplit and TrainSet
     g.evaluate("""MATCH (:RandomSplit)-[r:SPLITS_INTO]-(:TrainSet {trainsize:%d})

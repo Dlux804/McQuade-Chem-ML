@@ -15,7 +15,6 @@ def get_classifier(self):
     if self.algorithm in skl_cls.keys():
         self.regressor = skl_cls[self.algorithm]()
         # TODO refactor self.regressor to something more general (learner? method? algorithm? ESTIMATOR)
-        self.task_type = 'classification'
     else:
         pass
 

@@ -13,8 +13,8 @@ from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
 
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
-cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
-
+single_label_cds = ['BBBP.csv', 'bace.csv']
+multi_label_cds = ['sider.csv', 'clintox.csv']
 
 class MlModel:  # TODO update documentation here
     """
@@ -37,10 +37,12 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
-        multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
+
         # Sets self.task_type based on which dataset is being used.
-        if self.dataset in cds:
-            self.task_type = 'classification'
+        if self.dataset in single_label_cds:
+            self.task_type = 'single_label_classification'
+        elif self.dataset in multi_label_cds:
+            self.task_type = 'multi_label_classification'
         elif self.dataset in rds:
             self.task_type = 'regression'
         else:
@@ -63,7 +65,7 @@ class MlModel:  # TODO update documentation here
         # ingest data.  collect full data frame (self.data)
         # collect pandas series of the SMILES (self.smiles_col)
 
-        if self.dataset in multi_label_classification_datasets:
+        if self.task_type == 'multi_label_classification':
             self.data, self.smiles_series = ingest.load_smiles(self, dataset, drop = False) # Makes drop = False for multi-target classification
         else:
             self.data, self.smiles_series = ingest.load_smiles(self, dataset)
@@ -84,7 +86,7 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'regression':
             self.get_regressor(call=False) # returns instantiated model estimator
 
-        if self.task_type == 'classification':
+        if self.task_type == 'single_label_classification' or 'multi_label_classification':
             self.get_classifier()
 
     def run(self):
@@ -98,7 +100,7 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'regression':
             self.train_reg()
 
-        if self.task_type == 'classification':
+        if self.task_type == 'single_label_classification' or 'multi_label_classification':
             self.train_cls()
 
     def analyze(self):

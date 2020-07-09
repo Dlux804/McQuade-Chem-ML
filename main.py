@@ -93,8 +93,10 @@ def main():
                             if model1.algorithm != 'nn':
                                 model1.pickle_model()
 
-                            model1.export_json()
+                            model1.store()
                             model1.org_files(zip_only=True)
+
+
 
                 if c == 'c':
                     for data in datasets:

@@ -150,7 +150,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='nn', dataset='ESOL-short.csv', target='water-sol', feat_meth=[0],
+        model1 = models.MlModel(algorithm='rf', dataset='ESOL-short.csv', target='water-sol', feat_meth=[0],
                                 tune=True, cv=2, opt_iter=2)
 
         print('done.')
@@ -164,14 +164,14 @@ def single_model():
         model1.data_split(val=0.5)
         model1.reg()
         model1.run()
-        model1.analyze()
-        if model1.algorithm != 'nn':  # issues pickling NN models
-            model1.pickle_model()
-
-        model1.store()
-        model1.org_files(zip_only=True)
+        # model1.analyze()
+        # if model1.algorithm != 'nn':  # issues pickling NN models
+        #     model1.pickle_model()
+        #
+        # model1.store()
+        # model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        # model1.to_neo4j()
+        model1.to_neo4j()
 
 
 def example_load():
@@ -196,6 +196,6 @@ def example_load():
 
 
 if __name__ == "__main__":
-     main()
-    #single_model()
+     # main()
+    single_model()
     # example_load()

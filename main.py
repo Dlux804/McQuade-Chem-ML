@@ -77,7 +77,7 @@ def main():
                             print('Initializing model...', end=' ', flush=True)
                             # initiate model class with algorithm, dataset and target
                             model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                    tune=True, cv=3, opt_iter=25)
+                                                    tune=False, cv=3, opt_iter=25)
                             print('Done.\n')
 
                         with cd('dataFiles'):  # Have files output to output

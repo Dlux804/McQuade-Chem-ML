@@ -3,27 +3,15 @@ Objective: Create Neo4j graphs from files inside of "output"
 """
 import pandas as pd
 import os
-from core import json_cypher, split_smiles_to_neo4j, features_to_neo4j
 from py2neo import Graph
 from zipfile import ZipFile
 from core import misc
 import json
+from core import data_nodes_to_neo4j, data_rel_to_neo4j, prep_from_outputs
+
+# TODO: Add documentation
 
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
-
-
-def dataframe_section(dataframe, split):
-    """
-    Create a smaller dataframe based on their split
-    :param dataframe: _data.csv dataframe
-    :param value: a string that is either: train, test or val
-    :return: A smaller dataframe that only contains the "split" string on its "in_set" column
-    """
-    split = ''.join([split[0].lower(), split[1:]])
-    df = dataframe.loc[dataframe['in_set'] == split]
-    df = df.reset_index(drop=True)
-    df = df.drop(['Unnamed: 0'], axis=1)
-    return df
 
 
 def file_count():
@@ -62,36 +50,28 @@ def get_file(file_string):
                             if file_string in file and file_string == "_data.csv":
                                 df_from_data = pd.read_csv(zip.open(file))
                                 yield df_from_data
+                            if file_string in file and file_string == "_predictions.csv":
+                                df_from_predictions = pd.read_csv(zip.open(file))
+                                yield df_from_predictions
 
 
 def output_to_neo4j():
     """"""
     json_generator = get_file('_attributes.json')
-    csv_generator = get_file('_data.csv')
+    data_csv_generator = get_file('_data.csv')
+    predictions_csv_generator = get_file("_predictions.csv")
     for i in range(file_count()):
         # Json dataframe
         df_from_attributes = next(json_generator)
         # pandas dataframe
-        df_from_data = next(csv_generator)
-        data_list = list(df_from_attributes.T.to_dict().values())  # List of dictionary from json attributes
-        json_cypher.non_loop_graph(data_list, df_from_attributes)
-        json_cypher.if_nodes(data_list, df_from_attributes)
-        json_cypher.feature_method_node(df_from_attributes)
-        val_percent = float(df_from_attributes['val_percent'])
-        train_test_val = ['Train', 'Test', 'Val']
-        if val_percent > 0.0:
-            for split in train_test_val:
-                split_df = dataframe_section(df_from_data, split)
-                split_smiles_to_neo4j.split_to_neo(split_df, df_from_attributes, data_list, split)
-        else:
-            train_test_val.remove('Val')
-            for split in train_test_val:
-                split_df = dataframe_section(df_from_data, split)
-                split_smiles_to_neo4j.split_to_neo(split_df, df_from_attributes, data_list, split)
-        features_to_neo4j(df_from_attributes, df_from_attributes)
+        df_from_data = next(data_csv_generator)
+        df_from_predictions = next(predictions_csv_generator)
+        prep = prep_from_outputs.Prep(df_from_attributes, df_from_predictions, df_from_data)
+        # print(prep.n_test)
+        data_nodes_to_neo4j.nodes(prep)
+        data_rel_to_neo4j.relationships(prep)
 
-# print(df_from_attributes)
-output_to_neo4j()
+# output_to_neo4j()
 
 
 

@@ -6,7 +6,7 @@ from py2neo import Graph, Node
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 from core import fragments
-
+from tqdm import tqdm
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
@@ -34,7 +34,7 @@ def nodes(self):
     Create Neo4j nodes. Merge them if they already exist
     """
     print("Creating Nodes for %s" % self.run_name)
-    r2, mse, rmse, feature_length, smiles_list, predicted, test_mol = prep(self)
+    r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol = prep(self)
 
     # Make algorithm node
     if self.algorithm == "nn":
@@ -94,7 +94,7 @@ def nodes(self):
         pass
 
     # Make nodes for all the SMILES
-    for smiles, target in zip(smiles_list, list(self.target_array)):
+    for smiles, target in zip(canonical_smiles, list(self.target_array)):
         record = g.run("""MATCH (n:SMILES {SMILES:"%s"}) RETURN n""" % smiles)
         if len(list(record)) > 0:
             print(f"This SMILES, {smiles}, already exist. Updating its properties and relationships")
@@ -107,3 +107,20 @@ def nodes(self):
             g.evaluate("match (mol:SMILES {SMILES: $smiles}) set mol.measurement = [$target],"
                        "mol.dataset = [$dataset]",
                        parameters={'smiles': smiles, 'target': target, 'dataset': self.dataset})
+
+    # Only create Features for rdkit2d method
+    df = self.data.loc[:, 'BalabanJ':'qed']
+    columns = list(df.columns)
+
+    # Create nodes and relationships between features, feature methods and SMILES
+    for column in tqdm(columns, desc="Creating relationships between SMILES and features"):
+        # Create nodes for features
+        features = Node(column, name=column)
+        # Merge relationship
+        g.merge(features, column, "name")
+        g.evaluate("""match (rdkit2d:FeatureMethod {feature:"rdkit2d"}), (feat:%s) 
+                        merge (rdkit2d)-[:CALCULATES]->(feat)""" % column)
+        for mol, value in zip(canonical_smiles, list(df[column])):
+            g.run("match (smile:SMILES {SMILES:$mol}), (feat:%s)"
+                  "merge (smile)-[:HAS_DESCRIPTOR {value:$value}]->(feat)" % column,
+                  parameters={'mol': mol, 'value': value})

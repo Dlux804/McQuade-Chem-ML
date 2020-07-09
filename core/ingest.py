@@ -2,6 +2,7 @@ import pandas as pd
 from rdkit import Chem
 import cirpy
 
+
 def load_smiles(self, file, drop=True):
     """ Find SMILES in CSV.  Return DataFrame and Series of SMILES.
 
@@ -14,7 +15,7 @@ def load_smiles(self, file, drop=True):
             pd.DataFrame(list(map(Chem.MolFromSmiles, csv[i])))
             smiles_col = csv[i]
 
-        except Exception:  # TODO: suppress these SMILES Parse Error
+        except Exception:
             pass
     # rename the column with SMILES to 'smiles'
     csv = csv.rename(columns={smiles_col.name: "smiles"})
@@ -22,6 +23,7 @@ def load_smiles(self, file, drop=True):
         csv = csv[['smiles', self.target_name]]
 
     return csv, smiles_col
+
 
 def resolveID(file,column):  # TODO Consider incorporation of this function in load_csv()
     """ Resolves chemical ID using cripy package from NCI.

@@ -3,6 +3,7 @@ from rdkit.Chem import MolFromSmiles, MolToMolBlock
 import xml.etree.cElementTree as ET
 from lxml import etree
 import shutil
+import pandas as pd
 
 
 def QsarDB_export(self, zip_output=False):
@@ -55,8 +56,36 @@ def QsarDB_export(self, zip_output=False):
         ET.SubElement(comp, "Id").text = compound["id"]
         ET.SubElement(comp, "Cargos").text = "smiles molfile"
 
+    def __model_to_pmml__():
+
+        from sklearn2pmml import PMMLPipeline
+        pipeline = PMMLPipeline([
+            ("regressor", self.regressor)
+        ])
+
+        from sklearn2pmml import sklearn2pmml
+        sklearn2pmml(pipeline, "pmml", with_repr=True)
+
+        import re
+
+        # Read in the file
+        with open('pmml', 'r') as file:
+            filedata = file.read()
+
+        m = re.findall('"x\-?\d+"', filedata)
+        matches = []
+        [matches.append(x) for x in m if x not in matches]
+        feature_cols = list(data_df.columns.difference(["in_set", "smiles", "id", self.target_name]))
+        matched_dict = dict(zip(matches, feature_cols))
+        print(matched_dict)
+
+        # Write the file out again
+        with open('pmml', 'w') as file:
+            file.write(filedata)
+
     # Get current directory, change in qdb directory
     cur_dir = __mkd__(f'{self.run_name}_qdb')
+    non_descriptors_columns = ['smiles', 'id', 'in_set', self.target_name]
 
     # Gather all data (without validation data), testing data, and training data
     data_df = self.data
@@ -80,7 +109,6 @@ def QsarDB_export(self, zip_output=False):
 
     # Work on descriptors directory
     main_dir = __mkd__('descriptors')
-    non_descriptors_columns = ['smiles', 'id', 'in_set', self.target_name]
     root = ET.Element("DescriptorRegistry", xmlns="http://www.qsardb.org/QDB")
     for col in data_df.columns:
         if col not in non_descriptors_columns:
@@ -127,13 +155,9 @@ def QsarDB_export(self, zip_output=False):
     os.chdir(main_dir)
 
     # Work on models
-    main_dir = __mkd__('models')
-    model_dir = __mkd__(self.algorithm)
-    with open('bibtex', 'w') as f:  # Holding for writing bibtex later on
-        pass
-    with open('pmml', 'w') as f:  # Holding to better understand ppml
-        pass
-    os.chdir(model_dir)
+    __mkd__('models')
+
+    # Make models.xml
     root = ET.Element("ModelRegistry", xmlns="http://www.qsardb.org/QDB")
     model = ET.SubElement(root, "Model")
     ET.SubElement(model, "Id").text = self.algorithm
@@ -141,7 +165,8 @@ def QsarDB_export(self, zip_output=False):
     ET.SubElement(model, "Cargos").text = "pmml bibtex"
     ET.SubElement(model, "PropertyId").text = self.target_name
     __root_to_xml__(root, "models.xml")
-    os.chdir(main_dir)
+    __mkd__(self.algorithm)
+    __model_to_pmml__()
 
     # Switch back to original directory
     os.chdir(cur_dir)

@@ -28,6 +28,7 @@ class MlModel:  # TODO update documentation here
     from core.classifiers import get_classifier
     from core.storage import store, org_files, pickle_model, unpickle_model
     from core.qsardq_export import QsarDB_export
+    from core.model_to_neo4j import export_neo4j
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """

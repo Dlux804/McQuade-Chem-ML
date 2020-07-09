@@ -14,8 +14,7 @@ from core.fragments import self_smiles, canonical_smiles, fragments_to_neo
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.*')
 
-rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'ESOL-short.csv',
-       'Lipo-short.csv']
+rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
 cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
 
 

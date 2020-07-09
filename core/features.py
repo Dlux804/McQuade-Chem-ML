@@ -87,7 +87,6 @@ def data_split(self, test=0.2, val=0, random=None):
 
     # remove targets from features
     # axis 1 is the columns.
-    # TODO Collect and store the molecules in train, test and validation data sets
     if self.task_type == 'classification':
         self.target_name.extend(["smiles"])
         features = self.data.drop(self.target_name, axis=1)
@@ -120,6 +119,7 @@ def data_split(self, test=0.2, val=0, random=None):
                                                                                                     self.target_array,
                                                                                                     test_size=self.test_percent,
                                                                                                     random_state=self.random_seed)
+    self.raw_train_features = self.train_features
     # Define smiles that go with the different sets
     self.train_molecules, self.test_molecules, temp_train_target, temp_test_target = train_test_split(
                                                                                                     molecules_array,

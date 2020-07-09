@@ -28,8 +28,8 @@ def main():
         #learner = [] # Use this line to test specific models instead of iterating
 
 
-        #datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
-        datasets = ['sider.csv'] # Use this line to test specific data sets instead of having to iterate
+        datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'bace.csv']
+        #datasets = ['clintox.csv'] # Use this line to test specific data sets instead of having to iterate
 
     # Sets up learner, featurizations, and data sets for regression
     if c == 'r':
@@ -77,7 +77,7 @@ def main():
                             print('Initializing model...', end=' ', flush=True)
                             # initiate model class with algorithm, dataset and target
                             model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                    tune=True, cv=3, opt_iter=25)
+                                                    tune=False, cv=3, opt_iter=25)
                             print('Done.\n')
 
                         with cd('dataFiles'):  # Have files output to output
@@ -93,12 +93,11 @@ def main():
                             if model1.algorithm != 'nn':
                                 model1.pickle_model()
 
-                            model1.export_json()
+                            model1.store()
                             model1.org_files(zip_only=True)
 
                 if c == 'c':
                     for data in datasets:
-
                         # The following if statements allow for multi-label classification
                         if data == 'sider.csv':
                             targets = ['Hepatobiliary disorders', 'Metabolism and nutrition disorders', 'Product issues', 'Eye disorders', 'Investigations', 'Musculoskeletal and connective tissue disorders', 'Gastrointestinal disorders',
@@ -110,11 +109,9 @@ def main():
                         if data == 'clintox.csv':
                             targets = ['FDA_APPROVED', 'CT_TOX']
                         if data == 'BBBP.csv':
-                            targets = ['p_np']
-                        if data == 'HIV.csv':
-                            targets = ['HIV_active']
+                            targets = 'p_np'
                         if data == 'bace.csv':
-                            targets = ['Class']
+                            targets = 'Class'
 
                         if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
                             pass
@@ -197,6 +194,6 @@ def example_load():
 
 
 if __name__ == "__main__":
-    # main()
-    single_model()
+     main()
+    #single_model()
     # example_load()

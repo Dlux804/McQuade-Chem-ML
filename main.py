@@ -146,30 +146,33 @@ def single_model():
     :return: None
     """
 
-    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
-        print('Now in:', os.getcwd())
-        print('Initializing model...', end=' ', flush=True)
-        # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='ada', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                                tune=True, cv=5, opt_iter=5)
-        print('done.')
-        print('Model Type:', model1.algorithm)
-        print('Featurization:', model1.feat_meth)
-        print('Dataset:', model1.dataset)
-        print()
+    # with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+    #     print('Now in:', os.getcwd())
+    #     print('Initializing model...', end=' ', flush=True)
+    #     # initiate model class with algorithm, dataset and target
+    #     model1 = models.MlModel(algorithm='ada', dataset='water-energy.csv', target='expt', feat_meth=[0],
+    #                             tune=True, cv=5, opt_iter=5)
+    #     print('done.')
+    #     print('Model Type:', model1.algorithm)
+    #     print('Featurization:', model1.feat_meth)
+    #     print('Dataset:', model1.dataset)
+    #     print()
+    #
+    # with cd('output'):  # Have files output to output
+    #     model1.featurize()
+    #     model1.data_split(val=0.1)
+    #     model1.reg()
+    #     model1.run()
+    #     model1.analyze()
+    #     if model1.algorithm != 'nn':  # issues pickling NN models
+    #         model1.pickle_model()
+    #
+    #     model1.store()
+    #     model1.org_files(zip_only=True)
+    #     model1.QsarDB_export(zip_output=True)
 
-    with cd('output'):  # Have files output to output
-        model1.featurize()
-        model1.data_split(val=0.1)
-        model1.reg()
-        model1.run()
-        model1.analyze()
-        if model1.algorithm != 'nn':  # issues pickling NN models
-            model1.pickle_model()
-
-        model1.store()
-        model1.org_files(zip_only=True)
-        model1.QsarDB_export(zip_output=True)
+    model = unpickle_model('output/Aw01_20200709-162638.pkl')
+    model.QsarDB_export(zip_output=True)
 
 
 def example_load():
@@ -194,6 +197,6 @@ def example_load():
 
 
 if __name__ == "__main__":
-     main()
-    #single_model()
+    # main()
+    single_model()
     # example_load()

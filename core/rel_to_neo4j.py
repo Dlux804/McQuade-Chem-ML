@@ -3,36 +3,22 @@ Objective: The goal of this script is to create relationships in Neo4j directly 
 """
 
 from py2neo import Graph
-from sklearn.metrics import mean_squared_error
-import numpy as np
-from core import fragments
+from core import nodes_to_neo4j
 
-# TODO: Add documentation
 
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
 
-def prep(self):
-    """
-    Calculate Node's properties that can't be obtained directly from the pipeline
-    """
-    smiles_list = list(self.data['smiles'])  # List of all SMILES
-    canonical_smiles = fragments.canonical_smiles(smiles_list)
-    pva = self.predictions
-    predicted = list(pva['pred_avg'])  # List of predicted value for test molecules
-    test_mol = list(pva['smiles'])  # List of test molecules
-    rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
-    feature_length = len(self.feature_list)  # Total amount of features
-    return rmse, feature_length, canonical_smiles, predicted, test_mol
-
-
 def relationships(self):
     """
-    Create relationships in Neo4j
+    Objective: Create relationships in Neo4j based on our ontology directly from the pipeline.
+    Intent: I want this script to only create relationships for the nodes in Neo4j. There are also some node merging
+            lines sprinkled in. Sometimes when you merge two nodes, their duplicate relationships don't merge with each
+            other.
     """
     print("Creating relationships...")
-    rmse, feature_length, canonical_smiles, predicted, test_mol = prep(self)
+    r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol = nodes_to_neo4j.prep(self)
 
     # Merge RandomSplit node
     g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, "
@@ -113,10 +99,6 @@ def relationships(self):
                "(validate:ValidateSet {valsize: $val_size}) merge (split)-[:SPLITS_INTO]->(validate)",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
                            'val_size': self.n_val, 'random_seed': self.random_seed})
-
-    # Only create Features for rdkit2d method
-    df = self.data.loc[:, 'BalabanJ':'qed']
-    columns = list(df.columns)
 
     # Connect TrainSet with its molecules
     for train_smiles in list(self.train_molecules):

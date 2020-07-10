@@ -21,7 +21,7 @@ def relationships(self):
     r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol = nodes_to_neo4j.prep(self)
 
     # Merge RandomSplit node
-    g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, "
+    g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,"
                "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
                "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
 

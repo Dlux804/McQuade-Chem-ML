@@ -40,6 +40,8 @@ def nodes(self):
                     percent, but not the same val percent. They can even have the same split percentage but not the same
                     random_seed. Therefore, RandomSplit nodes must be merged using Cypher instead of py2neo, which is
                     located in "rel_to_neo4j.py"
+    Note: If you want to know why I put number of features in a list (line 77), read my note located in
+                                                                                                "prep_from_output"
     """
     print("Creating Nodes for %s" % self.run_name)
     r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol = prep(self)

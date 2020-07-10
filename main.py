@@ -95,7 +95,7 @@ def main():
 
                             model1.store()
                             model1.org_files(zip_only=True)
-
+                            model1.to_neo4j()
                 if c == 'c':
                     for data in datasets:
                         # The following if statements allow for multi-label classification
@@ -164,13 +164,13 @@ def single_model():
         model1.data_split(val=0.5)
         model1.reg()
         model1.run()
-        # model1.analyze()
-        # if model1.algorithm != 'nn':  # issues pickling NN models
-        #     model1.pickle_model()
-        #
-        # model1.store()
-        # model1.org_files(zip_only=True)
-        # model1.QsarDB_export(zip_output=True)
+        model1.analyze()
+        if model1.algorithm != 'nn':  # issues pickling NN models
+            model1.pickle_model()
+
+        model1.store()
+        model1.org_files(zip_only=True)
+        model1.QsarDB_export(zip_output=True)
         model1.to_neo4j()
 
 

@@ -7,15 +7,16 @@ from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 from core import fragments
 from tqdm import tqdm
+
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
-
-# TODO Add Molecular Fragments
 
 
 def prep(self):
     """
-    Calculate Node's properties that can't be obtained directly from the pipeline
+    Objective: Calculate or prepare variables that we don't have class instances for
+    Intent: I want to have one function that calculates the data I need for the ontology. I don't think we need
+            class instances for these data since they can be easily obtained with one ot two lines of code each.
     """
     smiles_list = list(self.data['smiles'])  # List of all SMILES
     canonical_smiles = fragments.canonical_smiles(smiles_list)
@@ -31,7 +32,14 @@ def prep(self):
 
 def nodes(self):
     """
-    Create Neo4j nodes. Merge them if they already exist
+    Objective: Create or merge Neo4j nodes from data collected from the ML pipeline
+    Intent: While most of the nodes are merged, some need to be created instead because:
+                - They don't need to be merged: MLModel
+                - You can only merge Nodes on 1 main property key in py2neo. RandomSplit Nodes can have duplicate
+                    properties with each other while still remain unique. For example: Splits can have the same test
+                    percent, but not the same val percent. They can even have the same split percentage but not the same
+                    random_seed. Therefore, RandomSplit nodes must be merged using Cypher instead of py2neo, which is
+                    located in "rel_to_neo4j.py"
     """
     print("Creating Nodes for %s" % self.run_name)
     r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol = prep(self)
@@ -65,7 +73,7 @@ def nodes(self):
     g.create(model)
 
     # Make FeatureList node
-    feature_list = Node("FeatureList", name="FeatureList", num=len(self.feature_list))
+    feature_list = Node("FeatureList", name="FeatureList", num=[len(self.feature_list)])
     g.merge(feature_list, "FeatureList", "num")
 
     # Make TrainSet node
@@ -113,7 +121,7 @@ def nodes(self):
     columns = list(df.columns)
 
     # Create nodes and relationships between features, feature methods and SMILES
-    for column in tqdm(columns, desc="Creating relationships between SMILES and features"):
+    for column in tqdm(columns, desc="Creating nodes and relationships between SMILES and features for rdkit2d"):
         # Create nodes for features
         features = Node(column, name=column)
         # Merge relationship

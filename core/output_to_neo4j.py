@@ -30,6 +30,8 @@ def file_count():
             for f in files:
                 if f.endswith('.zip'):
                     files_count += 1
+                if f.endswith('_qdb.zip'):  # Ignore qsardb zip files
+                    pass
             print(f"You have {files_count} zip files in your output folder")
             return files_count
 

@@ -72,12 +72,16 @@ def QsarDB_export(self, zip_output=False):
         with open('pmml', 'r') as file:
             filedata = file.read()
 
-        m = re.findall('"x\-?\d+"', filedata)
+        m = re.findall('x\-?\d+', filedata)
         matches = []
         [matches.append(x) for x in m if x not in matches]
         feature_cols = list(data_df.columns.difference(["in_set", "smiles", "id", self.target_name]))
         matched_dict = dict(zip(matches, feature_cols))
-        print(matched_dict)
+
+        for match, feat in matched_dict.items():
+            filedata = filedata.replace(match, f'{feat}')
+
+        filedata = filedata.replace('y', f'{self.target_name}')
 
         # Write the file out again
         with open('pmml', 'w') as file:

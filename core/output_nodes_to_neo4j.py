@@ -4,8 +4,8 @@ Objective: Gather data from _data.csv and _attributes.csv files and import nodes
 
 from py2neo import Graph, Node
 from tqdm import tqdm
+from core import fragments
 
-# TODO: Add documentation
 
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
@@ -13,7 +13,12 @@ g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
 def nodes(prep):
     """
-    Create Neo4j nodes. Merge them if they already exist
+    Objective: Create Neo4j nodes from output data. Merge them if they already exist
+    Intent: I want this file to almost exclusive create nodes in Neo4j. The only exception is that it also create
+            relationships between SMILES and rdkit2d features if the run uses rdkit2d.
+    :param prep: A class variable that contains all necessary data from "output" files. The file that creates this class
+                variable is "prep_from_outputs.py"
+    :return:
     """
     print("Creating Nodes for %s" % prep.run_name)
     # r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol = prep(self)
@@ -44,7 +49,7 @@ def nodes(prep):
     model = Node("MLModel", name=prep.run_name, feat_time=prep.feat_time, date=prep.date, train_time=prep.tune_time,
                  test_time=prep.test_time)
     g.create(model)
-    #
+
     # Make FeatureList node
     feature_list = Node("FeatureList", name="FeatureList", num=prep.num_feature_list)
     g.merge(feature_list, "FeatureList", "num")
@@ -76,11 +81,10 @@ def nodes(prep):
         pass
 
     # Make nodes for all the SMILES
-
     for smiles, target in zip(prep.canonical_smiles, prep.target_array):
-        record = g.run("""MATCH (n:SMILES {SMILES:"%s"}) RETURN n""" % smiles)
+        record = g.run("""MATCH (n:SMILES {SMILES:"%s"}) RETURN n""" % smiles)  # See if
         if len(list(record)) > 0:
-            print(f"This SMILES, {smiles}, already exist. Updating its properties and relationships")
+            print(f"This SMILES, {smiles}, already exists in your graph db. Updating its properties and relationships")
             g.evaluate("match (mol:SMILES {SMILES: $smiles}) set mol.measurement = mol.measurement + $target, "
                        "mol.dataset = mol.dataset + $dataset",
                        parameters={'smiles': smiles, 'target': target, 'dataset': prep.dataset_str})
@@ -90,12 +94,12 @@ def nodes(prep):
             g.evaluate("match (mol:SMILES {SMILES: $smiles}) set mol.measurement = [$target],"
                        "mol.dataset = [$dataset]",
                        parameters={'smiles': smiles, 'target': target, 'dataset': prep.dataset_str})
-    #
+
     # # Only create Features for rdkit2d method
     # Create nodes and relationships between features, feature methods and SMILES
     if ['rdkit2d'] in prep.feat_method_name:
         print("This run has rdkit2d")
-        for column in tqdm(prep.features_col, desc="Creating relationships between SMILES and features for rdkit2d"):
+        for column in tqdm(prep.features_col, desc="Creating nodes and rel between SMILES and features for rdkit2d"):
             # Create nodes for features
             features = Node(column, name=column)
             # Merge relationship
@@ -108,3 +112,6 @@ def nodes(prep):
                       parameters={'mol': mol, 'value': value})
     else:
         pass
+
+    # Create molecular fragments for smiles
+    fragments.fragments_to_neo(prep.canonical_smiles)

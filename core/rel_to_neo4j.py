@@ -3,7 +3,7 @@ Objective: The goal of this script is to create relationships in Neo4j directly 
 """
 
 from py2neo import Graph
-from core import nodes_to_neo4j
+from core.nodes_to_neo4j import prep
 
 
 # Connect to Neo4j Destop.
@@ -18,7 +18,7 @@ def relationships(self):
             other.
     """
     print("Creating relationships...")
-    r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol = nodes_to_neo4j.prep(self)
+    r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol, df_smiles, df_features = prep(self)
 
     # Merge RandomSplit node
     g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,"
@@ -101,29 +101,33 @@ def relationships(self):
                            'val_size': self.n_val, 'random_seed': self.random_seed})
 
     # Connect TrainSet with its molecules
-    for train_smiles in list(self.train_molecules):
-        g.evaluate("match (smile:SMILES {SMILES:$mol}), (trainset:TrainSet {trainsize: $training_size})"
-                   "merge (smile)-[:CONTAINS_MOLECULES]->(trainset)",
-                   parameters={'mol': train_smiles, 'training_size': self.n_train})
+    g.evaluate("""
+                   UNWIND $train_smiles as mol
+                   match (smile:Molecule {SMILES:mol}), (trainset:TrainSet {trainsize: $training_size})
+                   merge (smile)-[:CONTAINS_MOLECULES]->(trainset)""",
+                   parameters={'train_smiles': list(self.train_molecules), 'training_size': self.n_train})
 
     # Connect TestSet with its molecules
     for test_smiles, predict in zip(test_mol, predicted):
-        g.evaluate("match (smiles:SMILES {SMILES:$mol}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})"
-                   "merge (testset)-[:CONTAINS_MOLECULES {predicted_value: $predicted}]->(smiles)",
+        g.evaluate("""match (smiles:Molecule {SMILES:$mol}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})
+                   merge (testset)-[:CONTAINS_MOLECULES {predicted_value: $predicted}]->(smiles)""",
                    parameters={'mol': test_smiles, 'test_size': self.n_test, 'rmse': rmse, 'predicted': predict})
 
     # Connect ValidateSet with its molecules
     if self.val_percent > 0:
-        for val_smiles in list(self.val_molecules):
-            g.evaluate("match (smile:SMILES {SMILES:$mol}), (validate:ValidateSet {valsize: $val_size})"
-                       "merge (smile)-[:CONTAINS_MOLECULES]->(validate)",
-                       parameters={'mol': val_smiles, 'val_size': self.n_val})
+        g.evaluate("""
+                           UNWIND $val_smiles as mol
+                           match (smile:Molecule {SMILES:mol}), (validate:ValidateSet {valsize: $val_size})
+                           merge (smile)-[:CONTAINS_MOLECULES]->(validate)""",
+                   parameters={'train_smiles': list(self.val_molecules), 'training_size': self.n_val})
     else:
         pass
 
     # Merge "SPLITS_INTO" relationship between RandomSplit and TrainSet
-    g.evaluate("""MATCH (:RandomSplit)-[r:SPLITS_INTO]-(:TrainSet {trainsize:%d})
+    g.evaluate("""MATCH (a:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
+               random_seed: $random_seed})-[r:SPLITS_INTO]->(b:TrainSet {trainsize:%f})
                 WITH r.name AS name, COLLECT(r) AS rell, COUNT(*) AS count
                 WHERE count > 1
                 CALL apoc.refactor.mergeRelationships(rell) YIELD rel
-                RETURN rel""" % self.n_train)
+                RETURN rel""" % self.n_train, parameters={'test_percent': self.test_percent, 'train_percent':
+                                                self.train_percent, 'random_seed': self.random_seed})

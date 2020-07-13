@@ -51,6 +51,27 @@ def featurize(self):
     stop_feat = time()
     feat_time = stop_feat - start_feat
 
+
+    # The following section removes rows that had failed featurizations. This makes the workflow run properly for
+    # both the clintox and the BBBP data sets.
+
+    # This section (lines 60-65) is creating a list of each index (row) where smiles was not featurized.
+    # This list of indices can then be removed from df in lines 72-73.
+    issue_row_list = []
+    issue_row = 0
+    for sublist in data:
+        if sublist == None:
+            issue_row_list.append(issue_row)
+        issue_row = issue_row+1
+
+
+    # This section (lines 69-70) removes the nonetype (failed featurization) elements from the data list.
+    issue_row_removed_list = list(filter(None, data))
+    data = issue_row_removed_list
+
+    rows = df.index[[issue_row_list]]
+    df.drop(rows, inplace=True)
+
     # make dataframe of all features
     features = pd.DataFrame(data, columns=columns)
     df = pd.concat([df, features], axis=1)
@@ -87,11 +108,11 @@ def data_split(self, test=0.2, val=0, random=None):
 
     # remove targets from features
     # axis 1 is the columns.
-    if self.task_type == 'classification':
+    if self.dataset in ['sider.csv', 'clintox.csv']:
         self.target_name.extend(["smiles"])
         features = self.data.drop(self.target_name, axis=1)
 
-    if self.task_type == 'regression':
+    else:
         features = self.data.drop([self.target_name, 'smiles'], axis=1)
 
 

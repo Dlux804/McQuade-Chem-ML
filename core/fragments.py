@@ -11,6 +11,8 @@ import pandas as pd
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
+# TODO REDO DOCSTRINGS
+
 
 def self_smiles(self):
     """

@@ -4,10 +4,12 @@ Objective: The goal of this script is to create relationships in Neo4j directly 
 
 from py2neo import Graph
 from core.nodes_to_neo4j import prep
-
+import time
 
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+
+# TODO REDO DOCSTRINGS
 
 
 def relationships(self):
@@ -18,7 +20,8 @@ def relationships(self):
             other.
     """
     print("Creating relationships...")
-    r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol, df_smiles, df_features = prep(self)
+    t1 = time.perf_counter()
+    r2, mse, rmse, feature_length, canonical_smiles, df_smiles, df_features, test_mol_dict = prep(self)
 
     # Merge RandomSplit node
     g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,"
@@ -72,10 +75,6 @@ def relationships(self):
                "merge (model)-[:PREDICTS]->(testset)",
                parameters={'test_size': self.n_test, 'rmse': rmse, 'run_name': self.run_name})
 
-    # MLModel to ValidateSet
-    g.evaluate("match (validate:ValidateSet {valsize: $val_size}), (model:MLModel {name: $run_name})"
-               "merge (model)-[:VALIDATE]->(validate)",
-               parameters={'val_size': self.n_val, 'run_name': self.run_name})
 
     # MLModel to feature method, FeatureList to feature method
     for feat in self.feat_method_name:
@@ -93,12 +92,6 @@ def relationships(self):
                "merge (trainset)<-[:SPLITS_INTO]-(split)-[:SPLITS_INTO]->(testset)",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
                            'test_size': self.n_test, 'rmse': rmse, 'training_size': self.n_train})
-    # RandomSplit to Validation
-    g.evaluate("match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, "
-               "random_seed: $random_seed}), "
-               "(validate:ValidateSet {valsize: $val_size}) merge (split)-[:SPLITS_INTO]->(validate)",
-               parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
-                           'val_size': self.n_val, 'random_seed': self.random_seed})
 
     # Connect TrainSet with its molecules
     g.evaluate("""
@@ -108,20 +101,30 @@ def relationships(self):
                    parameters={'train_smiles': list(self.train_molecules), 'training_size': self.n_train})
 
     # Connect TestSet with its molecules
-    for test_smiles, predict in zip(test_mol, predicted):
-        g.evaluate("""match (smiles:Molecule {SMILES:$mol}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})
-                   merge (testset)-[:CONTAINS_MOLECULES {predicted_value: $predicted}]->(smiles)""",
-                   parameters={'mol': test_smiles, 'test_size': self.n_test, 'rmse': rmse, 'predicted': predict})
+    g.evaluate("""
+            UNWIND $parameters as row
+            match (smiles:Molecule {SMILES:row.smiles}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})
+            merge (testset)-[:CONTAINS_MOLECULES {predicted_value: row.predicted, uncertainty:row.uncertainty}]->(smiles)
+    
+    """, parameters={'parameters': test_mol_dict, 'test_size': self.n_test, 'rmse': rmse})
 
+    # RandomSplit to Validation
+    g.evaluate("match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, "
+                "random_seed: $random_seed}), "
+                "(validate:ValSet {valsize: $val_size}) merge (split)-[:SPLITS_INTO]->(validate)",
+                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
+                               'val_size': self.n_val, 'random_seed': self.random_seed})
+
+    # MLModel to ValidateSet
+    g.evaluate("match (validate:ValSet {valsize: $val_size}), (model:MLModel {name: $run_name})"
+               "merge (model)-[:VALIDATE]->(validate)",
+               parameters={'val_size': self.n_val, 'run_name': self.run_name})
     # Connect ValidateSet with its molecules
-    if self.val_percent > 0:
-        g.evaluate("""
-                           UNWIND $val_smiles as mol
-                           match (smile:Molecule {SMILES:mol}), (validate:ValidateSet {valsize: $val_size})
-                           merge (smile)-[:CONTAINS_MOLECULES]->(validate)""",
-                   parameters={'train_smiles': list(self.val_molecules), 'training_size': self.n_val})
-    else:
-        pass
+    g.evaluate("""
+                               UNWIND $val_smiles as mol
+                               match (smile:Molecule {SMILES:mol}), (validate:ValSet {valsize: $val_size})
+                               merge (smile)-[:CONTAINS_MOLECULES]->(validate)""",
+               parameters={'val_smiles': list(self.val_molecules), 'val_size': self.n_val})
 
     # Merge "SPLITS_INTO" relationship between RandomSplit and TrainSet
     g.evaluate("""MATCH (a:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
@@ -131,3 +134,6 @@ def relationships(self):
                 CALL apoc.refactor.mergeRelationships(rell) YIELD rel
                 RETURN rel""" % self.n_train, parameters={'test_percent': self.test_percent, 'train_percent':
                                                 self.train_percent, 'random_seed': self.random_seed})
+
+    t2 = time.perf_counter()
+    print(f"Time it takes to create the rest of the relationships: {t2-t1}")

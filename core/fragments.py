@@ -64,8 +64,7 @@ def fragments_to_neo(row):
     fcgen = FragmentCatalog.FragCatGenerator()
     mol = Chem.MolFromSmiles(smiles)
     fcount = fcgen.AddFragsFromMol(mol, fcat)
-    print("This SMILES, %s, has {fcount} %d" % (smiles, fcount))
-    fcgen.AddFragsFromMol(smiles, fcat)
+    print("This SMILES, %s, has %d" % (smiles, fcount))
     frag_list = []
     for frag in range(fcount):
         frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments

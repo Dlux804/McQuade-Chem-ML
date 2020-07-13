@@ -12,6 +12,8 @@ import time
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
+# TODO REDO DOCSTRINGS
+
 
 def prep(self):
     """
@@ -21,15 +23,17 @@ def prep(self):
     """
     canonical_smiles = fragments.canonical_smiles(list(self.data['smiles']))
     pva = self.predictions
-    predicted = list(pva['pred_avg'])  # List of predicted value for test molecules
-    test_mol = list(pva['smiles'])  # List of test molecules
+    pva.to_csv("predicted_test.csv")
     r2 = r2_score(pva['actual'], pva['pred_avg'])  # r2 values
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
     feature_length = len(self.feature_list)  # Total amount of features
     df_smiles = self.data.iloc[:, [1, 2]]
     df_features = self.data.loc[:, 'smiles':'qed']
-    return r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol, df_smiles, df_features
+    df_features['smiles'] = canonical_smiles
+    test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
+                                  'uncertainty': list(pva['pred_std'])}).to_dict('records')
+    return r2, mse, rmse, feature_length, canonical_smiles, df_smiles, df_features, test_mol_dict
 
 
 def __merge_molecules_and_feats__(row):
@@ -71,7 +75,7 @@ def nodes(self):
     t1 = time.perf_counter()
     print("Creating Nodes for %s" % self.run_name)
 
-    r2, mse, rmse, feature_length, canonical_smiles, predicted, test_mol, df_smiles, df_features = prep(self)
+    r2, mse, rmse, feature_length, canonical_smiles, df_smiles, df_features, test_mol_dict = prep(self)
 
     # Make algorithm node
     if self.algorithm == "nn":
@@ -109,8 +113,6 @@ def nodes(self):
     train_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet")
     g.merge(train_set, "TrainSet", "trainsize")
 
-
-
     # Since we can't use merge with multiple properties, I will merge RandomSplit nodes later on
     randomsplit = Node("RandomSplit", name="RandomSplit", test_percent=self.test_percent,
                        train_percent=self.train_percent, random_seed=self.random_seed,
@@ -123,8 +125,8 @@ def nodes(self):
 
     # Make ValidateSet node
     if self.val_percent > 0:
-        valset = Node("ValidateSet", name="ValidateSet", valsize=self.n_val)
-        g.merge(valset, "ValidateSet", "valsize")
+        valset = Node("ValSet", name="ValidateSet", valsize=self.n_val)
+        g.merge(valset, "ValSet", "valsize")
     else:
         pass
     df_smiles.columns = ['smiles', 'target']

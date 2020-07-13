@@ -7,8 +7,7 @@ from rdkit import RDConfig
 from rdkit.Chem import FragmentCatalog
 from rdkit import Chem
 from py2neo import Graph
-from tqdm import tqdm
-
+import pandas as pd
 # Connect to Neo4j Destop.
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
@@ -37,23 +36,7 @@ def canonical_smiles(smiles_list):
     return canonical_smiles
 
 
-def cypher_smiles_fragments(canonical_smiles, fragment_list):
-    """
-    Objective: Import SMILES and fragments into Neo4j with relationships based on our ontology
-    Intent: I want a separate function just for importing SMILES nad fragments to Neo4j. While I can put this into the
-            function "fragments_to_neo" located below, I think the code is more readable this way.
-    :param canonical_smiles: A SMILES (*cough *cough CANONICAL SMILES *cough *cough)
-    :param fragment_list: List of fragments for one SMILES
-    :return:
-    """
-    for fragment in tqdm(fragment_list, desc="Importing fragments to Neo4j"):
-        g.evaluate("merge (frag:Fragment {fragment: $fragment})", parameters={'fragment': fragment})
-        g.evaluate("match (smiles:SMILES {SMILES:$mol}), (frag:Fragment {fragment: $fragment})"
-                   "merge (frag)<-[:HAS_FRAGMENT]-(smiles)",
-                   parameters={'fragment': fragment, 'mol': canonical_smiles})
-
-
-def fragments_to_neo(canonical_smiles):
+def fragments_to_neo(row):
     """
     Objective: Create fragments and import them into Neo4j based on our ontology
     Intent: This script is based on Adam's "mol_frag.ipynb" file in his deepml branch, which is based on rdkit's
@@ -61,20 +44,33 @@ def fragments_to_neo(canonical_smiles):
             tune how much fragment this script can generate for one SMILES. Also, everything (line 69 to 77)
             needs to be under a for loop or else it will break (as in not generating the correct amount of fragments,
             usually much less than the actual amount). I'm not sure why
-    :param canonical_smiles:
+    :param row:
     :return:
     """
+    mol_feat_query = """
+        UNWIND $fragments as fragment
+        MERGE (mol:Molecule {SMILES: fragment.smiles})
+            FOREACH (value in fragment.fragments|
+                MERGE (fragment:Fragments {name: value.fragments})
+                MERGE (mol)-[:HAS_FRAGMENTS]->(fragment)
+                    )
+        """
+    smiles = str(row['smiles'])
 
-    for smiles in tqdm(canonical_smiles, desc="Creating molecular fragments for SMILES"):
-        fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
-        fparams = FragmentCatalog.FragCatParams(0, 3, fName)  # I need more research and tuning on this one
-        fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
-        fcgen = FragmentCatalog.FragCatGenerator()
-        mol = Chem.MolFromSmiles(smiles)
-        fcount = fcgen.AddFragsFromMol(mol, fcat)
-        print(f"This SMILES, {smiles}, has {fcount} fragments")
-        fcgen.AddFragsFromMol(mol, fcat)
-        frag_list = []
-        for frag in range(fcount):
-            frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
-        cypher_smiles_fragments(smiles, frag_list)
+    # for smiles in tqdm(canonical_smiles, desc="Creating molecular fragments for SMILES"):
+    fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
+    fparams = FragmentCatalog.FragCatParams(0, 6, fName)  # I need more research and tuning on this one
+    fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
+    fcgen = FragmentCatalog.FragCatGenerator()
+    mol = Chem.MolFromSmiles(smiles)
+    fcount = fcgen.AddFragsFromMol(mol, fcat)
+    print("This SMILES, %s, has {fcount} %d" % (smiles, fcount))
+    fcgen.AddFragsFromMol(smiles, fcat)
+    frag_list = []
+    for frag in range(fcount):
+        frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
+
+    fragment_df = pd.DataFrame({'fragments': frag_list}).to_dict('records')
+    fragment = {'smiles': smiles, 'fragments': fragment_df}
+    tx = g.begin(autocommit=True)
+    tx.evaluate(mol_feat_query, parameters={"fragments": fragment})

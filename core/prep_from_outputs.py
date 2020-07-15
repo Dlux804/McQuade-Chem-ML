@@ -5,6 +5,7 @@ relationships based on our ontology to Neo4j
 from core import fragments
 import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score
+import pandas as pd
 
 
 def remove_whitespace(string):
@@ -21,6 +22,13 @@ def remove_whitespace(string):
     return "".join(string.split())
 
 
+def split_molecules(df_from_data, split):
+    """"""
+    df_molecules = df_from_data.loc[df_from_data['in_set'] == split]['smiles'].tolist()
+    return df_molecules
+
+
+
 class Prep:
     """
     Objective: Class containing all the data needed for creating nodes and relationships from output files
@@ -35,7 +43,7 @@ class Prep:
             in to get the number inside the list, it is not very clean.
     """
     def __init__(self, df_from_attributes, df_from_predictions, df_from_data):
-        self.df_from_data = df_from_data
+        self.df_from_data = df_from_data.drop(['Unnamed: 0'], axis=1)
         self.df_from_attributes = df_from_attributes
         self.run_name = remove_whitespace(df_from_attributes['run_name'].to_string(index=False))
         self.algorithm = remove_whitespace(df_from_attributes['algorithm'].to_string(index=False))
@@ -63,10 +71,16 @@ class Prep:
         self.canonical_smiles = fragments.canonical_smiles(list(df_from_data['smiles']))
         self.target_array = list(df_from_data['target'])
         self.n_val = int(df_from_attributes['n_val'])
-        self.rdkit2d_features = df_from_data.loc[:, 'BalabanJ':'qed']
+        self.rdkit2d_features = df_from_data.loc[:, 'smiles':'qed']
         self.features_col = list(self.rdkit2d_features.columns)
         pva = df_from_predictions
         self.r2 = r2_score(pva['actual'], pva['pred_avg'])  # r2 values
         self.mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
         self.rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
         self.predicted = list(pva['pred_avg'])  # List of predicted value for test molecules
+        self.df_smiles = df_from_data.iloc[:, [1, 2]]
+        self.test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
+                                           'uncertainty': list(pva['pred_std'])}).to_dict('records')
+        self.train_molecules = split_molecules(df_from_data, 'train')
+        self.test_molecules = split_molecules(df_from_data, 'test')
+        self.val_molecules = split_molecules(df_from_data, 'val')

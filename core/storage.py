@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 import pickle
 import os
+import re
 import subprocess
 from core.misc import cd
 import platform
@@ -178,4 +179,22 @@ def org_files(self, zip_only=False):
         else:  # Directory is not properly deleted on Linux with above code
             rmdir = os.getcwd() + '/' + self.run_name
             shutil.rmtree(rmdir, ignore_errors=True)
+
+
+def compress_fingerprint(df):
+    fingerprint_columns = []
+    fingerprint_array_column_name = ''
+    for column in df.columns:
+        m = re.findall('-\-?\d+', column)
+        if m:
+            fingerprint_columns.append(column)
+            fingerprint_array_column_name = f"FP$${column.split('-')[0]}"
+
+    if fingerprint_columns:
+        fingerprint_column_lists = df[fingerprint_columns].values.tolist()
+        fp_df = pd.DataFrame({'smiles': list(df['smiles']),
+                              fingerprint_array_column_name: fingerprint_column_lists}).astype(str)
+        df = df[df.columns.difference(fingerprint_columns)]
+        df = pd.concat([df, fp_df], axis=1)
+    return df
 

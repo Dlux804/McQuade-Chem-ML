@@ -5,7 +5,7 @@ import numpy as np
 from time import time, sleep
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
-
+from rdkit import Chem
 
 def featurize(self):
     """
@@ -45,32 +45,31 @@ def featurize(self):
         columns.append(name)
     smi = df['smiles']
 
+
+
+    # The following section removes rows that had failed featurizations. This makes the workflow run properly for
+    # both the clintox and the BBBP data sets.
+
+    issue_row_list = []
+    issue_row = 0
+    for smiles in smi:
+        x = Chem.MolFromSmiles(smiles)
+        if x == None:
+            issue_row_list.append(issue_row)
+        issue_row = issue_row+1
+
+    rows = df.index[[issue_row_list]]
+    df.drop(rows, inplace=True)
+    smi.drop(rows, inplace=True)
+
+
+
     smi2 = tqdm(smi, desc= "Featurization")  # for progress bar
     data = list(map(generator.process, smi2))
     print('Done.')
     stop_feat = time()
     feat_time = stop_feat - start_feat
 
-
-    # The following section removes rows that had failed featurizations. This makes the workflow run properly for
-    # both the clintox and the BBBP data sets.
-
-    # This section (lines 60-65) is creating a list of each index (row) where smiles was not featurized.
-    # This list of indices can then be removed from df in lines 72-73.
-    issue_row_list = []
-    issue_row = 0
-    for sublist in data:
-        if sublist == None:
-            issue_row_list.append(issue_row)
-        issue_row = issue_row+1
-
-
-    # This section (lines 69-70) removes the nonetype (failed featurization) elements from the data list.
-    issue_row_removed_list = list(filter(None, data))
-    data = issue_row_removed_list
-
-    rows = df.index[[issue_row_list]]
-    df.drop(rows, inplace=True)
 
     # make dataframe of all features
     features = pd.DataFrame(data, columns=columns)

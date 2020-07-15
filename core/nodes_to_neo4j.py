@@ -39,9 +39,11 @@ def prep(self):
 def __merge_molecules_and_rdkit2d__(row):
     """
     Objective: For every row in a csv (or dataframe) that contains SMILES and rdkit2d Features, merge SMILES with
-    :param row:
+    rdkit2d features with its respective feature values
+    Intent: Created to be used with dataframe's apply function.
+    :param row: A row in a csv
     :return:
-    """
+        """
     mol_feat_query = """
     UNWIND $molecule as molecule
     MATCH (rdkit2d:FeatureMethod {feature:"rdkit2d"})
@@ -70,9 +72,9 @@ def nodes(self):
                 - They don't need to be merged: MLModel
                 - You can only merge Nodes on 1 main property key in py2neo. RandomSplit Nodes and others
                   can have duplicate properties with each other while still remain unique. For example: Splits can have
-                  the same test percent, but not the same val percent. They can even have the same split percentage but not the same
-                  random_seed. Therefore, RandomSplit nodes must be merged using Cypher instead of py2neo in
-                  "rel_to_neo4j.py". Same with TrainSet and Valset
+                  the same test percent, but not the same val percent. They can even have the same split percentage but
+                  not the same random_seed. Therefore, RandomSplit nodes must be merged using Cypher instead of py2neo
+                  in "rel_to_neo4j.py". Same with TrainSet and Valset
     Note: If you want to know why I put number of features in a list (line 77), read my note located in
                                                                                                 "prep_from_output"
     """

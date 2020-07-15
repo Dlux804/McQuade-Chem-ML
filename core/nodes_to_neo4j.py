@@ -28,16 +28,20 @@ def prep(self):
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
     feature_length = len(self.feature_list)  # Total amount of features
+    self.data['smiles'] = canonical_smiles
     df_smiles = self.data.iloc[:, [1, 2]]
     df_features = self.data.loc[:, 'smiles':'qed']
-    df_features['smiles'] = canonical_smiles
     test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
                                   'uncertainty': list(pva['pred_std'])}).to_dict('records')
     return r2, mse, rmse, feature_length, canonical_smiles, df_smiles, df_features, test_mol_dict
 
 
-def __merge_molecules_and_feats__(row):
-
+def __merge_molecules_and_rdkit2d__(row):
+    """
+    Objective: For every row in a csv (or dataframe) that contains SMILES and rdkit2d Features, merge SMILES with
+    :param row:
+    :return:
+    """
     mol_feat_query = """
     UNWIND $molecule as molecule
     MATCH (rdkit2d:FeatureMethod {feature:"rdkit2d"})
@@ -64,18 +68,18 @@ def nodes(self):
     Objective: Create or merge Neo4j nodes from data collected from the ML pipeline
     Intent: While most of the nodes are merged, some need to be created instead because:
                 - They don't need to be merged: MLModel
-                - You can only merge Nodes on 1 main property key in py2neo. RandomSplit Nodes can have duplicate
-                    properties with each other while still remain unique. For example: Splits can have the same test
-                    percent, but not the same val percent. They can even have the same split percentage but not the same
-                    random_seed. Therefore, RandomSplit nodes must be merged using Cypher instead of py2neo, which is
-                    located in "rel_to_neo4j.py"
+                - You can only merge Nodes on 1 main property key in py2neo. RandomSplit Nodes and others
+                  can have duplicate properties with each other while still remain unique. For example: Splits can have
+                  the same test percent, but not the same val percent. They can even have the same split percentage but not the same
+                  random_seed. Therefore, RandomSplit nodes must be merged using Cypher instead of py2neo in
+                  "rel_to_neo4j.py". Same with TrainSet and Valset
     Note: If you want to know why I put number of features in a list (line 77), read my note located in
                                                                                                 "prep_from_output"
     """
     t1 = time.perf_counter()
     print("Creating Nodes for %s" % self.run_name)
 
-    r2, mse, rmse, feature_length, canonical_smiles, df_smiles, df_features, test_mol_dict = prep(self)
+    r2, mse, rmse, feature_length, canonical_smiles, df_smiles, df_rdkit2d_features, test_mol_dict = prep(self)
 
     # Make algorithm node
     if self.algorithm == "nn":
@@ -110,8 +114,8 @@ def nodes(self):
     g.merge(feature_list, "FeatureList", "num")
 
     # Make TrainSet node
-    train_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet")
-    g.merge(train_set, "TrainSet", "trainsize")
+    train_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet", random_seed=self.random_seed)
+    g.create(train_set)
 
     # Since we can't use merge with multiple properties, I will merge RandomSplit nodes later on
     randomsplit = Node("RandomSplit", name="RandomSplit", test_percent=self.test_percent,
@@ -125,12 +129,13 @@ def nodes(self):
 
     # Make ValidateSet node
     if self.val_percent > 0:
-        valset = Node("ValSet", name="ValidateSet", valsize=self.n_val)
-        g.merge(valset, "ValSet", "valsize")
+        valset = Node("ValSet", name="ValidateSet", valsize=self.n_val, random_seed=self.random_seed)
+        g.create(valset)
     else:
         pass
-    df_smiles.columns = ['smiles', 'target']
+
     # Create SMILES
+    df_smiles.columns = ['smiles', 'target']  # Change target column header to target
     g.evaluate("""
     UNWIND $molecules as molecule
     MERGE (mol:Molecule {SMILES: molecule.smiles})
@@ -145,8 +150,8 @@ def nodes(self):
         if len(list(record)) > 0:
             print(f"This dataset, {self.dataset},and its molecular features already exist in the database. Moving on")
         else:
-            df_features = df_features.drop([self.target_name], axis=1)
-            df_features.apply(__merge_molecules_and_feats__, axis=1)
+            df_rdkit2d_features = df_rdkit2d_features.drop([self.target_name], axis=1)
+            df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, axis=1)
             t3 = time.perf_counter()
             print(f"Finished creating nodes and relationships between SMILES and their features in {t3 - t2}sec")
             self.data[['smiles']].apply(fragments_to_neo, axis=1)
@@ -154,7 +159,11 @@ def nodes(self):
             print(f"Finished creating molecular fragments in {t4 - t3}sec")
 
     else:
-        pass
+        g.evaluate("""
+         UNWIND $feat_name as featname
+         match (method:FeatureMethod {feature: featname}), (featlist:FeatureList {num:$feat_num})
+         merge (featurelist)<-[:CONTRIBUTES_TO]-(method)
+        """, parameters={'feat_name': self.feat_method_name, 'feat_num': [len(self.feature_list)]})
 
     # Make dataset node
     dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)

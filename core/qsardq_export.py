@@ -1,9 +1,10 @@
 import os
+import re
+import shutil
+from lxml import etree
 from rdkit.Chem import MolFromSmiles, MolToMolBlock
 import xml.etree.cElementTree as ET
-from lxml import etree
-import shutil
-import pandas as pd
+from sklearn2pmml import PMMLPipeline, sklearn2pmml
 
 
 def QsarDB_export(self, zip_output=False):
@@ -58,29 +59,25 @@ def QsarDB_export(self, zip_output=False):
 
     def __model_to_pmml__():
 
-        from sklearn2pmml import PMMLPipeline
         pipeline = PMMLPipeline([
             ("regressor", self.regressor)
         ])
-
-        from sklearn2pmml import sklearn2pmml
         sklearn2pmml(pipeline, "pmml", with_repr=True)
-
-        import re
 
         # Read in the file
         with open('pmml', 'r') as file:
             filedata = file.read()
 
+        # Replace x[1-...] with actual column names
         m = re.findall('x\-?\d+', filedata)
         matches = []
         [matches.append(x) for x in m if x not in matches]
         feature_cols = list(data_df.columns.difference(["in_set", "smiles", "id", self.target_name]))
         matched_dict = dict(zip(matches, feature_cols))
-
         for match, feat in matched_dict.items():
             filedata = filedata.replace(match, f'{feat}')
 
+        # Replace y with target name
         filedata = filedata.replace('y', f'{self.target_name}')
 
         # Write the file out again

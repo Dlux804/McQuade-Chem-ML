@@ -28,14 +28,14 @@ def main():
         #learner = [] # Use this line to test specific models instead of iterating
 
 
-        datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'bace.csv']
-        #datasets = ['clintox.csv'] # Use this line to test specific data sets instead of having to iterate
+        #datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'bace.csv']
+        datasets = ['clintox.csv'] # Use this line to test specific data sets instead of having to iterate
 
     # Sets up learner, featurizations, and data sets for regression
     if c == 'r':
         # list of available regression learning algorithms
         learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-        learner = ['gdb', 'nn']
+        #learner = ['gdb', 'nn']
 
 
         # list of available featurization methods

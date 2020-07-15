@@ -104,19 +104,19 @@ def nodes(prep):
     prep.df_smiles.columns = ['smiles', 'target']  # Change target column header to target
     g.evaluate("""
         UNWIND $molecules as molecule
-        MERGE (mol:Molecule {SMILES: molecule.smiles})
+        MATCH (mol:Molecule {SMILES: molecule.smiles})
         SET mol.target = [molecule.target], mol.dataset = [$dataset]
         """, parameters={'molecules': prep.df_smiles.to_dict('records'), 'dataset': prep.dataset_str})
     t2 = time.perf_counter()
     print(f"Finished creating main ML nodes in {t2 - t1}sec")
 
     # Creating nodes and relationships between SMILES, Features
-    if "rdkit2d" in prep.feat_method_name:
+    if ["rdkit2d"] in prep.feat_method_name:
         record = g.run("""MATCH (n:DataSet {data:"%s"}) RETURN n""" % prep.dataset_str)
         if len(list(record)) > 0:
             print(f"This dataset, {prep.dataset_str},and its molecular features already exist in the database. Moving on")
         else:
-            df_rdkit2d_features = prep.rdkit2d_features.drop([prep.target_name], axis=1)
+            df_rdkit2d_features = prep.rdkit2d_features.drop(['target'], axis=1)
             df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, axis=1)
             t3 = time.perf_counter()
             print(f"Finished creating nodes and relationships between SMILES and their features in {t3 - t2}sec")

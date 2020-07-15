@@ -97,13 +97,11 @@ def relationships(self):
                parameters={'test_size': self.n_test, 'rmse': rmse, 'run_name': self.run_name})
 
     # MLModel to feature method, FeatureList to feature method
-    for feat in self.feat_method_name:
-        g.evaluate("""match (method:FeatureMethod {feature: $feat}), (model:MLModel {name: $run_name}) 
-                   merge (model)-[:USES_FEATURIZATION]->(method)""",
-                   parameters={'feat': feat, 'run_name': self.run_name})
-        g.evaluate("""match (method:FeatureMethod {feature: $feat}), (featurelist:FeatureList {num: $feat_length}) 
-                   merge (method)-[:CONTRIBUTES_TO]->(featurelist)""",
-                   parameters={'feat': feat, 'feat_length': feature_length})
+    g.evaluate("""
+                        UNWIND $feat_name as feat
+                        match (method:FeatureMethod {feature: feat}), (model:MLModel {name: $run_name}) 
+                       merge (model)-[:USES_FEATURIZATION]->(method)""",
+               parameters={'feat_name': self.feat_method_name, 'run_name': self.run_name})
 
     # Merge RandomSplit to TrainSet and TestSet
     g.evaluate("""match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
@@ -113,7 +111,7 @@ def relationships(self):
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
                            'test_size': self.n_test, 'rmse': rmse, 'training_size': self.n_train,
                            'random_seed': self.random_seed})
-    
+
     # Merge Dataset to TrainSet and TestSet
     g.evaluate("""
         MATCH (dataset:DataSet {data: $dataset}), (trainset:TrainSet {trainsize: $training_size, 
@@ -137,15 +135,6 @@ def relationships(self):
             match (smiles:Molecule {SMILES:row.smiles}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})
             merge (testset)-[:CONTAINS_MOLECULES {predicted_value: row.predicted, uncertainty:row.uncertainty}]->(smiles)
         """, parameters={'parameters': test_mol_dict, 'test_size': self.n_test, 'rmse': rmse})
-
-    # Merge "SPLITS_INTO" relationship between RandomSplit and TrainSet
-    g.evaluate("""MATCH (:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
-                  random_seed: $random_seed})-[r:SPLITS_INTO]->(:TrainSet {trainsize:%f, random_seed: $random_seed})
-                  WITH r.name AS name, COLLECT(r) AS rell, COUNT(*) AS count
-                  WHERE count > 1
-                  CALL apoc.refactor.mergeRelationships(rell) YIELD rel
-                  RETURN rel""" % self.n_train, parameters={'test_percent': self.test_percent, 'train_percent':
-                                  self.train_percent, 'random_seed': self.random_seed})
 
     if self.val_percent > 0:
         # Merge RandomSplit to Validation
@@ -176,5 +165,13 @@ def relationships(self):
     else:
         pass
 
+    # # Merge "SPLITS_INTO" relationship between RandomSplit and TrainSet
+    # g.evaluate("""MATCH (:RandomSplit {test_percent: $test_percent, train_percent: $train_percent,
+    #               random_seed: $random_seed})-[r:SPLITS_INTO]->(:TrainSet {trainsize:%f, random_seed: $random_seed})
+    #               WITH r.name AS name, COLLECT(r) AS rell, COUNT(*) AS count
+    #               WHERE count > 1
+    #               CALL apoc.refactor.mergeRelationships(rell) YIELD rel
+    #               RETURN rel""" % self.n_train, parameters={'test_percent': self.test_percent, 'train_percent':
+    #                               self.train_percent, 'random_seed': self.random_seed})
     t2 = time.perf_counter()
     print(f"Time it takes to create the rest of the relationships: {t2-t1}")

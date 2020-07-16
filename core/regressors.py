@@ -170,6 +170,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
         n_jobs=n_jobs,  # number of parallel jobs (max = folds)
         cv=self.cv_folds  # number of cross-val folds to use
     )
+    self.tune_algorithm_name = str(type(bayes).__name__)
     # if self.algorithm != 'nn':  # non keras model
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
     # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')

@@ -61,11 +61,17 @@ def relationships(self):
                    merge (model)-[r:USES_ALGORITHM]->(algor)""",
                    parameters={'algorithm': self.algorithm, 'run_name': self.run_name})
 
-    # Algorithm to TuningAlg
+    # Algorithm and MLModel to TuningAlg
     if self.tuned:  # If tuned
-        g.evaluate("""match (tuning_alg:TuningAlg {tuneTime: $tune_time}), (algor:Algorithm {name: $algorithm})
-                   merge (algor)-[:USES_TUNING]->(tuning_alg)""",
-                   parameters={'tune_time': self.tune_time, 'algorithm': self.algorithm})
+        g.evaluate("""match (tuning_alg:TuningAlg), (algor:Algorithm {name: $algorithm}), 
+                    (model:MLModel {name: $run_name})
+                   merge (algor)-[r:USES_TUNING]->(tuning_alg)<-[:TUNED_WITH]-(model)
+                   Set r.num_cv=$cv_folds, r.tuneTime= $tune_time, r.delta = $cp_delta, r.n_best = $cp_n_best,
+                                r.steps=$opt_iter
+                   """,
+                   parameters={'tune_time': self.tune_time, 'algorithm': self.algorithm, 'run_name': self.run_name,
+                               'cv_folds': self.cv_folds, 'tunTime': self.tune_time, 'cp_delta': self.cp_delta,
+                               'cp_n_best': self.cp_n_best, 'opt_iter': self.opt_iter})
     else: # If not tuned
         g.evaluate("""match (tuning_alg:NotTuned), (algor:Algorithm {name: $algorithm})
                    merge (algor)-[:NOT_TUNED]->(tuning_alg)""",

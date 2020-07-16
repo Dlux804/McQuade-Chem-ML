@@ -97,7 +97,7 @@ def data_split(self, test=0.2, val=0, random=None):
 
     # save list of strings of features
     self.feature_list = list(features.columns)
-
+    self.feature_length = len(self.feature_list)
     # convert features to numpy
     featuresarr = np.array(features)
     # n_total = featuresarr.shape[0]

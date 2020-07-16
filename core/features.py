@@ -5,7 +5,7 @@ import numpy as np
 from time import time, sleep
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
-
+from rdkit import Chem
 
 def featurize(self):
     """
@@ -44,11 +44,31 @@ def featurize(self):
         columns.append(name)
     smi = df['smiles']
 
+
+
+    # The following section removes rows that had failed featurizations. This makes the workflow run properly for
+    # both the clintox and the BBBP data sets.
+
+    issue_row_list = []
+    issue_row = 0
+    for smiles in smi:
+        x = Chem.MolFromSmiles(smiles)
+        if x == None:
+            issue_row_list.append(issue_row)
+        issue_row = issue_row+1
+
+    rows = df.index[[issue_row_list]]
+    df.drop(rows, inplace=True)
+    smi.drop(rows, inplace=True)
+
+
+
     smi2 = tqdm(smi, desc= "Featurization")  # for progress bar
     data = list(map(generator.process, smi2))
     print('Done.')
     stop_feat = time()
     feat_time = stop_feat - start_feat
+
 
     # make dataframe of all features
     features = pd.DataFrame(data, columns=columns)
@@ -86,11 +106,11 @@ def data_split(self, test=0.2, val=0, random=None):
 
     # remove targets from features
     # axis 1 is the columns.
-    if self.task_type == 'classification':
+    if self.dataset in ['sider.csv', 'clintox.csv']:
         self.target_name.extend(["smiles"])
         features = self.data.drop(self.target_name, axis=1)
 
-    if self.task_type == 'regression':
+    else:
         features = self.data.drop([self.target_name, 'smiles'], axis=1)
 
 

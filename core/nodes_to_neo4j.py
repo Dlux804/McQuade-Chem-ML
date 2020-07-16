@@ -27,13 +27,16 @@ def prep(self):
     r2 = r2_score(pva['actual'], pva['pred_avg'])  # r2 values
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
-    feature_length = len(self.feature_list)  # Total amount of features
     self.data['smiles'] = canonical_smiles
     df_smiles = self.data.iloc[:, [1, 2]]
-    df_features = self.data.loc[:, 'smiles':'qed']
+    df_rdkit2d_features = self.data.loc[:, 'smiles':'qed']
+    try:
+        df_rdkit2d_features = df_rdkit2d_features.rename(columns={self.target_name: 'target'})
+    except KeyError:
+        pass
     test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
                                   'uncertainty': list(pva['pred_std'])}).to_dict('records')
-    return r2, mse, rmse, feature_length, canonical_smiles, df_smiles, df_features, test_mol_dict
+    return r2, mse, rmse, canonical_smiles, df_smiles, df_rdkit2d_features, test_mol_dict
 
 
 def __merge_molecules_and_rdkit2d__(row):
@@ -81,7 +84,7 @@ def nodes(self):
     t1 = time.perf_counter()
     print("Creating Nodes for %s" % self.run_name)
 
-    r2, mse, rmse, feature_length, canonical_smiles, df_smiles, df_rdkit2d_features, test_mol_dict = prep(self)
+    r2, mse, rmse, canonical_smiles, df_smiles, df_rdkit2d_features, test_mol_dict = prep(self)
 
     # Make algorithm node
     if self.algorithm == "nn":
@@ -108,11 +111,11 @@ def nodes(self):
 
     # Make MLModel nodes
     model = Node("MLModel", name=self.run_name, feat_time=self.feat_time, date=self.date, train_time=self.tune_time,
-                 test_time=self.predictions_stats["time_avg"])
+                 test_time=float(self.predictions_stats["time_avg"]))
     g.create(model)
 
     # Make FeatureList node
-    feature_list = Node("FeatureList", name="FeatureList", num=[len(self.feature_list)])
+    feature_list = Node("FeatureList", name="FeatureList", num=self.feature_length)
     g.merge(feature_list, "FeatureList", "num")
 
     # Make TrainSet node
@@ -147,12 +150,12 @@ def nodes(self):
     print(f"Finished creating main ML nodes in {t2-t1}sec")
 
     # Creating nodes and relationships between SMILES, Features
-    if "rdkit2d" in self.feat_method_name:
+    if ["rdkit2d"] or "rdkit2d" in self.feat_method_name:
         record = g.run("""MATCH (n:DataSet {data:"%s"}) RETURN n""" % self.dataset)
         if len(list(record)) > 0:
             print(f"This dataset, {self.dataset},and its molecular features already exist in the database. Moving on")
         else:
-            df_rdkit2d_features = df_rdkit2d_features.drop([self.target_name], axis=1)
+            df_rdkit2d_features = df_rdkit2d_features.drop('target', axis=1)
             df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, axis=1)
             t3 = time.perf_counter()
             print(f"Finished creating nodes and relationships between SMILES and their features in {t3 - t2}sec")
@@ -161,11 +164,13 @@ def nodes(self):
             print(f"Finished creating molecular fragments in {t4 - t3}sec")
 
     else:
-        g.evaluate("""
-         UNWIND $feat_name as featname
-         match (method:FeatureMethod {feature: featname}), (featlist:FeatureList {num:$feat_num})
-         merge (featurelist)<-[:CONTRIBUTES_TO]-(method)
-        """, parameters={'feat_name': self.feat_method_name, 'feat_num': [len(self.feature_list)]})
+        pass
+
+    # Merge FeatureList to FeatureMethod
+    g.evaluate("""
+        match (method:FeatureMethod), (featurelist:FeatureList)
+        merge (featurelist)<-[:CONTRIBUTES_TO]-(method)
+        """)
 
     # Make dataset node
     dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)

@@ -8,7 +8,7 @@ from py2neo import Graph
 from zipfile import ZipFile
 from core import misc
 import json
-from core import output_nodes_to_neo4j, output_rel_to_neo4j, prep_from_outputs
+from core import prep_from_outputs
 
 
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")

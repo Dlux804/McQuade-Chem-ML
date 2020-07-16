@@ -7,7 +7,8 @@ from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 from rdkit import Chem
 
-def featurize(self):
+
+def featurize(self, not_silent=True):
     """
     Caclulate molecular features.
     Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
@@ -29,9 +30,10 @@ def featurize(self):
         feat_meth = [int(x) for x in input(
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
     selected_feat = [feat_sets[i] for i in feat_meth]
-    print("You have selected the following featurizations: ", end="   ", flush=True)
-    print(*selected_feat, sep=', ')
-    print('Calculating features...')
+    if not_silent:  # Add option to silence messages
+        print("You have selected the following featurizations: ", end="   ", flush=True)
+        print(*selected_feat, sep=', ')
+        print('Calculating features...')
     sleep(0.25)
     # Start timer
     start_feat = time()
@@ -45,8 +47,6 @@ def featurize(self):
         columns.append(name)
     smi = df['smiles']
 
-
-
     # The following section removes rows that had failed featurizations. This makes the workflow run properly for
     # both the clintox and the BBBP data sets.
 
@@ -56,20 +56,18 @@ def featurize(self):
         x = Chem.MolFromSmiles(smiles)
         if x == None:
             issue_row_list.append(issue_row)
-        issue_row = issue_row+1
+        issue_row = issue_row + 1
 
     rows = df.index[[issue_row_list]]
     df.drop(rows, inplace=True)
     smi.drop(rows, inplace=True)
 
-
-
-    smi2 = tqdm(smi, desc= "Featurization")  # for progress bar
+    smi2 = tqdm(smi, desc="Featurization")  # for progress bar
     data = list(map(generator.process, smi2))
-    print('Done.')
+    if not_silent:
+        print('Done.')
     stop_feat = time()
     feat_time = stop_feat - start_feat
-
 
     # make dataframe of all features
     features = pd.DataFrame(data, columns=columns)
@@ -114,8 +112,6 @@ def data_split(self, test=0.2, val=0, random=None):
     else:
         features = self.data.drop([self.target_name, 'smiles'], axis=1)
 
-
-
     # save list of strings of features
     self.feature_list = list(features.columns)
 
@@ -135,16 +131,16 @@ def data_split(self, test=0.2, val=0, random=None):
 
     # what data to split and how to do it.
     self.train_features, self.test_features, self.train_target, self.test_target = train_test_split(
-                                                                                                    self.feature_array,
-                                                                                                    self.target_array,
-                                                                                                    test_size=self.test_percent,
-                                                                                                    random_state=self.random_seed)
+        self.feature_array,
+        self.target_array,
+        test_size=self.test_percent,
+        random_state=self.random_seed)
     # Define smiles that go with the different sets
     self.train_molecules, self.test_molecules, temp_train_target, temp_test_target = train_test_split(
-                                                                                                    molecules_array,
-                                                                                                    self.target_array,
-                                                                                                    test_size=self.test_percent,
-                                                                                                    random_state=self.random_seed)
+        molecules_array,
+        self.target_array,
+        test_size=self.test_percent,
+        random_state=self.random_seed)
 
     # scale the data.  This should not hurt but can help many models
     # TODO add this an optional feature
@@ -158,17 +154,17 @@ def data_split(self, test=0.2, val=0, random=None):
         # calculate percent of training to convert to val
         b = val / (1 - test)
         self.train_features, self.val_features, self.train_target, self.val_target = train_test_split(
-                                                                                                    self.train_features,
-                                                                                                    self.train_target,
-                                                                                                    test_size=b,
-                                                                                                    random_state=self.random_seed)
+            self.train_features,
+            self.train_target,
+            test_size=b,
+            random_state=self.random_seed)
         # Define smiles that go with the different sets
         # Use temp dummy variables for splitting molecules up the same way
         temp_train_molecules, self.val_molecules, temp_train_target, temp_val_target = train_test_split(
-                                                                                                    self.train_molecules,
-                                                                                                    temp_train_target,
-                                                                                                    test_size=b,
-                                                                                                    random_state=self.random_seed)
+            self.train_molecules,
+            temp_train_target,
+            test_size=b,
+            random_state=self.random_seed)
         # scale the validation features too
         self.val_features = scaler.transform(self.val_features)
 
@@ -186,7 +182,7 @@ def data_split(self, test=0.2, val=0, random=None):
 
     print()
     print('Dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
-            self.n_tot, ptrain, pval, ptest))
+        self.n_tot, ptrain, pval, ptest))
 
     # Logic to seperate data in test/train/val
     def __fetch_set__(smiles):
@@ -202,7 +198,7 @@ def data_split(self, test=0.2, val=0, random=None):
     cols.remove('in_set')
     self.data = self.data[['in_set', *cols]]
 
-        # return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
+    # return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
 
     # Uncomment this section to have data shape distribution printed.
 

@@ -12,14 +12,15 @@ from core.nodes_to_neo4j import nodes
 from core.rel_to_neo4j import relationships
 from core.fragments import fragments_to_neo
 from rdkit import RDLogger
-from core import speed_test_nodes_neo4j
-RDLogger.DisableLog('rdApp.*')
 from py2neo import Graph
 import time
+
+RDLogger.DisableLog('rdApp.*')
+
 g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
 
-rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'ESOL-short.csv']
+rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
 cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
 
 
@@ -53,7 +54,6 @@ class MlModel:  # TODO update documentation here
         else:
             raise Exception(
                 '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
-
 
         self.target_name = target
         self.feat_meth = feat_meth

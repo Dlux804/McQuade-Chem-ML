@@ -112,7 +112,7 @@ def nodes(self):
     # Make MLModel nodes
     model = Node("MLModel", name=self.run_name, feat_time=self.feat_time, date=self.date, train_time=self.tune_time,
                  test_time=float(self.predictions_stats["time_avg"]))
-    g.create(model)
+    g.merge(model, "MLModel", "name")
 
     # Make FeatureList node
     feature_list = Node("FeatureList", name="FeatureList", num=self.feature_length)

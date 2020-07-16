@@ -22,7 +22,7 @@ def relationships(self):
     """
     print("Creating relationships...")
     t1 = time.perf_counter()
-    r2, mse, rmse, feature_length, canonical_smiles, df_smiles, df_features, test_mol_dict = prep(self)
+    r2, mse, rmse, canonical_smiles, df_smiles, df_features, test_mol_dict = prep(self)
 
     # Merge RandomSplit node
     g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,"
@@ -51,11 +51,11 @@ def relationships(self):
 
     # Merge MLModel to Algorithm
     if self.tuned:  # If tuned
-        param_dict = dict(self.params)  # Turn OrderedDict to dictionary
+        param_dict = dict(self.params)
         for key in param_dict:
             g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
-                       merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = $params" % key""",
-                       parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'params': param_dict[key]})
+                       merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, str(param_dict[key])),
+                       parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key})
     else:  # If not tuned
         g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
                    merge (model)-[r:USES_ALGORITHM]->(algor)""",
@@ -78,7 +78,7 @@ def relationships(self):
     # MLModel to Featurelist
     g.evaluate("""match (featurelist:FeatureList {num: $feat_length}), (model:MLModel {name: $run_name})
                merge (model)-[:USES_FEATURES]->(featurelist)""",
-               parameters={'feat_length': feature_length, 'run_name': self.run_name})
+               parameters={'feat_length': self.feature_length, 'run_name': self.run_name})
 
     # MLModel to RandomSplit
     g.evaluate("""match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 

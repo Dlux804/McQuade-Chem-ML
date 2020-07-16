@@ -5,9 +5,11 @@ from tqdm import tqdm
 import pickle
 import os
 import re
+import ast
 import subprocess
 from core.misc import cd
 import platform
+import numpy
 
 from time import sleep
 import shutil
@@ -198,3 +200,43 @@ def compress_fingerprint(df):
         df = pd.concat([df, fp_df], axis=1)
     return df
 
+
+def decompress_fingerprint(df):
+
+    # Reads fingerprint, return numpy.nan if can not process
+    def digest_fingeprint_row(row):
+        try:
+            return ast.literal_eval(row)
+        except ValueError:
+            return numpy.nan
+
+    # Search for fingerprint column
+    columns = df.columns
+    fingerprint_column = None
+    for column in columns:
+        matches = re.findall('FP\$\$', column)
+        if len(matches) > 0:
+            fingerprint_column = column
+
+    # If not found, return df as is
+    if fingerprint_column is None:
+        return df
+
+    # Convert column astype(str) to astype(list)
+    fingerprints = df[fingerprint_column].apply(digest_fingeprint_row)
+    fingerprints = fingerprints.dropna()
+    fingerprints = fingerprints.values.tolist()
+
+    # Find out how long the fingerprint is, then create columns names that match
+    number_of_prints = len(fingerprints[0])
+    column_name = fingerprint_column.split('FP$$')[1]
+    prints_columns = []
+    for i in range(number_of_prints):
+        prints_columns.append(f'{column_name}-{str(i)}')
+
+    # Join together rest of dataframe with generated fingerprint dataframe
+    df = df.drop(fingerprint_column, axis=1)
+    fingerprints_df = pd.DataFrame(fingerprints, columns=prints_columns)
+
+    df = pd.concat([df, fingerprints_df], axis=1)
+    return df

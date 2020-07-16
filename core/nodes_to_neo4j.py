@@ -101,7 +101,7 @@ def nodes(self):
     
     # Make Tuner node
     if self.tuned:
-        tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm="BayesianOptimizer")
+        tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name)
         g.merge(tuning_algorithm, "TuningAlg", "algorithm")
     else:
         tuning_algorithm = Node("NotTuned", name="NotTuned")

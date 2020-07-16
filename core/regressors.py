@@ -8,56 +8,82 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
-from skopt import BayesSearchCV
 from time import time
-from skopt import callbacks
 from tensorflow import keras
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tqdm import tqdm
 
+# monkey patch to fix skopt and sklearn.  Requires downgrade to sklearn 0.23
+from numpy.ma import MaskedArray
+import sklearn.utils.fixes
+#
+sklearn.utils.fixes.MaskedArray = MaskedArray
 
-def build_nn(n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.0):
+import skopt
+from skopt import BayesSearchCV
+from skopt import callbacks
+
+# end monkey patch
+
+
+def build_nn( n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.1):
     """
     Create neural network architecture and compile.  Accepts number of hiiden layers, number of neurons,
     learning rate, and input shape. Returns compiled model.
 
     Keyword Arguments:
-        n_hidden (integer): Number of hidden layers with n_neurons to be added to model, excludes input and output layer. Default = 2
+        n_hidden (integer): Number of hidden layers added to model, excludes input and output layer. Default = 2
         n_neuron (integer): Number of neurons to add to each hidden layer. Default = 50
-        learning_rate (float):  Model learning rate that is passed to model optimizer.  Smaller values are slower, High values
-                        are prone to unstable training. Default = 0.001
+        learning_rate (float):  Model learning rate that is passed to model optimizer.
+                                Smaller values are slower, High values are prone to unstable training. Default = 0.001
         in_shape (integer): Input dimension should match number of features.  Default = 200 but should be overridden.
         drop (float): Dropout probability.  1 means drop everything, 0 means drop nothing. Default = 0.
                         Recommended = 0.2-0.6
     """
 
     model = keras.models.Sequential()
-    model.add(keras.layers.Dropout(drop, input_shape=in_shape))  # use dropout layer as input.
+    # use dropout layer as input.
+    model.add(keras.layers.Dropout(drop, input_shape=(in_shape,)))  # in_shape should be iterable (tuple)
     # model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
     for layer in range(n_hidden):  # create hidden layers
         model.add(keras.layers.Dense(n_neuron, activation="relu"))
         model.add(keras.layers.Dropout(drop))  # add dropout to model after the a dense layer
 
     model.add(keras.layers.Dense(1))  # output layer
-    # TODO Add optimizer selection as keyword arg
+    # TODO Add optimizer selection as keyword arg for tuning
     # optimizer = keras.optimizers.SGD(lr=learning_rate)  # this is a point to vary.  Dict could help call other ones.
     # optimizer = keras.optimizers.RMSprop(learning_rate=learning_rate)
     optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
     model.compile(loss="mse", optimizer=optimizer, metrics=[RootMeanSquaredError(name='rmse')])
+
     return model
 
-def wrapKeras(build_func, in_shape):
+
+def wrapKeras(self, build_func=build_nn):
     """
     Wraps up a Keras model to appear as sklearn Regressor for use in hyper parameter tuning.
+    :param self: For use in MLmodel class instance.
     :param build_func: Callable function that builds Keras model.
-    :param in_shape: Input dimension.  Must match number of features.
     :return: Regressor() like function for use with sklearn based optimization.
     """
-    return keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_nn, in_shape=200)  # pass non-hyper params here
+
+    # pass non-hyper params here
+    # if model has been tuned, it should have 'parrams' attribute
+    # create regressor instance with tuned parameters
+    if hasattr(self, 'params'):
+        self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape,
+                                                                    **self.params)
+
+    # has not been tuned and no params have been supplied, so use default.
+    else:
+        self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape)
 
 
-def get_regressor(self):
-    """Returns model specific regressor function."""
+def get_regressor(self, call=False):
+    """
+    Returns model specific regressor function.
+    Optional argument to create callable or instantiated instance.
+    """
 
     # Create Dictionary of regressors to be called with self.algorithm as key.
     skl_regs = {
@@ -69,11 +95,34 @@ def get_regressor(self):
         'knn': KNeighborsRegressor
     }
     if self.algorithm in skl_regs.keys():
-            self.regressor = skl_regs[self.algorithm]
-            self.task_type = 'regression'
+        self.task_type = 'regression'
 
-    else:  # neural network
-        pass
+        # if want callable regressor
+        if call:
+            self.regressor = skl_regs[self.algorithm]
+
+        # return instance with either default or tuned params
+        else:
+            if hasattr(self, 'params'):  # has been tuned
+                self.regressor = skl_regs[self.algorithm](**self.params)
+            else:  # use default params
+                self.regressor = skl_regs[self.algorithm]()
+
+    if self.algorithm == 'nn':  # neural network
+
+        # set a checkpoint file to save the model
+        chkpt_cb = keras.callbacks.ModelCheckpoint(self.run_name + '.h5', save_best_only=True)
+        # set up early stopping callback to avoid wasted resources
+        stop_cb = keras.callbacks.EarlyStopping(patience=10,  # number of epochs to wait for progress
+                                                restore_best_weights=True)
+
+        # params to pass to Keras fit method that don't match sklearn params
+        self.fit_params = {'epochs': 100,
+                           'callbacks': [chkpt_cb, stop_cb],
+                           'validation_data': (self.val_features, self.val_target)
+                           }
+        # wrap regressor like a sklearn regressor
+        wrapKeras(self)
 
 
 # for making a progress bar for skopt
@@ -103,44 +152,56 @@ def hyperTune(self, epochs=50,n_jobs=6):
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
     if self.algorithm == "nn":
-        fit_params = "callbacks"  # pseudo code.  add callbacks, epochs
-        #  {'epochs': 50, 'callbacks': [chkpt_cb, stop_cb], 'validation_data': (val_features,val_target)}
+        n_jobs = 1  # nn cannot run hyper tuning in parallel while using GPU.
     else:
-        fit_params = None
+        self.fit_params = None  # sklearn models don't need fit params
 
     # set up Bayes Search
     bayes = BayesSearchCV(
-        estimator=self.regressor(),  # what regressor to use
+        estimator=self.regressor,  # what regressor to use
         search_spaces=self.param_grid,  # hyper parameters to search through
-        # fit_params= self.callbacks,
+        fit_params=self.fit_params,
         n_iter=self.opt_iter,  # number of combos tried
         random_state=42,  # random seed
-        verbose=0,  # output print level
+        verbose=3,  # output print level
         scoring='neg_mean_squared_error',  # scoring function to use (RMSE)  #TODO needs update for Classification
         n_jobs=n_jobs,  # number of parallel jobs (max = folds)
         cv=self.cv_folds  # number of cross-val folds to use
     )
-
+    # if self.algorithm != 'nn':  # non keras model
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
-    self.cp_delta = 0.1  # TODO delta should be dynamic to match target value scales.  Score scales with measurement
+    # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
+    self.cp_delta = 0.05  # TODO delta should be dynamic to scale with target value
     self.cp_n_best = 5
 
-    """ Every optimization model in skopt saved all their scores in a built-in list. When called, DeltaYStopper will 
-    access this list and sort this list from lowest number to highest number. It then take the difference between the 
-    number in the n_best position and the first number and compare it to delta. If the difference is smaller or equal 
-    to delta, the optimization will be stopped.
+    """ 
+    Every optimization model in skopt saved all their scores in a built-in list.
+    When called, DeltaYStopper will access this list and sort this list from lowest number to highest number.
+    It then take the difference between the number in the n_best position and the first number and
+    compares it to delta. If the difference is smaller or equal to delta, the optimization will be stopped.
     """
 
     # print("delta and n_best is {0} and {1}".format(self.cp_delta, self.cp_n_best))
     deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
 
-    # Fit the Bayes search model
-    bayes.fit(self.train_features, self.train_target, callback=[tqdm_skopt(total=self.opt_iter,position=0, desc="Bayesian Parameter Optimization"),checkpoint_saver, deltay])
+    # Fit the Bayes search model, use early stopping
+    bayes.fit(self.train_features,
+              self.train_target,
+              callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization"),
+                        checkpoint_saver,
+                        deltay]
+              )
+    # else:  # nn no early stopping
+    #     bayes.fit(self.train_features,
+    #               self.train_target,
+    #               callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization")])
+
+    # collect best parameters from tuning
     self.params = bayes.best_params_
     tune_score = bayes.best_score_
 
     # update the regressor with best parameters
-    self.regressor = self.regressor(**self.params)
+    self.get_regressor(call=False)
 
     # Calculate time to tune parameters
     stop_tune = time()

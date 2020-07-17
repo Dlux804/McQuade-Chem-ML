@@ -8,7 +8,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import pandas as pd
 import re
 from ast import literal_eval
-from json import loads
+
 
 def remove_whitespace(string):
     """
@@ -48,23 +48,23 @@ class Prep:
         df_from_attributes = df_from_attributes.rename(columns=lambda x: re.sub("predictions_stats.", "", x))
         self.params = df_from_attributes.filter(regex="params.", axis=1).rename(columns=lambda x: re.sub("params.", "", x))
         self.predictions_stats = df_from_attributes.loc[:, 'r2_raw':'time_std']
-        self.run_name = remove_whitespace(df_from_attributes['run_name'].to_string(index=False))
-        self.algorithm = remove_whitespace(df_from_attributes['algorithm'].to_string(index=False))
-        self.feat_method_name = remove_whitespace(df_from_attributes['feat_method_name'].to_string(index=False))
-        self.feat_method_name = self.feat_method_name.strip('][').split(',')
-        self.tuned = literal_eval(remove_whitespace(df_from_attributes['tuned'].to_string(index=False)))
+        self.run_name = df_from_attributes['run_name'].values[0]
+        self.algorithm = df_from_attributes['algorithm'].values[0]
+        self.feat_method_name = df_from_attributes['feat_method_name'].values[0]
+        self.tuned = str(df_from_attributes['tuned'].values[0])
         self.n_test = int(df_from_attributes['n_test'])
         self.feat_time = float(df_from_attributes['feat_time'])
-        self.date = remove_whitespace(df_from_attributes['date'].to_string(float_format=True, index=False))
+        self.date = df_from_attributes['date'].values[0]
         self.test_time = float(df_from_attributes["time_avg"])
-        self.feature_list = int(df_from_attributes['feature_length'])
-        self.n_train = int(df_from_attributes['n_train'])
-        self.dataset = remove_whitespace(df_from_attributes['dataset'].to_string(index=False))
-        self.target_name = remove_whitespace(df_from_attributes['target_name'].to_string(index=False))
-        self.train_percent = float(df_from_attributes['train_percent'])
-        self.test_percent = float(df_from_attributes['test_percent'])
-        self.random_seed = int(df_from_attributes['random_seed'])
-        self.val_percent = float(df_from_attributes['val_percent'])
+        self.feature_length = int(df_from_attributes['feature_length'].values[0])
+        self.feature_list = df_from_attributes['feature_list'].values[0]
+        self.n_train = int(df_from_attributes['n_train'].values[0])
+        self.dataset = df_from_attributes['dataset'].values[0]
+        self.target_name = df_from_attributes['target_name'].values[0]
+        self.train_percent = float(df_from_attributes['train_percent'].values[0])
+        self.test_percent = float(df_from_attributes['test_percent'].values[0])
+        self.val_percent = float(df_from_attributes['val_percent'].values[0])
+        self.random_seed = int(df_from_attributes['random_seed'].values[0])
         self.params_list = list(df_from_attributes.filter(regex='params.'))
         self.canonical_smiles = fragments.canonical_smiles(list(df_from_data['smiles']))
         self.target_array = list(df_from_data['target'])
@@ -81,19 +81,18 @@ class Prep:
         self.train_molecules = split_molecules(df_from_data, 'train')
         self.test_molecules = split_molecules(df_from_data, 'test')
         self.val_molecules = split_molecules(df_from_data, 'val')
-        self.feature_length = int(df_from_attributes['feature_length'])
-        self.feat_meth = remove_whitespace(df_from_attributes['feat_meth'].to_string(float_format=True, index=False))
-        self.tune_algorithm_name = remove_whitespace(df_from_attributes['tune_algorithm_name'].to_string(index=False))
+        self.feat_meth = df_from_attributes['feat_meth'].values[0]
+        self.tune_algorithm_name = df_from_attributes['tune_algorithm_name'].values[0]
         if "rdkit2d" in self.feat_method_name:
             self.rdkit2d_features = df_from_data.loc[:, 'smiles':'qed']
         else:
             pass
         if self.tuned:
-            self.cv_folds = int(df_from_attributes['cv_folds'])
-            self.tune_time = float(df_from_attributes['tune_time'])
-            self.cp_delta = int(df_from_attributes['cp_delta'])
-            self.cp_n_best = int(df_from_attributes['cp_n_best'])
-            self.opt_iter = int(df_from_attributes['opt_iter'])
+            self.cv_folds = int(df_from_attributes['cv_folds'].values[0])
+            self.tune_time = float(df_from_attributes['tune_time'].values[0])
+            self.cp_delta = float(df_from_attributes['cp_delta'].values[0])
+            self.cp_n_best = int(df_from_attributes['cp_n_best'].values[0])
+            self.opt_iter = int(df_from_attributes['opt_iter'].values[0])
         else:
             self.cv_folds = 0
             self.tune_time = 0

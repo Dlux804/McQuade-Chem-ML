@@ -7,7 +7,7 @@ from core.nodes_to_neo4j import prep
 import time
 
 # Merge to Neo4j Destop.
-g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
 
 # TODO REDO DOCSTRINGS
 
@@ -22,7 +22,7 @@ def relationships(self):
     """
     print("Creating relationships...")
     t1 = time.perf_counter()
-    r2, mse, rmse, canonical_smiles, df_smiles, df_features, test_mol_dict = prep(self)
+    r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict = prep(self)
 
     # Merge RandomSplit node
     g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,"
@@ -48,6 +48,12 @@ def relationships(self):
             merge (split)-[:USES_SPLIT]->(dataset)
     """, parameters={"molecules": canonical_smiles, 'dataset': self.dataset, 'test_percent': self.test_percent,
                      'train_percent': self.train_percent, 'random_seed': self.random_seed})
+    # Merge FeatureList to FeatureMethod
+    g.evaluate("""
+        UNWIND $method_name as name
+        match (method:FeatureMethod {feature:name}), (featurelist:FeatureList {feat_ID: $feat_ID})
+        merge (featurelist)<-[:CONTRIBUTES_TO]-(method)
+        """, parameters={'feat_ID': self.feat_meth, 'method_name': self.feat_method_name})
 
     # Merge MLModel to Algorithm
     if self.tuned:  # If tuned
@@ -65,7 +71,7 @@ def relationships(self):
     if self.tuned:  # If tuned
         g.evaluate("""match (tuning_alg:TuningAlg), (algor:Algorithm {name: $algorithm}), 
                     (model:MLModel {name: $run_name})
-                   merge (algor)-[r:USES_TUNING]->(tuning_alg)<-[:TUNED_WITH]-(model)
+                   merge (algor)-[:USES_TUNING]->(tuning_alg)<-[r:TUNED_WITH]-(model)
                    Set r.num_cv=$cv_folds, r.tuneTime= $tune_time, r.delta = $cp_delta, r.n_best = $cp_n_best,
                                 r.steps=$opt_iter
                    """,

@@ -59,8 +59,9 @@ def relationships(self):
     if self.tuned:  # If tuned
         param_dict = dict(self.params)
         for key in param_dict:
+            value = param_dict[key].values[0]
             g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
-                       merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, str(param_dict[key])),
+                       merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, value),
                        parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key})
     else:  # If not tuned
         g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})

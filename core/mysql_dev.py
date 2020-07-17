@@ -29,7 +29,7 @@ class MLMySqlConn:
                           -1: None}
         # Define regression datasets with their keys
         self.rds = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
-                    'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50', '18k-logP.csv': 'logp'}
+                    'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50', '18k-logP.csv': 'exp'}
         # Define classification datasets
         self.cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv', 'cmc_noadd.csv']
         self.data = None
@@ -115,7 +115,7 @@ class MLMySqlConn:
 
     def insert_data_mysql(self):
         """
-        The point of this is to featurize and insert all the featurized data into MySql from datafiles.
+        The is to featurize and insert all the featurized data into MySql from datafiles.
         :return:
         """
 
@@ -142,6 +142,7 @@ class MLMySqlConn:
 
                     # Insert just the raw dataset that can be featurized (drop smiles that return None Mol objects)
                     if feat_name is None:
+
                         # Drop misbehaving rows
                         issue_row_list = []
                         issue_row = 0
@@ -150,6 +151,7 @@ class MLMySqlConn:
                                 issue_row_list.append(issue_row)
                             issue_row = issue_row + 1
                         self.data.drop(self.data.index[[issue_row_list]], inplace=True)
+
                         # Send data to MySql
                         self.data.to_sql(f'{dataset}', self.conn, if_exists='fail')
                         print(f'Created {dataset}')

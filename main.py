@@ -149,7 +149,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0, 2],
+        model1 = models.MlModel(algorithm='rf', dataset='18k-logP.csv', target='exp', feat_meth=[0, 2],
                                 tune=True, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model1.algorithm)

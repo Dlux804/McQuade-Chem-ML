@@ -20,6 +20,7 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
 
     # Get data from MySql if called
     if retrieve_from_mysql:
+        print("Pulling data from MySql")
         self.featurize_from_mysql()
         return
 

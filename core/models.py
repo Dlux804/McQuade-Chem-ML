@@ -15,7 +15,7 @@ from rdkit import RDLogger
 
 RDLogger.DisableLog('rdApp.*')
 
-rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
+rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', '18k-logP.csv']
 cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
 
 
@@ -129,6 +129,7 @@ class MlModel:  # TODO update documentation here
             return Exception("Bad parameters passed to connect to MySql database or MySql server"
                              "not properly configured")
 
-        # Insert featurized data into MySql (this will only run once, even if initialize_data=True)
+        # Insert featurized data into MySql. This will only run once per dataset/feat combo,
+            # even if initialize_data=True
         if initialize_data:
             conn.insert_data_mysql()

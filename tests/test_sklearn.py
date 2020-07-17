@@ -3,7 +3,10 @@ Objective: Test to see if the pipeline runs sklearn methods for tuned and un-tun
 """
 
 from core import models
+import os
+from tests import ml_assert
 
+# Test for almost all models instead of knn. With a small dataset, knn throws a fit
 algorithm_list = ['ada', 'svr', 'rf', 'gdb']
 
 
@@ -16,9 +19,14 @@ def test_sklearn_no_tuned():
         model1.data_split(val=0.1)
         model1.reg()
         model1.run()
+        model1.analyze()
+        assert os.path.isfile(''.join([model1.run_name, '_PVA.png']))
+        os.remove(''.join([model1.run_name, '_PVA.png']))
         assert float(model1.predictions_stats['mse_avg']) > 0.5
         assert float(model1.predictions_stats['r2_avg']) < 0.8
-
+        if algorithm in ['rf', 'gdb']:
+            assert os.path.isfile(''.join([model1.run_name, '_importance-graph.png']))
+            os.remove(''.join([model1.run_name, '_importance-graph.png']))
 
 
 def test_sklearn_tuned():
@@ -30,7 +38,16 @@ def test_sklearn_tuned():
         model1.data_split(val=0.1)
         model1.reg()
         model1.run()
+        model1.analyze()
+        assert os.path.isfile(''.join([model1.run_name, '_PVA.png']))
+        assert os.path.isfile(''.join([model1.run_name, '_checkpoint.pkl']))
+        os.remove(''.join([model1.run_name, '_PVA.png']))
+        os.remove(''.join([model1.run_name, '_checkpoint.pkl']))
         assert float(model1.predictions_stats['mse_avg']) > 0.5
         assert float(model1.predictions_stats['r2_avg']) < 0.8
+        if algorithm in ['rf', 'gdb']:
+            assert os.path.isfile(''.join([model1.run_name, '_importance-graph.png']))
+            os.remove(''.join([model1.run_name, '_importance-graph.png']))
+
 
 

@@ -73,9 +73,9 @@ class MLMySqlConn:
 
         # If feat_name or feat_meth is a list, check each item in list is an int
         if isinstance(feat_name, list) and not all(isinstance(item, str) for item in feat_name):
-            raise Exception("One or more invalid feature names")
+            raise Exception("One or more invalid feature names (try using feat_meth?)")
         if isinstance(feat_meth, list) and not all(isinstance(item, int) for item in feat_meth):
-            raise Exception("One or more invalid feature methods")
+            raise Exception("One or more invalid feature methods (try using feat_name?)")
 
         if feat_meth is not None:
             # If single feat_meth, return featurized df
@@ -102,9 +102,15 @@ class MLMySqlConn:
         for feat in feat_name:
             sql_data_table = f'{dataset}_{feat}'
             dfs.append(__fetch_table__(self.database, sql_data_table))
+
+        # Get the column names that are the same in the different featurized tables
+        df_1_columns = list(dfs[0].columns)
+        df_2_columns = list(dfs[1].columns)
+        same_columns = list(set(df_1_columns) & set(df_2_columns))
+
         data = dfs.pop(0)
         for df in dfs:
-            data = data.merge(df, on='smiles')
+            data = data.merge(df, on=same_columns)
         return data
 
     def insert_data_mysql(self):
@@ -132,7 +138,7 @@ class MLMySqlConn:
                         elif dataset in self.cds:
                             self.data, smiles_series = ingest.load_smiles(self, dataset, drop=False)
                         else:
-                            raise Exception(f"Dataset {dataset} not found in rds or cds. Please list in baddies")
+                            raise Exception(f"Dataset {dataset} not found in rds or cds. Please list in baddies or add")
 
                     # Insert just the raw dataset that can be featurized (drop smiles that return None Mol objects)
                     if feat_name is None:

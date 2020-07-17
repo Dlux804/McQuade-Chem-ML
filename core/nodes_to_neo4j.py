@@ -10,7 +10,7 @@ from core import fragments
 import pandas as pd
 import time
 # Connect to Neo4j Destop.
-g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
 
 # TODO REDO DOCSTRINGS
 
@@ -28,14 +28,10 @@ def prep(self):
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
     self.data['smiles'] = canonical_smiles
     df_smiles = self.data.iloc[:, [1, 2]]
-    df_rdkit2d_features = self.data.loc[:, 'smiles':'qed']
-    try:
-        df_rdkit2d_features = df_rdkit2d_features.rename(columns={self.target_name: 'target'})
-    except KeyError:
-        pass
+
     test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
                                   'uncertainty': list(pva['pred_std'])}).to_dict('records')
-    return r2, mse, rmse, canonical_smiles, df_smiles, df_rdkit2d_features, test_mol_dict
+    return r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict
 
 
 def __merge_molecules_and_rdkit2d__(row):
@@ -84,7 +80,7 @@ def nodes(self):
     t1 = time.perf_counter()
     print("Creating Nodes for %s" % self.run_name)
 
-    r2, mse, rmse, canonical_smiles, df_smiles, df_rdkit2d_features, test_mol_dict = prep(self)
+    r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict = prep(self)
 
     # Make algorithm node
     if self.algorithm == "nn":
@@ -93,11 +89,6 @@ def nodes(self):
     else:
         algor = Node("Algorithm", name=self.algorithm, source="sklearn", tuned=self.tuned)
         g.merge(algor, "Algorithm", "name")
-
-    # Make FeatureMethod node
-    for feat in self.feat_method_name:
-        feature_method = Node("FeatureMethod", feature=feat, name=feat)
-        g.merge(feature_method, "FeatureMethod", "feature")
     
     # Make Tuner node
     if self.tuned:
@@ -113,8 +104,8 @@ def nodes(self):
     g.merge(model, "MLModel", "name")
 
     # Make FeatureList node
-    feature_list = Node("FeatureList", name="FeatureList", num=self.feature_length)
-    g.merge(feature_list, "FeatureList", "num")
+    feature_list = Node("FeatureList", name="FeatureList", num=self.feature_length, feat_ID=self.feat_meth)
+    g.merge(feature_list, "FeatureList", "feat_ID")
 
     # Make TrainSet node
     train_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet", random_seed=self.random_seed)
@@ -148,27 +139,36 @@ def nodes(self):
     print(f"Finished creating main ML nodes in {t2-t1}sec")
 
     # Creating nodes and relationships between SMILES, Features
-    if ["rdkit2d"] or "rdkit2d" in self.feat_method_name:
-        record = g.run("""MATCH (n:DataSet {data:"%s"}) RETURN n""" % self.dataset)
+    record = g.run("""MATCH (n:DataSet {data:"%s"}) RETURN n""" % self.dataset)
+    if len(list(record)) > 0:
+        print(f"This dataset, {self.dataset}, and its fragments already exist in the database. Moving on")
+    else:
+        t3 = time.perf_counter()
+        self.data[['smiles']].apply(fragments_to_neo, axis=1)
+        t4 = time.perf_counter()
+        print(f"Finished creating molecular fragments in {t4 - t3}sec")
+
+    if 'rdkit2d' in self.feat_method_name:
+        record = g.run("""MATCH (n:FeatureMethod {feature:"rdkit2d"}) RETURN n""")
         if len(list(record)) > 0:
-            print(f"This dataset, {self.dataset},and its molecular features already exist in the database. Moving on")
+            print(f"This dataset, {self.dataset}, and its rdkit2d features already exist in the database. Moving on")
         else:
+            print("Creating rdki2d features")
+            df_rdkit2d_features = self.data.loc[:, 'smiles':'qed']
+            try:
+                df_rdkit2d_features = df_rdkit2d_features.rename(columns={self.target_name: 'target'})
+            except KeyError:
+                pass
             df_rdkit2d_features = df_rdkit2d_features.drop('target', axis=1)
             df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, axis=1)
             t3 = time.perf_counter()
-            print(f"Finished creating nodes and relationships between SMILES and their features in {t3 - t2}sec")
-            self.data[['smiles']].apply(fragments_to_neo, axis=1)
-            t4 = time.perf_counter()
-            print(f"Finished creating molecular fragments in {t4 - t3}sec")
+            print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t3 - t2}sec")
 
-    else:
-        pass
-
-    # Merge FeatureList to FeatureMethod
-    g.evaluate("""
-        match (method:FeatureMethod), (featurelist:FeatureList)
-        merge (featurelist)<-[:CONTRIBUTES_TO]-(method)
-        """)
+    # Make FeatureMethod node
+    for feat in self.feat_method_name:
+        print(feat)
+        feature_method = Node("FeatureMethod", feature=feat, name=feat)
+        g.merge(feature_method, "FeatureMethod", "feature")
 
     # Make dataset node
     dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)

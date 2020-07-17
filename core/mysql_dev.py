@@ -3,7 +3,11 @@ from sqlalchemy.exc import ProgrammingError
 import pymysql  # Hidden import, please leave this
 import pandas as pd
 import os
+from pathlib import Path
+from time import time
 
+from core import ingest
+from core.misc import cd
 from core.storage import compress_fingerprint, decompress_fingerprint
 
 from rdkit.Chem import MolFromSmiles
@@ -16,15 +20,22 @@ class MLMySqlConn:
 
     def __init__(self, user, password, host, database, pool_recycle=None):
         if pool_recycle is None:
-            self.conn = create_engine(f'mysql+pymysql://{user}:{password}@{host}/{database}')
+            self.conn = create_engine(f'mysql+pymysql://{user}:{password}@{host}/{database}', pool_pre_ping=True)
         else:
             self.conn = create_engine(f'mysql+pymysql://{user}:{password}@{host}/{database}',
-                                      pool_recycle={pool_recycle})
+                                      pool_recycle={pool_recycle}, pool_pre_ping=True)
         self.feat_sets = {0: 'rdkit2d', 1: 'rdkit2dnormalized', 2: 'rdkitfpbits', 3: 'morgan3counts',
                           4: 'morganfeature3counts', 5: 'morganchiral3counts', 6: 'atompaircounts',
                           -1: None}
+        # Define regression datasets with their keys
+        self.rds = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
+                    'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50', '18k-logP.csv': 'logp'}
+        # Define classification datasets
+        self.cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv', 'cmc_noadd.csv']
         self.data = None
         self.feat_meth = None
+        self.smiles_series = None
+        self.target_name = None
         self.database = database
 
     def table_exist(self, dataset, feat_name=None):
@@ -40,6 +51,7 @@ class MLMySqlConn:
 
     def retrieve_data(self, dataset, feat_meth=None, feat_name=None):
 
+        # Will actually retrive the table from MySql
         def __fetch_table__(database, table):
             try:
                 return decompress_fingerprint(pd.read_sql(f"select * from `{database}`.`{table}`;", self.conn,
@@ -103,15 +115,27 @@ class MLMySqlConn:
 
         bad_datasets = ['cmc.csv']  # This dataset seems to be giving me a hard time
 
-        datasets_dir = '/home/user/PycharmProjects/McQuade-Chem-ML/dataFiles'
+        # Pull datasets
+        datasets_dir = str(Path(__file__).parent.parent.absolute()) + '/dataFiles/'
         datasets = os.listdir(datasets_dir)
         for dataset in datasets:
             for feat_id, feat_name in self.feat_sets.items():
+                # Make sure dataset and feat_meth combo is not already in MySql
                 if dataset not in bad_datasets and not self.table_exist(dataset=dataset, feat_name=feat_name):
                     print(feat_name, dataset)
-                    if feat_name is None:
-                        self.data = pd.read_csv(datasets_dir + '/' + dataset)
 
+                    # Digest data and smiles_series
+                    with cd(str(Path(__file__).parent.parent.absolute()) + '/dataFiles/'):
+                        if dataset in list(self.rds.keys()):
+                            self.target_name = self.rds[dataset]
+                            self.data, smiles_series = ingest.load_smiles(self, dataset)
+                        elif dataset in self.cds:
+                            self.data, smiles_series = ingest.load_smiles(self, dataset, drop=False)
+                        else:
+                            raise Exception(f"Dataset {dataset} not found in rds or cds. Please list in baddies")
+
+                    # Insert just the raw dataset that can be featurized (drop smiles that return None Mol objects)
+                    if feat_name is None:
                         # Drop misbehaving rows
                         issue_row_list = []
                         issue_row = 0
@@ -120,11 +144,12 @@ class MLMySqlConn:
                                 issue_row_list.append(issue_row)
                             issue_row = issue_row + 1
                         self.data.drop(self.data.index[[issue_row_list]], inplace=True)
-
+                        # Send data to MySql
                         self.data.to_sql(f'{dataset}', self.conn, if_exists='fail')
                         print(f'Created {dataset}')
+
+                    # Otherwise featurize data like normal
                     else:
-                        self.data = pd.read_csv(datasets_dir + '/' + dataset)
                         self.feat_meth = [feat_id]
                         self.featurize(not_silent=False)
                         self.data = compress_fingerprint(self.data)
@@ -132,7 +157,19 @@ class MLMySqlConn:
                         print(f'Created {dataset}_{feat_name}')
 
 
-dev = MLMySqlConn(user='user', password='Lookout@10', host='localhost', database='featurized_databases')
-# dev.insert_data_mysql()
-df = dev.retrieve_data('Lipophilicity-ID.csv', feat_meth=[0, 2])
-# df.to_csv('dev.csv', index=False)
+def featurize_from_mysql(self):
+    # Pull data from MySql server
+    if self.mysql_params is None:
+        raise Exception("No connection to MySql made. Please run [model].connect_mysql()")
+    start_feat = time()
+    mysql_conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
+                             host=self.mysql_params['host'], database=self.mysql_params['database'])
+    self.data = mysql_conn.retrieve_data(dataset=self.dataset, feat_meth=self.feat_meth)
+    self.feat_time = time() - start_feat
+
+
+if __name__ == "__main__":
+    dev = MLMySqlConn(user='user', password='Lookout@10', host='localhost', database='featurized_databases')
+    dev.insert_data_mysql()
+    # df = dev.retrieve_data('water-energy.csv', feat_meth=[0])
+    # df.to_csv('dev.csv', index=False)

@@ -1,7 +1,7 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade and Ferri research groups.
 '''
-from core import ingest, features, grid, regressors, analysis, name, misc, classifiers
+from core import ingest, features, grid, regressors, analysis, name, misc, classifiers, mysql_dev
 import csv
 import os
 import subprocess
@@ -9,7 +9,10 @@ import shutil
 from numpy.random import randint
 from core import name
 
+from sqlalchemy.exc import OperationalError
+
 from rdkit import RDLogger
+
 RDLogger.DisableLog('rdApp.*')
 
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
@@ -28,6 +31,7 @@ class MlModel:  # TODO update documentation here
     from core.classifiers import get_classifier
     from core.storage import store, org_files, pickle_model, unpickle_model
     from core.qsardq_export import QsarDB_export
+    from core.mysql_dev import featurize_from_mysql
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """
@@ -37,7 +41,8 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
-        multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
+        multi_label_classification_datasets = ['sider.csv',
+                                               'clintox.csv']  # List of multi-label classification data sets
         # Sets self.task_type based on which dataset is being used.
         if self.dataset in cds:
             self.task_type = 'classification'
@@ -46,7 +51,6 @@ class MlModel:  # TODO update documentation here
         else:
             raise Exception(
                 '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
-
 
         self.target_name = target
         self.feat_meth = feat_meth
@@ -64,7 +68,8 @@ class MlModel:  # TODO update documentation here
         # collect pandas series of the SMILES (self.smiles_col)
 
         if self.dataset in multi_label_classification_datasets:
-            self.data, self.smiles_series = ingest.load_smiles(self, dataset, drop = False) # Makes drop = False for multi-target classification
+            self.data, self.smiles_series = ingest.load_smiles(self, dataset,
+                                                               drop=False)  # Makes drop = False for multi-target classification
         else:
             self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
@@ -76,13 +81,15 @@ class MlModel:  # TODO update documentation here
             self.cv_folds = None
             self.tune_time = None
 
+        self.mysql_params = None
+
     def reg(self):  # broke this out because input shape is needed for NN regressor to be defined.
         """
         Function to fetch regressor.  Should be called after featurization has occured and input shape defined.
         :return:
         """
         if self.task_type == 'regression':
-            self.get_regressor(call=False) # returns instantiated model estimator
+            self.get_regressor(call=False)  # returns instantiated model estimator
 
         if self.task_type == 'classification':
             self.get_classifier()
@@ -110,3 +117,18 @@ class MlModel:  # TODO update documentation here
         self.pva_graph()
         # TODO Make classification graphing function
 
+    def connect_mysql(self, user, password, host, database, initialize_data=False):
+        # Gather MySql Parameters
+        self.mysql_params = {'user': user, 'password': password, 'host': host, 'database': database}
+
+        # Test connection
+        try:
+            conn = mysql_dev.MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
+                                         host=self.mysql_params['host'], database=self.mysql_params['database'])
+        except OperationalError:
+            return Exception("Bad parameters passed to connect to MySql database or MySql server"
+                             "not properly configured")
+
+        # Insert featurized data into MySql (this will only run once, even if initialize_data=True)
+        if initialize_data:
+            conn.insert_data_mysql()

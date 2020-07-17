@@ -18,6 +18,8 @@ dependencies:
   - mock
   - tqdm
   - lxml
+  - sqlalchemy
+  - pymysql
   - pip:
       - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
       - "git+https://github.com/swansonk14/chemprop.git"

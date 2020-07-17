@@ -8,7 +8,7 @@ from tqdm import tqdm
 from rdkit import Chem
 
 
-def featurize(self, not_silent=True):
+def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     Caclulate molecular features.
     Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
@@ -17,6 +17,12 @@ def featurize(self, not_silent=True):
     Keyword arguments:
     feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
+
+    # Get data from MySql if called
+    if retrieve_from_mysql:
+        self.featurize_from_mysql()
+        return
+
     feat_meth = self.feat_meth
     df = self.data
 

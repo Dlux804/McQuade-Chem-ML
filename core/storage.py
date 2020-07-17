@@ -14,6 +14,8 @@ import numpy
 from time import sleep
 import shutil
 
+from timeit import default_timer
+
 
 class NumpyEncoder(json.JSONEncoder):
     """
@@ -184,6 +186,7 @@ def org_files(self, zip_only=False):
 
 
 def compress_fingerprint(df):
+    # Search for fingerprint columns
     fingerprint_columns = []
     fingerprint_array_column_name = ''
     for column in df.columns:
@@ -193,20 +196,27 @@ def compress_fingerprint(df):
             fingerprint_array_column_name = f"FP$${column.split('-')[0]}"
 
     if fingerprint_columns:
+        # Collect all fingerprint columns, and send them to a list of list (of fingerprints)
         fingerprint_column_lists = df[fingerprint_columns].values.tolist()
+        # Make a new dataframe with the columns smiles and the single fingerprint column
         fp_df = pd.DataFrame({'smiles': list(df['smiles']),
                               fingerprint_array_column_name: fingerprint_column_lists}).astype(str)
+        # Get the original dataframe, minus the fingerprint columns
         df = df[df.columns.difference(fingerprint_columns)]
+        # Join the new dataframes together
         df = pd.concat([df, fp_df], axis=1)
     return df
 
 
 def decompress_fingerprint(df):
 
-    # Reads fingerprint, return numpy.nan if can not process
+    # Reads fingerprint string and return fingerprint list, return numpy.nan if can not process
     def digest_fingeprint_row(row):
         try:
-            return ast.literal_eval(row)
+            row = row[1:len(row)-1]
+            row = row.split(', ')
+            row = list(map(int, row))
+            return row
         except ValueError:
             return numpy.nan
 

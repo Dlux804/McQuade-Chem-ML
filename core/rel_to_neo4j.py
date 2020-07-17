@@ -113,7 +113,7 @@ def relationships(self):
     g.evaluate("""match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
                random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, RMSE: $rmse}), 
                (trainset:TrainSet {trainsize: $training_size, random_seed: $random_seed})
-               merge (trainset)<-[:SPLITS_INTO]-(split)-[:SPLITS_INTO]->(testset)""",
+               merge (trainset)<-[:MAKES_SPLIT]-(split)-[:MAKES_SPLIT]->(testset)""",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
                            'test_size': self.n_test, 'rmse': rmse, 'training_size': self.n_train,
                            'random_seed': self.random_seed})
@@ -146,7 +146,7 @@ def relationships(self):
         # Merge RandomSplit to Validation
         g.evaluate("""match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
                    random_seed: $random_seed}), (validate:ValSet {valsize: $val_size, random_seed: $random_seed}) 
-                   merge (split)-[:SPLITS_INTO]->(validate)""",
+                   merge (split)-[:MAKES_SPLIT]->(validate)""",
                    parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
                                'val_size': self.n_val, 'random_seed': self.random_seed})
 
@@ -166,7 +166,7 @@ def relationships(self):
         # Merge Validate with DataSet
         g.evaluate("""match (validate:ValSet {valsize: $val_size, random_seed: $random_seed}), 
                         (dataset:DataSet {data: $dataset})
-                      merge (validate)-[:SPLITS_INTO]->(dataset)
+                      merge (dataset)-[:SPLITS_INTO]->(validate)
         """, parameters={'val_size': self.n_val, 'dataset':self.dataset, 'random_seed': self.random_seed})
     else:
         pass

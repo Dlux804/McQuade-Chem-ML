@@ -23,7 +23,6 @@ def prep(self):
     """
     canonical_smiles = fragments.canonical_smiles(list(self.data['smiles']))
     pva = self.predictions
-    pva.to_csv("predicted_test.csv")
     r2 = r2_score(pva['actual'], pva['pred_avg'])  # r2 values
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values

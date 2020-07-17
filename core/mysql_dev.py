@@ -108,6 +108,7 @@ class MLMySqlConn:
         df_2_columns = list(dfs[1].columns)
         same_columns = list(set(df_1_columns) & set(df_2_columns))
 
+        # Combine the multiple dataframes together
         data = dfs.pop(0)
         for df in dfs:
             data = data.merge(df, on=same_columns)
@@ -174,10 +175,3 @@ def featurize_from_mysql(self):
                              host=self.mysql_params['host'], database=self.mysql_params['database'])
     self.data = mysql_conn.retrieve_data(dataset=self.dataset, feat_meth=self.feat_meth)
     self.feat_time = time() - start_feat
-
-
-if __name__ == "__main__":
-    dev = MLMySqlConn(user='user', password='Lookout@10', host='localhost', database='featurized_databases')
-    dev.insert_data_mysql()
-    # df = dev.retrieve_data('water-energy.csv', feat_meth=[0])
-    # df.to_csv('dev.csv', index=False)

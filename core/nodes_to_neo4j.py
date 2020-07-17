@@ -48,13 +48,14 @@ def __merge_molecules_and_rdkit2d__(row):
         """
     mol_feat_query = """
     UNWIND $molecule as molecule
-    MATCH (rdkit2d:FeatureMethod {feature:"rdkit2d"})
+    MERGE (rdkit2d:FeatureMethod {feature:"rdkit2d"})
     MERGE (mol:Molecule {SMILES: molecule.smiles})
         FOREACH (feat in molecule.feats|
             MERGE (feature:Feature {name: feat.name})
             MERGE (mol)-[:HAS_DESCRIPTOR {value: feat.value, feat_name:feat.name}]->(feature)
+            MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
                 )
-    MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
+    
     """
 
     row = dict(row)
@@ -140,7 +141,7 @@ def nodes(self):
     df_smiles.columns = ['smiles', 'target']  # Change target column header to target
     g.evaluate("""
     UNWIND $molecules as molecule
-    MERGE (mol:Molecule {SMILES: molecule.smiles})
+    MERGE (mol:Molecule {SMILES: molecule.smiles, name: "Molecule"})
     SET mol.target = [molecule.target], mol.dataset = [$dataset]
     """, parameters={'molecules': df_smiles.to_dict('records'), 'dataset': self.dataset})
     t2 = time.perf_counter()

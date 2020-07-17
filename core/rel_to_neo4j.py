@@ -129,16 +129,16 @@ def relationships(self):
     # Merge TrainSet with its molecules
     g.evaluate("""
                    UNWIND $train_smiles as mol
-                   match (smile:Molecule {SMILES:mol}), (trainset:TrainSet {trainsize: $training_size, 
+                   match (smiles:Molecule {SMILES:mol}), (trainset:TrainSet {trainsize: $training_size, 
                    random_seed: $random_seed})
-                   merge (smile)-[:CONTAINS_MOLECULES]->(trainset)""",
+                   merge (smiles)<-[:CONTAINS_MOLECULES]-(trainset)""",
                    parameters={'train_smiles': list(self.train_molecules), 'training_size': self.n_train,
                               'random_seed': self.random_seed})
 
     # Merge TestSet with its molecules
     g.evaluate("""
             UNWIND $parameters as row
-            match (smiles:Molecule {SMILES:row.smiles}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})
+            match (testset:TestSet {testsize: $test_size, RMSE: $rmse}) merge (smiles:Molecule {SMILES: row.smiles}) 
             merge (testset)-[:CONTAINS_MOLECULES {predicted_value: row.predicted, uncertainty:row.uncertainty}]->(smiles)
         """, parameters={'parameters': test_mol_dict, 'test_size': self.n_test, 'rmse': rmse})
 
@@ -158,8 +158,8 @@ def relationships(self):
         # Merge ValidateSet with its molecules
         g.evaluate("""
                         UNWIND $val_smiles as mol
-                        match (smile:Molecule {SMILES:mol}), (validate:ValSet {valsize: $val_size, 
-                        random_seed: $random_seed}) merge (smile)-[:CONTAINS_MOLECULES]->(validate)""",
+                        match (smiles:Molecule {SMILES: mol}), (validate:ValSet {valsize: $val_size, 
+                        random_seed: $random_seed}) merge (validate)-[:CONTAINS_MOLECULES]->(smiles)""",
                    parameters={'val_smiles': list(self.val_molecules), 'val_size': self.n_val,
                                'random_seed': self.random_seed})
 
@@ -170,14 +170,5 @@ def relationships(self):
         """, parameters={'val_size': self.n_val, 'dataset':self.dataset, 'random_seed': self.random_seed})
     else:
         pass
-
-    # # Merge "SPLITS_INTO" relationship between RandomSplit and TrainSet
-    # g.evaluate("""MATCH (:RandomSplit {test_percent: $test_percent, train_percent: $train_percent,
-    #               random_seed: $random_seed})-[r:SPLITS_INTO]->(:TrainSet {trainsize:%f, random_seed: $random_seed})
-    #               WITH r.name AS name, COLLECT(r) AS rell, COUNT(*) AS count
-    #               WHERE count > 1
-    #               CALL apoc.refactor.mergeRelationships(rell) YIELD rel
-    #               RETURN rel""" % self.n_train, parameters={'test_percent': self.test_percent, 'train_percent':
-    #                               self.train_percent, 'random_seed': self.random_seed})
     t2 = time.perf_counter()
     print(f"Time it takes to create the rest of the relationships: {t2-t1}")

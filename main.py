@@ -77,7 +77,7 @@ def main():
                             print('Initializing model...', end=' ', flush=True)
                             # initiate model class with algorithm, dataset and target
                             model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                    tune=False, cv=3, opt_iter=25)
+                                                    tune=True, cv=2, opt_iter=2)
                             print('Done.\n')
 
                         with cd('dataFiles'):  # Have files output to output
@@ -90,12 +90,12 @@ def main():
                             model1.reg()
                             model1.run()
                             model1.analyze()
-                            if model1.algorithm != 'nn':
+                            if model1.algorithm != 'nn':  # issues pickling NN models
                                 model1.pickle_model()
 
                             model1.store()
                             model1.org_files(zip_only=True)
-
+                            model1.to_neo4j()
                 if c == 'c':
                     for data in datasets:
                         # The following if statements allow for multi-label classification
@@ -150,8 +150,10 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='ada', dataset='Lipo-short.csv', target='exp', feat_meth=[0],
+
+        model1 = models.MlModel(algorithm='ada', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 6],
                                 tune=True, cv=2, opt_iter=2)
+
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)
@@ -160,7 +162,7 @@ def single_model():
 
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split(val=0.1)
+        model1.data_split(val=0.2)
         model1.reg()
         model1.run()
         # model1.analyze()
@@ -170,6 +172,7 @@ def single_model():
         # model1.store()
         # model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
+        model1.to_neo4j()
 
 
 def example_load():

@@ -12,7 +12,6 @@ def featurize(self):
     Caclulate molecular features.
     Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
      and time to featurize.
-
     Keyword arguments:
     feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
@@ -83,6 +82,7 @@ def featurize(self):
     # store data back into the instance
     self.data = df
     self.feat_time = feat_time
+    self.feat_method_name = selected_feat
 
 
 def data_split(self, test=0.2, val=0, random=None):
@@ -91,7 +91,6 @@ def data_split(self, test=0.2, val=0, random=None):
     Returns a numpy array with the target variable,
     a numpy array (matrix) of feature variables,
     and a list of strings of the feature headers.
-
     Keyword Arguments
     random -- Integer. Set random seed using in data splitting.  Default = None
     test -- Float(0.0-1.0).  Percent of data to be used for testing
@@ -118,7 +117,7 @@ def data_split(self, test=0.2, val=0, random=None):
 
     # save list of strings of features
     self.feature_list = list(features.columns)
-
+    self.feature_length = len(self.feature_list)
     # convert features to numpy
     featuresarr = np.array(features)
     # n_total = featuresarr.shape[0]

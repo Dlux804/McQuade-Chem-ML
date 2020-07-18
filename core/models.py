@@ -8,9 +8,16 @@ import subprocess
 import shutil
 from numpy.random import randint
 from core import name
-
+from core.nodes_to_neo4j import nodes
+from core.rel_to_neo4j import relationships
+from core.fragments import fragments_to_neo
 from rdkit import RDLogger
+from py2neo import Graph
+import time
+
 RDLogger.DisableLog('rdApp.*')
+g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
+
 
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']
 cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
@@ -47,7 +54,6 @@ class MlModel:  # TODO update documentation here
             raise Exception(
                 '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
 
-
         self.target_name = target
         self.feat_meth = feat_meth
 
@@ -69,7 +75,7 @@ class MlModel:  # TODO update documentation here
             self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
         # define run name used to save all outputs of model
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)
+        self.run_name = name.name(self)
 
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None
@@ -110,3 +116,10 @@ class MlModel:  # TODO update documentation here
         self.pva_graph()
         # TODO Make classification graphing function
 
+    def to_neo4j(self):
+        # Create Neo4j graphs from pipeline
+        t1 = time.perf_counter()
+        nodes(self)  # Create nodes
+        relationships(self)  # Create relationships
+        t2 = time.perf_counter()
+        print(f"Time it takes to finish graphing {self.run_name}: {t2-t1}sec")

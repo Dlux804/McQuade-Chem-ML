@@ -7,21 +7,8 @@ import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score
 import pandas as pd
 import re
-from ast import literal_eval
 
-
-def remove_whitespace(string):
-    """
-    Objective: Remove whitespaces from string variables
-    Intent: Because I gather data from output files based on column names (the data is contained in dataframes
-            at this point), they are Pandas Series object. When I convert them into string and remove the index label
-            using "to_string(index=False)", there are whitespaces in the string variable. Therefore, I needed to create
-            this function to get rid of the whitespaces. I should have found a more clever way to obtain data from
-            dataframes instead of doing all this.
-    :param string: A string. What did you expect it to be???
-    :return:
-    """
-    return "".join(string.split())
+# TODO ADD DOCSTRING EXPLAINING ALL VARIABLES
 
 
 def split_molecules(df_from_data, split):
@@ -101,5 +88,6 @@ class Prep:
             self.opt_iter = 0
 
     def to_neo4j(self):
+        """"""
         nodes_to_neo4j.nodes(self)
         rel_to_neo4j.relationships(self)

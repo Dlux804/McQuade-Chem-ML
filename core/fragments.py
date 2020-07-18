@@ -21,8 +21,7 @@ def self_smiles(self):
     :param self:
     :return:
     """
-    smiles_list = list(self.data['smiles'])
-    return smiles_list
+    return list(self.data['smiles'])
 
 
 def canonical_smiles(smiles_list):
@@ -34,8 +33,7 @@ def canonical_smiles(smiles_list):
     :param smiles_list:
     :return:
     """
-    canonical_smiles = list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
-    return canonical_smiles
+    return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
 
 
 def fragments_to_neo(row):

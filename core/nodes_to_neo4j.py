@@ -152,11 +152,11 @@ def nodes(self):
 
     # Merge rdkit2d features with molecules
     if 'rdkit2d' in self.feat_method_name:  # rdkit2d in feat method name
-        # Check if rdkit2d already exist for
+        # Check if rdkit2d already exist for this dataset
         record = g.run("""MATCH (n:DataSet {data:$dataset}) RETURN n""", parameters={'dataset': self.dataset})
-        if len(list(record)) > 0:
+        if len(list(record)) > 0:  # Already created rdkit2d feature for this dataset
             print(f"This dataset, {self.dataset}, and its rdkit2d features already exist in the database. Moving on")
-        else:
+        else:  # If not
             print("Creating rdki2d features")
             df_rdkit2d_features = self.data.loc[:, 'smiles':'qed']
             try:

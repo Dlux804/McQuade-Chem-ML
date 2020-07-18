@@ -104,8 +104,9 @@ def nodes(self):
     g.merge(model, "MLModel", "name")
 
     # Make FeatureList node
-    feature_list = Node("FeatureList", name="FeatureList", num=self.feature_length, feat_ID=self.feat_meth)
-    g.merge(feature_list, "FeatureList", "feat_ID")
+    feat_list = Node("FeatureList", name="FeatureList", num=self.feature_length, feat_ID=self.feat_meth,
+                     featuure_lists=str(self.feature_list))
+    g.merge(feat_list, "FeatureList", "feat_ID")
 
     # Make TrainSet node
     train_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet", random_seed=self.random_seed)
@@ -138,18 +139,21 @@ def nodes(self):
     t2 = time.perf_counter()
     print(f"Finished creating main ML nodes in {t2-t1}sec")
 
-    # Creating nodes and relationships between SMILES, Features
+    # Creating Molecular Fragments
+    # Check to see if we have created fragments for this run's dataset
     record = g.run("""MATCH (n:DataSet {data:"%s"}) RETURN n""" % self.dataset)
-    if len(list(record)) > 0:
+    if len(list(record)) > 0:  # If yes, then skip
         print(f"This dataset, {self.dataset}, and its fragments already exist in the database. Moving on")
-    else:
+    else:  # If not, then make fragments
         t3 = time.perf_counter()
         self.data[['smiles']].apply(fragments_to_neo, axis=1)
         t4 = time.perf_counter()
         print(f"Finished creating molecular fragments in {t4 - t3}sec")
 
-    if 'rdkit2d' in self.feat_method_name:
-        record = g.run("""MATCH (n:FeatureMethod {feature:"rdkit2d"}) RETURN n""")
+    # Merge rdkit2d features with molecules
+    if 'rdkit2d' in self.feat_method_name:  # rdkit2d in feat method name
+        # Check if rdkit2d already exist for
+        record = g.run("""MATCH (n:DataSet {data:$dataset}) RETURN n""", parameters={'dataset': self.dataset})
         if len(list(record)) > 0:
             print(f"This dataset, {self.dataset}, and its rdkit2d features already exist in the database. Moving on")
         else:
@@ -163,10 +167,11 @@ def nodes(self):
             df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, axis=1)
             t3 = time.perf_counter()
             print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t3 - t2}sec")
+    else:
+        pass
 
     # Make FeatureMethod node
     for feat in self.feat_method_name:
-        print(feat)
         feature_method = Node("FeatureMethod", feature=feat, name=feat)
         g.merge(feature_method, "FeatureMethod", "feature")
 

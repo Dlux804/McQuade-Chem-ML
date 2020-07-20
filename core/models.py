@@ -1,21 +1,26 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade and Ferri research groups.
 '''
-from core import ingest, features, grid, regressors, analysis, name, misc, classifiers, mysql_dev
+from core import ingest, features, grid, regressors, analysis, name, misc, classifiers
 import csv
 import os
 import subprocess
 import shutil
 from numpy.random import randint
 from core import name
-
-from sqlalchemy.exc import OperationalError
-
+from core.nodes_to_neo4j import nodes
+from core.rel_to_neo4j import relationships
+from core.fragments import fragments_to_neo
 from rdkit import RDLogger
+from py2neo import Graph
+import time
 
 RDLogger.DisableLog('rdApp.*')
 
-rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', '18k-logP.csv']
+g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+
+
+rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']
 cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
 
 
@@ -31,7 +36,6 @@ class MlModel:  # TODO update documentation here
     from core.classifiers import get_classifier
     from core.storage import store, org_files, pickle_model, unpickle_model
     from core.qsardq_export import QsarDB_export
-    from core.mysql_dev import featurize_from_mysql
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """
@@ -41,8 +45,7 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
-        multi_label_classification_datasets = ['sider.csv',
-                                               'clintox.csv']  # List of multi-label classification data sets
+        multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
         # Sets self.task_type based on which dataset is being used.
         if self.dataset in cds:
             self.task_type = 'classification'
@@ -68,20 +71,17 @@ class MlModel:  # TODO update documentation here
         # collect pandas series of the SMILES (self.smiles_col)
 
         if self.dataset in multi_label_classification_datasets:
-            self.data, self.smiles_series = ingest.load_smiles(self, dataset,
-                                                               drop=False)  # Makes drop = False for multi-target classification
+            self.data, self.smiles_series = ingest.load_smiles(self, dataset, drop = False) # Makes drop = False for multi-target classification
         else:
             self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
         # define run name used to save all outputs of model
-        self.run_name = name.name(self.algorithm, self.dataset, self.feat_meth, self.tuned)
+        self.run_name = name.name(self)
 
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None
             self.cv_folds = None
             self.tune_time = None
-
-        self.mysql_params = None
 
     def reg(self):  # broke this out because input shape is needed for NN regressor to be defined.
         """
@@ -89,7 +89,7 @@ class MlModel:  # TODO update documentation here
         :return:
         """
         if self.task_type == 'regression':
-            self.get_regressor(call=False)  # returns instantiated model estimator
+            self.get_regressor(call=False) # returns instantiated model estimator
 
         if self.task_type == 'classification':
             self.get_classifier()
@@ -117,19 +117,10 @@ class MlModel:  # TODO update documentation here
         self.pva_graph()
         # TODO Make classification graphing function
 
-    def connect_mysql(self, user, password, host, database, initialize_data=False):
-        # Gather MySql Parameters
-        self.mysql_params = {'user': user, 'password': password, 'host': host, 'database': database}
-
-        # Test connection
-        try:
-            conn = mysql_dev.MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
-                                         host=self.mysql_params['host'], database=self.mysql_params['database'])
-        except OperationalError:
-            return Exception("Bad parameters passed to connect to MySql database or MySql server"
-                             "not properly configured")
-
-        # Insert featurized data into MySql. This will only run once per dataset/feat combo,
-            # even if initialize_data=True
-        if initialize_data:
-            conn.insert_data_mysql()
+    def to_neo4j(self):
+        # Create Neo4j graphs from pipeline
+        t1 = time.perf_counter()
+        nodes(self)  # Create nodes
+        relationships(self)  # Create relationships
+        t2 = time.perf_counter()
+        print(f"Time it takes to finish graphing {self.run_name}: {t2-t1}sec")

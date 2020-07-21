@@ -6,11 +6,11 @@ import os
 from rdkit import RDConfig
 from rdkit.Chem import FragmentCatalog
 from rdkit import Chem
-# from py2neo import Graph
+from py2neo import Graph
 import pandas as pd
-import py2neo
+# import py2neo
 # Connect to Neo4j Destop.
-g = py2neo.Graph()
+g = Graph()
 
 # TODO REDO DOCSTRINGS
 

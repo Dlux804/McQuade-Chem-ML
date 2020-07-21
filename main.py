@@ -172,7 +172,7 @@ def single_model():
         # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
-def example_run_with_mysql():
+def example_run_with_mysql_and_neo4j():
     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
@@ -199,6 +199,7 @@ def example_run_with_mysql():
         model3.store()
         model3.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
+        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_load():
@@ -226,5 +227,5 @@ if __name__ == "__main__":
     # main()
     # single_model()
     # example_load()
-    # example_run_with_mysql()
-    output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")  # Testing output_to_neo4j
+    example_run_with_mysql_and_neo4j()
+    # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")  # Testing output_to_neo4j

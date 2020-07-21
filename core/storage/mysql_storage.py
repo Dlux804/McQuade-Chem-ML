@@ -40,6 +40,7 @@ class MLMySqlConn:
         except ConnectionRefusedError:
             raise Exception("ConnectionRefusedError: [Error 111] Connection Refused (is MySql running?)")
 
+        # Dict matching feature methods to feature names
         self.feat_sets = {-1: None, 0: 'rdkit2d', 1: 'rdkit2dnormalized', 2: 'rdkitfpbits', 3: 'morgan3counts',
                           4: 'morganfeature3counts', 5: 'morganchiral3counts', 6: 'atompaircounts'}
         # Define regression datasets with their keys
@@ -103,7 +104,7 @@ class MLMySqlConn:
             except ProgrammingError:
                 raise Exception(f"{table} does not exist in MySql database")
 
-        # Return raw database if both feat_meth and feat_name is None
+        # Return raw database if both feat_meth and feat_name are None
         if feat_meth is None and feat_name is None:
             sql_data_table = f'{dataset}'
             return __fetch_table__(self.database, sql_data_table)
@@ -172,7 +173,7 @@ class MLMySqlConn:
         bad_datasets = ['cmc.csv']  # This dataset seems to be giving me a hard time
 
         # Pull datasets
-        datasets_dir = str(Path(__file__).parent.parent.absolute()) + '/dataFiles/'
+        datasets_dir = str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'
         datasets = os.listdir(datasets_dir)
         for dataset in datasets:
             for feat_id, feat_name in self.feat_sets.items():

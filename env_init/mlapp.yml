@@ -28,5 +28,4 @@ dependencies:
       - "git+https://github.com/mcs07/CIRpy.git"
       - "git+https://github.com/technige/py2neo.git"
 
-prefix: C:\Users\Adam\miniconda3\envs\mlapp
-
+# prefix: C:\Users\Adam\miniconda3\envs\mlapp

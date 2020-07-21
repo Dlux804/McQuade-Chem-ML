@@ -2,7 +2,7 @@
 This code was written by Adam Luxon and team as part of the McQuade and Ferri research groups.
 '''
 from core import ingest
-from core.storage.storage import MLMySqlConn
+from core.storage.mysql_storage import MLMySqlConn
 from numpy.random import randint
 from core import name
 from core.neo4j.nodes_to_neo4j import nodes
@@ -30,6 +30,11 @@ class MlModel:  # TODO update documentation here
     from core.train import train_reg, train_cls
     from core.analysis import impgraph, pva_graph
     from core.classifiers import get_classifier
+
+    from core.features import featurize, data_split
+    from core.storage.storage import pickle_model, store, org_files
+    from core.storage.mysql_storage import featurize_from_mysql
+    from core.storage.qsardq_export import QsarDB_export
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """

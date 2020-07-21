@@ -17,12 +17,6 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
 
-    # Get data from MySql if called
-    if retrieve_from_mysql:
-        print("Pulling data from MySql")
-        self.featurize_from_mysql()
-        return
-
     feat_meth = self.feat_meth
     df = self.data
 
@@ -36,6 +30,14 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
         feat_meth = [int(x) for x in input(
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
     selected_feat = [feat_sets[i] for i in feat_meth]
+    self.feat_method_name = selected_feat
+
+    # Get data from MySql if called
+    if retrieve_from_mysql:
+        print("Pulling data from MySql")
+        self.featurize_from_mysql()
+        return
+
     if not_silent:  # Add option to silence messages
         print("You have selected the following featurizations: ", end="   ", flush=True)
         print(*selected_feat, sep=', ')
@@ -87,7 +89,6 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     # store data back into the instance
     self.data = df
     self.feat_time = feat_time
-    self.feat_method_name = selected_feat
 
 
 def data_split(self, test=0.2, val=0, random=None):

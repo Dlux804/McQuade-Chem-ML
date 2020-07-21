@@ -12,7 +12,7 @@ from core.storage import misc
 from main import ROOT_DIR
 
 
-@mock.patch('core.misc.os')
+@mock.patch('core.storage.misc.os')
 def test_cd(mock_cd):
     """
     :param mock_cd: mocked object. In this case, we will mock the module cd

@@ -84,4 +84,4 @@ def output_to_neo4j(port, username, password):
         prep.to_neo4j(port=port, username=username, password=password)
 
 # You can uncomment this to run the process of importing data from output files into Neo4j based on our ontology
-output_to_neo4j()
+# output_to_neo4j()

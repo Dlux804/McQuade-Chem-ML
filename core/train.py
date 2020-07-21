@@ -28,7 +28,7 @@ def train_reg(self,n=5):
     pva_multi = pd.DataFrame([])
     pva_multi['smiles'] = self.test_molecules  # Save smiles to predictions
     pva_multi['actual'] = self.test_target
-    for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
+    for i in tqdm(range(0, n), desc="Model Replication\n"):  # run model n times
         start_time = time()
 
         if self.algorithm == 'nn':  # needs fit_params to set epochs and callback

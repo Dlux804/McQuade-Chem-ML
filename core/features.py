@@ -13,16 +13,9 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     Caclulate molecular features.
     Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
      and time to featurize.
-
     Keyword arguments:
     feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
-
-    # Get data from MySql if called
-    if retrieve_from_mysql:
-        print("Pulling data from MySql")
-        self.featurize_from_mysql()
-        return
 
     feat_meth = self.feat_meth
     df = self.data
@@ -37,6 +30,14 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
         feat_meth = [int(x) for x in input(
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
     selected_feat = [feat_sets[i] for i in feat_meth]
+    self.feat_method_name = selected_feat
+
+    # Get data from MySql if called
+    if retrieve_from_mysql:
+        print("Pulling data from MySql")
+        self.featurize_from_mysql()
+        return
+
     if not_silent:  # Add option to silence messages
         print("You have selected the following featurizations: ", end="   ", flush=True)
         print(*selected_feat, sep=', ')
@@ -96,7 +97,6 @@ def data_split(self, test=0.2, val=0, random=None):
     Returns a numpy array with the target variable,
     a numpy array (matrix) of feature variables,
     and a list of strings of the feature headers.
-
     Keyword Arguments
     random -- Integer. Set random seed using in data splitting.  Default = None
     test -- Float(0.0-1.0).  Percent of data to be used for testing
@@ -121,7 +121,7 @@ def data_split(self, test=0.2, val=0, random=None):
 
     # save list of strings of features
     self.feature_list = list(features.columns)
-
+    self.feature_length = len(self.feature_list)
     # convert features to numpy
     featuresarr = np.array(features)
     # n_total = featuresarr.shape[0]

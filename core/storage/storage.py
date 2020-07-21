@@ -5,16 +5,12 @@ from tqdm import tqdm
 import pickle
 import os
 import re
-import ast
 import subprocess
-from core.misc import cd
 import platform
 import numpy
 
 from time import sleep
 import shutil
-
-from timeit import default_timer
 
 
 class NumpyEncoder(json.JSONEncoder):
@@ -83,7 +79,11 @@ def store(self):
 
         # grab pandas related objects for export to csv
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
-            if k != "smiles_series":
+            if k == "data":  # Rename target column to a more general one
+                v = v.rename(columns={self.target_name: "target"})
+                v.to_csv(self.run_name + '_' + k + '.csv')
+
+            elif k != "smiles_series":
                 objs.append(k)
                 dfs.append(k)
                 v.to_csv(self.run_name + '_' + k + '.csv')
@@ -210,16 +210,6 @@ def compress_fingerprint(df):
 
 def decompress_fingerprint(df):
 
-    # Reads fingerprint string and return fingerprint list, return numpy.nan if can not process
-    def digest_fingeprint_row(row):
-        try:
-            row = row[1:len(row)-1]
-            row = row.split(', ')
-            row = list(map(int, row))
-            return row
-        except ValueError:
-            return numpy.nan
-
     # Search for fingerprint column
     columns = df.columns
     fingerprint_column = None
@@ -232,21 +222,21 @@ def decompress_fingerprint(df):
     if fingerprint_column is None:
         return df
 
-    # Convert column astype(str) to astype(list)
-    fingerprints = df[fingerprint_column].apply(digest_fingeprint_row)
+    # Convert column astype(str) to columns of numbers
+    fingerprints = df[fingerprint_column]
+    fingerprints = fingerprints.str[1:-1]  # Remove string brackets
+    fingerprints = fingerprints.str.split(', ', expand=True)
+    fingerprints = fingerprints.astype(float)  # Note columns are converted to float, even if it was an int.
     fingerprints = fingerprints.dropna()
-    fingerprints = fingerprints.values.tolist()
 
-    # Find out how long the fingerprint is, then create columns names that match
-    number_of_prints = len(fingerprints[0])
-    column_name = fingerprint_column.split('FP$$')[1]
-    prints_columns = []
-    for i in range(number_of_prints):
-        prints_columns.append(f'{column_name}-{str(i)}')
+    # Rename columns to match original fingerprint column
+    fingerprints_columns = []
+    fingerprint_type = fingerprint_column.split('FP$$')[1]
+    for column in list(fingerprints.columns):
+        fingerprints_columns.append(f'{fingerprint_type}-{column}')
+    fingerprints.columns = fingerprints_columns
 
     # Join together rest of dataframe with generated fingerprint dataframe
     df = df.drop(fingerprint_column, axis=1)
-    fingerprints_df = pd.DataFrame(fingerprints, columns=prints_columns)
-
-    df = pd.concat([df, fingerprints_df], axis=1)
+    df = pd.concat([df, fingerprints], axis=1)
     return df

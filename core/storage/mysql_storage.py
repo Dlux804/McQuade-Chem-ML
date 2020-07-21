@@ -1,14 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.exc import ProgrammingError
-import pymysql  # Hidden import, please leave this
 import pandas as pd
 import os
 from pathlib import Path
 from time import time
 
 from core import ingest
-from core.misc import cd
-from core.storage import compress_fingerprint, decompress_fingerprint
+from core.storage.misc import cd
+from core.storage.storage import compress_fingerprint, decompress_fingerprint
 
 from rdkit.Chem import MolFromSmiles
 from rdkit import RDLogger
@@ -19,14 +18,31 @@ class MLMySqlConn:
     from core.features import featurize
 
     def __init__(self, user, password, host, database, pool_recycle=None):
-        if pool_recycle is None:
-            self.conn = create_engine(f'mysql+pymysql://{user}:{password}@{host}/{database}', pool_pre_ping=True)
-        else:
-            self.conn = create_engine(f'mysql+pymysql://{user}:{password}@{host}/{database}',
-                                      pool_recycle={pool_recycle}, pool_pre_ping=True)
-        self.feat_sets = {0: 'rdkit2d', 1: 'rdkit2dnormalized', 2: 'rdkitfpbits', 3: 'morgan3counts',
-                          4: 'morganfeature3counts', 5: 'morganchiral3counts', 6: 'atompaircounts',
-                          -1: None}
+        """
+
+        Will create and define the connection to the MySql database. Recommended to not store this class
+        as another class instance or attribute. The MySql connection can not be pickled, and thus will break
+        other parts of the code if pickling of this class is attempted.
+
+        :param user: Username
+        :param password: Password
+        :param host: Hostname (ex: localhost)
+        :param database: Database name
+        :param pool_recycle: Default=None, recycle pool for extended database use
+        """
+
+        try:
+            if pool_recycle is None:
+                self.conn = create_engine(f'mysql+pymysql://{user}:{password}@{host}/{database}', pool_pre_ping=True)
+            else:
+                self.conn = create_engine(f'mysql+pymysql://{user}:{password}@{host}/{database}',
+                                          pool_recycle={pool_recycle}, pool_pre_ping=True)
+        except ConnectionRefusedError:
+            raise Exception("ConnectionRefusedError: [Error 111] Connection Refused (is MySql running?)")
+
+        # Dict matching feature methods to feature names
+        self.feat_sets = {-1: None, 0: 'rdkit2d', 1: 'rdkit2dnormalized', 2: 'rdkitfpbits', 3: 'morgan3counts',
+                          4: 'morganfeature3counts', 5: 'morganchiral3counts', 6: 'atompaircounts'}
         # Define regression datasets with their keys
         self.rds = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
                     'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50', '18k-logP.csv': 'exp'}
@@ -39,6 +55,15 @@ class MLMySqlConn:
         self.database = database
 
     def table_exist(self, dataset, feat_name=None):
+        """
+
+        Checks weather or not a table exist in the MySql server
+
+        :param dataset: Basse dataset
+        :param feat_name: Feature name(s)
+        :return: True or False
+        """
+
         if feat_name is None:
             query = f"select * from `{self.database}`.`{dataset}` LIMIT 1;"
         else:
@@ -50,6 +75,26 @@ class MLMySqlConn:
             return False
 
     def retrieve_data(self, dataset, feat_meth=None, feat_name=None):
+        """
+
+        Will retrieve the different featurized dataframes from the MySql server using a base dataset. The dataset must
+        already be in the MySql database before this is called (try calling insert_data_mysql if failed).
+
+        If only one feat_meth/feat_name is called, then immediately return the featurized dataframe. Otherwise,
+        merge the multiple dataframes together.
+
+        :param dataset: Base dataset to call (ex: ESOL.csv)
+
+        :param feat_meth: feature method as int or list of ints.
+        Good feat_meth: 0, 2, [0], [0,5].
+        Bad: 'rdkit2d', ['rdkit2d'], ['rdkit2d', 'rdkitfpbits']
+
+        :param feat_name: feature name as str or list of strs.
+        Good feat_name: 'rdkit2d', ['rdkit2d'], ['rdkit2d', 'rdkitfpbits'].
+        Bad: 0, 2, [0], [0,5].
+
+        :return: Featurized dataframe
+        """
 
         # Will actually retrive the table from MySql
         def __fetch_table__(database, table):
@@ -59,7 +104,7 @@ class MLMySqlConn:
             except ProgrammingError:
                 raise Exception(f"{table} does not exist in MySql database")
 
-        # Return raw database if both feat_meth and feat_name is None
+        # Return raw database if both feat_meth and feat_name are None
         if feat_meth is None and feat_name is None:
             sql_data_table = f'{dataset}'
             return __fetch_table__(self.database, sql_data_table)
@@ -116,14 +161,19 @@ class MLMySqlConn:
 
     def insert_data_mysql(self):
         """
-        The is to featurize and insert all the featurized data into MySql from datafiles.
+        The is to featurize and insert all the featurized data into MySql from datafiles. Goes through the entire
+        datafiles folder, featurizing each dataset with each feature method. This will only 'run' once natively, even
+        if called many times. If a dataset and feature combo already exist, this will skip that dataset.
+
+        If you need to re-insert a dataset-feat_meth combo, simply delete that table from your MySql server
+
         :return:
         """
 
         bad_datasets = ['cmc.csv']  # This dataset seems to be giving me a hard time
 
         # Pull datasets
-        datasets_dir = str(Path(__file__).parent.parent.absolute()) + '/dataFiles/'
+        datasets_dir = str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'
         datasets = os.listdir(datasets_dir)
         for dataset in datasets:
             for feat_id, feat_name in self.feat_sets.items():
@@ -132,7 +182,7 @@ class MLMySqlConn:
                     print(feat_name, dataset)
 
                     # Digest data and smiles_series
-                    with cd(str(Path(__file__).parent.parent.absolute()) + '/dataFiles/'):
+                    with cd(str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'):
                         if dataset in list(self.rds.keys()):
                             self.target_name = self.rds[dataset]
                             self.data, smiles_series = ingest.load_smiles(self, dataset)
@@ -167,9 +217,18 @@ class MLMySqlConn:
 
 
 def featurize_from_mysql(self):
+
+    """
+
+    Is a wrapper for featurizing data using MySql server
+
+    :param self: MLModel object
+    :return:
+    """
+
     # Pull data from MySql server
     if self.mysql_params is None:
-        raise Exception("No connection to MySql made. Please run [model].connect_mysql()")
+        raise Exception("No connection to MySql made. Please run [model].connect_mysql(**params)")
     start_feat = time()
     mysql_conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
                              host=self.mysql_params['host'], database=self.mysql_params['database'])

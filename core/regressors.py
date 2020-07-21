@@ -25,6 +25,8 @@ from skopt import callbacks
 
 # end monkey patch
 
+# TODO: Add other tuning algorithms and create a variable that stores the algorithm's name
+
 
 def build_nn( n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.1):
     """
@@ -168,6 +170,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
         n_jobs=n_jobs,  # number of parallel jobs (max = folds)
         cv=self.cv_folds  # number of cross-val folds to use
     )
+    self.tune_algorithm_name = str(type(bayes).__name__)
     # if self.algorithm != 'nn':  # non keras model
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
     # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')

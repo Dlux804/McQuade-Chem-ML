@@ -62,10 +62,10 @@ def QsarDB_export(self, zip_output=False):
         pipeline = PMMLPipeline([
             ("regressor", self.regressor)
         ])
-        sklearn2pmml(pipeline, "pmml", with_repr=True)
+        sklearn2pmml(pipeline, "pmml.xml", with_repr=True)
 
         # Read in the file
-        with open('pmml', 'r') as file:
+        with open('pmml.xml', 'r') as file:
             filedata = file.read()
 
         # Replace x[1-...] with actual column names
@@ -81,7 +81,7 @@ def QsarDB_export(self, zip_output=False):
         filedata = filedata.replace('y', f'{self.target_name}')
 
         # Write the file out again
-        with open('pmml', 'w') as file:
+        with open('pmml.xml', 'w') as file:
             file.write(filedata)
 
     # Get current directory, change in qdb directory
@@ -163,7 +163,7 @@ def QsarDB_export(self, zip_output=False):
     model = ET.SubElement(root, "Model")
     ET.SubElement(model, "Id").text = self.algorithm
     ET.SubElement(model, "Name").text = "No Names available yet"
-    ET.SubElement(model, "Cargos").text = "pmml bibtex"
+    ET.SubElement(model, "Cargos").text = "pmml.xml bibtex"
     ET.SubElement(model, "PropertyId").text = self.target_name
     __root_to_xml__(root, "models.xml")
     __mkd__(self.algorithm)

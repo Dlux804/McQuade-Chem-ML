@@ -155,8 +155,7 @@ def single_model():
             model1.pickle_model()
         model1.store()
         model1.org_files(zip_only=True)
-        # model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j()
+        model1.QsarDB_export(zip_output=True)
 
 
 def example_run_with_mysql_and_neo4j():
@@ -212,7 +211,14 @@ def example_load():
 
 if __name__ == "__main__":
     # main()
-    # single_model()
+    single_model()
     # example_load()
-    example_run_with_mysql_and_neo4j()
+    # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+
+    from core import MLMySqlConn
+    conn = MLMySqlConn(user='neo4j', password='password', host='localhost', database='featurized_databases')
+    """
+    This serves as an example for how to import different classes into current file (Notice how mysql_storag.py
+    was never imported directly). 
+    """

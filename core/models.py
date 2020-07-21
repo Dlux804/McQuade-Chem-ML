@@ -10,13 +10,10 @@ from numpy.random import randint
 from core import name
 from core.nodes_to_neo4j import nodes
 from core.rel_to_neo4j import relationships
-from core.fragments import fragments_to_neo
 from rdkit import RDLogger
-from py2neo import Graph
 import time
 
 RDLogger.DisableLog('rdApp.*')
-g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
 
 
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']

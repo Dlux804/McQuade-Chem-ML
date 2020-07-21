@@ -9,7 +9,7 @@ from rdkit import Chem
 from py2neo import Graph
 import pandas as pd
 # Connect to Neo4j Destop.
-g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
+g = Graph("bolt://neo4j:1234@localhost:7687")
 
 # TODO REDO DOCSTRINGS
 

@@ -11,7 +11,7 @@ import json
 from core import prep_from_outputs
 
 
-g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+g = Graph("bolt://neo4j:1234@localhost:7687")
 
 
 def file_count():
@@ -87,4 +87,4 @@ def output_to_neo4j():
         prep.to_neo4j()
 
 # You can uncomment this to run the process of importing data from output files into Neo4j based on our ontology
-# output_to_neo4j()
+output_to_neo4j()

@@ -19,11 +19,8 @@ def test_sklearn_no_tuned():
         model1.reg()
         model1.run()
         model1.analyze()
-        model1.pickle_model()
         assert os.path.isfile(''.join([model1.run_name, '_PVA.png']))  # Check for PVA graphs
-        assert os.path.isfile(''.join([model1.run_name, '.pkl']))
         os.remove(''.join([model1.run_name, '_PVA.png']))  # Delete PVA graphs
-        os.remove(''.join([model1.run_name, '.pkl']))
         assert float(model1.predictions_stats['mse_avg']) > 0.5  # Check for mse value
         assert float(model1.predictions_stats['r2_avg']) < 0.8  # Check for r2_avg value
         if algorithm in ['rf', 'gdb']:   # Check for variable importance graphs
@@ -41,11 +38,8 @@ def test_sklearn_tuned():
         model1.reg()
         model1.run()
         model1.analyze()
-        model1.pickle_model()
         assert os.path.isfile(''.join([model1.run_name, '_PVA.png']))
         assert os.path.isfile(''.join([model1.run_name, '_checkpoint.pkl']))
-        assert os.path.isfile(''.join([model1.run_name, '.pkl']))
-        os.remove(''.join([model1.run_name, '.pkl']))
         os.remove(''.join([model1.run_name, '_PVA.png']))
         os.remove(''.join([model1.run_name, '_checkpoint.pkl']))
         assert float(model1.predictions_stats['mse_avg']) > 0.5

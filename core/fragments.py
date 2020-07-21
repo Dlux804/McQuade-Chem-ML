@@ -9,7 +9,7 @@ from rdkit import Chem
 from py2neo import Graph
 import pandas as pd
 # Connect to Neo4j Destop.
-g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
+g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
 # TODO REDO DOCSTRINGS
 
@@ -55,11 +55,19 @@ def fragments_to_neo(row):
                 MERGE (mol)-[:HAS_FRAGMENTS]->(fragment)
                     )
         """
+    # mol_feat_query = """
+    #     UNWIND $fragments as fragment
+    #     UNWIND fragment.fragments as value
+    #     MERGE (mol:Molecule {SMILES: fragment.smiles})
+    #     MERGE (frag:Fragments {name: value.fragments})
+    #     MERGE (mol)-[:HAS_FRAGMENTS]->(frag)
+    #
+    #     """
     smiles = str(row['smiles'])
 
     # for smiles in tqdm(canonical_smiles, desc="Creating molecular fragments for SMILES"):
     fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
-    fparams = FragmentCatalog.FragCatParams(0, 6, fName)  # I need more research and tuning on this one
+    fparams = FragmentCatalog.FragCatParams(0, 4, fName)  # I need more research and tuning on this one
     fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
     fcgen = FragmentCatalog.FragCatGenerator()
     mol = Chem.MolFromSmiles(smiles)

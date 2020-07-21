@@ -7,7 +7,7 @@ from core.nodes_to_neo4j import prep
 import time
 
 # Merge to Neo4j Destop.
-g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
+g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
 # TODO REDO DOCSTRINGS
 
@@ -59,9 +59,8 @@ def relationships(self):
     if self.tuned:  # If tuned
         param_dict = dict(self.params)
         for key in param_dict:
-            value = param_dict[key].values[0]
             g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
-                       merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, value),
+                       merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, param_dict[key]),
                        parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key})
     else:  # If not tuned
         g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})

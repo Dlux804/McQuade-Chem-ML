@@ -10,7 +10,7 @@ from core import fragments
 import pandas as pd
 import time
 # Connect to Neo4j Destop.
-g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
+g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
 # TODO REDO DOCSTRINGS
 
@@ -158,6 +158,7 @@ def nodes(self):
             print(f"This dataset, {self.dataset}, and its rdkit2d features already exist in the database. Moving on")
         else:  # If not
             print("Creating rdki2d features")
+            t3 = time.perf_counter()
             df_rdkit2d_features = self.data.loc[:, 'smiles':'qed']
             try:
                 df_rdkit2d_features = df_rdkit2d_features.rename(columns={self.target_name: 'target'})
@@ -165,8 +166,8 @@ def nodes(self):
                 pass
             df_rdkit2d_features = df_rdkit2d_features.drop('target', axis=1)
             df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, axis=1)
-            t3 = time.perf_counter()
-            print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t3 - t2}sec")
+            t4 = time.perf_counter()
+            print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t4 - t3}sec")
     else:
         pass
 

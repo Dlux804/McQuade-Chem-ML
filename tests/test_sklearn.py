@@ -3,8 +3,10 @@ Objective: Test to see if the pipeline runs sklearn methods for tuned and un-tun
 """
 from core.storage import misc
 from core import models
-import os
-
+import os, sys
+myPath = os.path.dirname(os.path.abspath(__file__))
+# add to system path the root dir with relative notation: /../ (go up one dir)
+sys.path.insert(0, myPath + '/../')
 # Test for almost all models instead of knn. With a small dataset, knn throws a fit
 algorithm_list = ['ada', 'svr', 'rf', 'gdb']
 

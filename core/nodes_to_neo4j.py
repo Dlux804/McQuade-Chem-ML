@@ -10,7 +10,7 @@ from core import fragments
 import pandas as pd
 import time
 # Connect to Neo4j Destop.
-g = Graph("neo4j:1234@localhost:7687/db/data/", bolt=True)
+g = Graph()
 
 # TODO REDO DOCSTRINGS
 

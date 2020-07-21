@@ -11,8 +11,6 @@ from core.neo4j import prep_from_outputs
 import pathlib
 
 
-
-
 def file_count():
     """
     Objective: Count the number of zip files in the "output" folder.

@@ -1,12 +1,11 @@
 # TODO: Make main function that asks user what models they would like to initiate
 
 from core import models
-from core.misc import cd
-from core.storage import pickle_model, unpickle_model
+from core.storage.misc import cd
+from core.storage.storage import unpickle_model
 import os
 import pathlib
-from time import sleep
-from core.features import featurize
+from core.neo4j.output_to_neo4j import output_to_neo4j
 
 import pandas as pd
 
@@ -150,7 +149,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='ada', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 6],
+        model1 = models.MlModel(algorithm='ada', dataset='water-energy.csv', target='expt', feat_meth=[0, 6],
                                 tune=True, cv=2, opt_iter=2)
 
         print('done.')
@@ -170,7 +169,36 @@ def single_model():
         model1.store()
         model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j()
+        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+
+
+def example_run_with_mysql():
+    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+        print('Now in:', os.getcwd())
+        print('Initializing model...', end=' ', flush=True)
+        # initiate model class with algorithm, dataset and target
+        model3 = models.MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0, 2],
+                                tune=True, cv=2, opt_iter=2)
+        print('done.')
+        print('Model Type:', model3.algorithm)
+        print('Featurization:', model3.feat_meth)
+        print('Dataset:', model3.dataset)
+        print()
+
+    with cd('output'):  # Have files output to output
+        model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases',
+                             initialize_data=True)
+        model3.featurize(retrieve_from_mysql=True)
+        model3.data_split(val=0.1)
+        model3.reg()
+        model3.run()
+        model3.analyze()
+        if model3.algorithm != 'nn':  # issues pickling NN models
+            model3.pickle_model()
+
+        model3.store()
+        model3.org_files(zip_only=True)
+        # model1.QsarDB_export(zip_output=True)
 
 
 def example_load():
@@ -195,6 +223,8 @@ def example_load():
 
 
 if __name__ == "__main__":
-     # main()
-    single_model()
+    # main()
+    # single_model()
     # example_load()
+    # example_run_with_mysql()
+    output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")  # Testing output_to_neo4j

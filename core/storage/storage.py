@@ -5,16 +5,12 @@ from tqdm import tqdm
 import pickle
 import os
 import re
-import ast
 import subprocess
-from core.misc import cd
 import platform
 import numpy
 
 from time import sleep
 import shutil
-
-from timeit import default_timer
 
 
 class NumpyEncoder(json.JSONEncoder):

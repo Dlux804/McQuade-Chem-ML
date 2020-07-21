@@ -1,22 +1,14 @@
 import matplotlib.pyplot as plt
-from matplotlib import cm
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-from time import time
 import pandas as pd
 import shutil
 import glob
-from core import misc
+from core.storage import misc
 from core import ingest
-from core import analysis
-import cirpy
 from rdkit import Chem
-from rdkit.Chem import Draw
 from rdkit.Chem import PandasTools
 import itertools
 from functools import reduce
-import pprint
-
 
 """
 Goal is to compare the output of many models in a systematic, automatic manner.

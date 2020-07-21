@@ -8,7 +8,7 @@ myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
 
 # Now we can import modules from other directory
-from core import misc
+from core.storage import misc
 from main import ROOT_DIR
 
 

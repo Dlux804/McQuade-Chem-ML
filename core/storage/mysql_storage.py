@@ -182,7 +182,7 @@ class MLMySqlConn:
                     print(feat_name, dataset)
 
                     # Digest data and smiles_series
-                    with cd(str(Path(__file__).parent.parent.absolute()) + '/dataFiles/'):
+                    with cd(str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'):
                         if dataset in list(self.rds.keys()):
                             self.target_name = self.rds[dataset]
                             self.data, smiles_series = ingest.load_smiles(self, dataset)

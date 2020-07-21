@@ -94,7 +94,7 @@ def main():
 
                             model1.store()
                             model1.org_files(zip_only=True)
-                            model1.to_neo4j()
+                            # model1.to_neo4j()  # Commenting out for now, still in development
                 if c == 'c':
                     for data in datasets:
                         # The following if statements allow for multi-label classification
@@ -177,7 +177,7 @@ def example_run_with_mysql_and_neo4j():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = models.MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0, 2],
+        model3 = models.MlModel(algorithm='nn', dataset='water-energy.csv', target='expt', feat_meth=[0, 2],
                                 tune=True, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)

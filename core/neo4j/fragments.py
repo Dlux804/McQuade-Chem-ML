@@ -10,7 +10,6 @@ from py2neo import Graph
 import pandas as pd
 # import py2neo
 # Connect to Neo4j Destop.
-g = Graph('bolt://neo4j@localhost:7687')
 
 # TODO REDO DOCSTRINGS
 
@@ -37,7 +36,7 @@ def canonical_smiles(smiles_list):
     return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
 
 
-def fragments_to_neo(row):
+def fragments_to_neo(row, g):
     """
     Objective: Create fragments and import them into Neo4j based on our ontology
     Intent: This script is based on Adam's "mol_frag.ipynb" file in his deepml branch, which is based on rdkit's
@@ -45,9 +44,11 @@ def fragments_to_neo(row):
             tune how much fragment this script can generate for one SMILES. Also, everything (line 69 to 77)
             needs to be under a for loop or else it will break (as in not generating the correct amount of fragments,
             usually much less than the actual amount). I'm not sure why
+    :param g:
     :param row:
     :return:
     """
+
     mol_feat_query = """
         UNWIND $fragments as fragment
         MERGE (mol:Molecule {SMILES: fragment.smiles})

@@ -4,9 +4,10 @@ import numpy as np
 from tqdm import tqdm
 import pickle
 import os
+import re
 import subprocess
-from core.misc import cd
 import platform
+import numpy
 
 from time import sleep
 import shutil
@@ -183,3 +184,59 @@ def org_files(self, zip_only=False):
             rmdir = os.getcwd() + '/' + self.run_name
             shutil.rmtree(rmdir, ignore_errors=True)
 
+
+def compress_fingerprint(df):
+    # Search for fingerprint columns
+    fingerprint_columns = []
+    fingerprint_array_column_name = ''
+    for column in df.columns:
+        m = re.findall('-\-?\d+', column)
+        if m:
+            fingerprint_columns.append(column)
+            fingerprint_array_column_name = f"FP$${column.split('-')[0]}"
+
+    if fingerprint_columns:
+        # Collect all fingerprint columns, and send them to a list of list (of fingerprints)
+        fingerprint_column_lists = df[fingerprint_columns].values.tolist()
+        # Make a new dataframe with the columns smiles and the single fingerprint column
+        fp_df = pd.DataFrame({'smiles': list(df['smiles']),
+                              fingerprint_array_column_name: fingerprint_column_lists}).astype(str)
+        # Get the original dataframe, minus the fingerprint columns
+        df = df[df.columns.difference(fingerprint_columns)]
+        # Join the new dataframes together
+        df = pd.concat([df, fp_df], axis=1)
+    return df
+
+
+def decompress_fingerprint(df):
+
+    # Search for fingerprint column
+    columns = df.columns
+    fingerprint_column = None
+    for column in columns:
+        matches = re.findall('FP\$\$', column)
+        if len(matches) > 0:
+            fingerprint_column = column
+
+    # If not found, return df as is
+    if fingerprint_column is None:
+        return df
+
+    # Convert column astype(str) to columns of numbers
+    fingerprints = df[fingerprint_column]
+    fingerprints = fingerprints.str[1:-1]  # Remove string brackets
+    fingerprints = fingerprints.str.split(', ', expand=True)
+    fingerprints = fingerprints.astype(float)  # Note columns are converted to float, even if it was an int.
+    fingerprints = fingerprints.dropna()
+
+    # Rename columns to match original fingerprint column
+    fingerprints_columns = []
+    fingerprint_type = fingerprint_column.split('FP$$')[1]
+    for column in list(fingerprints.columns):
+        fingerprints_columns.append(f'{fingerprint_type}-{column}')
+    fingerprints.columns = fingerprints_columns
+
+    # Join together rest of dataframe with generated fingerprint dataframe
+    df = df.drop(fingerprint_column, axis=1)
+    df = pd.concat([df, fingerprints], axis=1)
+    return df

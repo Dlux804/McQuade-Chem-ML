@@ -7,7 +7,7 @@ from core.nodes_to_neo4j import prep
 import time
 
 # Merge to Neo4j Destop.
-g = Graph("bolt://neo4j:1234@localhost:7687")
+g = Graph("bolt://neo4j:1234@localhost:7687/db/data/")
 
 # TODO REDO DOCSTRINGS
 

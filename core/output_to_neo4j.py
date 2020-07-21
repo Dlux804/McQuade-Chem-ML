@@ -11,7 +11,7 @@ import json
 from core import prep_from_outputs
 
 
-g = Graph("bolt://neo4j:1234@localhost:7687")
+g = Graph("bolt://neo4j:1234@localhost:7687/db/data/")
 
 
 def file_count():

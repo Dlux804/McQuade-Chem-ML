@@ -1,11 +1,12 @@
 # TODO: Make main function that asks user what models they would like to initiate
 
-from core import models
-from core.storage.misc import cd
-from core.storage.storage import unpickle_model
+from core import models, Get_Classification
+from core.misc import cd
+from core.storage import pickle_model, unpickle_model
 import os
 import pathlib
-from core.neo4j.output_to_neo4j import output_to_neo4j
+from time import sleep
+from core.features import featurize
 
 import pandas as pd
 
@@ -27,8 +28,14 @@ def main():
         #learner = [] # Use this line to test specific models instead of iterating
 
 
-        #datasets = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'bace.csv']
-        datasets = ['clintox.csv'] # Use this line to test specific data sets instead of having to iterate
+        targets = None
+        sets = {
+            'BBBP.csv': targets,
+            'sider.csv': targets,
+            'clintox.csv': targets,
+            'bace.csv': targets,
+        }
+
 
     # Sets up learner, featurizations, and data sets for regression
     if c == 'r':
@@ -54,87 +61,68 @@ def main():
     for alg in learner:  # loop over all learning algorithms
         # The following if statements set featurization options based on if the
         # model needs normalized data (currently only set up for the classification models)
-        if alg == 'svc':   # Normalized
-            feats = [[1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1], [2], [3], [4],
-                 [5], [6]]
-        if alg == 'knc':   # Normalized
-            feats = [[1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1], [2], [3], [4],
-                     [5], [6]]
-        if alg == 'rf':    # Not Normalized
-            feats = [[0], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0], [2], [3], [4],
-                 [5], [6]]
+        if c == 'c':
+            feats = Get_Classification.get_classification_feats(alg) # Selects featurizations for classification based on the model being ran
+
         for method in feats:  # loop over the featurization methods
+            for data, target in sets.items(): # loop over dataset dictionary
 
 
                 if c == 'r':  # Runs the models/featurizations for regression
-                    for data, target in sets.items(): # loop over dataset dictionary
-                        with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
-                            print('Model Type:', alg)
-                            print('Featurization:', method)
-                            print('Dataset:', data)
-                            print()
-                            print('Initializing model...', end=' ', flush=True)
-                            # initiate model class with algorithm, dataset and target
-                            model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                    tune=True, cv=2, opt_iter=2)
-                            print('Done.\n')
+                    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+                        print('Model Type:', alg)
+                        print('Featurization:', method)
+                        print('Dataset:', data)
+                        print()
+                        print('Initializing model...', end=' ', flush=True)
+                        # initiate model class with algorithm, dataset and target
+                        model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
+                                                tune=False, cv=3, opt_iter=25)
+                        print('Done.\n')
 
-                        with cd('dataFiles'):  # Have files output to output
-                            model1.featurize()
-                            if alg == 'nn':
-                                val = 0.1
-                            else:
-                                val = 0.0
-                            model1.data_split(val=val)
-                            model1.reg()
-                            model1.run()
-                            model1.analyze()
-                            if model1.algorithm != 'nn':  # issues pickling NN models
-                                model1.pickle_model()
+                    with cd('dataFiles'):  # Have files output to output
+                        model1.featurize()
+                        val = 0.0
+                        if alg == 'nn':
+                            val = 0.1
 
-                            model1.store()
-                            model1.org_files(zip_only=True)
-                            # model1.to_neo4j()  # Commenting out for now, still in development
+                        model1.data_split(val=val)
+                        model1.reg()
+                        model1.run()
+                        model1.analyze()
+                        if model1.algorithm != 'nn':
+                            model1.pickle_model()
+
+                        model1.store()
+                        model1.org_files(zip_only=True)
+
                 if c == 'c':
-                    for data in datasets:
-                        # The following if statements allow for multi-label classification
-                        if data == 'sider.csv':
-                            targets = ['Hepatobiliary disorders', 'Metabolism and nutrition disorders', 'Product issues', 'Eye disorders', 'Investigations', 'Musculoskeletal and connective tissue disorders', 'Gastrointestinal disorders',
-                                       'Social circumstances', 'Immune system disorders', 'Reproductive system and breast disorders', 'Neoplasms benign, malignant and unspecified (incl cysts and polyps)',
-                                       'General disorders and administration site conditions', 'Endocrine disorders', 'Surgical and medical procedures', 'Vascular disorders', 'Blood and lymphatic system disorders',
-                                       'Skin and subcutaneous tissue disorders', 'Congenital, familial and genetic disorders', 'Infections and infestations', 'Respiratory, thoracic and mediastinal disorders',
-                                       'Psychiatric disorders', 'Renal and urinary disorders', 'Pregnancy, puerperium and perinatal conditions', 'Ear and labyrinth disorders', 'Cardiac disorders',
-                                       'Nervous system disorders', 'Injury, poisoning and procedural complications']
-                        if data == 'clintox.csv':
-                            targets = ['FDA_APPROVED', 'CT_TOX']
-                        if data == 'BBBP.csv':
-                            targets = 'p_np'
-                        if data == 'bace.csv':
-                            targets = 'Class'
+                    targets = Get_Classification.get_classification_targets(data)  # Gets targets for classification based on the data set being used
 
-                        if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
-                            pass
-                        else:
-                            # change active directory
-                            with cd('dataFiles'):
-                                print('Now in:', os.getcwd())
-                                print('Initializing model...', end=' ', flush=True)
+                    if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
+                        pass
+                    else:
+                        # change active directory
+                        with cd('dataFiles'):
+                            print('Now in:', os.getcwd())
+                            print('Initializing model...', end=' ', flush=True)
 
-                                # initiate model class with algorithm, dataset and target
-                                model = models.MlModel(alg, data, targets, method)
-                                print('done.')
+                            # initiate model class with algorithm, dataset and target
+                            model = models.MlModel(alg, data, targets, method)
+                            print('done.')
 
-                            print('Model Type:', alg)
-                            print('Featurization:', method)
-                            print('Dataset:', data)
-                            print('Target(s):', targets)
-                            print()
-                            # Runs classification model
-                            model.featurize()  # Featurize molecules
-                            model.data_split()
-                            model.reg()
-                            model.run()  # Runs the models/featurizations for classification
-                        # loop over dataset dictionary
+                        print('Model Type:', alg)
+                        print('Featurization:', method)
+                        print('Dataset:', data)
+                        print('Target(s):', targets)
+                        print()
+                        # Runs classification model
+                        model.featurize()  # Featurize molecules
+                        model.data_split()
+                        model.reg()
+                        model.run()  # Runs the models/featurizations for classification
+
+
 
 
 def single_model():
@@ -149,7 +137,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='ada', dataset='water-energy.csv', target='expt', feat_meth=[0, 6],
+        model1 = models.MlModel(algorithm='ada', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 6],
                                 tune=True, cv=2, opt_iter=2)
 
         print('done.')
@@ -169,37 +157,7 @@ def single_model():
         model1.store()
         model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
-
-
-def example_run_with_mysql_and_neo4j():
-    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
-        print('Now in:', os.getcwd())
-        print('Initializing model...', end=' ', flush=True)
-        # initiate model class with algorithm, dataset and target
-        model3 = models.MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0, 4],
-                                tune=True, cv=2, opt_iter=2)
-        print('done.')
-        print('Model Type:', model3.algorithm)
-        print('Featurization:', model3.feat_meth)
-        print('Dataset:', model3.dataset)
-        print()
-
-    with cd('output'):  # Have files output to output
-        model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases',
-                             initialize_data=True)
-        model3.featurize(retrieve_from_mysql=True)
-        model3.data_split(val=0.1)
-        model3.reg()
-        model3.run()
-        model3.analyze()
-        if model3.algorithm != 'nn':  # issues pickling NN models
-            model3.pickle_model()
-
-        model3.store()
-        model3.org_files(zip_only=True)
-        # model1.QsarDB_export(zip_output=True)
-        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        model1.to_neo4j()
 
 
 def example_load():
@@ -224,8 +182,6 @@ def example_load():
 
 
 if __name__ == "__main__":
-    # main()
-    # single_model()
+     # main()
+    single_model()
     # example_load()
-    example_run_with_mysql_and_neo4j()
-    # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")  # Testing output_to_neo4j

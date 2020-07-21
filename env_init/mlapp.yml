@@ -18,7 +18,7 @@ dependencies:
   - mock
   - tqdm
   - lxml
-  - sqlalchemy
+#  - sqlalchemy
   - pymysql
   - pip:
       - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
@@ -27,5 +27,6 @@ dependencies:
       - "git+https://github.com/Zsailer/pandas_flavor.git"
       - "git+https://github.com/mcs07/CIRpy.git"
       - "git+https://github.com/technige/py2neo.git"
+      - "git+https://github.com/sqlalchemy/sqlalchemy.git"
 
 prefix: C:\Users\Adam\miniconda3\envs\mlapp

@@ -226,7 +226,7 @@ def decompress_fingerprint(df):
     fingerprints = df[fingerprint_column]
     fingerprints = fingerprints.str[1:-1]  # Remove string brackets
     fingerprints = fingerprints.str.split(', ', expand=True)
-    fingerprints = fingerprints.astype(float)  # Note column is converted to float, even if it was an int.
+    fingerprints = fingerprints.astype(float)  # Note columns are converted to float, even if it was an int.
     fingerprints = fingerprints.dropna()
 
     # Rename columns to match original fingerprint column

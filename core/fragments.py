@@ -10,7 +10,7 @@ from py2neo import Graph
 import pandas as pd
 # import py2neo
 # Connect to Neo4j Destop.
-g = Graph()
+g = Graph('bolt://neo4j@localhost:7687')
 
 # TODO REDO DOCSTRINGS
 

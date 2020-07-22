@@ -8,7 +8,7 @@ from rdkit.Chem import PandasTools
 from core import features
 
 # Feature importance graph
-def impgraph(self):
+def impgraph(model):
     """
     Objective: Make a feature importance graph. I'm limiting this to only rf and gdb since only they have feature
     importance (I might need to double check on that). I'm also limiting this to only rdkit2d since the rest are only 0s
@@ -16,11 +16,11 @@ def impgraph(self):
     """
 
     # Get numerical feature importances
-    importances2 = self.regressor.feature_importances_  # used later for graph
+    importances2 = model.regressor.feature_importances_  # used later for graph
 
     # List of tuples with variable and importance
     feature_importances = [(feature, round(importance, 2)) for feature, importance in
-                               zip(self.feature_list, list(importances2))]
+                           zip(model.feature_list, list(importances2))]
 
     # Sort the feature importances by most important first
     feature_importances = sorted(feature_importances, key=lambda x: x[1], reverse=True)
@@ -31,7 +31,7 @@ def impgraph(self):
     # prepare importance data for export and graphing
     indicies = (-importances2).argsort()
     varimp = pd.DataFrame([], columns=['variable', 'importance'])
-    varimp['variable'] = [self.feature_list[i] for i in indicies]
+    varimp['variable'] = [model.feature_list[i] for i in indicies]
     varimp['importance'] = importances2[indicies]
 
     # Importance Bar Graph
@@ -50,22 +50,23 @@ def impgraph(self):
     # Axis labels and title
     plt.ylabel('Importance')
     plt.xlabel('Variable')
-    plt.title(self.run_name + ' Variable Importances')
+    plt.title(model.run_name + ' Variable Importances')
 
     # ax = plt.axes()
     ax.xaxis.grid(False)  # remove just xaxis grid
 
-    plt.savefig(self.run_name + '_importance-graph.png')
+    plt.savefig(model.run_name + '_importance-graph.png')
     # self.impgraph = plt
-    self.varimp = varimp
+    model.varimp = varimp
+    return model.varimp
 
 
-def pva_graph(self):
+def pva_graph(model):
     """
     Make Predicted vs. Actual graph with prediction uncertainty.
     Pass dataframe from multipredict function. Return a graph.
     """
-    pva = self.predictions
+    pva = model.predictions
     r2 = r2_score(pva['actual'], pva['pred_avg'])
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))
@@ -109,7 +110,7 @@ def pva_graph(self):
     # ax = plt.axes()
     plt.xlabel('True', fontsize=14)
     plt.ylabel('Predicted', fontsize=14)
-    plt.title(self.run_name + ' Predicted vs. Actual')
+    plt.title(model.run_name + ' Predicted vs. Actual')
 
     plt.plot(lims, lims, 'k-', label='y=x')
     plt.plot([], [], ' ', label='R^2 = %.3f' % r2)
@@ -124,7 +125,7 @@ def pva_graph(self):
     fig.patch.set_facecolor('blue')  # Will change background color
     fig.patch.set_alpha(0.0)  # Makes background transparent
 
-    plt.savefig(self.run_name+'_' + 'PVA.png')
+    plt.savefig(model.run_name + '_' + 'PVA.png')
     # plt.show()
     # self.pva_graph = plt
     # return plt

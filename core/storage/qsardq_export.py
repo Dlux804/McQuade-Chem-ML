@@ -7,10 +7,10 @@ import xml.etree.cElementTree as ET
 from sklearn2pmml import PMMLPipeline, sklearn2pmml
 
 
-def QsarDB_export(self, zip_output=False):
+def QsarDB_export(model, zip_output=False):
     """
     :param zip_output: Weather to zip output folder
-    :param self: Model Object
+    :param model: Model Object
     :return:
 
     Purpose of this is to export our models in a format that complies with the QsarDB requirements.
@@ -37,9 +37,9 @@ def QsarDB_export(self, zip_output=False):
 
     # Fetch which set each molecule is in
     def __get_compound_set__(smiles):
-        if smiles in self.test_molecules:
+        if smiles in model.test_molecules:
             return 'TE'
-        if smiles in self.train_molecules:
+        if smiles in model.train_molecules:
             return 'TR'
         else:
             return 'V'
@@ -60,36 +60,36 @@ def QsarDB_export(self, zip_output=False):
     def __model_to_pmml__():
 
         pipeline = PMMLPipeline([
-            ("regressor", self.regressor)
+            ("regressor", model.regressor)
         ])
-        sklearn2pmml(pipeline, "pmml.xml", with_repr=True)
+        sklearn2pmml(pipeline, "pmml", with_repr=True)
 
         # Read in the file
-        with open('pmml.xml', 'r') as file:
+        with open('pmml', 'r') as file:
             filedata = file.read()
 
         # Replace x[1-...] with actual column names
         m = re.findall('x\-?\d+', filedata)
         matches = []
         [matches.append(x) for x in m if x not in matches]
-        feature_cols = list(data_df.columns.difference(["in_set", "smiles", "id", self.target_name]))
+        feature_cols = list(data_df.columns.difference(["in_set", "smiles", "id", model.target_name]))
         matched_dict = dict(zip(matches, feature_cols))
         for match, feat in matched_dict.items():
             filedata = filedata.replace(match, f'{feat}')
 
         # Replace y with target name
-        filedata = filedata.replace('y', f'{self.target_name}')
+        filedata = filedata.replace('y', f'{model.target_name}')
 
         # Write the file out again
-        with open('pmml.xml', 'w') as file:
+        with open('pmml', 'w') as file:
             file.write(filedata)
 
     # Get current directory, change in qdb directory
-    cur_dir = __mkd__(f'{self.run_name}_qdb')
-    non_descriptors_columns = ['smiles', 'id', 'in_set', self.target_name]
+    cur_dir = __mkd__(f'{model.run_name}_qdb')
+    non_descriptors_columns = ['smiles', 'id', 'in_set', model.target_name]
 
     # Gather all data (without validation data), testing data, and training data
-    data_df = self.data
+    data_df = model.data
     data_df['id'] = data_df['smiles'].apply(__get_compound_set__)
     data_df = data_df.sort_values(by=['id'])
     data_df = data_df.reset_index(drop=True)
@@ -126,13 +126,13 @@ def QsarDB_export(self, zip_output=False):
 
     # Work on properties directory
     main_dir = __mkd__('properties')
-    prop_dir = __mkd__(f'{self.target_name}')
-    properties_df = data_df[['id', self.target_name]]
+    prop_dir = __mkd__(f'{model.target_name}')
+    properties_df = data_df[['id', model.target_name]]
     properties_df.to_csv('values', sep='\t', index=False)
     os.chdir(prop_dir)
     root = ET.Element("PropertyRegistry", xmlns="http://www.qsardb.org/QDB")
     prop = ET.SubElement(root, "Property")
-    ET.SubElement(prop, "Id").text = self.target_name
+    ET.SubElement(prop, "Id").text = model.target_name
     ET.SubElement(prop, "Name").text = "No Names available yet"
     ET.SubElement(prop, "Cargos").text = "values"
     __root_to_xml__(root, "properties.xml")
@@ -140,16 +140,16 @@ def QsarDB_export(self, zip_output=False):
 
     # Work on predictions
     main_dir = __mkd__('predictions')
-    pred_dir = __mkd__(f'{self.algorithm}_test')
-    predictions_df = data_df.merge(self.predictions, on='smiles', how='inner')[['id', 'pred_avg']]
+    pred_dir = __mkd__(f'{model.algorithm}_test')
+    predictions_df = data_df.merge(model.predictions, on='smiles', how='inner')[['id', 'pred_avg']]
     predictions_df.to_csv('values', sep='\t', index=False)
     os.chdir(pred_dir)
     root = ET.Element("PredictionRegistry", xmlns="http://www.qsardb.org/QDB")
     pred = ET.SubElement(root, "Prediction")
-    ET.SubElement(pred, "Id").text = f"{self.algorithm}_Test"
+    ET.SubElement(pred, "Id").text = f"{model.algorithm}_Test"
     ET.SubElement(pred, "Name").text = "Testing Set"
     ET.SubElement(pred, "Cargos").text = "values"
-    ET.SubElement(pred, "ModelId").text = self.algorithm
+    ET.SubElement(pred, "ModelId").text = model.algorithm
     ET.SubElement(pred, "Type").text = "testing"
     ET.SubElement(pred, "Application").text = "Python 3"
     __root_to_xml__(root, "predictions.xml")
@@ -161,18 +161,18 @@ def QsarDB_export(self, zip_output=False):
     # Make models.xml
     root = ET.Element("ModelRegistry", xmlns="http://www.qsardb.org/QDB")
     model = ET.SubElement(root, "Model")
-    ET.SubElement(model, "Id").text = self.algorithm
+    ET.SubElement(model, "Id").text = model.algorithm
     ET.SubElement(model, "Name").text = "No Names available yet"
-    ET.SubElement(model, "Cargos").text = "pmml.xml bibtex"
-    ET.SubElement(model, "PropertyId").text = self.target_name
+    ET.SubElement(model, "Cargos").text = "pmml bibtex"
+    ET.SubElement(model, "PropertyId").text = model.target_name
     __root_to_xml__(root, "models.xml")
-    __mkd__(self.algorithm)
+    __mkd__(model.algorithm)
     __model_to_pmml__()
 
     # Switch back to original directory
     os.chdir(cur_dir)
 
     if zip_output:
-        shutil.make_archive((os.getcwd() + '/ ' + f'{self.run_name}_qdb'), 'zip',
-                            os.getcwd(), f'{self.run_name}_qdb')
-        shutil.rmtree(f'{self.run_name}_qdb', ignore_errors=True)
+        shutil.make_archive((os.getcwd() + '/ ' + f'{model.run_name}_qdb'), 'zip',
+                            os.getcwd(), f'{model.run_name}_qdb')
+        shutil.rmtree(f'{model.run_name}_qdb', ignore_errors=True)

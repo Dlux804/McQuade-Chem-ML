@@ -7,7 +7,7 @@ Just so we have the featurized datasets (using RDKit).
 # from core import features
 # from core import ingest
 from core import models
-from core.storage.misc import cd
+from core.storage import cd
 import os
 
 sets = {

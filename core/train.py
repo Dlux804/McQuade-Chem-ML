@@ -9,10 +9,10 @@ from tqdm import tqdm
 from time import sleep
 
 
-def train_reg(self,n=5):
+def train_reg(model, n=5):
     """
     Function to train the model n times and collect basic statistics about results.
-    :param self:
+    :param model:
     :param n: number of replicates
     :return:
     """
@@ -26,24 +26,24 @@ def train_reg(self,n=5):
     t = np.empty(n)
 
     pva_multi = pd.DataFrame([])
-    pva_multi['smiles'] = self.test_molecules  # Save smiles to predictions
-    pva_multi['actual'] = self.test_target
+    pva_multi['smiles'] = model.test_molecules  # Save smiles to predictions
+    pva_multi['actual'] = model.test_target
     for i in tqdm(range(0, n), desc="Model Replication\n"):  # run model n times
         start_time = time()
 
-        if self.algorithm == 'nn':  # needs fit_params to set epochs and callback
-            self.regressor.fit(self.train_features, self.train_target, **self.fit_params)
+        if model.algorithm == 'nn':  # needs fit_params to set epochs and callback
+            model.regressor.fit(model.train_features, model.train_target, **model.fit_params)
         else:
-            self.regressor.fit(self.train_features, self.train_target)
+            model.regressor.fit(model.train_features, model.train_target)
 
         # Make predictions
-        predictions = self.regressor.predict(self.test_features)
+        predictions = model.regressor.predict(model.test_features)
         done_time = time()
         fit_time = done_time - start_time
 
         # Dataframe for replicate_model
         pva = pd.DataFrame([], columns=['actual', 'predicted'])
-        pva['actual'] = self.test_target
+        pva['actual'] = model.test_target
         pva['predicted'] = predictions
         r2[i] = r2_score(pva['actual'], pva['predicted'])
         mse[i] = mean_squared_error(pva['actual'], pva['predicted'])
@@ -71,15 +71,17 @@ def train_reg(self,n=5):
         'time_avg': t.mean(),
         'time_std': t.std()
     }
-    self.predictions = pva_multi
-    self.predictions_stats = stats
+    model.predictions = pva_multi
+    model.predictions_stats = stats
 
     print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])
     print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
     print()
 
+    return model.predictions, model.predictions_stats
 
-def train_cls(self, n=5):
+
+def train_cls(model, n=5):
     # set the model specific classifier function from sklearn
 
     print("Starting model training with {} replicates.\n".format(n), end=' ', flush=True)
@@ -91,33 +93,37 @@ def train_cls(self, n=5):
     f1_score1 = np.empty(n)
 
     cls_multi = pd.DataFrame([])
-    cls_multi['smiles'] = self.test_molecules  # Save smiles to predictions
-#    cls_multi['actual'] = self.test_target
+    cls_multi['smiles'] = model.test_molecules  # Save smiles to predictions
+    if model.dataset not in ['sider.csv', 'clintox.csv']:
+        cls_multi['actual'] = model.test_target  # Broken for mult-label classification
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         print()
         start_time = time()
-        self.regressor.fit(self.train_features, self.train_target)
+        model.regressor.fit(model.train_features, model.train_target)
 
         # Make predictions
-        predictions = self.regressor.predict(self.test_features)
+        predictions = model.regressor.predict(model.test_features)
         done_time = time()
         fit_time = done_time - start_time
-        if self.dataset in ['sider.csv', 'clintox.csv']: # Contains multi-label evaluation methods, since sider data set and clintox data set are done with multi-target classification.
-            conf = multilabel_confusion_matrix(self.test_target, predictions)
+
+        # Contains multi-label evaluation methods
+        if model.dataset in ['sider.csv', 'clintox.csv']:
+            conf = multilabel_confusion_matrix(model.test_target, predictions)
             print("Confusion matrix for each individual label (see key above, labeled as 'target(s):'): ")
             print(conf)
             print()
 
-            RF_pred = cross_val_predict(self.regressor, self.train_features, self.train_target, cv=3)
-            f1_score1[i] = f1_score(self.train_target, RF_pred, average="macro")
+            RF_pred = cross_val_predict(model.regressor, model.train_features, model.train_target, cv=3)
+            f1_score1[i] = f1_score(model.train_target, RF_pred, average="macro")
 
             print()
-            auc[i] = roc_auc_score(self.test_target, predictions)
+            auc[i] = roc_auc_score(model.test_target, predictions)
             sleep(0.25)
+
         else:  # Contains single-label evaluation methods
             # Dataframe for replicate_model
             cls = pd.DataFrame([], columns=['actual', 'predicted'])
-            cls['actual'] = self.test_target
+            cls['actual'] = model.test_target
             cls['predicted'] = predictions
             acc[i] = accuracy_score(cls['actual'], cls['predicted'])
 
@@ -136,6 +142,10 @@ def train_cls(self, n=5):
             # store as enumerated column for multipredict
             cls_multi['predicted' + str(i)] = predictions
             sleep(0.25)  # so progress bar can update
+
+            # Define pred_avg and pred_std
+            cls_multi['pred_avg'] = cls.mean(axis=1)
+            cls_multi['pred_std'] = cls.std(axis=1)
 
     print('Done after {:.1f} seconds.'.format(t.sum()))
 
@@ -159,10 +169,11 @@ def train_cls(self, n=5):
         'f1_score_avg': f1_score1.mean(),
         'f1_score_std': f1_score1.std()
     }
-    self.predictions = cls_multi
-    self.predictions_stats = stats
 
-    if self.dataset in ['sider.csv', 'clintox.csv']:
+    model.predictions = cls_multi
+    model.predictions_stats = stats
+
+    if model.dataset in ['sider.csv', 'clintox.csv']:
         print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
         print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
         print()
@@ -171,7 +182,4 @@ def train_cls(self, n=5):
         print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
         print()
 
-
-
-
-
+    return model.predictions, model.predictions_stats

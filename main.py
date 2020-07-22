@@ -1,13 +1,10 @@
 # TODO: Make main function that asks user what models they would like to initiate
 
 from core import models, Get_Classification
-from core.storage.misc import cd
-from core.storage.storage import pickle_model, unpickle_model
+from core.storage import cd
+from core.storage.misc_storage import unpickle_model
 import os
 import pathlib
-from time import sleep
-from core.features import featurize
-from core.neo4j.output_to_neo4j import output_to_neo4j
 
 import pandas as pd
 
@@ -26,10 +23,11 @@ def main():
     if c == 'c':
         # list of available classification learning algorithms
         learner = ['svc', 'knc', 'rf']
-        #learner = [] # Use this line to test specific models instead of iterating
-
+        # learner = [] # Use this line to test specific models instead of iterating
 
         targets = None
+        feats = None
+
         sets = {
             'BBBP.csv': targets,
             'sider.csv': targets,
@@ -37,18 +35,16 @@ def main():
             'bace.csv': targets,
         }
 
-
     # Sets up learner, featurizations, and data sets for regression
-    if c == 'r':
+    elif c == 'r':
         # list of available regression learning algorithms
         learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-        #learner = ['gdb', 'nn']
-
+        # learner = ['gdb', 'nn']
 
         # list of available featurization methods
         feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
                  [5]]
-        feats = [[0]]#, [0, 2]]  # Change this to change which featurizations are being tested (for regression)
+        feats = [[0]]  # , [0, 2]]  # Change this to change which featurizations are being tested (for regression)
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
@@ -59,15 +55,18 @@ def main():
             # 'jak2_pic50.csv': 'pIC50'
         }
 
+    else:
+        raise Exception("Not a valid input... please type c or r")
+
     for alg in learner:  # loop over all learning algorithms
         # The following if statements set featurization options based on if the
         # model needs normalized data (currently only set up for the classification models)
         if c == 'c':
-            feats = Get_Classification.get_classification_feats(alg) # Selects featurizations for classification based on the model being ran
+            feats = Get_Classification.get_classification_feats(
+                alg)  # Selects featurizations for classification based on the model being ran
 
         for method in feats:  # loop over the featurization methods
-            for data, target in sets.items(): # loop over dataset dictionary
-
+            for data, target in sets.items():  # loop over dataset dictionary
 
                 if c == 'r':  # Runs the models/featurizations for regression
                     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
@@ -98,7 +97,8 @@ def main():
                         model1.org_files(zip_only=True)
 
                 if c == 'c':
-                    targets = Get_Classification.get_classification_targets(data)  # Gets targets for classification based on the data set being used
+                    targets = Get_Classification.get_classification_targets(
+                        data)  # Gets targets for classification based on the data set being used
 
                     if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
                         pass
@@ -136,7 +136,9 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='ada', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 6],
+        model1 = models.MlModel(algorithm='rf', dataset='clintox.csv',
+                                target=['FDA_APPROVED', 'CT_TOX'],
+                                feat_meth=[0, 2],
                                 tune=True, cv=2, opt_iter=2)
 
         print('done.')
@@ -153,9 +155,11 @@ def single_model():
         model1.analyze()
         if model1.algorithm != 'nn':  # issues pickling NN models
             model1.pickle_model()
+        if model1.algorithm != 'nn' and model1.algorithm != 'knn':  # These models wont export properly
+            if model1.dataset not in model1.multi_label_classification_datasets:
+                model1.QsarDB_export(zip_output=True)
         model1.store()
         model1.org_files(zip_only=True)
-        model1.QsarDB_export(zip_output=True)
 
 
 def example_run_with_mysql_and_neo4j():
@@ -163,7 +167,7 @@ def example_run_with_mysql_and_neo4j():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = models.MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0, 4],
+        model3 = models.MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0, 4],
                                 tune=True, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
@@ -172,8 +176,7 @@ def example_run_with_mysql_and_neo4j():
         print()
 
     with cd('output'):  # Have files output to output
-        model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases',
-                             initialize_data=True)
+        model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases')
         model3.featurize(retrieve_from_mysql=True)
         model3.data_split(val=0.1)
         model3.reg()
@@ -215,10 +218,3 @@ if __name__ == "__main__":
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
-
-    from core import MLMySqlConn
-    conn = MLMySqlConn(user='neo4j', password='password', host='localhost', database='featurized_databases')
-    """
-    This serves as an example for how to import different classes into current file (Notice how mysql_storag.py
-    was never imported directly). 
-    """

@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import shutil
 import glob
-from core.storage import misc
+from core.storage import cd
 from core import ingest
 from rdkit import Chem
 from rdkit.Chem import PandasTools
@@ -21,7 +21,7 @@ def datasize(dataset):
     Flaw is the assumption that each row is a valid data set
     entry.  It is safe for our basic cases.
     """
-    with misc.cd('../dataFiles/'): # move to dataset directory
+    with cd('../dataFiles/'): # move to dataset directory
         with open(dataset) as f:
             size = sum(1 for line in f) - 1  # remove one for header
             print('The {} dataset has {} entries in it.'.format(dataset, size))
@@ -329,7 +329,7 @@ def moloverlap(datasets, n, image=False):
     image=False,  Whether to create a grid image of the overlapping molecules.
 
     """
-    with misc.cd('../dataFiles/'):  # move to dataset directory
+    with cd('../dataFiles/'):  # move to dataset directory
 
         # use dictionary comprehension and iterate over argument dictionary
         # create resolve chemID and create dataframe with ingest.resolveID
@@ -439,7 +439,7 @@ data = {
 
 
 #
-# with misc.cd('../dataFiles/'): # move to dataset directory
+# with cd('../dataFiles/'): # move to dataset directory
 #     cmc = pd.read_csv('cmc_smiles_26.csv')
 #     cmc = cmc[:9]
 #     print(cmc)

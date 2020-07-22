@@ -6,16 +6,16 @@ from pathlib import Path
 from time import time
 
 from core import ingest
-from core.storage.misc import cd
-from core.storage.storage import compress_fingerprint, decompress_fingerprint
+from core.storage import cd
+from core.storage.misc_storage import compress_fingerprint, decompress_fingerprint
 
 from rdkit.Chem import MolFromSmiles
 from rdkit import RDLogger
+
 RDLogger.DisableLog('rdApp.*')
 
 
 class MLMySqlConn:
-    from core.features import featurize
 
     def __init__(self, user, password, host, database, pool_recycle=None):
         """
@@ -43,15 +43,43 @@ class MLMySqlConn:
         # Dict matching feature methods to feature names
         self.feat_sets = {-1: None, 0: 'rdkit2d', 1: 'rdkit2dnormalized', 2: 'rdkitfpbits', 3: 'morgan3counts',
                           4: 'morganfeature3counts', 5: 'morganchiral3counts', 6: 'atompaircounts'}
-        # Define regression datasets with their keys
-        self.rds = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
-                    'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50', '18k-logP.csv': 'exp'}
-        # Define classification datasets
-        self.cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv', 'cmc_noadd.csv']
+
+        # Define datasets with their keys
+        self.dataset_target_dict = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
+                                    'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50', '18k-logP.csv': 'exp',
+                                    'clintox.csv': ['FDA_APPROVED', 'CT_TOX'], 'BBBP.csv': 'p_np', 'bace.csv': 'Class',
+                                    'sider.csv': ['Hepatobiliary disorders', 'Metabolism and nutrition disorders',
+                                                  'Product issues',
+                                                  'Eye disorders', 'Investigations',
+                                                  'Musculoskeletal and connective tissue disorders',
+                                                  'Gastrointestinal disorders',
+                                                  'Social circumstances', 'Immune system disorders',
+                                                  'Reproductive system and breast disorders',
+                                                  'Neoplasms benign, malignant and unspecified (incl cysts and polyps)',
+                                                  'General disorders and administration site conditions',
+                                                  'Endocrine disorders',
+                                                  'Surgical and medical procedures', 'Vascular disorders',
+                                                  'Blood and lymphatic system disorders',
+                                                  'Skin and subcutaneous tissue disorders',
+                                                  'Congenital, familial and genetic disorders',
+                                                  'Infections and infestations',
+                                                  'Respiratory, thoracic and mediastinal disorders',
+                                                  'Psychiatric disorders', 'Renal and urinary disorders',
+                                                  'Pregnancy, puerperium and perinatal conditions',
+                                                  'Ear and labyrinth disorders',
+                                                  'Cardiac disorders',
+                                                  'Nervous system disorders',
+                                                  'Injury, poisoning and procedural complications']}
+
+        self.bad_datasets = ['cmc.csv']  # This dataset seems to be giving me a hard time
+
+        # Define loose variables
         self.data = None
         self.feat_meth = None
         self.smiles_series = None
         self.target_name = None
+        self.feat_time = None
+        self.feat_method_name = None
         self.database = database
 
     def table_exist(self, dataset, feat_name=None):
@@ -159,7 +187,50 @@ class MLMySqlConn:
             data = data.merge(df, on=same_columns)
         return data
 
-    def insert_data_mysql(self):
+    def __insert_table__(self, dataset, feat_meth):
+
+        from core import featurize
+
+        # Digest data and smiles_series
+        with cd(str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'):
+            if dataset in list(self.dataset_target_dict.keys()):
+                self.target_name = self.dataset_target_dict[dataset]
+                self.data = ingest.load_smiles(self, dataset)
+            else:
+                raise Exception(f"Dataset {dataset} not found in rds or cds. Please list in baddies or add")
+
+        # Insert just the raw dataset that can be featurized (drop smiles that return None Mol objects)
+        if feat_meth is None:
+
+            # Drop misbehaving rows
+            issue_row_list = []
+            issue_row = 0
+            for smiles in self.data['smiles']:
+                if MolFromSmiles(smiles) is None:
+                    issue_row_list.append(issue_row)
+                issue_row = issue_row + 1
+            self.data.drop(self.data.index[[issue_row_list]], inplace=True)
+
+            # Send data to MySql
+            self.data.to_sql(f'{dataset}', self.conn, if_exists='fail')
+            print(f'Created {dataset}')
+
+        # Otherwise featurize data like normal
+        else:
+            feat_name = self.feat_sets[feat_meth]
+            self.feat_meth = [feat_meth]
+            self.data, self.feat_time, self.feat_method_name = featurize(self, not_silent=False)
+            self.data = compress_fingerprint(self.data)
+            self.data.to_sql(f'{dataset}_{feat_name}', self.conn, if_exists='fail')
+            print(f'Created {dataset}_{feat_name}')
+
+    def init_table(self, dataset, feat_meths):
+        for feat_meth in feat_meths:
+            feat_name = self.feat_sets[feat_meth]
+            if dataset not in self.bad_datasets and not self.table_exist(dataset=dataset, feat_name=feat_name):
+                self.__insert_table__(dataset, feat_meth)
+
+    def insert_all_data_mysql(self):
         """
         The is to featurize and insert all the featurized data into MySql from datafiles. Goes through the entire
         datafiles folder, featurizing each dataset with each feature method. This will only 'run' once natively, even
@@ -170,67 +241,14 @@ class MLMySqlConn:
         :return:
         """
 
-        bad_datasets = ['cmc.csv']  # This dataset seems to be giving me a hard time
-
         # Pull datasets
         datasets_dir = str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'
         datasets = os.listdir(datasets_dir)
         for dataset in datasets:
             for feat_id, feat_name in self.feat_sets.items():
                 # Make sure dataset and feat_meth combo is not already in MySql
-                if dataset not in bad_datasets and not self.table_exist(dataset=dataset, feat_name=feat_name):
+                if dataset not in self.bad_datasets and not self.table_exist(dataset=dataset, feat_name=feat_name):
                     print(feat_name, dataset)
-
-                    # Digest data and smiles_series
-                    with cd(str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'):
-                        if dataset in list(self.rds.keys()):
-                            self.target_name = self.rds[dataset]
-                            self.data, smiles_series = ingest.load_smiles(self, dataset)
-                        elif dataset in self.cds:
-                            self.data, smiles_series = ingest.load_smiles(self, dataset, drop=False)
-                        else:
-                            raise Exception(f"Dataset {dataset} not found in rds or cds. Please list in baddies or add")
-
-                    # Insert just the raw dataset that can be featurized (drop smiles that return None Mol objects)
-                    if feat_name is None:
-
-                        # Drop misbehaving rows
-                        issue_row_list = []
-                        issue_row = 0
-                        for smiles in self.data['smiles']:
-                            if MolFromSmiles(smiles) is None:
-                                issue_row_list.append(issue_row)
-                            issue_row = issue_row + 1
-                        self.data.drop(self.data.index[[issue_row_list]], inplace=True)
-
-                        # Send data to MySql
-                        self.data.to_sql(f'{dataset}', self.conn, if_exists='fail')
-                        print(f'Created {dataset}')
-
-                    # Otherwise featurize data like normal
-                    else:
-                        self.feat_meth = [feat_id]
-                        self.featurize(not_silent=False)
-                        self.data = compress_fingerprint(self.data)
-                        self.data.to_sql(f'{dataset}_{feat_name}', self.conn, if_exists='fail')
-                        print(f'Created {dataset}_{feat_name}')
+                    self.__insert_table__(dataset, feat_id)
 
 
-def featurize_from_mysql(self):
-
-    """
-
-    Is a wrapper for featurizing data using MySql server
-
-    :param self: MLModel object
-    :return:
-    """
-
-    # Pull data from MySql server
-    if self.mysql_params is None:
-        raise Exception("No connection to MySql made. Please run [model].connect_mysql(**params)")
-    start_feat = time()
-    mysql_conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
-                             host=self.mysql_params['host'], database=self.mysql_params['database'])
-    self.data = mysql_conn.retrieve_data(dataset=self.dataset, feat_meth=self.feat_meth)
-    self.feat_time = time() - start_feat

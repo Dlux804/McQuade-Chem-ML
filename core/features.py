@@ -7,18 +7,11 @@ from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 from rdkit import Chem
 
+from core import MLMySqlConn
 
-def featurize(self, not_silent=True, retrieve_from_mysql=False):
-    """
-    Caclulate molecular features.
-    Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
-     and time to featurize.
-    Keyword arguments:
-    feat_meth -- Features you want by their numerical value.  Default = None (require user input)
-    """
 
-    feat_meth = self.feat_meth
-    df = self.data
+def __get_feat_meth__(model):
+    feat_meth = model.feat_meth
 
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
@@ -30,13 +23,35 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
         feat_meth = [int(x) for x in input(
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
     selected_feat = [feat_sets[i] for i in feat_meth]
-    self.feat_method_name = selected_feat
+    return selected_feat
 
-    # Get data from MySql if called
-    if retrieve_from_mysql:
-        print("Pulling data from MySql")
-        self.featurize_from_mysql()
-        return
+
+def featurize_from_mysql(model):
+    model.feat_method_name = __get_feat_meth__(model)
+
+    print("Pulling data from MySql")
+    if model.mysql_params is None:
+        raise Exception("No connection to MySql made. Please run [model].connect_mysql(**params)")
+    start_feat = time()
+    mysql_conn = MLMySqlConn(user=model.mysql_params['user'], password=model.mysql_params['password'],
+                             host=model.mysql_params['host'], database=model.mysql_params['database'])
+    model.data = mysql_conn.retrieve_data(dataset=model.dataset, feat_meth=model.feat_meth)
+    model.feat_time = time() - start_feat
+    return model.data, model.feat_time, model.feat_method_name
+
+
+def featurize(model, not_silent=True):
+    """
+    Caclulate molecular features.
+    Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
+     and time to featurize.
+    Keyword arguments:
+    feat_meth -- Features you want by their numerical value.  Default = None (require user input)
+    """
+
+    selected_feat = __get_feat_meth__(model)
+    model.feat_method_name = selected_feat
+    df = model.data
 
     if not_silent:  # Add option to silence messages
         print("You have selected the following featurizations: ", end="   ", flush=True)
@@ -87,11 +102,13 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     df = df.drop(list(df.filter(regex='[lL]og[pP]')), axis=1)
 
     # store data back into the instance
-    self.data = df
-    self.feat_time = feat_time
+    model.data = df
+    model.feat_time = feat_time
+
+    return model.data, model.feat_time, model.feat_method_name
 
 
-def data_split(self, test=0.2, val=0, random=None):
+def data_split(model, test=0.2, val=0, random=None):
     """
     Take in a data frame, the target column name (exp).
     Returns a numpy array with the target variable,
@@ -104,32 +121,32 @@ def data_split(self, test=0.2, val=0, random=None):
     """
 
     # make array of target values
-    self.target_array = np.array(self.data[self.target_name])
-    molecules_array = np.array(self.data['smiles'])  # Grab molecules array
-    self.test_percent = test
-    self.val_percent = val
-    self.train_percent = 1 - test - val
+    model.target_array = np.array(model.data[model.target_name])
+    molecules_array = np.array(model.data['smiles'])  # Grab molecules array
+    model.test_percent = test
+    model.val_percent = val
+    model.train_percent = 1 - test - val
 
     # remove targets from features
     # axis 1 is the columns.
-    if self.dataset in ['sider.csv', 'clintox.csv']:
-        self.target_name.extend(["smiles"])
-        features = self.data.drop(self.target_name, axis=1)
+    if model.dataset in ['sider.csv', 'clintox.csv']:
+        model.target_name.extend(["smiles"])
+        features = model.data.drop(model.target_name, axis=1)
 
     else:
-        features = self.data.drop([self.target_name, 'smiles'], axis=1)
+        features = model.data.drop([model.target_name, 'smiles'], axis=1)
 
     # save list of strings of features
-    self.feature_list = list(features.columns)
-    self.feature_length = len(self.feature_list)
+    model.feature_list = list(features.columns)
+    model.feature_length = len(model.feature_list)
     # convert features to numpy
     featuresarr = np.array(features)
     # n_total = featuresarr.shape[0]
 
     # store to instance
-    self.feature_array = featuresarr
-    self.n_tot = self.feature_array.shape[0]
-    self.in_shape = self.feature_array.shape[1]
+    model.feature_array = featuresarr
+    model.n_tot = model.feature_array.shape[0]
+    model.in_shape = model.feature_array.shape[1]
 
     # print("self.feature_array: ", self.feature_array)
     # print('self target array', self.target_array)
@@ -137,73 +154,85 @@ def data_split(self, test=0.2, val=0, random=None):
     # print('Feature input shape', self.in_shape)
 
     # what data to split and how to do it.
-    self.train_features, self.test_features, self.train_target, self.test_target = train_test_split(
-        self.feature_array,
-        self.target_array,
-        test_size=self.test_percent,
-        random_state=self.random_seed)
+    model.train_features, model.test_features, model.train_target, model.test_target = train_test_split(
+        model.feature_array,
+        model.target_array,
+        test_size=model.test_percent,
+        random_state=model.random_seed)
     # Define smiles that go with the different sets
-    self.train_molecules, self.test_molecules, temp_train_target, temp_test_target = train_test_split(
+    model.train_molecules, model.test_molecules, temp_train_target, temp_test_target = train_test_split(
         molecules_array,
-        self.target_array,
-        test_size=self.test_percent,
-        random_state=self.random_seed)
+        model.target_array,
+        test_size=model.test_percent,
+        random_state=model.random_seed)
 
     # scale the data.  This should not hurt but can help many models
     # TODO add this an optional feature
     # TODO add other scalers from sklearn
     scaler = StandardScaler()
-    self.scaler = scaler
-    self.train_features = scaler.fit_transform(self.train_features)
-    self.test_features = scaler.transform(self.test_features)
+    model.scaler = scaler
+    model.train_features = scaler.fit_transform(model.train_features)
+    model.test_features = scaler.transform(model.test_features)
 
     if val > 0:  # if validation data is requested.
         # calculate percent of training to convert to val
         b = val / (1 - test)
-        self.train_features, self.val_features, self.train_target, self.val_target = train_test_split(
-            self.train_features,
-            self.train_target,
+        model.train_features, model.val_features, model.train_target, model.val_target = train_test_split(
+            model.train_features,
+            model.train_target,
             test_size=b,
-            random_state=self.random_seed)
+            random_state=model.random_seed)
         # Define smiles that go with the different sets
         # Use temp dummy variables for splitting molecules up the same way
-        temp_train_molecules, self.val_molecules, temp_train_target, temp_val_target = train_test_split(
-            self.train_molecules,
+        temp_train_molecules, model.val_molecules, temp_train_target, temp_val_target = train_test_split(
+            model.train_molecules,
             temp_train_target,
             test_size=b,
-            random_state=self.random_seed)
+            random_state=model.random_seed)
         # scale the validation features too
-        self.val_features = scaler.transform(self.val_features)
+        model.val_features = scaler.transform(model.val_features)
 
-        self.n_val = self.val_features.shape[0]
-        pval = self.n_val / self.n_tot * 100
+        model.n_val = model.val_features.shape[0]
+        pval = model.n_val / model.n_tot * 100
 
     else:
+        model.val_features = None
+        model.val_target = None
+        model.val_molecules = None
+        model.n_val = None
         pval = 0
 
-    self.n_train = self.train_features.shape[0]
-    ptrain = self.n_train / self.n_tot * 100
+    model.n_train = model.train_features.shape[0]
+    ptrain = model.n_train / model.n_tot * 100
 
-    self.n_test = self.test_features.shape[0]
-    ptest = self.n_test / self.n_tot * 100
+    model.n_test = model.test_features.shape[0]
+    ptest = model.n_test / model.n_tot * 100
 
     print()
     print('Dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
-        self.n_tot, ptrain, pval, ptest))
+        model.n_tot, ptrain, pval, ptest))
 
     # Logic to seperate data in test/train/val
     def __fetch_set__(smiles):
-        if smiles in self.test_molecules:
+        if smiles in model.test_molecules:
             return 'test'
-        elif smiles in self.train_molecules:
+        elif smiles in model.train_molecules:
             return 'train'
         else:
             return 'val'
 
-    self.data['in_set'] = self.data['smiles'].apply(__fetch_set__)
-    cols = list(self.data.columns)
+    model.data['in_set'] = model.data['smiles'].apply(__fetch_set__)
+    cols = list(model.data.columns)
     cols.remove('in_set')
-    self.data = self.data[['in_set', *cols]]
+    model.data = model.data[['in_set', *cols]]
+
+    return (model.data, model.scaler, model.in_shape, model.n_tot,
+            model.n_train, model.n_test, model.n_val, model.target_name, model.target_array,
+            model.feature_array, model.feature_list, model.feature_length,
+            model.train_features, model.test_features, model.val_features,
+            model.train_percent, model.test_percent, model.val_percent,
+            model.train_target, model.test_target, model.val_target,
+            model.train_molecules, model.test_molecules, model.val_molecules)
 
     # return train_features, test_features, val_features, train_target, test_target, val_target, feature_list
 

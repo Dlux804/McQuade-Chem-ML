@@ -251,7 +251,7 @@ def keras_paramgrid():
     return bayes_grid
 
 
-def make_grid(self):
+def make_grid(model):
     """ Dictionary containing all the grid functions. Can call specific function based off of dict key."""
     grids = {
         "ada" : ada_paramgrid,
@@ -262,7 +262,8 @@ def make_grid(self):
         'knn': knn_paramgrid,
         'nn': keras_paramgrid
     }
-    self.param_grid = grids[self.algorithm]()
+    model.param_grid = grids[model.algorithm]()
+    return model.param_grid
     # return grids[method]()
 
 

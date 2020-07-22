@@ -14,14 +14,14 @@ import pandas as pd
 # TODO REDO DOCSTRINGS
 
 
-def self_smiles(self):
+def self_smiles(model):
     """
     Objective: Get SMILES directly from pipeline
     Intent: I created this function only when the user is creating Neo4j graphs directly from the ML pipeline
-    :param self:
+    :param model:
     :return:
     """
-    return list(self.data['smiles'])
+    return list(model.data['smiles'])
 
 
 def canonical_smiles(smiles_list):

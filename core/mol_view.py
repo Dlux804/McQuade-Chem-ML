@@ -9,6 +9,7 @@ from rdkit import Chem
 from rdkit.Chem import Draw
 from rdkit.Chem.Draw import rdMolDraw2D
 
+
 def canon_smi(smi):
     """Prints out SMILES.  Useful for going from PubChem version of SMILES to arromatic SMILES."""
     mol = Chem.MolFromSmiles(smi)
@@ -49,9 +50,9 @@ def mol_svg(smi, filename=None, filepath='./', molSize=(450,150)):
         f.write(svg)
 
 
-# specify smiles here.  Could re-write to accept CLI input.
-smi = 'CC(C)O'
-# rewrite smiles to canonical non-kelu
-smi = canon_smi(smi)
-mol_view(smi)
-mol_svg(smi)
+# # specify smiles here.  Could re-write to accept CLI input.
+# smi = 'CC(C)O'
+# # rewrite smiles to canonical non-kelu
+# smi = canon_smi(smi)
+# mol_view(smi)
+# mol_svg(smi)

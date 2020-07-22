@@ -15,19 +15,19 @@ import time
 # TODO REDO DOCSTRINGS
 
 
-def prep(self):
+def prep(model):
     """
     Objective: Calculate or prepare variables that we don't have class instances for
     Intent: I want to have one function that calculates the data I need for the ontology. I don't think we need
             class instances for these data since they can be easily obtained with one ot two lines of code each.
     """
-    canonical_smiles = fragments.canonical_smiles(list(self.data['smiles']))
-    pva = self.predictions
+    canonical_smiles = fragments.canonical_smiles(list(model.data['smiles']))
+    pva = model.predictions
     r2 = r2_score(pva['actual'], pva['pred_avg'])  # r2 values
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
-    self.data['smiles'] = canonical_smiles
-    df_smiles = self.data.iloc[:, [1, 2]]
+    model.data['smiles'] = canonical_smiles
+    df_smiles = model.data.iloc[:, [1, 2]]
 
     test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
                                   'uncertainty': list(pva['pred_std'])}).to_dict('records')
@@ -65,7 +65,7 @@ def __merge_molecules_and_rdkit2d__(row, g):
     tx.evaluate(mol_feat_query, parameters={"molecule": molecule})
 
 
-def nodes(self):
+def nodes(model):
     """
     Objective: Create or merge Neo4j nodes from data collected from the ML pipeline
     Intent: While most of the nodes are merged, some need to be created instead because:
@@ -79,92 +79,91 @@ def nodes(self):
                                                                                                 "prep_from_output"
     """
     t1 = time.perf_counter()
-    print("Creating Nodes for %s" % self.run_name)
+    print("Creating Nodes for %s" % model.run_name)
 
-    g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
-              password=self.neo4j_params["password"])  # Define graph for function
+    g = Graph(model.neo4j_params["port"], username=model.neo4j_params["username"],
+              password=model.neo4j_params["password"])  # Define graph for function
 
-    r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict = prep(self)
+    r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict = prep(model)
 
     # Make algorithm node
-    if self.algorithm == "nn":
-        algor = Node("Algorithm", name=self.algorithm, source="Keras", tuned=self.tuned)
+    if model.algorithm == "nn":
+        algor = Node("Algorithm", name=model.algorithm, source="Keras", tuned=model.tuned)
         g.merge(algor, "Algorithm", "name")
     else:
-        algor = Node("Algorithm", name=self.algorithm, source="sklearn", tuned=self.tuned)
+        algor = Node("Algorithm", name=model.algorithm, source="sklearn", tuned=model.tuned)
         g.merge(algor, "Algorithm", "name")
 
     # Make Tuner node
-    if self.tuned:
-        tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name)
+    if model.tuned:
+        tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=model.tune_algorithm_name)
         g.merge(tuning_algorithm, "TuningAlg", "algorithm")
     else:
         tuning_algorithm = Node("NotTuned", name="NotTuned")
         g.merge(tuning_algorithm, "NotTuned", "name")
 
     # Make MLModel nodes
-    model = Node("MLModel", name=self.run_name, feat_time=self.feat_time, date=self.date, train_time=self.tune_time,
-                 test_time=float(self.predictions_stats["time_avg"]))
-    g.merge(model, "MLModel", "name")
+    model_node = Node("MLModel", name=model.run_name, feat_time=model.feat_time, date=model.date, train_time=model.tune_time,
+                      test_time=float(model.predictions_stats["time_avg"]))
+    g.merge(model_node, "MLModel", "name")
 
     # Make FeatureList node
-    feat_list = Node("FeatureList", name="FeatureList", num=self.feature_length, feat_ID=self.feat_meth,
-                     featuure_lists=str(self.feature_list))
+    feat_list = Node("FeatureList", name="FeatureList", num=model.feature_length, feat_ID=model.feat_meth,
+                     featuure_lists=str(model.feature_list))
     g.merge(feat_list, "FeatureList", "feat_ID")
 
     # Make TrainSet node
-    train_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet", random_seed=self.random_seed)
+    train_set = Node("TrainSet", trainsize=model.n_train, name="TrainSet", random_seed=model.random_seed)
     g.create(train_set)
 
     # Since we can't use merge with multiple properties, I will merge RandomSplit nodes later on
-    randomsplit = Node("RandomSplit", name="RandomSplit", test_percent=self.test_percent,
-                       train_percent=self.train_percent, random_seed=self.random_seed,
-                       val_percent=self.val_percent)
+    randomsplit = Node("RandomSplit", name="RandomSplit", test_percent=model.test_percent,
+                       train_percent=model.train_percent, random_seed=model.random_seed,
+                       val_percent=model.val_percent)
     g.create(randomsplit)
 
     # Make TestSet node
-    testset = Node("TestSet", name="TestSet", RMSE=rmse, mse=mse, r2=r2, testsize=self.n_test)
+    testset = Node("TestSet", name="TestSet", RMSE=rmse, mse=mse, r2=r2, testsize=model.n_test)
     g.merge(testset, "TestSet", "RMSE")
 
     # Make ValidateSet node
-    if self.val_percent > 0:
-        valset = Node("ValSet", name="ValidateSet", valsize=self.n_val, random_seed=self.random_seed)
+    if model.val_percent > 0:
+        valset = Node("ValSet", name="ValidateSet", valsize=model.n_val, random_seed=model.random_seed)
         g.create(valset)
     else:
         pass
-
     # Create SMILES
     df_smiles.columns = ['smiles', 'target']  # Change target column header to target
     g.evaluate("""
     UNWIND $molecules as molecule
     MERGE (mol:Molecule {SMILES: molecule.smiles, name: "Molecule"})
     SET mol.target = [molecule.target], mol.dataset = [$dataset]
-    """, parameters={'molecules': df_smiles.to_dict('records'), 'dataset': self.dataset})
+    """, parameters={'molecules': df_smiles.to_dict('records'), 'dataset': model.dataset})
     t2 = time.perf_counter()
     print(f"Finished creating main ML nodes in {t2-t1}sec")
 
     # Creating Molecular Fragments
     # Check to see if we have created fragments for this run's dataset
-    record = g.run("""MATCH (n:DataSet {data:"%s"}) RETURN n""" % self.dataset)
+    record = g.run("""MATCH (n:DataSet {data:"%s"}) RETURN n""" % model.dataset)
     if len(list(record)) > 0:  # If yes, then skip
-        print(f"This dataset, {self.dataset}, and its fragments already exist in the database. Moving on")
+        print(f"This dataset, {model.dataset}, and its fragments already exist in the database. Moving on")
     else:  # If not, then make fragments
         t3 = time.perf_counter()
-        self.data[['smiles']].apply(fragments_to_neo, g=g, axis=1)
+        model.data[['smiles']].apply(fragments_to_neo, g=g, axis=1)
         t4 = time.perf_counter()
         print(f"Finished creating molecular fragments in {t4 - t3}sec")
 
     # Merge rdkit2d features with molecules
-    if 'rdkit2d' in self.feat_method_name:  # rdkit2d in feat method name
+    if 'rdkit2d' in model.feat_method_name:  # rdkit2d in feat method name
         # Check if rdkit2d already exist for this dataset
-        record = g.run("""MATCH (n:DataSet {data:$dataset}) RETURN n""", parameters={'dataset': self.dataset})
+        record = g.run("""MATCH (n:DataSet {data:$dataset}) RETURN n""", parameters={'dataset': model.dataset})
         if len(list(record)) > 0:  # Already created rdkit2d feature for this dataset
-            print(f"This dataset, {self.dataset}, and its rdkit2d features already exist in the database. Moving on")
+            print(f"This dataset, {model.dataset}, and its rdkit2d features already exist in the database. Moving on")
         else:  # If not
             print("Creating rdki2d features")
-            df_rdkit2d_features = self.data.loc[:, 'smiles':'qed']
+            df_rdkit2d_features = model.data.loc[:, 'smiles':'qed']
             try:
-                df_rdkit2d_features = df_rdkit2d_features.rename(columns={self.target_name: 'target'})
+                df_rdkit2d_features = df_rdkit2d_features.rename(columns={model.target_name: 'target'})
             except KeyError:
                 pass
             df_rdkit2d_features = df_rdkit2d_features.drop('target', axis=1)
@@ -175,11 +174,11 @@ def nodes(self):
         pass
 
     # Make FeatureMethod node
-    for feat in self.feat_method_name:
+    for feat in model.feat_method_name:
         feature_method = Node("FeatureMethod", feature=feat, name=feat)
         g.merge(feature_method, "FeatureMethod", "feature")
 
     # Make dataset node
-    dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)
+    dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=model.dataset, measurement=model.target_name)
     g.merge(dataset, "DataSet", "data")
 

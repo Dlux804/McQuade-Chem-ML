@@ -3,26 +3,31 @@ from rdkit import Chem
 import cirpy
 
 
-def load_smiles(self, file, drop=True):
+def load_smiles(model, file):
     """ Find SMILES in CSV.  Return DataFrame and Series of SMILES.
 
     Keyword Arguments
     drop -- Drop all other columns besides smiles and target. Default = True
     """
     csv = pd.read_csv(file)
-    for i in csv.head(0):
-        try:
-            pd.DataFrame(list(map(Chem.MolFromSmiles, csv[i])))
-            smiles_col = csv[i]
-
-        except Exception:
-            pass
-    # rename the column with SMILES to 'smiles'
-    csv = csv.rename(columns={smiles_col.name: "smiles"})
-    if drop: # drop all extra columns
-        csv = csv[['smiles', self.target_name]]
-
-    return csv, smiles_col
+    for i in range(15):  # Try for first 15 molecules (some may be None)
+        row = dict(csv.iloc[i])  # Pull row and convert it to a dict as records
+        for column_name, column_value in row.items():
+            try:
+                mol = Chem.MolFromSmiles(column_value)  # Check if value can be converted to mol object
+                if mol is not None:
+                    if isinstance(model.target_name, list):
+                        old_columns = list([column_name, *model.target_name])
+                        new_columns = list(['smiles', *model.target_name])
+                        df = csv[old_columns]
+                        df.columns = new_columns
+                    else:
+                        df = csv[[column_name, model.target_name]]
+                        df.columns = ['smiles', model.target_name]
+                    return df
+            except TypeError:
+                pass
+    raise Exception("No column with smiles found")
 
 
 def resolveID(file,column):  # TODO Consider incorporation of this function in load_csv()

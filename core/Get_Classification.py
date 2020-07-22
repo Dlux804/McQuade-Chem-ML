@@ -13,15 +13,16 @@ def get_classification_targets(data):
                    'Pregnancy, puerperium and perinatal conditions', 'Ear and labyrinth disorders',
                    'Cardiac disorders',
                    'Nervous system disorders', 'Injury, poisoning and procedural complications']
-    if data == 'clintox.csv':
+    elif data == 'clintox.csv':
         targets = ['FDA_APPROVED', 'CT_TOX']
-    if data == 'BBBP.csv':
+    elif data == 'BBBP.csv':
         targets = 'p_np'
-    if data == 'bace.csv':
+    elif data == 'bace.csv':
         targets = 'Class'
+    else:
+        return Exception(f"Dataset {data} unknown")
 
     return targets
-
 
 
 def get_classification_feats(alg):

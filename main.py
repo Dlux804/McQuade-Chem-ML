@@ -24,16 +24,27 @@ def main():
     # Sets up learner and datasets for classification.
     if c == 'c':
         # list of available classification learning algorithms
-        learner = ['svc', 'knc', 'rf']
-        #learner = [] # Use this line to test specific models instead of iterating
+        learner = ['svc', 'knc', 'rfc']
+        learner = ['knc'] # Use this line to test specific models instead of iterating
 
 
-        targets = None
         sets = {
-            'BBBP.csv': targets,
-            'sider.csv': targets,
-            'clintox.csv': targets,
-            'bace.csv': targets,
+#            'BBBP.csv': 'p_np',
+            'sider.csv': ['Hepatobiliary disorders', 'Metabolism and nutrition disorders', 'Product issues',
+                   'Eye disorders', 'Investigations', 'Musculoskeletal and connective tissue disorders',
+                   'Gastrointestinal disorders',
+                   'Social circumstances', 'Immune system disorders', 'Reproductive system and breast disorders',
+                   'Neoplasms benign, malignant and unspecified (incl cysts and polyps)',
+                   'General disorders and administration site conditions', 'Endocrine disorders',
+                   'Surgical and medical procedures', 'Vascular disorders', 'Blood and lymphatic system disorders',
+                   'Skin and subcutaneous tissue disorders', 'Congenital, familial and genetic disorders',
+                   'Infections and infestations', 'Respiratory, thoracic and mediastinal disorders',
+                   'Psychiatric disorders', 'Renal and urinary disorders',
+                   'Pregnancy, puerperium and perinatal conditions', 'Ear and labyrinth disorders',
+                   'Cardiac disorders',
+                   'Nervous system disorders', 'Injury, poisoning and procedural complications'],
+#            'clintox.csv': ['FDA_APPROVED', 'CT_TOX'],
+ #           'bace.csv': 'Class',
         }
 
 
@@ -67,62 +78,106 @@ def main():
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items(): # loop over dataset dictionary
 
-
-                if c == 'r':  # Runs the models/featurizations for regression
+                if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
+                    pass
+                else:
                     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
                         print('Model Type:', alg)
                         print('Featurization:', method)
                         print('Dataset:', data)
+                        print('Target(s):', target)
                         print()
                         print('Initializing model...', end=' ', flush=True)
                         # initiate model class with algorithm, dataset and target
-                        model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                tune=False, cv=3, opt_iter=25)
+                        opt_iter = 10
+                        if data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv',
+                                    'jak2_pic50.csv']:
+                            opt_iter = 25
+                        model = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
+                                               tune=False, cv=3, opt_iter=opt_iter)
                         print('Done.\n')
 
-                    with cd('dataFiles'):  # Have files output to output
-                        model1.featurize()
+                    with cd('dataFiles'):
+                        # Runs classification model
+                        model.featurize()  # Featurize molecules
                         val = 0.0
                         if alg == 'nn':
                             val = 0.1
-
-                        model1.data_split(val=val)
-                        model1.reg()
-                        model1.run()
-                        model1.analyze()
-                        if model1.algorithm != 'nn':
-                            model1.pickle_model()
-
-                        model1.store()
-                        model1.org_files(zip_only=True)
-
-                if c == 'c':
-                    targets = Get_Classification.get_classification_targets(data)  # Gets targets for classification based on the data set being used
-
-                    if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
-                        pass
-                    else:
-                        # change active directory
-                        with cd('dataFiles'):
-                            print('Now in:', os.getcwd())
-                            print('Initializing model...', end=' ', flush=True)
-
-                            # initiate model class with algorithm, dataset and target
-                            model = models.MlModel(alg, data, targets, method)
-                            print('done.')
-
-                        print('Model Type:', alg)
-                        print('Featurization:', method)
-                        print('Dataset:', data)
-                        print('Target(s):', targets)
-                        print()
-                        # Runs classification model
-                        model.featurize()  # Featurize molecules
-                        model.data_split()
+                        model.data_split(val=val)
                         model.reg()
                         model.run()  # Runs the models/featurizations for classification
+                        model.analyze()
+                        if model.algorithm != 'nn':
+                            model.pickle_model()
+                        model.store()
+                        model.org_files(zip_only=True)
+
+                    # Have files output to output
 
 
+                # if c == 'r':  # Runs the models/featurizations for regression
+                #     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+                #         print('Model Type:', alg)
+                #         print('Featurization:', method)
+                #         print('Dataset:', data)
+                #         print()
+                #         print('Initializing model...', end=' ', flush=True)
+                #         # initiate model class with algorithm, dataset and target
+                #         model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
+                #                                 tune=False, cv=3, opt_iter=25)
+                #         print('Done.\n')
+                #
+                #     with cd('dataFiles'):  # Have files output to output
+                #         model1.featurize()
+                #         val = 0.0
+                #         if alg == 'nn':
+                #             val = 0.1
+                #
+                #         model1.data_split(val=val)
+                #         model1.reg()
+                #         model1.run()
+                #         model1.analyze()
+                #         if model1.algorithm != 'nn':
+                #             model1.pickle_model()
+                #
+                #         model1.store()
+                #         model1.org_files(zip_only=True)
+
+#                if c == 'c':
+#                     if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
+#                         pass
+#                     else:
+#                         with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+#                             print('Model Type:', alg)
+#                             print('Featurization:', method)
+#                             print('Dataset:', data)
+#                             print('Target(s):', target)
+#                             print()
+#                             print('Initializing model...', end=' ', flush=True)
+#                             # initiate model class with algorithm, dataset and target
+#                             opt_iter=10
+#                             if data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']:
+#                                 opt_iter = 25
+#                             model = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
+#                                                    tune=False, cv=3, opt_iter=opt_iter)
+#                             print('Done.\n')
+#
+#                         with cd('dataFiles'):
+#                             # Runs classification model
+#                             model.featurize()  # Featurize molecules
+#                             val = 0.0
+#                             if alg == 'nn':
+#                                 val = 0.1
+#                             model.data_split(val=val)
+#                             model.reg()
+#                             model.run()  # Runs the models/featurizations for classification
+#                             model.analyze()
+#                             if model.algorithm != 'nn':
+#                                 model.pickle_model()
+#                             model.store()
+#                             model.org_files(zip_only=True)
+#
+#                         # Have files output to output
 
 
 def single_model():
@@ -182,6 +237,6 @@ def example_load():
 
 
 if __name__ == "__main__":
-     # main()
-    single_model()
+      main()
+#    single_model()
     # example_load()

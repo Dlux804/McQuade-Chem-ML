@@ -45,7 +45,7 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
-        multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
+        self.multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
         # Sets self.task_type based on which dataset is being used.
         if self.dataset in cds:
             self.task_type = 'classification'
@@ -70,7 +70,7 @@ class MlModel:  # TODO update documentation here
         # ingest data.  collect full data frame (self.data)
         # collect pandas series of the SMILES (self.smiles_col)
 
-        if self.dataset in multi_label_classification_datasets:
+        if self.dataset in self.multi_label_classification_datasets:
             self.data, self.smiles_series = ingest.load_smiles(self, dataset, drop = False) # Makes drop = False for multi-target classification
         else:
             self.data, self.smiles_series = ingest.load_smiles(self, dataset)
@@ -114,7 +114,8 @@ class MlModel:  # TODO update documentation here
             self.impgraph()
 
         # make predicted vs actual graph
-        self.pva_graph()
+        if self.dataset in rds:
+            self.pva_graph()
         # TODO Make classification graphing function
 
     def to_neo4j(self):

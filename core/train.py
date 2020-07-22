@@ -7,7 +7,8 @@ from sklearn.model_selection import cross_val_predict
 import pandas as pd
 from tqdm import tqdm
 from time import sleep
-
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve
 
 def train_reg(self,n=5):
     """
@@ -130,6 +131,14 @@ def train_cls(self, n=5):
             clsrep = classification_report(cls['actual'], cls['predicted'])
             print('Classification report for this run: ')
             print(clsrep)
+
+            # Creates and saves a graphical evaluation for single-label classification
+            fpr, tpr, thresholds = roc_curve(cls['actual'], cls['predicted'])
+            plot_roc_curve(fpr, tpr)
+            name = self.algorithm + '-' + self.dataset + '-' + self.selected_feat_string   # Creates a unique file name to save the graph with
+            filename = "%-roc_curve.png" % name
+            plt.savefig(filename)
+
             auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
             t[i] = fit_time
 
@@ -175,3 +184,8 @@ def train_cls(self, n=5):
 
 
 
+def plot_roc_curve(fpr, tpr, label=None):
+    plt.plot(fpr, tpr, linewidth=2, label=label)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate (Recall)')

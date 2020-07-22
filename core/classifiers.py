@@ -10,7 +10,7 @@ def get_classifier(self):
     skl_cls = {
         'svc': SVC,
         'knc': KNeighborsClassifier,
-        'rf': RandomForestClassifier
+        'rfc': RandomForestClassifier
     }
     if self.algorithm in skl_cls.keys():
         self.regressor = skl_cls[self.algorithm]()

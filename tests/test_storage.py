@@ -7,7 +7,8 @@ from core.storage import storage
 import pytest
 import os
 import pandas as pd
-
+with misc.cd('../tests'):
+    print(os.getcwd())
 
 def test_store():
     """"""

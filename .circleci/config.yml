@@ -28,7 +28,7 @@ jobs:
             - v2-condareqs-{{ .Branch }}
             - v2-condareqs
             # fallback to using the latest cache if no exact match is found
-            - v2-condareqs-
+#            - v2-condareqs-
 
         # Install the necessary Python packages
         # activate conda env for future use

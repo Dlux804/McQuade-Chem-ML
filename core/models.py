@@ -1,23 +1,16 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade and Ferri research groups.
 '''
-from core import ingest
-from core.storage.mysql_storage import MLMySqlConn
+import time
 from numpy.random import randint
-from core import name
-from core.neo4j import nodes, relationships
 from rdkit import RDLogger
 from py2neo import Graph
-import time
-
-from core import featurize, featurize_from_mysql, data_split, pickle_model, store, org_files, QsarDB_export
-from core.regressors import get_regressor, hyperTune
-from core.classifiers import get_classifier
-from core.grid import make_grid
-from core.train import train_reg, train_cls
-from core.analysis import impgraph, pva_graph
-
 from sqlalchemy.exc import OperationalError
+
+from core import featurize, featurize_from_mysql, data_split, get_regressor, \
+    get_classifier, hyperTune, make_grid, train_reg, train_cls, impgraph, pva_graph, name, ingest
+from core.storage import pickle_model, store, org_files, QsarDB_export, MLMySqlConn
+from core.neo4j import nodes, relationships
 
 RDLogger.DisableLog('rdApp.*')
 

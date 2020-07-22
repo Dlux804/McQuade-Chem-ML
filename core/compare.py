@@ -3,12 +3,13 @@ import numpy as np
 import pandas as pd
 import shutil
 import glob
-from core.storage import cd
-from core import ingest
 from rdkit import Chem
 from rdkit.Chem import PandasTools
 import itertools
 from functools import reduce
+
+from core import ingest
+from core.storage import cd
 
 """
 Goal is to compare the output of many models in a systematic, automatic manner.

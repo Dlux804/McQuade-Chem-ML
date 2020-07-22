@@ -1,8 +1,7 @@
 # TODO: Make main function that asks user what models they would like to initiate
 
 from core import models, Get_Classification
-from core.storage import cd
-from core.storage.misc_storage import unpickle_model
+from core.storage import cd, unpickle_model
 import os
 import pathlib
 

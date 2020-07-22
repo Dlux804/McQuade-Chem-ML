@@ -46,6 +46,7 @@ def cd(newdir):
         # print('Switching back to previous PATH:', prevdir)
         os.chdir(prevdir)
 
+
 def __clean_up_params__(params):
     if isinstance(params, tuple):  # Check is a tuple
         params = list(params)

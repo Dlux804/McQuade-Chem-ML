@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 from rdkit import Chem
 
-from core import MLMySqlConn
+from core.storage import MLMySqlConn
 
 
 def __get_feat_meth__(model):

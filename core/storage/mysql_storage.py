@@ -3,7 +3,6 @@ from sqlalchemy.exc import ProgrammingError
 import pandas as pd
 import os
 from pathlib import Path
-from time import time
 
 from core import ingest
 from core.storage import cd

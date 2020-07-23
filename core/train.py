@@ -137,7 +137,8 @@ def train_cls(self, n=5):
             plot_roc_curve(fpr, tpr)
             name = self.algorithm + '-' + self.dataset + '-' + self.selected_feat_string   # Creates a unique file name to save the graph with
             filename = "%-roc_curve.png" % name
-            plt.savefig(filename)
+            plt.savefig(self.run_name+'_' + filename)
+            plt.show()
 
             auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
             t[i] = fit_time

@@ -83,7 +83,7 @@ This is the overview of our MLModels Python class functions.  ```main.py``` esse
    * [hte-models.py](./core/hte-models.py)
    * [ingest.py](./core/ingest.py)
    * [regressors.py](./core/regressors.py)
-   * [misc.py](./core/misc.py)
+   * [misc.py](core/storage/misc.py)
    * [analysis.py](./core/analysis.py)
    * [models.py](./core/models.py)
  * [tests](./tests)

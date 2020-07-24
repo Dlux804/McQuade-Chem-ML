@@ -2,3 +2,4 @@
 !output/
 output/*
 core/nn_opt.ipynb
+py_module/

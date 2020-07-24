@@ -1,11 +1,12 @@
-from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
-import pandas as pd
-from sklearn.model_selection import train_test_split
-import numpy as np
 from time import time, sleep
-from sklearn.preprocessing import StandardScaler
+
+import pandas as pd
+import numpy as np
 from tqdm import tqdm
 from rdkit import Chem
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
 
 def featurize(self, not_silent=True, retrieve_from_mysql=False):
@@ -16,9 +17,7 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     Keyword arguments:
     feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
-
     feat_meth = self.feat_meth
-    df = self.data
 
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
@@ -30,13 +29,9 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
         feat_meth = [int(x) for x in input(
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
     selected_feat = [feat_sets[i] for i in feat_meth]
-    self.feat_method_name = selected_feat
 
-    # Get data from MySql if called
-    if retrieve_from_mysql:
-        print("Pulling data from MySql")
-        self.featurize_from_mysql()
-        return
+    self.feat_method_name = selected_feat
+    df = self.data
 
     if not_silent:  # Add option to silence messages
         print("You have selected the following featurizations: ", end="   ", flush=True)
@@ -91,7 +86,7 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     self.feat_time = feat_time
 
 
-def data_split(self, test=0.2, val=0, random=None):
+def data_split(self, test=0.2, val=0):
     """
     Take in a data frame, the target column name (exp).
     Returns a numpy array with the target variable,

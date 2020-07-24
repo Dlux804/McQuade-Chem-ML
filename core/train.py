@@ -1,12 +1,11 @@
+from time import sleep, time
 
 import numpy as np
-from time import time
+import pandas as pd
+from tqdm import tqdm
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_auc_score, multilabel_confusion_matrix, f1_score
 from sklearn.model_selection import cross_val_predict
-import pandas as pd
-from tqdm import tqdm
-from time import sleep
 
 
 def train_reg(self,n=5):

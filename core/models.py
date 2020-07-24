@@ -1,17 +1,17 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade and Ferri research groups.
 '''
-from core import ingest
-from core.storage.mysql_storage import MLMySqlConn
-from numpy.random import randint
-from core import name
-from core.neo4j.nodes_to_neo4j import nodes
-from core.neo4j.rel_to_neo4j import relationships
-from rdkit import RDLogger
-from py2neo import Graph
 import time
 
+from rdkit import RDLogger
+from py2neo import Graph
+from numpy.random import randint
 from sqlalchemy.exc import OperationalError
+
+from core import load_smiles, get_run_name, featurize, data_split
+from core.storage import MLMySqlConn, pickle_model, store, QsarDB_export, org_files, featurize_from_mysql
+from core.neo4j import nodes, relationships
+
 
 RDLogger.DisableLog('rdApp.*')
 
@@ -30,11 +30,7 @@ class MlModel:  # TODO update documentation here
     from core.train import train_reg, train_cls
     from core.analysis import impgraph, pva_graph
     from core.classifiers import get_classifier
-
-    from core.features import featurize, data_split
-    from core.storage.storage import pickle_model, store, org_files
-    from core.storage.mysql_storage import featurize_from_mysql
-    from core.storage.qsardq_export import QsarDB_export
+    from core.storage import initialize_tables
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """
@@ -71,13 +67,12 @@ class MlModel:  # TODO update documentation here
         # collect pandas series of the SMILES (self.smiles_col)
 
         if self.dataset in multi_label_classification_datasets:
-            self.data, self.smiles_series = ingest.load_smiles(self, dataset,
-                                                               drop=False)  # Makes drop = False for multi-target classification
+            self.data, self.smiles_series = load_smiles(self, dataset, drop=False)
         else:
-            self.data, self.smiles_series = ingest.load_smiles(self, dataset)
+            self.data, self.smiles_series = load_smiles(self, dataset)
 
         # define run name used to save all outputs of model
-        self.run_name = name.name(self)
+        self.run_name = get_run_name(self)
 
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None
@@ -86,6 +81,32 @@ class MlModel:  # TODO update documentation here
 
         self.mysql_params = None
         self.neo4j_params = None
+
+    def connect_mysql(self, user, password, host, database, initialize_data=False):
+        # Gather MySql Parameters
+        self.mysql_params = {'user': user, 'password': password, 'host': host, 'database': database}
+
+        # Test connection
+        try:
+            conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
+                               host=self.mysql_params['host'], database=self.mysql_params['database'])
+        except OperationalError:
+            return Exception("Bad parameters passed to connect to MySql database or MySql server"
+                             "not properly configured")
+
+        # Insert featurized data into MySql. This will only run once per dataset/feat combo,
+        # even if initialize_data=True
+        if initialize_data:
+            self.initialize_tables()
+
+    def featurize(self, retrieve_from_mysql=False):
+        if retrieve_from_mysql:
+            featurize_from_mysql(self)
+        else:
+            featurize(self, retrieve_from_mysql=retrieve_from_mysql)
+
+    def data_split(self, test=0.2, val=0):
+        data_split(self, test, val)
 
     def reg(self):  # broke this out because input shape is needed for NN regressor to be defined.
         """
@@ -121,6 +142,18 @@ class MlModel:  # TODO update documentation here
         self.pva_graph()
         # TODO Make classification graphing function
 
+    def pickle_model(self):
+        pickle_model(self)
+
+    def store(self):
+        store(self)
+
+    def org_files(self, zip_only=False):
+        org_files(self, zip_only)
+
+    def QsarDB_export(self, zip_output=False):
+        QsarDB_export(self, zip_output)
+
     def to_neo4j(self, port, username, password):
         # Create Neo4j graphs from pipeline
         t1 = time.perf_counter()
@@ -131,20 +164,3 @@ class MlModel:  # TODO update documentation here
         relationships(self)  # Create relationships
         t2 = time.perf_counter()
         print(f"Time it takes to finish graphing {self.run_name}: {t2 - t1}sec")
-
-    def connect_mysql(self, user, password, host, database, initialize_data=False):
-        # Gather MySql Parameters
-        self.mysql_params = {'user': user, 'password': password, 'host': host, 'database': database}
-
-        # Test connection
-        try:
-            conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
-                               host=self.mysql_params['host'], database=self.mysql_params['database'])
-        except OperationalError:
-            return Exception("Bad parameters passed to connect to MySql database or MySql server"
-                             "not properly configured")
-
-        # Insert featurized data into MySql. This will only run once per dataset/feat combo,
-        # even if initialize_data=True
-        if initialize_data:
-            conn.insert_data_mysql()

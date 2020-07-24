@@ -1,14 +1,16 @@
 """
 Objective: The goal of this script is to create nodes in Neo4j directly from the pipeline using class instances
 """
+import time
 
+import pandas as pd
+import numpy as np
 from py2neo import Graph, Node
 from sklearn.metrics import mean_squared_error, r2_score
-import numpy as np
-from core.neo4j.fragments import fragments_to_neo
-from core.neo4j import fragments
-import pandas as pd
-import time
+
+from core.neo4j.fragments import fragments_to_neo, canonical_smiles
+
+
 # Connect to Neo4j Destop.
 # g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
 
@@ -21,17 +23,17 @@ def prep(self):
     Intent: I want to have one function that calculates the data I need for the ontology. I don't think we need
             class instances for these data since they can be easily obtained with one ot two lines of code each.
     """
-    canonical_smiles = fragments.canonical_smiles(list(self.data['smiles']))
+    can_smiles = canonical_smiles(list(self.data['smiles']))
     pva = self.predictions
     r2 = r2_score(pva['actual'], pva['pred_avg'])  # r2 values
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
-    self.data['smiles'] = canonical_smiles
+    self.data['smiles'] = can_smiles
     df_smiles = self.data.iloc[:, [1, 2]]
 
     test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
                                   'uncertainty': list(pva['pred_std'])}).to_dict('records')
-    return r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict
+    return r2, mse, rmse, can_smiles, df_smiles, test_mol_dict
 
 
 def __merge_molecules_and_rdkit2d__(row, g):

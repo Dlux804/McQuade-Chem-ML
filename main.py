@@ -1,15 +1,14 @@
 # TODO: Make main function that asks user what models they would like to initiate
 
-from core import models, Get_Classification
-from core.storage.misc import cd
-from core.storage.storage import pickle_model, unpickle_model
 import os
 import pathlib
-from time import sleep
-from core.features import featurize
-from core.neo4j.output_to_neo4j import output_to_neo4j
 
 import pandas as pd
+
+from core import models, get_classification_feats, get_classification_targets
+from core.storage import cd, unpickle_model
+from core.neo4j import output_to_neo4j
+
 
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
@@ -26,10 +25,10 @@ def main():
     if c == 'c':
         # list of available classification learning algorithms
         learner = ['svc', 'knc', 'rf']
-        #learner = [] # Use this line to test specific models instead of iterating
-
+        # learner = [] # Use this line to test specific models instead of iterating
 
         targets = None
+        feats = None
         sets = {
             'BBBP.csv': targets,
             'sider.csv': targets,
@@ -37,18 +36,16 @@ def main():
             'bace.csv': targets,
         }
 
-
     # Sets up learner, featurizations, and data sets for regression
-    if c == 'r':
+    elif c == 'r':
         # list of available regression learning algorithms
         learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-        #learner = ['gdb', 'nn']
-
+        # learner = ['gdb', 'nn']
 
         # list of available featurization methods
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
-                 [5]]
-        feats = [[0]]#, [0, 2]]  # Change this to change which featurizations are being tested (for regression)
+        # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
+        #          [5]]
+        feats = [[0]]  # , [0, 2]]  # Change this to change which featurizations are being tested (for regression)
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
@@ -59,15 +56,17 @@ def main():
             # 'jak2_pic50.csv': 'pIC50'
         }
 
+    else:
+        raise Exception("Learner not understood. Please enter r for regression and c for classification")
+
     for alg in learner:  # loop over all learning algorithms
         # The following if statements set featurization options based on if the
         # model needs normalized data (currently only set up for the classification models)
         if c == 'c':
-            feats = Get_Classification.get_classification_feats(alg) # Selects featurizations for classification based on the model being ran
+            feats = get_classification_feats(alg)  # Selects featurizations for classification
 
         for method in feats:  # loop over the featurization methods
-            for data, target in sets.items(): # loop over dataset dictionary
-
+            for data, target in sets.items():  # loop over dataset dictionary
 
                 if c == 'r':  # Runs the models/featurizations for regression
                     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
@@ -98,7 +97,8 @@ def main():
                         model1.org_files(zip_only=True)
 
                 if c == 'c':
-                    targets = Get_Classification.get_classification_targets(data)  # Gets targets for classification based on the data set being used
+                    targets = get_classification_targets(
+                        data)  # Gets targets for classification based on the data set being used
 
                     if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
                         pass
@@ -156,7 +156,6 @@ def single_model():
         model1.store()
         model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j()
 
 
 def example_run_with_mysql_and_neo4j():
@@ -185,8 +184,12 @@ def example_run_with_mysql_and_neo4j():
 
         model3.store()
         model3.org_files(zip_only=True)
-        # model1.QsarDB_export(zip_output=True)
+        model3.QsarDB_export(zip_output=True)
         model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+
+
+def all_output_to_neo4j():
+    output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_load():
@@ -208,6 +211,7 @@ def example_load():
     r2 = r2_score(pva['actual'], pva['predicted'])
     mse = mean_squared_error(pva['actual'], pva['predicted'])
     rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
+    print(r2, mse, rmme)
 
 
 if __name__ == "__main__":
@@ -215,4 +219,4 @@ if __name__ == "__main__":
     # single_model()
     # example_load()
     example_run_with_mysql_and_neo4j()
-    # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+    # all_output_to_neo4j()

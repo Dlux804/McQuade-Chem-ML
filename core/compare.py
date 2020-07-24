@@ -1,14 +1,17 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
 import shutil
 import glob
-from core.storage import misc
-from core import ingest
-from rdkit import Chem
-from rdkit.Chem import PandasTools
+import pathlib
 import itertools
 from functools import reduce
+import matplotlib.pyplot as plt
+
+import numpy as np
+import pandas as pd
+from rdkit import Chem
+from rdkit.Chem import PandasTools
+
+from core import ingest
+from core.storage import cd
 
 """
 Goal is to compare the output of many models in a systematic, automatic manner.
@@ -21,7 +24,7 @@ def datasize(dataset):
     Flaw is the assumption that each row is a valid data set
     entry.  It is safe for our basic cases.
     """
-    with misc.cd('../dataFiles/'): # move to dataset directory
+    with cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/dataFiles/'): # move to dataset directory
         with open(dataset) as f:
             size = sum(1 for line in f) - 1  # remove one for header
             print('The {} dataset has {} entries in it.'.format(dataset, size))
@@ -329,7 +332,7 @@ def moloverlap(datasets, n, image=False):
     image=False,  Whether to create a grid image of the overlapping molecules.
 
     """
-    with misc.cd('../dataFiles/'):  # move to dataset directory
+    with cd('../dataFiles/'):  # move to dataset directory
 
         # use dictionary comprehension and iterate over argument dictionary
         # create resolve chemID and create dataframe with ingest.resolveID
@@ -416,22 +419,22 @@ def moloverlap(datasets, n, image=False):
 
 
 
-
-data = {
-    # "pyridine_cas.csv": "CAS",
-    # "pyridine_smi_1.csv": "smiles",
-    # "pyridine_smi_2.csv": "smiles",
-    # "cmc_noadd.csv": "canon_smiles",
-    "logP14k.csv": "smiles",
-    # "18k-logP.csv": "smiles",
-    "ESOL.csv": "smiles",
-    # "cmc_smiles_26.csv": "smiles",
-    # "flashpoint.csv": "smiles",
-    # "Lipophilicity-ID.csv": "smiles",
-    # "jak2_pic50.csv": "SMILES",
-    "water-energy.csv" : "smiles"
-    # "pyridine_smi_3.csv" : "smiles"
-}
+#
+# data = {
+#     # "pyridine_cas.csv": "CAS",
+#     # "pyridine_smi_1.csv": "smiles",
+#     # "pyridine_smi_2.csv": "smiles",
+#     # "cmc_noadd.csv": "canon_smiles",
+#     "logP14k.csv": "smiles",
+#     # "18k-logP.csv": "smiles",
+#     "ESOL.csv": "smiles",
+#     # "cmc_smiles_26.csv": "smiles",
+#     # "flashpoint.csv": "smiles",
+#     # "Lipophilicity-ID.csv": "smiles",
+#     # "jak2_pic50.csv": "SMILES",
+#     "water-energy.csv" : "smiles"
+#     # "pyridine_smi_3.csv" : "smiles"
+# }
 # uncomment this xdf line to perform dataset overlap analysis
 #xdf = moloverlap(data,2)
 # analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
@@ -439,14 +442,14 @@ data = {
 
 
 #
-# with misc.cd('../dataFiles/'): # move to dataset directory
+# with cd('../dataFiles/'): # move to dataset directory
 #     cmc = pd.read_csv('cmc_smiles_26.csv')
 #     cmc = cmc[:9]
 #     print(cmc)
 #     analysis.grid_image(cmc, 'cmc_molecules_short', molobj=False)
 
-for key in data.keys():
-    print(key)
-    datasize(key)
-# string = 'ESOL.csv'
-# datasize(string)
+# for key in data.keys():
+#     print(key)
+#     datasize(key)
+# # string = 'ESOL.csv'
+# # datasize(string)

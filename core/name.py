@@ -1,7 +1,8 @@
 import os
-from core.storage import misc
-from datetime import datetime
 import pathlib
+from datetime import datetime
+
+from core.storage import cd
 """
 Objective: A systematic way to create a unique name for every single machine learning run
 This code follows the "Letters and Numbers" rule explained in naming_schemes_v2.pptx in the naming branch
@@ -14,7 +15,7 @@ def represent_dataset():
     This representation follows the "Letters and Numbers" rule explained in naming_schemes_v2.pptx in the naming branch
     :return: Dictionary of dataset as key and their representation as value
     """
-    with misc.cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/dataFiles/'):  # Access folder with all dataset
+    with cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/dataFiles/'):  # Access folder with all dataset
         for roots, dirs, files in os.walk(os.getcwd()):
             data_dict = {}  # Dictionary of dataset and their first character
             for dataset in files:  # Loop through list of files
@@ -73,7 +74,7 @@ def represent_algorithm():
     return dictionary
 
 
-def name(self):
+def get_run_name(self):
     """
     Give a unique name to a machine learning run
     :return: A unique name to a machine learning run

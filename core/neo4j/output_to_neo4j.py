@@ -2,13 +2,15 @@
 Objective: Contains the function "output_to_neo4j" which is the function that imports data from output folders into
             Neo4j based in our ontology
 """
-import pandas as pd
 import os
-from zipfile import ZipFile
-from core.storage import misc
 import json
-from core.neo4j import prep_from_outputs
 import pathlib
+from zipfile import ZipFile
+
+import pandas as pd
+
+from core.storage import cd
+from core.neo4j import prep_from_outputs
 
 # g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
@@ -22,7 +24,7 @@ def file_count():
     :return: Number of zip files in the output folder
     """
     # print(hello)
-    with misc.cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/output/'):  # Access output
+    with cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/output/'):  # Access output
         print('Now in:', os.getcwd())
         for roots, dirs, files in os.walk(os.getcwd()):
             files_count = 0
@@ -45,7 +47,7 @@ def get_file(file_string):
     :param file_string: A common substring in a file name in our zip files
     :return: 3 dataframe from _attributes.json, _data.csv and _predictions.csv
     """
-    with misc.cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/output/'):  # Access output
+    with cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/output/'):  # Access output
         for roots, dirs, files in os.walk(os.getcwd()):
             for f in files:
                 if f.endswith('.zip'):

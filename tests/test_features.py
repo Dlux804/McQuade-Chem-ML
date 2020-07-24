@@ -111,3 +111,12 @@
 #         assert np.round(test_target.shape[0] / target.shape[0] * 100, -1) == 20.0
 #         # Test to see if feature_list is a list
 #         assert type(feature_list) == list
+
+
+import pytest
+from tests.fixtures.model_fixture import __run_all__
+
+
+@pytest.mark.parametrize('algorithm, data, exp', [('rf', 'Lipo-short.csv', 'exp')])
+def test_var_importance(__run_all__):
+    model1 = __run_all__

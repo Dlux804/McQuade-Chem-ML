@@ -28,6 +28,9 @@ def featurize(self):
         feat_meth = [int(x) for x in input(
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
     selected_feat = [feat_sets[i] for i in feat_meth]
+
+    self.selected_feat_string = '-'.join(selected_feat) # This variable will be used later in train.py for giving classification roc graph a unique file name.
+
     print("You have selected the following featurizations: ", end="   ", flush=True)
     print(*selected_feat, sep=', ')
     print('Calculating features...')

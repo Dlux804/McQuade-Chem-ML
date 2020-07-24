@@ -132,13 +132,6 @@ def train_cls(self, n=5):
             print('Classification report for this run: ')
             print(clsrep)
 
-            # Creates a graphical evaluation for single-label classification
-            fpr, tpr, thresholds = roc_curve(cls['actual'], cls['predicted'])
-            plot_roc_curve(fpr, tpr)
-            plt.xlabel('False Positive Rate')
-            plt.ylabel('True Positive Rate (Recall)')
-            plt.show(hold=True)
-            plt.savefig('roc_curve.png')
 
             auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
             t[i] = fit_time
@@ -181,10 +174,21 @@ def train_cls(self, n=5):
         print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
         print()
 
+    if self.dataset in ['BBBP.csv', 'bace.csv']:
+        # Creates and saves a graphical evaluation for single-label classification
+        fpr, tpr, thresholds = roc_curve(cls['actual'], cls['predicted'])
+        plot_roc_curve(fpr, tpr, stats['auc_avg'])
+        name = self.algorithm + '-' + self.dataset + '-' + self.selected_feat_string  # Creates a unique file name to save the graph with
+        filename = "%-roc_curve.png" % name
+        plt.legend(loc='best')
+        plt.savefig(self.run_name + '_' + filename)
+        plt.show()
 
 
 
 
-def plot_roc_curve(fpr, tpr, label=None):
-    plt.plot(fpr, tpr, linewidth=2, label=label)
+def plot_roc_curve(fpr, tpr, auc, label=None):
+    plt.plot(fpr, tpr, linewidth=2, label="Roc_Auc_Score Average{{}} = {}".format(auc))
     plt.plot([0, 1], [0, 1], 'k--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate (Recall)')

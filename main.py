@@ -18,67 +18,60 @@ def main():
     os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
 
-    # Asking the user to decide between running classification models or regression models
-    c = str(input("Enter c for classification, r for regression: "))
+    # list of all learning algorithms
+    learner = ['svc', 'knc', 'rfc', 'ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
+#    learner = ['rfc']
 
-    # Sets up learner and datasets for classification.
-    if c == 'c':
-        # list of available classification learning algorithms
-        learner = ['svc', 'knc', 'rfc']
-        learner = ['knc'] # Use this line to test specific models instead of iterating
+    # list of available classification learning algorithms for reference/testing
+    #learner = ['svc', 'knc', 'rfc']
 
+    # list of available regression learning algorithms for reference/testing
+#    learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
 
-        sets = {
-#            'BBBP.csv': 'p_np',
-            'sider.csv': ['Hepatobiliary disorders', 'Metabolism and nutrition disorders', 'Product issues',
-                   'Eye disorders', 'Investigations', 'Musculoskeletal and connective tissue disorders',
-                   'Gastrointestinal disorders',
-                   'Social circumstances', 'Immune system disorders', 'Reproductive system and breast disorders',
-                   'Neoplasms benign, malignant and unspecified (incl cysts and polyps)',
-                   'General disorders and administration site conditions', 'Endocrine disorders',
-                   'Surgical and medical procedures', 'Vascular disorders', 'Blood and lymphatic system disorders',
-                   'Skin and subcutaneous tissue disorders', 'Congenital, familial and genetic disorders',
-                   'Infections and infestations', 'Respiratory, thoracic and mediastinal disorders',
-                   'Psychiatric disorders', 'Renal and urinary disorders',
-                   'Pregnancy, puerperium and perinatal conditions', 'Ear and labyrinth disorders',
-                   'Cardiac disorders',
-                   'Nervous system disorders', 'Injury, poisoning and procedural complications'],
-#            'clintox.csv': ['FDA_APPROVED', 'CT_TOX'],
- #           'bace.csv': 'Class',
-        }
+    # All data sets in dict
+    targets = None
+    sets = {
+        'BBBP.csv': targets,
+        'sider.csv': targets,
+        'clintox.csv': targets,
+        'bace.csv': targets,
+        'ESOL.csv': 'water-sol',
+        'Lipophilicity-ID.csv': 'exp',
+        'water-energy.csv': 'expt',
+        'logP14k.csv': 'Kow',
+        'jak2_pic50.csv': 'pIC50'
+    }
 
+    # classification data sets for reference/testing
+    # sets = {
+    #     'BBBP.csv': targets,
+    #     'sider.csv': targets,
+    #     'clintox.csv': targets,
+    #     'bace.csv': targets,
+    # }
 
-    # Sets up learner, featurizations, and data sets for regression
-    if c == 'r':
-        # list of available regression learning algorithms
-        learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-        #learner = ['gdb', 'nn']
+    # regression data sets for reference/testing
+    # sets = {
+    #     'ESOL.csv': 'water-sol',
+    #     'Lipophilicity-ID.csv': 'exp',
+    #     'water-energy.csv': 'expt',
+    #     'logP14k.csv': 'Kow',
+    #     'jak2_pic50.csv': 'pIC50'
+    # }
 
-
-        # list of available featurization methods
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
-                 [5]]
-        feats = [[0]]#, [0, 2]]  # Change this to change which featurizations are being tested (for regression)
-
-        # regression data sets in dict. Key: Filename.csv , Value: Target column header
-        sets = {
-            'ESOL.csv': 'water-sol',
-            # 'Lipophilicity-ID.csv': 'exp',
-            # 'water-energy.csv': 'expt',
-            # 'logP14k.csv': 'Kow',
-            # 'jak2_pic50.csv': 'pIC50'
-        }
-
-    for alg in learner:  # loop over all learning algorithms
-        # The following if statements set featurization options based on if the
-        # model needs normalized data (currently only set up for the classification models)
-        if c == 'c':
-            feats = Get_Classification.get_classification_feats(alg) # Selects featurizations for classification based on the model being ran
-
+    for alg in learner: # loop over all learning algorithms
+        feats = Get_Classification.get_classification_feats(alg) # Selects featurizations for classification based on the model being ran, if regression model; uses default featurizations
+#        feats=[] # Use this line to select specific featurizations
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items(): # loop over dataset dictionary
+                if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
+                    target = Get_Classification.get_classification_targets(data)
 
-                if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
+                if data in ['sider.csv', 'clintox.csv'] and alg == 'svc':
+                    pass
+                elif data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv'] and alg in ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']:
+                    pass
+                elif data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv'] and alg in ['svc', 'knc', 'rfc']:
                     pass
                 else:
                     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
@@ -115,69 +108,6 @@ def main():
                     # Have files output to output
 
 
-                # if c == 'r':  # Runs the models/featurizations for regression
-                #     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
-                #         print('Model Type:', alg)
-                #         print('Featurization:', method)
-                #         print('Dataset:', data)
-                #         print()
-                #         print('Initializing model...', end=' ', flush=True)
-                #         # initiate model class with algorithm, dataset and target
-                #         model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                #                                 tune=False, cv=3, opt_iter=25)
-                #         print('Done.\n')
-                #
-                #     with cd('dataFiles'):  # Have files output to output
-                #         model1.featurize()
-                #         val = 0.0
-                #         if alg == 'nn':
-                #             val = 0.1
-                #
-                #         model1.data_split(val=val)
-                #         model1.reg()
-                #         model1.run()
-                #         model1.analyze()
-                #         if model1.algorithm != 'nn':
-                #             model1.pickle_model()
-                #
-                #         model1.store()
-                #         model1.org_files(zip_only=True)
-
-#                if c == 'c':
-#                     if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
-#                         pass
-#                     else:
-#                         with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
-#                             print('Model Type:', alg)
-#                             print('Featurization:', method)
-#                             print('Dataset:', data)
-#                             print('Target(s):', target)
-#                             print()
-#                             print('Initializing model...', end=' ', flush=True)
-#                             # initiate model class with algorithm, dataset and target
-#                             opt_iter=10
-#                             if data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']:
-#                                 opt_iter = 25
-#                             model = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-#                                                    tune=False, cv=3, opt_iter=opt_iter)
-#                             print('Done.\n')
-#
-#                         with cd('dataFiles'):
-#                             # Runs classification model
-#                             model.featurize()  # Featurize molecules
-#                             val = 0.0
-#                             if alg == 'nn':
-#                                 val = 0.1
-#                             model.data_split(val=val)
-#                             model.reg()
-#                             model.run()  # Runs the models/featurizations for classification
-#                             model.analyze()
-#                             if model.algorithm != 'nn':
-#                                 model.pickle_model()
-#                             model.store()
-#                             model.org_files(zip_only=True)
-#
-#                         # Have files output to output
 
 
 def single_model():

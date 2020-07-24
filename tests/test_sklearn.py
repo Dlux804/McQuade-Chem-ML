@@ -2,7 +2,6 @@
 Objective: Test to see if the pipeline runs sklearn methods for tuned and un-tuned to completion
 """
 import pytest
-import os, glob
 from tests.fixtures.model_fixture import __run_all__
 # Test for almost all models instead of knn. With a small dataset, knn throws a fit
 algorithm_list = ['ada', 'svr', 'rf', 'gdb']
@@ -14,7 +13,7 @@ def test_sklearn_untuned(__run_all__):
     """"""
     # for algor in algorithm_list:
     model1 = __run_all__
-    list(map(os.remove, glob.glob('*%s*' % model1.run_name)))
+
 
 
 @pytest.mark.parametrize('algorithm', algorithm_list)
@@ -30,7 +29,6 @@ def test_sklearn_tuned(__run_all__):
     # assert os.path.isfile(''.join([model1.run_name, '_PVA.png']))  # Check for PVA graphs
     # assert os.path.isfile(''.join([model1.run_name, '_checkpoint.pkl']))
     # # assert os.path.isfile(''.join([model1.run_name, '_importance-graph.png']))
-    list(map(os.remove, glob.glob('*%s*' % model1.run_name)))
 
 
 

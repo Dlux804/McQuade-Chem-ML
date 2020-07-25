@@ -53,7 +53,7 @@ jobs:
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
             python -m pytest tests/
-            pytest -v
+            pytest --disable-pytest-warnings -v --maxfail=10
       - store_artifacts:
           path: test-reports
           destination: test-reports

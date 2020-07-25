@@ -2,22 +2,22 @@
 Objective: Test to see if the pipeline runs sklearn methods for tuned and un-tuned to completion
 """
 import pytest
-from tests.fixtures.model_fixture import __run_all__
+import os, glob
+from tests.model_fixture import __run_all__, delete_files
 # Test for almost all models instead of knn. With a small dataset, knn throws a fit
 algorithm_list = ['ada', 'svr', 'rf', 'gdb']
 
 
 @pytest.mark.parametrize('algorithm', algorithm_list)
-@pytest.mark.parametrize('data, exp, tuned', [('Lipo-short.csv', 'exp', False)])
+@pytest.mark.parametrize('data, exp, tuned, delete, directory', [('Lipo-short.csv', 'exp', False, True, True)])
 def test_sklearn_untuned(__run_all__):
     """"""
     # for algor in algorithm_list:
     model1 = __run_all__
 
 
-
 @pytest.mark.parametrize('algorithm', algorithm_list)
-@pytest.mark.parametrize('data, exp, tuned', [('Lipo-short.csv', 'exp', True)])
+@pytest.mark.parametrize('data, exp, tuned, delete, directory', [('Lipo-short.csv', 'exp', True, True, True)])
 def test_sklearn_tuned(__run_all__):
     """"""
     # for algor in algorithm_list:

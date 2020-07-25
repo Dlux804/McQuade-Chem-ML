@@ -1,41 +1,22 @@
 """
 Objective: Test to see if the pipeline runs keras methods for tuned and un-tuned to completion
 """
-from core import models
-import os, glob
-from core.storage import misc
+
+import pytest
+from tests.model_fixture import __run_all__
 
 
-def test_keras_no_tuned():
+@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('nn', 'Lipo-short.csv', 'exp', False, True,
+                                                                             True)])
+def test_sklearn_untuned(__run_all__):
     """"""
-    with misc.cd('../dataFiles'):
-        model1 = models.MlModel(algorithm='nn', dataset='Lipo-short.csv', target='exp', feat_meth=[0], tune=False,
-                                cv=2, opt_iter=2)
-    model1.featurize()
-    model1.data_split(val=0.1)
-    model1.reg()
-    model1.run()
-    model1.analyze()
-    assert os.path.isfile(''.join([model1.run_name, '_PVA.png']))  # Check for PVA graphs
-    assert os.path.isfile(''.join([model1.run_name, '.h5']))  # Check for PVA graphs
-    assert float(model1.predictions_stats['mse_avg']) > 0.5  # Check for mse value
-    assert float(model1.predictions_stats['r2_avg']) < 0.8  # Check for r2_avg value
-    list(map(os.remove, glob.glob('*%s*' % model1.run_name)))
+    # for algor in algorithm_list:
+    model1 = __run_all__
 
 
-def test_keras_tuned():
+@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('nn', 'Lipo-short.csv', 'exp', True, True,
+                                                                             True)])
+def test_sklearn_tuned(__run_all__):
     """"""
-    with misc.cd('../dataFiles'):
-        model1 = models.MlModel(algorithm='nn', dataset='Lipo-short.csv', target='exp', feat_meth=[0], tune=True,
-                                cv=2, opt_iter=2)
-    model1.featurize()
-    model1.data_split(val=0.1)
-    model1.reg()
-    model1.run()
-    model1.analyze()
-    assert os.path.isfile(''.join([model1.run_name, '_PVA.png']))  # Check for PVA graphs
-    assert os.path.isfile(''.join([model1.run_name, '.h5']))  # Check for PVA graphs
-    assert os.path.isfile(''.join([model1.run_name, '_checkpoint.pkl']))
-    assert float(model1.predictions_stats['mse_avg']) > 0.5  # Check for mse value
-    assert float(model1.predictions_stats['r2_avg']) < 0.8  # Check for r2_avg value
-    list(map(os.remove, glob.glob('*%s*' % model1.run_name)))
+    # for algor in algorithm_list:
+    model1 = __run_all__

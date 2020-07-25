@@ -7,8 +7,12 @@ import os, glob
 import pandas as pd
 from core.storage.storage import unpickle_model
 import shutil
+from main import ROOT_DIR
 
-with misc.cd('../dataFiles'):
+# change working directory to
+os.chdir(ROOT_DIR)
+
+with misc.cd('dataFiles/testdata'):
     model1 = models.MlModel(algorithm='ada', dataset='Lipo-short.csv', target='exp', feat_meth=[0], tune=False, cv=2,
                             opt_iter=2)
 

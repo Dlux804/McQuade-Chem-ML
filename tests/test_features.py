@@ -1,122 +1,46 @@
-# import pandas as pd
-# import numpy as np
-# import mock
-# import os, sys
-#
-#
-# # before importing local modules, must add root dir to system path
-# # capture location of current file (/root/tests/)
-# myPath = os.path.dirname(os.path.abspath(__file__))
-# # add to system path the root dir with relative notation: /../ (go up one dir)
-# sys.path.insert(0, myPath + '/../')
-#
-# from core import features, misc
-# from main import ROOT_DIR
-#
-# # Expected features
-# feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
-#              'morganchiral3counts', 'atompaircounts']
-# # Expected models
-# model_name = ['rf', 'svr', 'gdb', 'ada', 'nn', 'knn']
-#
-#
-# # Mock the function MakeGenerator since it takes a lot of time to generate and it's the thing we want to test
-# @mock.patch('core.features.MakeGenerator')
-# def test_features_makegenerator(mock_makegenerator):
-#     """
-#     Since MakeGenerator is the main part of this function, we should test to see if it is called successfully. This will
-#     help us narrow down the actual error if we ever run into one.
-#     """
-#     # change working directory to
-#     os.chdir(ROOT_DIR)
-#     # move to dataFiles
-#     with misc.cd('dataFiles'):
-#         print('Now in:', os.getcwd())
-#         # Read csv into dataframe
-#         df = pd.read_csv("water-energy.csv")
-#         # Call function featurize
-#         df, num_feat, feat_time = features.featurize(df, 'rf', feat_meth=[0])  # Call function featurize
-#         # Test to see if MakeGenerator is called
-#         mock_makegenerator.assert_called()
-#         # Stop mock
-#         mock.patch.stopall()
-#
-#
-# def test_featurize_remove():
-#     """
-#     We want to test if the first descriptor generated different between using ML models that need normalization and ones
-#     that don't
-#     """
-#     # change working directory to
-#     os.chdir(ROOT_DIR)
-#     # move to dataFiles
-#     with misc.cd('dataFiles'):
-#         print('Now in:', os.getcwd())
-#         # Read csv into dataframe
-#         df = pd.read_csv("water-energy.csv")
-#         # Call function featurize using nn
-#         df1, num_feat1, feat_time1 = features.featurize(df, 'nn', feat_meth=[0])
-#         # Call function featurize using rf
-#         df2, num_feat2, feat_time2 = features.featurize(df, 'rf', feat_meth=[0])
-#         # See if the two dataframes are the same
-#         assert df1.equals(df2) == True
-#
-# def test_featurize():
-#     """
-#     This function was designed to test the script features.py and its function "featurize"
-#
-#     """
-#     # change working directory to
-#     os.chdir(ROOT_DIR)
-#     # move to dataFiles
-#     with misc.cd('dataFiles'):
-#         print('Now in:', os.getcwd())
-#         # Read csv into dataframe
-#         df = pd.read_csv("water-energy.csv")
-#         # Next, test on every model. We know that the feats are different if the model is either nn or knn
-#         for i in model_name:
-#             # Exception with nn and knn
-#             if i == 'nn' or i == 'knn':
-#                 df, selected_feat, feat_time = features.featurize(df, i, feat_meth=[0])  # Call function featurize
-#                 # Test to see if df is a dataframe
-#                 assert type(df) == pd.DataFrame, 'Something is wrong, i can feel it'
-#                 # Test to see if the variable time is a number
-#                 assert type(feat_time) == float, 'Something is wrong, i can feel it'
-#             else:
-#                 df, selected_feat, feat_time = features.featurize(df, i, feat_meth=[0])
-#                 # Test to see if df is a dataframe
-#                 assert type(df) == pd.DataFrame, 'Something is wrong, i can feel it'
-#                 # Test to see if the variable time is a number
-#                 assert type(feat_time) == float, 'Something is wrong, i can feel it'
-#
-# def test_targets_features():
-#     """
-#     This function was designed to test the script features.py and its function "targets_features"
-#
-#     """
-#     # change working directory to
-#     os.chdir(ROOT_DIR)
-#     # move to dataFiles
-#     with misc.cd('dataFiles'):
-#         print('Now in:', os.getcwd())
-#         # Read csv into dataframe
-#         df = pd.read_csv("water-energy.csv")
-#         target = df['expt']  # Target column
-#         feature = df.drop(['expt', 'smiles'], axis=1)  # All feature columns
-#         # Split the data
-#         train_features, test_features, train_target, test_target, feature_list = features.data_split(df, 'expt')
-#         # Test to see if we get a 20% split on test features
-#         assert np.round(test_features.shape[0] / feature.shape[0] * 100, -1) == 20.0
-#         # Test to see if we get a 20% split on test target
-#         assert np.round(test_target.shape[0] / target.shape[0] * 100, -1) == 20.0
-#         # Test to see if feature_list is a list
-#         assert type(feature_list) == list
+"""
+Objective: Test functions in features.py
 
-
+"""
 import pytest
-from tests.fixtures.model_fixture import __run_all__
+from numpy.random import randint
+from tests.model_fixture import __model_object__
+
+# SMILES from clintox.csv that has been confirmed to cause issue with rdkit
+smiles = "C/C=C\1/C(=O)N[C@H](C(=O)O[C@H]\2CC(=O)N[C@@H](C(=O)N[C@H](CSSCC/C=C2)C(=O)N1)C(C)C)C(C)C"
 
 
-@pytest.mark.parametrize('algorithm, data, exp', [('rf', 'Lipo-short.csv', 'exp')])
-def test_var_importance(__run_all__):
-    model1 = __run_all__
+@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,
+                                                                             False, True)])
+def test_featurize(__model_object__):
+    """"""
+    model1 = __model_object__
+    df = model1.data.append({'smiles': smiles, 'exp': randint(0.1, 1)}, ignore_index=True)
+    model1.featurize()
+    assert len(df['smiles']) != len(model1.data['smiles']), "Faulty SMILES were not removed from data"
+    assert "RDKit2D_calculated" not in model1.data.columns
+    assert len(model1.data.columns) > len(df.columns)
+
+
+@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,
+                                                                             False, True)])
+def test_val_data_split(__model_object__):
+    model1 = __model_object__
+    model1.featurize()
+    model1.data_split(val=0.1)
+    assert model1.val_percent == model1.n_val / model1.n_tot
+    assert float('%g' % model1.train_percent) == model1.n_train / model1.n_tot  # Fix Trailing 1 problem in float
+    assert "in_set" in model1.data.columns, """ No "in_set" column"""
+    assert list(model1.data.loc[model1.data['in_set'] == "val"]['smiles']), """NO "val" value in "in_set" column"""
+
+
+@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,
+                                                                             False, True)])
+def test_data_split(__model_object__):
+    model1 = __model_object__
+    model1.featurize()
+    model1.data_split()
+    assert model1.val_percent == 0
+    assert float('%g' % model1.train_percent) == model1.n_train / model1.n_tot  # Fix Trailing 1 problem in float
+    assert "in_set" in model1.data.columns, """ No "in_set" column"""
+    assert not list(model1.data.loc[model1.data['in_set'] == "val"]['smiles']), """NO "val" value in "in_set" column"""

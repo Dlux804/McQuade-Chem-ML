@@ -2,11 +2,12 @@
 Objective: This script stores all data from output files. The data will then be used to create nodes and
 relationships based on our ontology to Neo4j
 """
-from core import fragments, nodes_to_neo4j, rel_to_neo4j
+from core.neo4j import rel_to_neo4j, nodes_to_neo4j, fragments
 import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score
 import pandas as pd
 import re
+from py2neo import Graph
 
 # TODO ADD DOCSTRING EXPLAINING ALL VARIABLES
 
@@ -87,7 +88,12 @@ class Prep:
             self.cp_n_best = 0
             self.opt_iter = 0
 
-    def to_neo4j(self):
+        self.neo4j_params = None
+
+    def to_neo4j(self, port, username, password):
         """"""
+        self.neo4j_params = {'port': port, 'username': username, 'password': password}  # Pass Neo4j Parameters
+        Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
+              password=self.neo4j_params["password"])  # Test connection to Neo4j
         nodes_to_neo4j.nodes(self)
         rel_to_neo4j.relationships(self)

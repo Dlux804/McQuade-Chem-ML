@@ -3,11 +3,11 @@ Objective: The goal of this script is to create relationships in Neo4j directly 
 """
 
 from py2neo import Graph
-from core.nodes_to_neo4j import prep
+from core.neo4j.nodes_to_neo4j import prep
 import time
 
 # Merge to Neo4j Destop.
-g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
+# g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
 
 # TODO REDO DOCSTRINGS
 
@@ -23,6 +23,8 @@ def relationships(self):
     print("Creating relationships...")
     t1 = time.perf_counter()
     r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict = prep(self)
+    g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
+              password=self.neo4j_params["password"])  # Define graph for function
 
     # Merge RandomSplit node
     g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,"
@@ -59,10 +61,13 @@ def relationships(self):
     if self.tuned:  # If tuned
         param_dict = dict(self.params)
         for key in param_dict:
-            value = param_dict[key].values[0]
-            g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
-                       merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, value),
-                       parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key})
+            try:
+                value = param_dict[key].values[0]
+                g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
+                           merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, value),
+                           parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key})
+            except AttributeError:
+                print(f"Failed to merge relationship with {param_dict[key]}")
     else:  # If not tuned
         g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
                    merge (model)-[r:USES_ALGORITHM]->(algor)""",
@@ -79,7 +84,7 @@ def relationships(self):
                    parameters={'tune_time': self.tune_time, 'algorithm': self.algorithm, 'run_name': self.run_name,
                                'cv_folds': self.cv_folds, 'tunTime': self.tune_time, 'cp_delta': self.cp_delta,
                                'cp_n_best': self.cp_n_best, 'opt_iter': self.opt_iter})
-    else: # If not tuned
+    else:  # If not tuned
         g.evaluate("""match (tuning_alg:NotTuned), (algor:Algorithm {name: $algorithm})
                    merge (algor)-[:NOT_TUNED]->(tuning_alg)""",
                    parameters={'algorithm': self.algorithm})

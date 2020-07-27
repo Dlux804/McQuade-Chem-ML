@@ -1,4 +1,4 @@
-SMILES,pIC50
+smiles,pIC50
 O=S(=O)(Nc1cccc(-c2cnc3ccccc3n2)c1)c1cccs1,4.26
 O=c1cc(-c2nc(-c3ccc(-c4cn(CCP(=O)(O)O)nn4)cc3)[nH]c2-c2ccc(F)cc2)cc[nH]1,4.34
 NC(=O)c1ccc2c(c1)nc(C1CCC(O)CC1)n2CCCO,4.53

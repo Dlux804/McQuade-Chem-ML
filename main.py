@@ -32,15 +32,15 @@ def main():
     # All data sets in dict
     targets = None
     sets = {
-        # 'BBBP.csv': targets,
-        # 'sider.csv': targets,
-        # 'clintox.csv': targets,
-        # 'bace.csv': targets,
-        'ESOL.csv': 'water-sol',
-        'Lipophilicity-ID.csv': 'exp',
-        'water-energy.csv': 'expt',
-        'logP14k.csv': 'Kow',
-        'jak2_pic50.csv': 'pIC50'
+        'BBBP.csv': targets,
+#        'sider.csv': targets,
+#        'clintox.csv': targets,
+        'bace.csv': targets,
+        # 'ESOL.csv': 'water-sol',
+        # 'Lipophilicity-ID.csv': 'exp',
+        # 'water-energy.csv': 'expt',
+        # 'logP14k.csv': 'Kow',
+        # 'jak2_pic50.csv': 'pIC50'
     }
 
     # classification data sets for reference/testing

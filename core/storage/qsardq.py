@@ -267,12 +267,18 @@ def QsarDB_import(directory, zipped=False, cleanup_unzipped_dir=True):
                 prop_columns.remove('Compound Id')
                 target_columns.append(prop_columns[0])
 
+    """Extract pmml from models directory"""
+
+    model_directories = directory + '/' + 'models'
+    for sub_value_dir in [f.name for f in os.scandir(model_directories) if f.is_dir()]:
+        model_name = sub_value_dir
+        pmml_file = model_directories + '/' + sub_value_dir + '/pmml'
+        # TODO import models from the pmml file
+
     if len(target_columns) == 1:
         target_columns = target_columns[0]
     elif len(target_columns) == 0:
         raise Exception("No target column was found...")
-
-
 
     if cleanup_unzipped_dir and zipped:
         shutil.rmtree(directory, ignore_errors=True)

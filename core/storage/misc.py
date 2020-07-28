@@ -102,7 +102,8 @@ def store(self):
         # grab pandas related objects for export to csv
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
             if k == "data":  # Rename target column to a more general one
-                v = v.rename(columns={self.target_name: "target"})
+                if self.dataset not in self.multi_label_classification_datasets:
+                    v = v.rename(columns={self.target_name: "target"})
                 v.to_csv(self.run_name + '_' + k + '.csv')
 
             elif k != "smiles_series":
@@ -225,8 +226,9 @@ def compress_fingerprint(df):
                               fingerprint_array_column_name: fingerprint_column_lists}).astype(str)
         # Get the original dataframe, minus the fingerprint columns
         df = df[df.columns.difference(fingerprint_columns)]
+
         # Join the new dataframes together
-        df = pd.concat([df, fp_df], axis=1)
+        df = df.merge(fp_df, on='smiles')
     return df
 
 

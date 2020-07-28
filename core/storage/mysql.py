@@ -160,14 +160,6 @@ class MLMySqlConn:
             data = data.merge(df, on=same_columns)
         return data
 
-    def insert_single_table(self, dataset, feat_meth):
-        feat_name = self.feat_sets[feat_meth]
-        if dataset not in bad_datasets and not self.table_exist(dataset=dataset, feat_name=feat_name):
-            self.featurize(not_silent=False)
-            self.data = compress_fingerprint(self.data)
-            self.data.to_sql(f'{dataset}_{feat_name}', self.conn, if_exists='fail')
-            print(f'Created {dataset}_{feat_name}')
-
     def insert_all_data_mysql(self):
         """
         The is to featurize and insert all the featurized data into MySql from datafiles. Goes through the entire
@@ -227,7 +219,14 @@ def initialize_tables(self):
     mysql_conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
                              host=self.mysql_params['host'], database=self.mysql_params['database'])
     for feat in self.feat_meth:
-        mysql_conn.insert_single_table(self.dataset, feat)
+        feat_name = mysql_conn.feat_sets[feat]
+        if self.dataset not in bad_datasets and not mysql_conn.table_exist(dataset=self.dataset, feat_name=feat_name):
+            print(feat_name, self.dataset)
+            self.feat_meth = [feat]
+            self.featurize(not_silent=False)
+            self.data = compress_fingerprint(self.data)
+            self.data.to_sql(f'{self.dataset}_{feat_name}', mysql_conn.conn, if_exists='fail')
+            print(f'Created {self.dataset}_{feat_name}')
 
 
 def featurize_from_mysql(self):

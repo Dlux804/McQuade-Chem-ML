@@ -1,11 +1,15 @@
 import os
 import re
 import shutil
+import zipfile
 
-from lxml import etree
+import pandas as pd
 import xml.etree.cElementTree as ET
+from lxml import etree
 from rdkit.Chem import MolFromSmiles, MolToMolBlock
 from sklearn2pmml import PMMLPipeline, sklearn2pmml
+
+from core.storage.misc import compress_fingerprint
 
 
 def QsarDB_export(self, zip_output=False):
@@ -17,6 +21,8 @@ def QsarDB_export(self, zip_output=False):
     Purpose of this is to export our models in a format that complies with the QsarDB requirements.
     This script is meant to be run on a model that has been fully featurized and tested.
     """
+
+    print("Exporting data into QsarDB format")
 
     # Define function for less code to change between directories
     def __mkd__(new_dir):
@@ -65,22 +71,30 @@ def QsarDB_export(self, zip_output=False):
         ])
         sklearn2pmml(pipeline, "pmml", with_repr=True)
 
+        print('creating pmml')
         # Read in the file
         with open('pmml', 'r') as file:
             filedata = file.read()
 
+        print('finding matches')
         # Replace x[1-...] with actual column names
         m = re.findall('x\-?\d+', filedata)
         matches = []
-        [matches.append(x) for x in m if x not in matches]
+        print('sorting matches')
+        for match in m:
+            if match in matches:
+                break
+            matches.append(match)
         feature_cols = list(data_df.columns.difference(["in_set", "smiles", "id", self.target_name]))
         matched_dict = dict(zip(matches, feature_cols))
+        print('replacing')
         for match, feat in matched_dict.items():
             filedata = filedata.replace(match, f'{feat}')
 
         # Replace y with target name
         filedata = filedata.replace('y', f'{self.target_name}')
 
+        print('rewrite to file')
         # Write the file out again
         with open('pmml', 'w') as file:
             file.write(filedata)
@@ -90,7 +104,7 @@ def QsarDB_export(self, zip_output=False):
     non_descriptors_columns = ['smiles', 'id', 'in_set', self.target_name]
 
     # Gather all data (without validation data), testing data, and training data
-    data_df = self.data
+    data_df = compress_fingerprint(self.data)
     data_df['id'] = data_df['smiles'].apply(__get_compound_set__)
     data_df = data_df.sort_values(by=['id'])
     data_df = data_df.reset_index(drop=True)
@@ -177,3 +191,91 @@ def QsarDB_export(self, zip_output=False):
         shutil.make_archive((os.getcwd() + '/ ' + f'{self.run_name}_qdb'), 'zip',
                             os.getcwd(), f'{self.run_name}_qdb')
         shutil.rmtree(f'{self.run_name}_qdb', ignore_errors=True)
+
+
+def QsarDB_import(directory, zipped=False, cleanup_unzipped_dir=True):
+    def __combine_dfs__(df1, df2):
+        df1['Compound Id'] = df1['Compound Id'].astype(int)
+        df2['Compound Id'] = df2['Compound Id'].astype(int)
+        return df1.merge(df2, on='Compound Id', how='outer')
+
+    if zipped:
+
+        unzipped_directory_file_name = directory.split('.')
+        extension = unzipped_directory_file_name.pop(-1)
+
+        if extension != 'zip':
+            raise Exception("Zipped folders should have a .zip extension")
+
+        unzipped_directory_file_name = ".".join(unzipped_directory_file_name)
+
+        with zipfile.ZipFile(directory, 'r') as zip_ref:
+            zip_ref.extractall(unzipped_directory_file_name)
+
+        directory = unzipped_directory_file_name
+
+    """Work on compounds dir"""
+    root_compounds_dir = directory + '/' + 'compounds'
+
+    # get compound details from compounds.xml
+    compounds_xml = root_compounds_dir + '/' + 'compounds.xml'
+    compounds_xml_root = ET.parse(compounds_xml).getroot()
+    compound_dicts = []
+    for compound in compounds_xml_root:
+        compound_props = {}
+        for prop in compound:
+            label = prop.tag.split('}')[1]
+            value = prop.text
+            if label != 'Cargos':
+                compound_props[label] = value
+        compound_dicts.append(compound_props)
+
+    # create dataframe to add data too, and append columns in cargos
+    data = pd.DataFrame(compound_dicts)
+    data = data.rename(columns={'Id': 'Compound Id'})
+
+    # gather information in cargos
+    compounds_cargos_dicts = []
+    for compound_dir in [f.name for f in os.scandir(root_compounds_dir) if f.is_dir()]:
+        compound_cargos = {'Compound Id': compound_dir}
+        compound_dir = root_compounds_dir + '/' + compound_dir
+        for cargo in os.listdir(compound_dir):
+            cargo_label = cargo
+            cargo = compound_dir + '/' + cargo
+            with open(cargo, 'r') as f:
+                compound_cargos[cargo_label] = f.read()
+        compounds_cargos_dicts.append(compound_cargos)
+    if compounds_cargos_dicts:
+        cargos_df = pd.DataFrame(compounds_cargos_dicts)
+        data = __combine_dfs__(data, cargos_df)
+
+    """Work on descriptors, predictions, and properties dir"""
+
+    values_directories = ['descriptors', 'predictions', 'properties']
+    target_columns = []
+
+    for value_directory in values_directories:
+        root_dir = directory + '/' + value_directory
+
+        for sub_value_dir in [f.name for f in os.scandir(root_dir) if f.is_dir()]:
+            value_csv = root_dir + '/' + sub_value_dir + '/values'
+            values = pd.read_csv(value_csv, sep='\t')
+            data = __combine_dfs__(data, values)
+
+            if value_directory == 'properties':
+                prop_columns = list(values.columns)
+                prop_columns.remove('Compound Id')
+                target_columns.append(prop_columns[0])
+
+    if len(target_columns) == 1:
+        target_columns = target_columns[0]
+    elif len(target_columns) == 0:
+        raise Exception("No target column was found...")
+
+
+
+    if cleanup_unzipped_dir and zipped:
+        shutil.rmtree(directory, ignore_errors=True)
+
+    return data, target_columns
+

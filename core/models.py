@@ -40,11 +40,14 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
-        multi_label_classification_datasets = ['sider.csv',
+        self.multi_label_classification_datasets = ['sider.csv',
                                                'clintox.csv']  # List of multi-label classification data sets
         # Sets self.task_type based on which dataset is being used.
         if self.dataset in cds:
             self.task_type = 'classification'
+            if tune:
+                print('Not tuning classification model... please update to add')
+                tune = False
         elif self.dataset in rds:
             self.task_type = 'regression'
         else:
@@ -66,7 +69,7 @@ class MlModel:  # TODO update documentation here
         # ingest data.  collect full data frame (self.data)
         # collect pandas series of the SMILES (self.smiles_col)
 
-        if self.dataset in multi_label_classification_datasets:
+        if self.dataset in self.multi_label_classification_datasets:
             self.data, self.smiles_series = load_smiles(self, dataset, drop=False)
         else:
             self.data, self.smiles_series = load_smiles(self, dataset)
@@ -99,11 +102,11 @@ class MlModel:  # TODO update documentation here
         if initialize_data:
             self.initialize_tables()
 
-    def featurize(self, retrieve_from_mysql=False):
+    def featurize(self, not_silent=False, retrieve_from_mysql=False):
         if retrieve_from_mysql:
             featurize_from_mysql(self)
         else:
-            featurize(self, retrieve_from_mysql=retrieve_from_mysql)
+            featurize(self, not_silent)
 
     def data_split(self, test=0.2, val=0):
         data_split(self, test, val)
@@ -139,7 +142,11 @@ class MlModel:  # TODO update documentation here
             self.impgraph()
 
         # make predicted vs actual graph
-        self.pva_graph()
+
+        if self.dataset not in self.multi_label_classification_datasets:
+            self.pva_graph()
+        else:
+            print("No graphing function defined for multi-classification")
         # TODO Make classification graphing function
 
     def pickle_model(self):

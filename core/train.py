@@ -8,7 +8,7 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 from sklearn.model_selection import cross_val_predict
 
 
-def train_reg(self,n=5):
+def train_reg(self, n=5):
     """
     Function to train the model n times and collect basic statistics about results.
     :param self:
@@ -91,7 +91,8 @@ def train_cls(self, n=5):
 
     cls_multi = pd.DataFrame([])
     cls_multi['smiles'] = self.test_molecules  # Save smiles to predictions
-#    cls_multi['actual'] = self.test_target
+    if self.dataset not in self.multi_label_classification_datasets:
+        cls_multi['actual'] = self.test_target  # TODO Fix graphing function for mult-classification
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         print()
         start_time = time()
@@ -138,6 +139,10 @@ def train_cls(self, n=5):
 
     print('Done after {:.1f} seconds.'.format(t.sum()))
 
+    if self.dataset not in self.multi_label_classification_datasets:
+        cls_multi['pred_avg'] = cls.mean(axis=1)
+        cls_multi['pred_std'] = cls.std(axis=1)
+
     stats = {
         'acc_raw': acc,
         'acc_avg': acc.mean(),
@@ -158,6 +163,7 @@ def train_cls(self, n=5):
         'f1_score_avg': f1_score1.mean(),
         'f1_score_std': f1_score1.std()
     }
+
     self.predictions = cls_multi
     self.predictions_stats = stats
 
@@ -169,8 +175,4 @@ def train_cls(self, n=5):
         print('Average accuracy score = %.3f' % stats['acc_avg'], '+- %.3f' % stats['acc_std'])
         print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
         print()
-
-
-
-
 

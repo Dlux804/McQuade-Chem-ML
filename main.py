@@ -6,7 +6,7 @@ import pathlib
 import pandas as pd
 
 from core import models, get_classification_feats, get_classification_targets
-from core.storage import cd, unpickle_model
+from core.storage import cd, unpickle_model, QsarDB_import
 from core.neo4j import output_to_neo4j
 
 
@@ -163,7 +163,7 @@ def example_run_with_mysql_and_neo4j():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = models.MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0, 4],
+        model3 = models.MlModel(algorithm='knc', dataset='bace.csv', target='Class', feat_meth=[0, 4],
                                 tune=True, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
@@ -184,8 +184,10 @@ def example_run_with_mysql_and_neo4j():
 
         model3.store()
         model3.org_files(zip_only=True)
-        model3.QsarDB_export(zip_output=True)
-        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+
+        if model3.dataset not in model3.multi_label_classification_datasets:
+            model3.QsarDB_export(zip_output=False)
+            # model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def all_output_to_neo4j():
@@ -218,5 +220,6 @@ if __name__ == "__main__":
     # main()
     # single_model()
     # example_load()
-    example_run_with_mysql_and_neo4j()
+    # example_run_with_mysql_and_neo4j()
     # all_output_to_neo4j()
+    QsarDB_import('linear.qdb.zip', zipped=True)

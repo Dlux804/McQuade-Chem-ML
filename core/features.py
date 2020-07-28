@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
 
-def featurize(self, not_silent=True, retrieve_from_mysql=False):
+def featurize(self, not_silent=True):
     """
     Caclulate molecular features.
     Returns DataFrame, list of selected features (numeric values. i.e [0,4]),

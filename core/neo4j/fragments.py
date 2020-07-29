@@ -61,7 +61,7 @@ def fragments_to_neo(row, g):
 
     # for smiles in tqdm(canonical_smiles, desc="Creating molecular fragments for SMILES"):
     fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
-    fparams = FragmentCatalog.FragCatParams(0, 6, fName)  # I need more research and tuning on this one
+    fparams = FragmentCatalog.FragCatParams(0, 4, fName)  # I need more research and tuning on this one
     fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
     fcgen = FragmentCatalog.FragCatGenerator()
     mol = Chem.MolFromSmiles(smiles)

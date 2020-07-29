@@ -18,8 +18,8 @@ def test_featurize(__model_object__):
     df = model1.data.append({'smiles': smiles, 'exp': randint(0.1, 1)}, ignore_index=True)
     model1.featurize()
     assert len(df['smiles']) != len(model1.data['smiles']), "Faulty SMILES were not removed from data"
-    assert "RDKit2D_calculated" not in model1.data.columns
-    assert len(model1.data.columns) > len(df.columns)
+    assert "RDKit2D_calculated" not in model1.data.columns, "Excess columns were not removed"
+    assert len(model1.data.columns) > len(df.columns), "Current Dataframe does not contain features"
 
 
 @pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,

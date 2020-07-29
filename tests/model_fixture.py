@@ -31,6 +31,22 @@ def __model_object__(algorithm, data, exp, tuned, delete, directory):
 
 
 @pytest.fixture(scope="function")
+def __data_split_model__(algorithm, data, exp, tuned, directory):
+
+    if directory:
+        with misc.cd('dataFiles/testdata'):
+            model1 = models.MlModel(algorithm=algorithm, dataset=data, target=exp, tune=tuned, feat_meth=[0], cv=2,
+                                    opt_iter=2)
+    else:
+        model1 = models.MlModel(algorithm=algorithm, dataset=data, target=exp, tune=tuned, feat_meth=[0], cv=2,
+                                opt_iter=2)
+    model1.featurize()
+    model1.data_split(val=0.1)
+
+    return model1
+
+
+@pytest.fixture(scope="function")
 def __run_all__(algorithm, data, exp, tuned, delete, directory):
     if directory:
         with misc.cd('dataFiles/testdata'):
@@ -51,10 +67,13 @@ def __run_all__(algorithm, data, exp, tuned, delete, directory):
     return model1
 
 
-def __assert_results__(r2, mse, rmse):
-    assert float(r2) < 0.8  # Check for r2_avg value
-    assert float(mse) > 0.5  # Check for mse value
-    assert float(rmse) > 0.5  # Check for mse value
+def __assert_results__(predictions_stats):
+    assert float(predictions_stats['r2_avg']) < 0.9  # Check for r2_avg value
+    assert float(predictions_stats['mse_avg']) > 0.5  # Check for mse value
+    assert float(predictions_stats['rmse_avg']) > 0.5  # Check for mse value
+
 
 def delete_files(run_name):
     return list(map(os.remove, glob.glob('*%s*' % run_name)))
+
+

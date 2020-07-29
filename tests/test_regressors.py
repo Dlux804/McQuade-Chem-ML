@@ -1,70 +1,57 @@
-# import pandas as pd
-# import mock
-# from sklearn.ensemble import RandomForestRegressor
-# import pytest
-# import os, sys
-#
-# # before importing local modules, must add root dir to system path
-# # capture location of current file (/root/tests/)
-# myPath = os.path.dirname(os.path.abspath(__file__))
-# # add to system path the root dir with relative notation: /../ (go up one dir)
-# sys.path.insert(0, myPath + '/../')
-#
-# # Now we can import modules from other directory
-# from core import features, regressors, models, grid, misc
-# from main import ROOT_DIR
-#
-#
-#
-# # Set up data
-# @pytest.fixture
-# def setup():
-#     """
-#     A few functions in analysis.py require setting up the same data (dataframe, target column, feature columns)
-#     Using pytest.fixture, we only need to set up data once for every test that need it.
-#     """
-#     # change working directory to
-#     os.chdir(ROOT_DIR)
-#     # move to dataFiles
-#     with misc.cd('dataFiles'):
-#         print('Now in:', os.getcwd())
-#         # Load in data
-#         model_test = models.MlModel('rf', 'water-energy.csv', 'expt')
-#         # Get feature. I use rdkit2d as it is fast to generate
-#         df, num_feat, feat_time = features.featurize(model_test.data, model_test.algorithm, [0])
-#         # Split the data
-#         train_features, test_features, train_target, test_target, feature_list = features.data_split(df, 'expt')
-#         return train_features, test_features, train_target, test_target
-#
-# # # Mock the call that we want to test, which is RandomizedSearchCV
-# # @mock.patch('core.regressors.RandomizedSearchCV')
-# # def test_regressors_hypertune_randomsearch(mock_rdsearchcv, setup):
-# #     """
-# #     In hypertune, RandomizedSearchCV plays a major part since is the call that does the actual tuning.
-# #     This function was designed to test whether RandomizedSearchCV is called successfully if the function hypertune is
-# #     being used.
-# #     """
-# #     # Load in data
-# #     train_features, test_features, train_target, test_target = setup
-# #     # Call the function that we would like to test
-# #     regressors.hyperTune(RandomForestRegressor(), train_features, train_target,
-# #                                             grid=grid.rf_paramgrid(), folds=2, iters=1, jobs=1)
-# #     # See if RandomizedSearchCV is called
-# #     mock_rdsearchcv.assert_called_once()
-# #     mock.patch.stopall()
-#
-#
-#
-# # def test_regressors_hypertune(setup):
-# #     """
-# #     Once we know RandomizedSearchCV is called successfully, want to make sure that the output is correct.
-# #     """
-# #     # Load the data
-# #     train_features, test_features, train_target, test_target = setup
-# #     # Call the function that we would like to test
-# #     tuned, tune_time = regressors.hyperTune(RandomForestRegressor(), train_features, train_target,
-# #                                             grid=grid.rf_paramgrid(), folds=2, iters=1, jobs=1)
-# #     # Assert if tuned is a dictionary
-# #     assert type(tuned) == dict
-# #     # Assert if tune_time is a float
-# #     assert type(tune_time) == float
+"""
+Objective: Test regressors.py's functionality
+"""
+
+from tests.model_fixture import __data_split_model__, delete_files
+import pytest
+from collections import OrderedDict
+import os
+from main import ROOT_DIR
+# change working directory to
+os.chdir(ROOT_DIR)
+
+
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('nn', 'Lipo-short.csv', 'exp', False, True)])
+def test_nn_get_regressor(__data_split_model__):
+    model1 = __data_split_model__
+    model1.get_regressor()
+    assert model1.regressor, "Can't call for regressor object"
+    assert type(model1.fit_params) is dict, "fit params is not a dictionary"
+    assert model1.task_type == 'regression'
+
+
+sklearn_list = ['ada', 'svr', 'rf', 'gdb', 'mlp', 'knn']
+
+
+@pytest.mark.parametrize('algorithm', sklearn_list)
+@pytest.mark.parametrize('data, exp, tuned, directory', [('Lipo-short.csv', 'exp', False, True)])
+def test_sklearn_get_regressor(__data_split_model__):
+    model1 = __data_split_model__
+    model1.get_regressor()
+    assert model1.task_type == 'regression'
+    assert str(model1.regressor)
+
+
+sklearn_list.remove('knn')
+
+
+@pytest.mark.parametrize('algorithm', sklearn_list)
+@pytest.mark.parametrize('data, exp, tuned, directory', [('Lipo-short.csv', 'exp', True, True)])
+def test_sklearn_hypertune(__data_split_model__):
+    model1 = __data_split_model__
+    model1.reg()
+    model1.make_grid()
+    model1.hyperTune()
+    assert type(model1.params) is OrderedDict
+    delete_files(model1.run_name)
+
+
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('nn', 'Lipo-short.csv', 'exp', True, True)])
+def test_nn_hypertune(__data_split_model__):
+    model1 = __data_split_model__
+    model1.reg()
+    model1.make_grid()
+    model1.hyperTune()
+    assert type(model1.params) is OrderedDict
+    assert os.path.isfile(''.join([model1.run_name, '.h5']))  # Check for PVA graphs
+    delete_files(model1.run_name)

@@ -77,3 +77,14 @@ def delete_files(run_name):
     return list(map(os.remove, glob.glob('*%s*' % run_name)))
 
 
+### This secion is created for acquiring datatypes before testing
+# with misc.cd('dataFiles/testdata'):
+#     model1 = models.MlModel(algorithm='gdb', dataset='ESOL-short.csv', target='exp', tune=True, feat_meth=[0], cv=2,
+#                             opt_iter=2)
+#     model1.featurize()
+#     model1.data_split(val=0.1)
+#     model1.reg()
+#     model1.make_grid()
+#     model1.hyperTune()
+#     print(type(model1.params))
+#     delete_files(model1.run_name)

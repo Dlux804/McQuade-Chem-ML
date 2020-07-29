@@ -4,7 +4,7 @@ Objective: Test regressors.py's functionality
 
 from tests.model_fixture import __data_split_model__, delete_files
 import pytest
-from collections import OrderedDict
+import collections
 import os
 from main import ROOT_DIR
 # change working directory to
@@ -42,7 +42,7 @@ def test_sklearn_hypertune(__data_split_model__):
     model1.reg()
     model1.make_grid()
     model1.hyperTune()
-    assert type(model1.params) is OrderedDict
+    assert type(model1.params) is collections.OrderedDict
     delete_files(model1.run_name)
 
 
@@ -52,6 +52,6 @@ def test_nn_hypertune(__data_split_model__):
     model1.reg()
     model1.make_grid()
     model1.hyperTune()
-    assert type(model1.params) is OrderedDict
+    assert type(model1.params) is collections.OrderedDict
     assert os.path.isfile(''.join([model1.run_name, '.h5']))  # Check for PVA graphs
     delete_files(model1.run_name)

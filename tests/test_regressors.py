@@ -42,7 +42,7 @@ def test_sklearn_hypertune(__data_split_model__):
     model1.reg()
     model1.make_grid()
     model1.hyperTune()
-    assert type(model1.params) is OrderedDict
+    assert type(model1.params) is dict
     delete_files(model1.run_name)
 
 

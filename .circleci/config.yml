@@ -47,6 +47,12 @@ jobs:
       # other common Python testing frameworks include pytest and nose
       # https://pytest.org
       # https://nose.readthedocs.io
+      ## --disable-pytest-warnings: suppress warnings. While warnings can be important, I think it is faster to look
+      # for failures without scrolling through 200 lines of warnings
+      ## -v : Verbose. Pytest will tell us where the errors occurs, on which test functions, and why there's an error
+      ## --maxfail=5: Maximum amount of failures before stopping the tests. We have a lot of redundant
+      # initialization in the testing process. If one part of the module fails, everything that comes after it will fall
+      # apart. No need to look at the same error 50 times.
       - run:
           name: Run tests
           command: |
@@ -54,6 +60,7 @@ jobs:
             conda activate mlapp
             python -m pytest tests/
             pytest --disable-pytest-warnings -v --maxfail=10
+
       - store_artifacts:
           path: test-reports
           destination: test-reports

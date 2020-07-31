@@ -12,8 +12,7 @@ from tests.model_fixture import __run_all__, __model_object__, delete_files
 os.chdir(ROOT_DIR)
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,
-                                                                             True, True)])
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', False, True)])
 def test_store(__model_object__):
     """"""
     model1 = __model_object__
@@ -23,8 +22,7 @@ def test_store(__model_object__):
     delete_files(model1.run_name)
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,
-                                                                             True, True)])
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', False, True)])
 def test_pickle(__run_all__):
     """"""
     model1 = __run_all__
@@ -45,8 +43,7 @@ def test_pickle(__run_all__):
     delete_files(model1.run_name)
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,
-                                                                             False, True)])
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', False, True)])
 def test_org_files(__model_object__):
     model1 = __model_object__
     model1.store()

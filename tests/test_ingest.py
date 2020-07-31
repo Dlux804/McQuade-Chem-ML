@@ -7,8 +7,7 @@ import pytest
 import pandas as pd
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,
-                                                                             False, True)])
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', False, True)])
 def test_ingest(__model_object__):
     model1 = __model_object__
     assert type(model1.data) is pd.core.frame.DataFrame

@@ -43,7 +43,7 @@ def test_sklearn_hypertune(__data_split_model__):
     model1.make_grid()
     model1.hyperTune()
     assert type(model1.params) is dict
-    delete_files(model1.run_name)
+    # delete_files(model1.run_name)
 
 
 @pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('nn', 'Lipo-short.csv', 'exp', True, True)])

@@ -17,6 +17,31 @@ They can be accessed by tests functions and can be given different parameters de
 """
 
 
+@pytest.fixture(scope="function")
+def __run_all__(algorithm, data, exp, tuned, directory):
+    """
+    Objective: Run all
+    :param algorithm:
+    :param data:
+    :param exp:
+    :param tuned:
+    :param directory:
+    :return:
+    """
+    if directory:
+        with misc.cd('../dataFiles/testdata'):
+            model1 = models.MlModel(algorithm=algorithm, dataset=data, target=exp, tune=tuned, feat_meth=[0], cv=2,
+                                    opt_iter=2)
+    else:
+        model1 = models.MlModel(algorithm=algorithm, dataset=data, target=exp, tune=tuned, feat_meth=[0], cv=2,
+                                opt_iter=2)
+    model1.featurize()
+    model1.data_split(val=0.1)
+    model1.reg()
+    model1.run()
+    return model1
+
+
 def file_list(directory):
     """
     Objective: Return list of files in a directory
@@ -25,7 +50,7 @@ def file_list(directory):
                                         being used in the same function
     :return: list: list of files
     """
-    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))], directory
 
 
 @pytest.fixture(scope="function")
@@ -37,7 +62,7 @@ def __unpickle_model__(directory, pkl):
     """
     with misc.cd(directory):
         model1 = unpickle_model(''.join([pkl]))
-        return model1
+    return model1
 
 
 def __assert_results__(predictions_stats):

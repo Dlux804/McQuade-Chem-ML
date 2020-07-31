@@ -10,8 +10,8 @@ from new_tests.model_fixture import __run_all__, delete_files
 def test_nn_untuned(__run_all__):
     """
     Objective: Run an untuned keras model from start to get prediction results.
-    Note: Since I can't unload a h5 file to get important information for testing, I decided to test its functionality
-            by running a keras model from start to getting prediction results
+   Note: Since I can't unload a h5 file to get important information for almost all tests, I decided to test its
+            functionality by running a keras model from start to getting prediction results
     :param __run_all__:
     :return:
     """
@@ -24,8 +24,8 @@ def test_nn_untuned(__run_all__):
 def test_nn_tuned(__run_all__):
     """
     Objective: Run a tuned keras model from start to get prediction results.
-    Note: Since I can't unload a h5 file to get important information for testing, I decided to test its functionality
-            by running a keras model from start to getting prediction results
+    Note: Since I can't unload a h5 file to get important information for almost all tests, I decided to test its
+            functionality by running a keras model from start to getting prediction results
     :param __run_all__:
     :return:
     """

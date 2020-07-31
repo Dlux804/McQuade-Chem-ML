@@ -17,7 +17,9 @@ from sqlalchemy.exc import OperationalError
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']
 RDLogger.DisableLog('rdApp.*')
 
-cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
+cds = ['BBBP.csv', 'HIV.csv', 'bace.csv']
+
+multi_label_classification_datasets = ['sider.csv', 'clintox.csv']  # List of multi-label classification data sets
 
 
 class MlModel:  # TODO update documentation here
@@ -43,10 +45,9 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
-        multi_label_classification_datasets = ['sider.csv',
-                                               'clintox.csv']  # List of multi-label classification data sets
+
         # Sets self.task_type based on which dataset is being used.
-        if self.dataset in cds:
+        if self.dataset in cds or self.dataset in multi_label_classification_datasets:
             self.task_type = 'classification'
         elif self.dataset in rds:
             self.task_type = 'regression'
@@ -113,7 +114,7 @@ class MlModel:  # TODO update documentation here
 
     def analyze(self):
         # Variable importance for tree based estimators
-        if self.algorithm in ['rf', 'gdb', 'rfc'] and self.feat_meth == [0]:
+        if self.algorithm in ['rf', 'gdb', 'rfc', 'ada'] and self.feat_meth == [0]:
             self.impgraph()
 
         # make predicted vs actual graph

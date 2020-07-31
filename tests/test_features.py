@@ -10,8 +10,7 @@ from tests.model_fixture import __model_object__
 smiles = "C/C=C\1/C(=O)N[C@H](C(=O)O[C@H]\2CC(=O)N[C@@H](C(=O)N[C@H](CSSCC/C=C2)C(=O)N1)C(C)C)C(C)C"
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,
-                                                                             False, True)])
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', False, True)])
 def test_featurize(__model_object__):
     """"""
     model1 = __model_object__
@@ -22,8 +21,7 @@ def test_featurize(__model_object__):
     assert len(model1.data.columns) > len(df.columns), "Current Dataframe does not contain features"
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,
-                                                                             False, True)])
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', False, True)])
 def test_val_data_split(__model_object__):
     model1 = __model_object__
     model1.featurize()
@@ -34,8 +32,7 @@ def test_val_data_split(__model_object__):
     assert list(model1.data.loc[model1.data['in_set'] == "val"]['smiles']), """NO "val" value in "in_set" column"""
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('rf', 'Lipo-short.csv', 'exp', False,
-                                                                             False, True)])
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', False, True)])
 def test_data_split(__model_object__):
     model1 = __model_object__
     model1.featurize()

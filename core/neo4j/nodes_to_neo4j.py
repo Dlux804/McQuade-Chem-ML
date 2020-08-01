@@ -154,25 +154,20 @@ def nodes(self):
         t4 = time.perf_counter()
         print(f"Finished creating molecular fragments in {t4 - t3}sec")
 
-    # # Merge rdkit2d features with molecules
-    # if 'rdkit2d' in self.feat_method_name:  # rdkit2d in feat method name
-    #     # Check if rdkit2d already exist for this dataset
-    #     record = g.run("""MATCH (n:DataSet {data:$dataset}) RETURN n""", parameters={'dataset': self.dataset})
-    #     if len(list(record)) > 0:  # Already created rdkit2d feature for this dataset
-    #         print(f"This dataset, {self.dataset}, and its rdkit2d features already exist in the database. Moving on")
-    #     else:  # If not
-    #         print("Creating rdki2d features")
-    #         df_rdkit2d_features = self.data.loc[:, 'smiles':'qed']
-    #         try:
-    #             df_rdkit2d_features = df_rdkit2d_features.rename(columns={self.target_name: 'target'})
-    #         except KeyError:
-    #             pass
-    #         df_rdkit2d_features = df_rdkit2d_features.drop('target', axis=1)
-    #         df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, g=g, axis=1)
-    #         t3 = time.perf_counter()
-    #         print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t3 - t2}sec")
-    # else:
-    #     pass
+    # Merge rdkit2d features with molecules
+    if 'rdkit2d' in self.feat_method_name:  # rdkit2d in feat method name
+        # Check if rdkit2d already exist for this dataset
+        record = g.run("""MATCH (n:DataSet {data:$dataset}) RETURN n""", parameters={'dataset': self.dataset})
+        if len(list(record)) > 0:  # Already created rdkit2d feature for this dataset
+            print(f"This dataset, {self.dataset}, and its rdkit2d features already exist in the database. Moving on")
+        else:  # If not
+            print("Creating rdki2d features")
+            df_rdkit2d_features = self.data.filter(regex='smiles|fr_|Count|Num|Charge', axis=1)
+            df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, g=g, axis=1)
+            t3 = time.perf_counter()
+            print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t3 - t2}sec")
+    else:
+        pass
 
     # Make FeatureMethod node
     for feat in self.feat_method_name:

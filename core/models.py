@@ -28,7 +28,7 @@ class MlModel:  # TODO update documentation here
     from core.regressors import get_regressor, hyperTune
     from core.grid import make_grid
     from core.train import train_reg, train_cls
-    from core.analysis import impgraph, pva_graph
+    from core.analysis import impgraph, pva_graph, permutation_importance
     from core.classifiers import get_classifier
 
     from core.features import featurize, data_split
@@ -114,8 +114,9 @@ class MlModel:  # TODO update documentation here
 
     def analyze(self):
         # Variable importance for tree based estimators
-        if self.algorithm in ['rf', 'gdb', 'rfc'] and self.feat_meth == [0]:
-            self.impgraph()
+
+        if self.feat_meth == [0]:
+            self.permutation_importance()
 
         # make predicted vs actual graph
         self.pva_graph()

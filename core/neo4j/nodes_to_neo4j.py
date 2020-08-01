@@ -5,12 +5,12 @@ Objective: The goal of this script is to create nodes in Neo4j directly from the
 from py2neo import Graph, Node
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
-from core.fragments import fragments_to_neo
-from core import fragments
+from core.neo4j.fragments import fragments_to_neo
+from core.neo4j import fragments
 import pandas as pd
 import time
 # Connect to Neo4j Destop.
-g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
+# g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
 
 # TODO REDO DOCSTRINGS
 
@@ -34,7 +34,7 @@ def prep(self):
     return r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict
 
 
-def __merge_molecules_and_rdkit2d__(row):
+def __merge_molecules_and_rdkit2d__(row, g):
     """
     Objective: For every row in a csv (or dataframe) that contains SMILES and rdkit2d Features, merge SMILES with
     rdkit2d features with its respective feature values
@@ -42,6 +42,7 @@ def __merge_molecules_and_rdkit2d__(row):
     :param row: A row in a csv
     :return:
         """
+
     mol_feat_query = """
     UNWIND $molecule as molecule
     MERGE (rdkit2d:FeatureMethod {feature:"rdkit2d"})
@@ -80,6 +81,9 @@ def nodes(self):
     t1 = time.perf_counter()
     print("Creating Nodes for %s" % self.run_name)
 
+    g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
+              password=self.neo4j_params["password"])  # Define graph for function
+
     r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict = prep(self)
 
     # Make algorithm node
@@ -89,7 +93,7 @@ def nodes(self):
     else:
         algor = Node("Algorithm", name=self.algorithm, source="sklearn", tuned=self.tuned)
         g.merge(algor, "Algorithm", "name")
-    
+
     # Make Tuner node
     if self.tuned:
         tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name)
@@ -146,7 +150,7 @@ def nodes(self):
         print(f"This dataset, {self.dataset}, and its fragments already exist in the database. Moving on")
     else:  # If not, then make fragments
         t3 = time.perf_counter()
-        self.data[['smiles']].apply(fragments_to_neo, axis=1)
+        self.data[['smiles']].apply(fragments_to_neo, g=g, axis=1)
         t4 = time.perf_counter()
         print(f"Finished creating molecular fragments in {t4 - t3}sec")
 
@@ -164,7 +168,7 @@ def nodes(self):
             except KeyError:
                 pass
             df_rdkit2d_features = df_rdkit2d_features.drop('target', axis=1)
-            df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, axis=1)
+            df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, g=g, axis=1)
             t3 = time.perf_counter()
             print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t3 - t2}sec")
     else:

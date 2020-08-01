@@ -23,7 +23,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v2-condareqs-{{ checksum "env_init/mlapp.yml" }}
+            - v2-condareqs-{{ .Branch }}-{{ checksum "env_init/mlapp.yml" }}
             # fallback to using the latest cache if no exact match is found
             - v2-condareqs-
 
@@ -36,9 +36,9 @@ jobs:
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
       - save_cache:
+          key: v2-condareqs-{{ .Branch }}-{{ checksum "env_init/mlapp.yml" }}
           paths:
-            - env_init/
-          key: v2-condareqs-{{ checksum "env_init/mlapp.yml" }}
+            - ~/py_module
       # run tests!
       # this example uses Django's built-in test-runner
       # other common Python testing frameworks include pytest and nose

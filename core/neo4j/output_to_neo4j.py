@@ -4,14 +4,13 @@ Objective: Contains the function "output_to_neo4j" which is the function that im
 """
 import pandas as pd
 import os
-from py2neo import Graph
 from zipfile import ZipFile
-from core import misc
+from core.storage import misc
 import json
-from core import prep_from_outputs
+from core.neo4j import prep_from_outputs
+import pathlib
 
-
-g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+# g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
 
 
 def file_count():
@@ -23,7 +22,7 @@ def file_count():
     :return: Number of zip files in the output folder
     """
     # print(hello)
-    with misc.cd('../output/'):  # Access output
+    with misc.cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/output/'):  # Access output
         print('Now in:', os.getcwd())
         for roots, dirs, files in os.walk(os.getcwd()):
             files_count = 0
@@ -46,7 +45,7 @@ def get_file(file_string):
     :param file_string: A common substring in a file name in our zip files
     :return: 3 dataframe from _attributes.json, _data.csv and _predictions.csv
     """
-    with misc.cd('../output/'):  # Access output
+    with misc.cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/output/'):  # Access output
         for roots, dirs, files in os.walk(os.getcwd()):
             for f in files:
                 if f.endswith('.zip'):
@@ -67,7 +66,7 @@ def get_file(file_string):
                                 yield df_from_predictions
 
 
-def output_to_neo4j():
+def output_to_neo4j(port, username, password):
     """
     Objective: Import data from output files into Neo4j based on our ontology.
     Intent: This want this function to be the final command that will put data into Neo4j. Should not contain anything
@@ -84,7 +83,7 @@ def output_to_neo4j():
         df_from_data = next(data_csv_generator)
         df_from_predictions = next(predictions_csv_generator)
         prep = prep_from_outputs.Prep(df_from_attributes, df_from_predictions, df_from_data)
-        prep.to_neo4j()
+        prep.to_neo4j(port=port, username=username, password=password)
 
 # You can uncomment this to run the process of importing data from output files into Neo4j based on our ontology
 # output_to_neo4j()

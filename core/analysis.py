@@ -62,7 +62,7 @@ def impgraph(self):
     self.varimp = varimp
 
 
-def perm_importance(self):
+def permutation_importance(self):
     """
     From sklearn's documentation: impurity-based feature importances can be misleading for
         high cardinality features (many unique values). My goal is to create a more accurate feature importance graph
@@ -82,7 +82,7 @@ def perm_importance(self):
     else:
         perm = PermutationImportance(self.regressor, scoring='neg_mean_squared_error').fit(self.train_features,
                                                                                            self.train_target)
-    importances2 = self.permutation.feature_importances_
+    importances2 = perm.feature_importances_
     feature_importances = [(feature, round(importance, 2)) for feature, importance in zip(self.feature_list,
                                                                                                     list(importances2))]
     # print(importances2)

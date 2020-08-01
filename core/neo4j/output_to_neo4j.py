@@ -9,6 +9,7 @@ from core.storage import misc
 import json
 from core.neo4j import prep_from_outputs
 import pathlib
+from main import ROOT_DIR
 
 
 def file_count():
@@ -20,7 +21,8 @@ def file_count():
     :return: Number of zip files in the output folder
     """
     # print(hello)
-    with misc.cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/output/'):  # Access output
+    os.chdir(ROOT_DIR)  # Start in root directory
+    with misc.cd('output'):  # Access output
         print('Now in:', os.getcwd())
         for roots, dirs, files in os.walk(os.getcwd()):
             files_count = 0
@@ -43,7 +45,8 @@ def get_file(file_string):
     :param file_string: A common substring in a file name in our zip files
     :return: 3 dataframe from _attributes.json, _data.csv and _predictions.csv
     """
-    with misc.cd(str(pathlib.Path(__file__).parent.parent.absolute()) + '/output/'):  # Access output
+    os.chdir(ROOT_DIR)  # Start in root directory
+    with misc.cd('output'):  # Access output
         for roots, dirs, files in os.walk(os.getcwd()):
             for f in files:
                 if f.endswith('.zip'):
@@ -83,5 +86,6 @@ def output_to_neo4j(port, username, password):
         prep = prep_from_outputs.Prep(df_from_attributes, df_from_predictions, df_from_data)
         prep.to_neo4j(port=port, username=username, password=password)
 
+
 # You can uncomment this to run the process of importing data from output files into Neo4j based on our ontology
-# output_to_neo4j()
+# output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

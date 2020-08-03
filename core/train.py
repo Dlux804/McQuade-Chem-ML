@@ -189,7 +189,7 @@ def train_cls(self, n=5):
         filename = "%-roc_curve.png" % name
         plt.legend(loc='best')
         plt.savefig(self.run_name + '_' + filename)
-        plt.show()
+        plt.close()
 
         # Saves classification report for run
         filename2 = "%-report_classification.csv" % name
@@ -201,7 +201,7 @@ def train_cls(self, n=5):
         filename3 = "%-rprecision_recall_vs_threshold.png" % name
         plt.legend(loc='best')
         plt.savefig(self.run_name + '_' + filename3)
-        plt.show()
+        plt.close()
 
 
 

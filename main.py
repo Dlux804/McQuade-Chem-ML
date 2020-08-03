@@ -1,6 +1,6 @@
 # TODO: Make main function that asks user what models they would like to initiate
 
-from core import models, Get_Classification
+from core import models
 from core.storage.misc import cd
 from core.storage.storage import pickle_model, unpickle_model
 import os
@@ -32,10 +32,22 @@ def main():
     # All data sets in dict
     targets = None
     sets = {
-        'BBBP.csv': targets,
-#        'sider.csv': targets,
-#        'clintox.csv': targets,
-        'bace.csv': targets,
+#        'BBBP.csv': 'p_np',
+        'sider.csv': ['Hepatobiliary disorders', 'Metabolism and nutrition disorders', 'Product issues',
+                   'Eye disorders', 'Investigations', 'Musculoskeletal and connective tissue disorders',
+                   'Gastrointestinal disorders',
+                   'Social circumstances', 'Immune system disorders', 'Reproductive system and breast disorders',
+                   'Neoplasms benign, malignant and unspecified',
+                   'General disorders and administration site conditions', 'Endocrine disorders',
+                   'Surgical and medical procedures', 'Vascular disorders', 'Blood and lymphatic system disorders',
+                   'Skin and subcutaneous tissue disorders', 'Congenital, familial and genetic disorders',
+                   'Infections and infestations', 'Respiratory, thoracic and mediastinal disorders',
+                   'Psychiatric disorders', 'Renal and urinary disorders',
+                   'Pregnancy, puerperium and perinatal conditions', 'Ear and labyrinth disorders',
+                   'Cardiac disorders',
+                   'Nervous system disorders', 'Injury, poisoning and procedural complications'],
+        'clintox.csv': ['FDA_APPROVED', 'CT_TOX'],
+#        'bace.csv': 'Class',
         # 'ESOL.csv': 'water-sol',
         # 'Lipophilicity-ID.csv': 'exp',
         # 'water-energy.csv': 'expt',
@@ -61,12 +73,10 @@ def main():
     # }
 
     for alg in learner: # loop over all learning algorithms
-        feats = Get_Classification.get_classification_feats(alg) # Selects featurizations for classification based on the model being ran, if regression model; uses default featurizations
-#        feats=[] # Use this line to select specific featurizations
+        feats=[[0], [0,2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
+                  [5], [6]] # Use this line to select specific featurizations
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items(): # loop over dataset dictionary
-                if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
-                    target = Get_Classification.get_classification_targets(data)
 
                 if data in ['sider.csv', 'clintox.csv'] and alg == 'svc':
                     pass
@@ -83,12 +93,9 @@ def main():
                         print()
                         print('Initializing model...', end=' ', flush=True)
                         # initiate model class with algorithm, dataset and target
-                        opt_iter = 10
-                        if data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv',
-                                    'jak2_pic50.csv']:
-                            opt_iter = 25
+
                         model = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                               tune=False, cv=3, opt_iter=opt_iter)
+                                               tune=False, cv=3, opt_iter=25)
                         print('Done.\n')
 
                     with cd('dataFiles'):

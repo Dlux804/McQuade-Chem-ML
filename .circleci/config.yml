@@ -21,9 +21,12 @@ jobs:
       - checkout
 
       # Download and cache dependencies
+      # Multiple caches are used to increase the chance of a cache hit (source: https://circleci.com/docs/2.0/caching/)
       - restore_cache:
           keys:
             - v2-condareqs-{{ .Branch }}-{{ checksum "env_init/mlapp.yml" }}
+            - v2-condareqs-{{ .Branch }}
+            - v2-condareqs
             # fallback to using the latest cache if no exact match is found
             - v2-condareqs-
 
@@ -44,13 +47,20 @@ jobs:
       # other common Python testing frameworks include pytest and nose
       # https://pytest.org
       # https://nose.readthedocs.io
+      ## --disable-pytest-warnings: suppress warnings. While warnings can be important, I think it is faster to look
+      # for failures without scrolling through 200 lines of warnings
+      ## -v : Verbose. Pytest will tell us where the errors occurs, on which test functions, and why there's an error
+      ## --maxfail=5: Maximum amount of failures before stopping the tests. We have a lot of redundant
+      # initialization in the testing process. If one part of the module fails, everything that comes after it will fall
+      # apart. No need to look at the same error 50 times.
       - run:
           name: Run tests
           command: |
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
             python -m pytest tests/
-            pytest -v
+            pytest --disable-pytest-warnings -v --maxfail=10
+
       - store_artifacts:
           path: test-reports
           destination: test-reports

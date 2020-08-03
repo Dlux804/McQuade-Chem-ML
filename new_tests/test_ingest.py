@@ -12,7 +12,7 @@ files, directory = file_list('pickle/init')
 @pytest.mark.parametrize('directory', [directory])
 def test_load_smiles(__unpickle_model__):
     """
-    Objective: Test ingest.py's load_smiles. Check if daa instance is a dataframe, smiles_series instance is a
+    Objective: Test ingest.py's load_smiles. Check if data instance is a dataframe, smiles_series instance is a
                 pandas Series object and that we have the correct amount of columns depending on the dataset.
 
     :param __unpickle_model__:

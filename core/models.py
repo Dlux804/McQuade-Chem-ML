@@ -5,20 +5,21 @@ from core import ingest
 from core.storage.mysql_storage import MLMySqlConn
 from numpy.random import randint
 from core import name
+
 from core.neo4j.nodes_to_neo4j import nodes
 from core.neo4j.rel_to_neo4j import relationships
 from rdkit import RDLogger
-from py2neo import Graph
 import time
-
+from py2neo import Graph
 from sqlalchemy.exc import OperationalError
 
+
+rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']
 RDLogger.DisableLog('rdApp.*')
 
-# g = Graph("bolt://localhost:7687", user="neo4j", password="1234")
+cds = ['BBBP.csv', 'HIV.csv', 'bace.csv']
 
-rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', '18k-logP.csv']
-cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv']
+multi_label_classification_datasets = ['sider.csv', 'clintox.csv']  # List of multi-label classification data sets
 
 
 class MlModel:  # TODO update documentation here
@@ -44,10 +45,9 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
-        self.multi_label_classification_datasets = ['sider.csv', 'clintox.csv'] # List of multi-label classification data sets
 
         # Sets self.task_type based on which dataset is being used.
-        if self.dataset in cds:
+        if self.dataset in cds or self.dataset in multi_label_classification_datasets:
             self.task_type = 'classification'
         elif self.dataset in rds:
             self.task_type = 'regression'
@@ -70,8 +70,9 @@ class MlModel:  # TODO update documentation here
         # ingest data.  collect full data frame (self.data)
         # collect pandas series of the SMILES (self.smiles_col)
 
-        if self.dataset in self.multi_label_classification_datasets:
-            self.data, self.smiles_series = ingest.load_smiles(self, dataset, drop = False) # Makes drop = False for multi-target classification
+        if self.dataset in multi_label_classification_datasets:
+            self.data, self.smiles_series = ingest.load_smiles(self, dataset,
+                                                               drop=False)  # Makes drop = False for multi-target classification
         else:
             self.data, self.smiles_series = ingest.load_smiles(self, dataset)
 
@@ -113,7 +114,7 @@ class MlModel:  # TODO update documentation here
 
     def analyze(self):
         # Variable importance for tree based estimators
-        if self.algorithm in ['rf', 'gdb', 'rfc'] and self.feat_meth == [0]:
+        if self.algorithm in ['rf', 'gdb', 'rfc', 'ada'] and self.feat_meth == [0]:
             self.impgraph()
 
         # make predicted vs actual graph

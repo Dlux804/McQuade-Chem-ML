@@ -79,11 +79,7 @@ def store(self):
 
         # grab pandas related objects for export to csv
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
-            if k == "data" and self.dataset not in self.multi_label_classification_datasets:  # Rename target column to a more general one
-                v = v.rename(columns={self.target_name: "target"})
-                v.to_csv(self.run_name + '_' + k + '.csv')
-
-            elif k != "smiles_series":
+            if k != "smiles_series":
                 objs.append(k)
                 dfs.append(k)
                 v.to_csv(self.run_name + '_' + k + '.csv')

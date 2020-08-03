@@ -58,7 +58,7 @@ jobs:
           command: |
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
-            python -m pytest tests/
+            python -m pytest new_tests/
             pytest --disable-pytest-warnings -v --maxfail=10
 
       - store_artifacts:

@@ -92,4 +92,4 @@ class Prep:
         Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Test connection to Neo4j
         nodes_to_neo4j.nodes(self)
-        # rel_to_neo4j.relationships(self)
+        rel_to_neo4j.relationships(self)

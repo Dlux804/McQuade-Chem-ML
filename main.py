@@ -7,8 +7,7 @@ import os
 import pathlib
 from time import sleep
 from core.features import featurize
-from core.neo4j.output_to_neo4j import output_to_neo4j
-
+from core.Get_Classification import get_classification_targets
 import pandas as pd
 
 # Creating a global variable to be imported from all other models
@@ -148,15 +147,16 @@ def single_model():
     with cd('output'):  # Have files output to output
         model1.featurize()
         model1.data_split(val=0.1)
-        # model1.reg()
-        # model1.run()
-        # model1.analyze()
-        # if model1.algorithm != 'nn':  # issues pickling NN models
-        #     model1.pickle_model()
-        # model1.store()
-        # model1.org_files(zip_only=True)
-        # model1.QsarDB_export(zip_output=True)
-        # model1.to_neo4j()
+        model1.reg()
+        model1.run()
+        model1.analyze()
+        if model1.algorithm != 'nn':  # issues pickling NN models
+            model1.pickle_model()
+        model1.store()
+        model1.org_files(zip_only=True)
+        model1.QsarDB_export(zip_output=True)
+        model1.to_neo4j()
+
 
 
 def example_run_with_mysql_and_neo4j():

@@ -7,7 +7,7 @@ from core.neo4j.nodes_to_neo4j import prep
 import time
 
 # Merge to Neo4j Destop.
-# g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
+
 
 # TODO REDO DOCSTRINGS
 

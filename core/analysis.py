@@ -35,7 +35,6 @@ def impgraph(self):
     varimp = pd.DataFrame([], columns=['variable', 'importance'])
     varimp['variable'] = [self.feature_list[i] for i in indicies]
     varimp['importance'] = importances2[indicies]
-
     # Importance Bar Graph
     plt.rcParams['figure.figsize'] = [15, 9]
 
@@ -58,68 +57,6 @@ def impgraph(self):
     ax.xaxis.grid(False)  # remove just xaxis grid
 
     plt.savefig(self.run_name + '_importance-graph.png')
-    # self.impgraph = plt
-    self.varimp = varimp
-
-
-def permutation_importance(self):
-    """
-    From sklearn's documentation: impurity-based feature importances can be misleading for
-        high cardinality features (many unique values). My goal is to create a more accurate feature importance graph
-        that can be applied to all sklearn models
-    We can achieve this by using the permutation importance method from eli5 module
-    Note: I tried passing self.regressor to PermutationImportance function but it keeps giving me an error saying that
-        it hasn't been fitted even though self.regressor was passed after fitting and predicting in train.py. Weird.
-        This makes the graph creation process much more time intensive. One more thing, Keras's neural network
-        does not provide any variable importance, or at least it shows a graph with no columns for any of the variables.
-        However, using sklearn's mlp does return a permutation variable importance graph. Double weird
-    """
-    from sklearn.feature_selection import SelectFromModel
-    if self.algorithm == 'nn':  # needs fit_params to set epochs and callback
-        perm = PermutationImportance(self.regressor, scoring='neg_mean_squared_error').fit(self.train_features,
-                                                                                           self.train_target,
-                                                                                           **self.fit_params)
-    else:
-        perm = PermutationImportance(self.regressor, scoring='neg_mean_squared_error').fit(self.train_features,
-                                                                                           self.train_target)
-    importances2 = perm.feature_importances_
-    feature_importances = [(feature, round(importance, 2)) for feature, importance in zip(self.feature_list,
-                                                                                                    list(importances2))]
-    # print(importances2)
-
-    # Sort the feature importances by most important first
-    feature_importances = sorted(feature_importances, key=lambda x: x[1], reverse=True)
-
-    # Print out the feature and importances
-    # [print('Variable: {:20} Importance: {}'.format(*pair)) for pair in feature_importances]
-
-    # prepare importance data for export and graphing
-    indicies = (-importances2).argsort()
-    varimp = pd.DataFrame([], columns=['variable', 'importance'])
-    varimp['variable'] = [self.feature_list[i] for i in indicies]
-    varimp['importance'] = importances2[indicies]
-    # Importance Bar Graph
-    plt.rcParams['figure.figsize'] = [15, 9]
-
-    # Set the style
-    plt.style.use('bmh')
-
-    # intiate plot (mwahaha)
-    fig, ax = plt.subplots()
-    plt.bar(varimp.index, varimp['importance'], orientation='vertical')
-
-    # Tick labels for x axis
-    plt.xticks(varimp.index, varimp['variable'], rotation='vertical')
-
-    # Axis labels and title
-    plt.ylabel('Importance')
-    plt.xlabel('Variable')
-    plt.title(self.run_name + ' Variable Importances')
-
-    # ax = plt.axes()
-    ax.xaxis.grid(False)  # remove just xaxis grid
-
-    plt.savefig(self.run_name + '_permutation_importance-graph.png')
     # self.impgraph = plt
     self.varimp = varimp
 

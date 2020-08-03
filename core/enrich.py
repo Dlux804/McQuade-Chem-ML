@@ -7,9 +7,8 @@ Just so we have the featurized datasets (using RDKit).
 # from core import features
 # from core import ingest
 from core import models
-from core.misc import cd
+from core.storage.misc import cd
 import os
-import pandas as pd
 
 sets = {
         'Lipophilicity-ID.csv': 'exp',

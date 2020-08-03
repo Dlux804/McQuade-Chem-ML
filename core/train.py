@@ -9,7 +9,7 @@ from tqdm import tqdm
 from time import sleep
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve
-
+from sklearn.metrics import precision_recall_curve
 def train_reg(self,n=5):
     """
     Function to train the model n times and collect basic statistics about results.
@@ -109,8 +109,7 @@ def train_cls(self, n=5):
             print(conf)
             print()
 
-            RF_pred = cross_val_predict(self.regressor, self.train_features, self.train_target, cv=3)
-            f1_score1[i] = f1_score(self.train_target, RF_pred, average="macro")
+            f1_score1[i] = f1_score(self.test_target, predictions, average="macro")
 
             print()
             auc[i] = roc_auc_score(self.test_target, predictions)
@@ -120,17 +119,24 @@ def train_cls(self, n=5):
             cls = pd.DataFrame([], columns=['actual', 'predicted'])
             cls['actual'] = self.test_target
             cls['predicted'] = predictions
+
             acc[i] = accuracy_score(cls['actual'], cls['predicted'])
 
-            # TODO fix confusion matrix and classificaiton report metrics
+
+            f1_score1[i] = f1_score(cls['actual'], cls['predicted'], average="macro")
+
+
             conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
             print()
             print('Confusion matrix for this run: ')
             print(conf[i])
 
-            clsrep = classification_report(cls['actual'], cls['predicted'])
+
+            clsrep = classification_report(cls['actual'], cls['predicted'], output_dict=True)
+            report = classification_report(cls['actual'], cls['predicted'])
             print('Classification report for this run: ')
-            print(clsrep)
+            print(report)
+            df = pd.DataFrame(clsrep).transpose()
 
 
             auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
@@ -172,23 +178,43 @@ def train_cls(self, n=5):
     else:
         print('Average accuracy score = %.3f' % stats['acc_avg'], '+- %.3f' % stats['acc_std'])
         print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
+        print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
         print()
 
     if self.dataset in ['BBBP.csv', 'bace.csv']:
         # Creates and saves a graphical evaluation for single-label classification
         fpr, tpr, thresholds = roc_curve(cls['actual'], cls['predicted'])
-        plot_roc_curve(fpr, tpr, stats['auc_avg'])
+        plot_roc_curve(fpr, tpr, stats['auc_avg'], stats['acc_avg'], stats['f1_score_avg'])
         name = self.algorithm + '-' + self.dataset + '-' + self.selected_feat_string  # Creates a unique file name to save the graph with
         filename = "%-roc_curve.png" % name
         plt.legend(loc='best')
         plt.savefig(self.run_name + '_' + filename)
         plt.show()
 
+        # Saves classification report for run
+        filename2 = "%-report_classification.csv" % name
+        df.to_csv(self.run_name + '_' + filename2)
+
+
+        precisions, recalls, thresholds = precision_recall_curve(cls['actual'], cls['predicted'])
+        plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
+        filename3 = "%-rprecision_recall_vs_threshold.png" % name
+        plt.legend(loc='best')
+        plt.savefig(self.run_name + '_' + filename3)
+        plt.show()
 
 
 
-def plot_roc_curve(fpr, tpr, auc, label=None):
+
+def plot_roc_curve(fpr, tpr, auc, acc, f1, label=None):
     plt.plot(fpr, tpr, linewidth=2, label="Roc_Auc_Score Average{{}} = {}".format(auc))
-    plt.plot([0, 1], [0, 1], 'k--')
+    plt.plot([0, 1], [0, 1], 'k--', label="Accuracy_Score Average{{}} = {}".format(acc))
+    plt.plot([0, 1], [0, 1], 'k--', label="F1_Score Average {{}} = {}".format(f1))
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate (Recall)')
+
+
+def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+    plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
+    plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
+    plt.xlabel('Threshold')

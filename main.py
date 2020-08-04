@@ -25,8 +25,7 @@ def main():
     if c == 'c':
         # list of available classification learning algorithms
         learner = ['svc', 'knc', 'rf']
-        #learner = [] # Use this line to test specific models instead of iterating
-
+        # learner = [] # Use this line to test specific models instead of iterating
 
         targets = None
         sets = {
@@ -36,18 +35,16 @@ def main():
             'bace.csv': targets,
         }
 
-
     # Sets up learner, featurizations, and data sets for regression
     if c == 'r':
         # list of available regression learning algorithms
         learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-        #learner = ['gdb', 'nn']
-
+        # learner = ['gdb', 'nn']
 
         # list of available featurization methods
         feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
                  [5]]
-        feats = [[0]]#, [0, 2]]  # Change this to change which featurizations are being tested (for regression)
+        feats = [[0]]  # , [0, 2]]  # Change this to change which featurizations are being tested (for regression)
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
@@ -62,11 +59,11 @@ def main():
         # The following if statements set featurization options based on if the
         # model needs normalized data (currently only set up for the classification models)
         if c == 'c':
-            feats = Get_Classification.get_classification_feats(alg) # Selects featurizations for classification based on the model being ran
+            feats = Get_Classification.get_classification_feats(
+                alg)  # Selects featurizations for classification based on the model being ran
 
         for method in feats:  # loop over the featurization methods
-            for data, target in sets.items(): # loop over dataset dictionary
-
+            for data, target in sets.items():  # loop over dataset dictionary
 
                 if c == 'r':  # Runs the models/featurizations for regression
                     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
@@ -97,7 +94,8 @@ def main():
                         model1.org_files(zip_only=True)
 
                 if c == 'c':
-                    targets = Get_Classification.get_classification_targets(data)  # Gets targets for classification based on the data set being used
+                    targets = Get_Classification.get_classification_targets(
+                        data)  # Gets targets for classification based on the data set being used
 
                     if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
                         pass
@@ -160,12 +158,12 @@ def single_model():
         model1.to_neo4j()
 
 
-def example_run_with_mysql_and_neo4j():
+def example_run_with_mysql_and_neo4j(dataset, target):
     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = models.MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0, 4],
+        model3 = models.MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0],
                                 tune=True, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
@@ -174,20 +172,21 @@ def example_run_with_mysql_and_neo4j():
         print()
 
     with cd('output'):  # Have files output to output
-        model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases',
-                             initialize_data=True)
-        model3.featurize(retrieve_from_mysql=True)
+        # model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases',
+        #                      initialize_data=True)
+        model3.featurize(retrieve_from_mysql=False)
         model3.data_split(val=0.1)
         model3.reg()
         model3.run()
         model3.analyze()
-        if model3.algorithm != 'nn':  # issues pickling NN models
-            model3.pickle_model()
+        # if model3.algorithm != 'nn':  # issues pickling NN models
+        #     model3.pickle_model()
 
-        model3.store()
-        model3.org_files(zip_only=True)
+        # model3.store()
+        # model3.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        time_dict = model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        return time_dict
 
 
 def example_load():
@@ -211,9 +210,28 @@ def example_load():
     rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
 
+def time_analyze():
+    datasets = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
+                'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50'}
+    datasets = {'water-energy.csv': 'expt'}
+    time_df = pd.DataFrame(columns=['Dataset', 'Loop', 'Base Nodes', 'Molecules', 'Fragments',
+                                    'Features', 'Misc relationships', 'Total Time', 'Number of Molecules',
+                                    'Number of Fragments'])
+
+    for i in range(2):
+
+        for dataset, target in datasets.items():
+            time_dict = example_run_with_mysql_and_neo4j(dataset, target)
+            time_dict['Dataset'] = dataset
+            time_dict['Loop'] = str(i)
+            time_df = time_df.append(time_dict, ignore_index=True)
+            time_df.to_csv('Time.csv')
+
+
 if __name__ == "__main__":
     # main()
-    single_model()
+    # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
+    time_analyze()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

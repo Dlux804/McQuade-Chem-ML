@@ -4,7 +4,8 @@ Objective: The goal of this script is to create relationships in Neo4j directly 
 
 from py2neo import Graph
 from core.neo4j.nodes_to_neo4j import prep
-import time
+from timeit import default_timer
+
 
 # Merge to Neo4j Destop.
 
@@ -12,7 +13,7 @@ import time
 # TODO REDO DOCSTRINGS
 
 
-def relationships(self):
+def relationships(self, time_dict):
     """
     Objective: Create relationships in Neo4j based on our ontology directly from the pipeline.
     Intent: I want this script to only create relationships for the nodes in Neo4j. There are also some node merging
@@ -21,41 +22,46 @@ def relationships(self):
             statements with 30+ variables, trying to figure out which Cypher correlates to what variable in Python
     """
     print("Creating relationships...")
-    t1 = time.perf_counter()
+    t1 = default_timer()
     r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict = prep(self)
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
 
-    # Merge RandomSplit node
-    g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,"
-               "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
-               "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
-    
-    # Merge TrainSet node
-    g.evaluate(" MATCH (n:TrainSet) WITH n.trainsize as trainsize, n.random_seed as seed,"
-               "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
-               "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
+    # # Merge RandomSplit node
+    # g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,"
+    #            "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
+    #            "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
+    #
+    # # Merge TrainSet node
+    # g.evaluate(" MATCH (n:TrainSet) WITH n.trainsize as trainsize, n.random_seed as seed,"
+    #            "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
+    #            "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
+    #
+    # # Merge ValSet node
+    # g.evaluate(" MATCH (n:ValSet) WITH n.valsize as valsize, n.random_seed as seed,"
+    #            "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
+    #            "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
 
-    # Merge ValSet node
-    g.evaluate(" MATCH (n:ValSet) WITH n.valsize as valsize, n.random_seed as seed,"
-               "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
-               "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
-    
     # Merge Dataset with molecules and RandomSplit
     g.evaluate("""
-            UNWIND $molecules as mol
-            match (smiles:Molecule {SMILES:mol}), (dataset:DataSet {data: $dataset}), 
+    UNWIND $molecules as mol
+        MATCH (smiles:Molecule {SMILES:mol}), (dataset:DataSet {data: $dataset}), 
             (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, random_seed: $random_seed})
-            merge (dataset)-[:CONTAINS_MOLECULES]->(smiles)
-            merge (split)-[:USES_SPLIT]->(dataset)
-    """, parameters={"molecules": canonical_smiles, 'dataset': self.dataset, 'test_percent': self.test_percent,
-                     'train_percent': self.train_percent, 'random_seed': self.random_seed})
+        MERGE (dataset)-[:CONTAINS_MOLECULES]->(smiles)
+        MERGE (split)-[:USES_SPLIT]->(dataset)
+        """,
+               parameters={"molecules": canonical_smiles, 'dataset': self.dataset, 'test_percent': self.test_percent,
+                           'train_percent': self.train_percent, 'random_seed': self.random_seed}
+               )
+
     # Merge FeatureList to FeatureMethod
     g.evaluate("""
-        UNWIND $method_name as name
-        match (method:FeatureMethod {feature:name}), (featurelist:FeatureList {feat_ID: $feat_ID})
-        merge (featurelist)<-[:CONTRIBUTES_TO]-(method)
-        """, parameters={'feat_ID': self.feat_meth, 'method_name': self.feat_method_name})
+    UNWIND $method_name as name
+        MATCH (method:FeatureMethod {feature:name}), (featurelist:FeatureList {feat_ID: $feat_ID})
+        MERGE (featurelist)<-[:CONTRIBUTES_TO]-(method)
+        """,
+               parameters={'feat_ID': self.feat_meth, 'method_name': self.feat_method_name}
+               )
 
     # Merge MLModel to Algorithm
     if self.tuned:  # If tuned
@@ -63,31 +69,45 @@ def relationships(self):
         for key in param_dict:
             try:
                 value = param_dict[key].values[0]
-                g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
-                           merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, value),
-                           parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key})
             except AttributeError:
-                print(f"Failed to merge relationship with {param_dict[key]}")
+                value = param_dict[key]
+            g.evaluate("""
+                        MATCH (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
+                        MERGE (model)-[r:USES_ALGORITHM]->(algor) 
+                            SET r.%s = "%s" 
+                        """ % (key, value),
+                       parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key}
+                       )
+            # except AttributeError:
+            #     print(f"Failed to merge relationship with {key}, with a value of {param_dict[key]}")
     else:  # If not tuned
-        g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
-                   merge (model)-[r:USES_ALGORITHM]->(algor)""",
-                   parameters={'algorithm': self.algorithm, 'run_name': self.run_name})
+        g.evaluate("""
+                    MATCH (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
+                    MERGE (model)-[r:USES_ALGORITHM]->(algor)
+                    """,
+                   parameters={'algorithm': self.algorithm, 'run_name': self.run_name}
+                   )
 
     # Algorithm and MLModel to TuningAlg
     if self.tuned:  # If tuned
-        g.evaluate("""match (tuning_alg:TuningAlg), (algor:Algorithm {name: $algorithm}), 
-                    (model:MLModel {name: $run_name})
-                   merge (algor)-[:USES_TUNING]->(tuning_alg)<-[r:TUNED_WITH]-(model)
-                   Set r.num_cv=$cv_folds, r.tuneTime= $tune_time, r.delta = $cp_delta, r.n_best = $cp_n_best,
-                                r.steps=$opt_iter
+        g.evaluate("""
+                    MATCH (tuning_alg:TuningAlg), (algor:Algorithm {name: $algorithm}), 
+                        (model:MLModel {name: $run_name})
+                    MERGE (algor)-[:USES_TUNING]->(tuning_alg)<-[r:TUNED_WITH]-(model)
+                        SET r.num_cv=$cv_folds, r.tuneTime= $tune_time, r.delta = $cp_delta, 
+                            r.n_best = $cp_n_best, r.steps=$opt_iter
                    """,
                    parameters={'tune_time': self.tune_time, 'algorithm': self.algorithm, 'run_name': self.run_name,
                                'cv_folds': self.cv_folds, 'tunTime': self.tune_time, 'cp_delta': self.cp_delta,
-                               'cp_n_best': self.cp_n_best, 'opt_iter': self.opt_iter})
+                               'cp_n_best': self.cp_n_best, 'opt_iter': self.opt_iter}
+                   )
     else:  # If not tuned
-        g.evaluate("""match (tuning_alg:NotTuned), (algor:Algorithm {name: $algorithm})
-                   merge (algor)-[:NOT_TUNED]->(tuning_alg)""",
-                   parameters={'algorithm': self.algorithm})
+        g.evaluate("""
+                    MATCH (tuning_alg:NotTuned), (algor:Algorithm {name: $algorithm})
+                    MERGE (algor)-[:NOT_TUNED]->(tuning_alg)
+                    """,
+                   parameters={'algorithm': self.algorithm}
+                   )
     # MLModel to DataSet
     g.evaluate("""match (dataset:DataSet {data: $dataset}), (model:MLModel {name: $run_name})
                merge (model)-[:USES_DATASET]->(dataset)""",
@@ -122,30 +142,36 @@ def relationships(self):
                parameters={'feat_name': self.feat_method_name, 'run_name': self.run_name})
 
     # Merge RandomSplit to TrainSet and TestSet
-    g.evaluate("""match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
-               random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, RMSE: $rmse}), 
-               (trainset:TrainSet {trainsize: $training_size, random_seed: $random_seed})
-               merge (trainset)<-[:MAKES_SPLIT]-(split)-[:MAKES_SPLIT]->(testset)""",
+    g.evaluate("""
+                MATCH (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
+                    random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, RMSE: $rmse}), 
+                    (trainset:TrainSet {trainsize: $training_size, random_seed: $random_seed})
+                MERGE (trainset)<-[:MAKES_SPLIT]-(split)-[:MAKES_SPLIT]->(testset)
+                """,
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
                            'test_size': self.n_test, 'rmse': rmse, 'training_size': self.n_train,
                            'random_seed': self.random_seed})
 
     # Merge Dataset to TrainSet and TestSet
     g.evaluate("""
-        MATCH (dataset:DataSet {data: $dataset}), (trainset:TrainSet {trainsize: $training_size, 
-        random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})
-        MERGE (trainset)<-[:SPLITS_INTO]-(dataset)-[:SPLITS_INTO]->(testset)
-    """, parameters={'dataset':self.dataset, 'training_size': self.n_train, 'random_seed': self.random_seed,
-                     'test_size': self.n_test, 'rmse': rmse})
+                MATCH (dataset:DataSet {data: $dataset}), (trainset:TrainSet {trainsize: $training_size, 
+                    random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})
+                MERGE (trainset)<-[:SPLITS_INTO]-(dataset)-[:SPLITS_INTO]->(testset)
+                """,
+               parameters={'dataset': self.dataset, 'training_size': self.n_train, 'random_seed': self.random_seed,
+                           'test_size': self.n_test, 'rmse': rmse}
+               )
 
     # Merge TrainSet with its molecules
     g.evaluate("""
-                   UNWIND $train_smiles as mol
-                   match (smiles:Molecule {SMILES:mol}), (trainset:TrainSet {trainsize: $training_size, 
-                   random_seed: $random_seed})
-                   merge (smiles)<-[:CONTAINS_MOLECULES]-(trainset)""",
-                   parameters={'train_smiles': list(self.train_molecules), 'training_size': self.n_train,
-                              'random_seed': self.random_seed})
+                UNWIND $train_smiles as mol
+                    MATCH (smiles:Molecule {SMILES:mol}), (trainset:TrainSet {trainsize: $training_size, 
+                        random_seed: $random_seed})
+                    MERGE (smiles)<-[:CONTAINS_MOLECULES]-(trainset)
+                """,
+               parameters={'train_smiles': list(self.train_molecules), 'training_size': self.n_train,
+                           'random_seed': self.random_seed}
+               )
 
     # Merge TestSet with its molecules
     g.evaluate("""
@@ -179,8 +205,11 @@ def relationships(self):
         g.evaluate("""match (validate:ValSet {valsize: $val_size, random_seed: $random_seed}), 
                         (dataset:DataSet {data: $dataset})
                       merge (dataset)-[:SPLITS_INTO]->(validate)
-        """, parameters={'val_size': self.n_val, 'dataset':self.dataset, 'random_seed': self.random_seed})
+        """, parameters={'val_size': self.n_val, 'dataset': self.dataset, 'random_seed': self.random_seed})
     else:
         pass
-    t2 = time.perf_counter()
-    print(f"Time it takes to create the rest of the relationships: {t2-t1}")
+
+    t2 = default_timer() - t1
+    # print(f"Time it takes to create the rest of the relationships: {t2}")
+    time_dict['Misc relationships'] = t2
+    return time_dict

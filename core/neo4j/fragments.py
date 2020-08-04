@@ -36,7 +36,7 @@ def canonical_smiles(smiles_list):
     return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
 
 
-def fragments_to_neo(row, g):
+def fragments_to_neo(smiles):
     """
     Objective: Create fragments and import them into Neo4j based on our ontology
     Intent: This script is based on Adam's "mol_frag.ipynb" file in his deepml branch, which is based on rdkit's
@@ -45,19 +45,9 @@ def fragments_to_neo(row, g):
             needs to be under a for loop or else it will break (as in not generating the correct amount of fragments,
             usually much less than the actual amount). I'm not sure why
     :param g:
-    :param row:
+    :param smiles:
     :return:
     """
-
-    mol_feat_query = """
-        UNWIND $fragments as fragment
-        MERGE (mol:Molecule {SMILES: fragment.smiles})
-            FOREACH (value in fragment.fragments|
-                MERGE (fragment:Fragments {name: value.fragments})
-                MERGE (mol)-[:HAS_FRAGMENTS]->(fragment)
-                    )
-        """
-    smiles = str(row['smiles'])
 
     # for smiles in tqdm(canonical_smiles, desc="Creating molecular fragments for SMILES"):
     fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
@@ -66,12 +56,44 @@ def fragments_to_neo(row, g):
     fcgen = FragmentCatalog.FragCatGenerator()
     mol = Chem.MolFromSmiles(smiles)
     fcount = fcgen.AddFragsFromMol(mol, fcat)
-    print("This SMILES, %s, has %d fragments" % (smiles, fcount))
+    # print("This SMILES, %s, has %d fragments" % (smiles, fcount))
     frag_list = []
     for frag in range(fcount):
         frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
 
-    fragment_df = pd.DataFrame({'fragments': frag_list}).to_dict('records')
-    fragment = {'smiles': smiles, 'fragments': fragment_df}
-    tx = g.begin(autocommit=True)
-    tx.evaluate(mol_feat_query, parameters={"fragments": fragment})
+    return frag_list
+
+
+def insert_fragments(temp_df, graph):
+
+    mol_feat_query = """
+            UNWIND $rows as row
+                MERGE (mol:Molecule {SMILES: row.smiles})
+                FOREACH (fragment in row.fragments |
+                    MERGE (frag:Fragments {name: fragment})
+                    MERGE (mol)-[:HAS_FRAGMENTS]->(frag)
+                    )
+            """
+
+    temp_df = temp_df[['smiles', 'fragments']]
+    smiles_frags_dicts = temp_df.to_dict('records')
+
+    range_dicts = []
+    for index, smiles_frag_dict in enumerate(smiles_frags_dicts):
+        range_dicts.append(smiles_frags_dicts)
+        if index % 2000 == 0:  # Do 2000 molecules at a time to spare memory (in case of a lot of fragments)
+            tx = graph.begin(autocommit=True)
+            tx.evaluate(mol_feat_query, parameters={"rows": smiles_frags_dicts})
+            range_dicts = []
+    tx = graph.begin(autocommit=True)
+    tx.evaluate(mol_feat_query, parameters={"rows": smiles_frags_dicts})
+
+
+def calculate_number_of_fragments(temp_df):
+
+    counter = 0
+    for frag_list in temp_df['fragments']:
+        counter = counter + len(frag_list)
+
+    print(f'Inserting {counter} relationships between molecules and fragments')
+    return counter

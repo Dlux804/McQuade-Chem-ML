@@ -5,11 +5,13 @@ Objective: The goal of this script is to create nodes in Neo4j directly from the
 from py2neo import Graph, Node
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
-from core.neo4j.fragments import fragments_to_neo
+from core.neo4j.fragments import fragments_to_neo, insert_fragments, calculate_number_of_fragments
 from core.neo4j import fragments
 import pandas as pd
 import time
-# Connect to Neo4j Destop.
+from timeit import default_timer
+from core.storage.misc import parallel_apply
+
 
 
 # TODO REDO DOCSTRINGS
@@ -65,7 +67,7 @@ def __merge_molecules_and_rdkit2d__(row, g):
     tx.evaluate(mol_feat_query, parameters={"molecule": molecule})
 
 
-def nodes(self):
+def nodes(self, time_dict):
     """
     Objective: Create or merge Neo4j nodes from data collected from the ML pipeline
     Intent: While most of the nodes are merged, some need to be created instead because:
@@ -80,6 +82,8 @@ def nodes(self):
     """
     t1 = time.perf_counter()
     print("Creating Nodes for %s" % self.run_name)
+
+    base_start_timer = default_timer()  # Timer tracker
 
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
@@ -133,15 +137,25 @@ def nodes(self):
     else:
         pass
 
+    base_time_needed = default_timer() - base_start_timer  # Timer tracker
+
+    molecules_start_timer = default_timer()
+
     # Create SMILES
     df_smiles.columns = ['smiles', 'target']  # Change target column header to target
     g.evaluate("""
-    UNWIND $molecules as molecule
-    MERGE (mol:Molecule {SMILES: molecule.smiles, name: "Molecule"})
-    SET mol.target = [molecule.target], mol.dataset = [$dataset]
-    """, parameters={'molecules': df_smiles.to_dict('records'), 'dataset': self.dataset})
+                UNWIND $molecules as molecule
+                    MERGE (mol:Molecule {SMILES: molecule.smiles, name: "Molecule"})
+                    ON CREATE SET mol.target = [molecule.target], mol.dataset = [$dataset]
+                """,
+               parameters={'molecules': df_smiles.to_dict('records'), 'dataset': self.dataset}
+               )
     t2 = time.perf_counter()
-    print(f"Finished creating main ML nodes in {t2-t1}sec")
+    print(f"Finished creating main ML nodes in {t2 - t1}sec")
+
+    molecules_time_needed = default_timer() - molecules_start_timer  # Timer tracker
+
+    fragments_start_timer = default_timer()  # Timer tracker
 
     # Creating Molecular Fragments
     # Check to see if we have created fragments for this run's dataset
@@ -150,9 +164,22 @@ def nodes(self):
         print(f"This dataset, {self.dataset}, and its fragments already exist in the database. Moving on")
     else:  # If not, then make fragments
         t3 = time.perf_counter()
-        self.data[['smiles']].apply(fragments_to_neo, g=g, axis=1)
+        temp_df = self.data[['smiles']]
+        print('Calculating Fragments')
+        temp_df['fragments'] = parallel_apply(temp_df['smiles'], fragments_to_neo, number_of_workers=3,
+                                              loading_bars=True)
+        print("Calculating Number of Fragments")
+        num_of_frags = calculate_number_of_fragments(temp_df)
+        time_dict['Number of Fragments'] = num_of_frags
+        time_dict['Number of Molecules'] = len(temp_df)
+        print('Inserting Fragments')
+        insert_fragments(temp_df, graph=g)
         t4 = time.perf_counter()
         print(f"Finished creating molecular fragments in {t4 - t3}sec")
+
+    fragments_time_needed = default_timer() - fragments_start_timer  # Timer tracker
+
+    features_start_timer = default_timer()
 
     # Merge rdkit2d features with molecules
     if 'rdkit2d' in self.feat_method_name:  # rdkit2d in feat method name
@@ -169,6 +196,10 @@ def nodes(self):
     else:
         pass
 
+    features_time_needed = default_timer() - features_start_timer  # Timer tracker
+
+    base_start_timer = default_timer()
+
     # Make FeatureMethod node
     for feat in self.feat_method_name:
         feature_method = Node("FeatureMethod", feature=feat, name=feat)
@@ -178,3 +209,16 @@ def nodes(self):
     dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)
     g.merge(dataset, "DataSet", "data")
 
+    base_time_needed = base_time_needed + (default_timer() - base_start_timer)
+
+    # print(f"Base Time Needed {base_time_needed} \n"
+    #       f"Molecules Time Needed {molecules_time_needed} \n"
+    #       f"Fragments Time Needed {fragments_time_needed} \n"
+    #       f"Features Time Needed {features_time_needed} \n")
+
+    time_dict['Base Nodes'] = base_time_needed
+    time_dict['Molecules'] = molecules_time_needed
+    time_dict['Fragments'] = fragments_time_needed
+    time_dict['Features'] = features_time_needed
+
+    return time_dict

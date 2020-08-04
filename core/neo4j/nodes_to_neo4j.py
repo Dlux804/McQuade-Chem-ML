@@ -127,8 +127,8 @@ def nodes(self):
     g.create(randomsplit)
 
     # Make TestSet node
-    testset = Node("TestSet", name="TestSet", RMSE=rmse, mse=mse, r2=r2, testsize=self.n_test)
-    g.merge(testset, "TestSet", "RMSE")
+    testset = Node("TestSet", name="TestSet", testsize=self.n_test, random_seed=self.random_seed)
+    g.create(testset)
 
     # Make ValidateSet node
     if self.val_percent > 0:

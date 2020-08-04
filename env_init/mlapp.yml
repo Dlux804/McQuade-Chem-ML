@@ -29,6 +29,5 @@ dependencies:
       - "git+https://github.com/technige/py2neo.git"
       - "git+https://github.com/sqlalchemy/sqlalchemy.git"
       - "git+https://github.com/jpmml/sklearn2pmml.git"
-      - "git+https://github.com/TeamHG-Memex/eli5.git"
 
 prefix: C:\Users\Adam\miniconda3\envs\mlapp

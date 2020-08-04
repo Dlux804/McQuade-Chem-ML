@@ -24,18 +24,3 @@ def get_classification_targets(data):
 
 
 
-def get_classification_feats(alg):
-    if alg == 'svc':  # Normalized
-        feats = [[1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1], [2], [3], [4],
-                 [5], [6]]
-    elif alg == 'knc':  # Normalized
-        feats = [[1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1], [2], [3], [4],
-                 [5], [6]]
-    elif alg == 'rfc':  # Not Normalized
-        feats = [[0], [0,2], [0, 3], [0, 4], [0, 5], [0, 6], [0], [2], [3], [4],
-                 [5], [6]]
-    else:
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
-                 [5]]
-
-    return feats

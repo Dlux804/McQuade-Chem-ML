@@ -136,7 +136,7 @@ def train_cls(self, n=5):
             report = classification_report(cls['actual'], cls['predicted'])
             print('Classification report for this run: ')
             print(report)
-            df = pd.DataFrame(clsrep).transpose()
+            self.clsrepdf = pd.DataFrame(clsrep).transpose()
 
 
             auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
@@ -168,8 +168,11 @@ def train_cls(self, n=5):
         'f1_score_avg': f1_score1.mean(),
         'f1_score_std': f1_score1.std()
     }
-    self.predictions = cls_multi
+    self.predictions = predictions
     self.predictions_stats = stats
+    self.auc_avg = stats['auc_avg']
+    self.acc_avg = stats['acc_avg']
+    self.f1_score_avg = stats['f1_score_avg']
 
     if self.dataset in ['sider.csv', 'clintox.csv']:
         print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
@@ -181,40 +184,3 @@ def train_cls(self, n=5):
         print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
         print()
 
-    if self.dataset in ['BBBP.csv', 'bace.csv']:
-        # Creates and saves a graphical evaluation for single-label classification
-        fpr, tpr, thresholds = roc_curve(cls['actual'], cls['predicted'])
-        plot_roc_curve(fpr, tpr, stats['auc_avg'], stats['acc_avg'], stats['f1_score_avg'])
-        name = self.algorithm + '-' + self.dataset + '-' + self.selected_feat_string  # Creates a unique file name to save the graph with
-        filename = "%-roc_curve.png" % name
-        plt.legend(loc='best')
-        plt.savefig(self.run_name + '_' + filename)
-        plt.close()
-
-        # Saves classification report for run
-        filename2 = "%-report_classification.csv" % name
-        df.to_csv(self.run_name + '_' + filename2)
-
-
-        precisions, recalls, thresholds = precision_recall_curve(cls['actual'], cls['predicted'])
-        plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
-        filename3 = "%-rprecision_recall_vs_threshold.png" % name
-        plt.legend(loc='best')
-        plt.savefig(self.run_name + '_' + filename3)
-        plt.close()
-
-
-
-
-def plot_roc_curve(fpr, tpr, auc, acc, f1, label=None):
-    plt.plot(fpr, tpr, linewidth=2, label="Roc_Auc_Score Average{{}} = {}".format(auc))
-    plt.plot([0, 1], [0, 1], 'k--', label="Accuracy_Score Average{{}} = {}".format(acc))
-    plt.plot([0, 1], [0, 1], 'k--', label="F1_Score Average {{}} = {}".format(f1))
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate (Recall)')
-
-
-def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
-    plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
-    plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
-    plt.xlabel('Threshold')

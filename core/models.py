@@ -29,7 +29,7 @@ class MlModel:  # TODO update documentation here
     from core.regressors import get_regressor, hyperTune
     from core.grid import make_grid
     from core.train import train_reg, train_cls
-    from core.analysis import impgraph, pva_graph
+    from core.analysis import impgraph, pva_graph, classification_graphs
     from core.classifiers import get_classifier
 
     from core.features import featurize, data_split
@@ -114,13 +114,15 @@ class MlModel:  # TODO update documentation here
 
     def analyze(self):
         # Variable importance for tree based estimators
-        if self.algorithm in ['rf', 'gdb', 'rfc', 'ada'] and self.feat_meth == [0]:
+        if self.algorithm in ['rf', 'gdb', 'ada'] and self.feat_meth == [0]:
             self.impgraph()
 
         # make predicted vs actual graph
-        if self.dataset in rds:
+        if self.task_type == 'regression':
             self.pva_graph()
-        # TODO Make classification graphing function
+
+        if self.task_type == 'classification':
+            self.classification_graphs()
 
     def to_neo4j(self, port, username, password):
         # Create Neo4j graphs from pipeline

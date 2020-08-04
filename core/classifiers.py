@@ -10,12 +10,11 @@ def get_classifier(self):
     skl_cls = {
         'svc': SVC,
         'knc': KNeighborsClassifier,
-        'rfc': RandomForestClassifier
+        'rf': RandomForestClassifier
     }
     if self.algorithm in skl_cls.keys():
         self.regressor = skl_cls[self.algorithm]()
         # TODO refactor self.regressor to something more general (learner? method? algorithm? ESTIMATOR)
-        self.task_type = 'classification'
     else:
         pass
 

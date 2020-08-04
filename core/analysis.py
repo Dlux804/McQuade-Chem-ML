@@ -7,6 +7,9 @@ from sklearn.metrics import mean_squared_error, r2_score, classification_report,
 from rdkit.Chem import PandasTools
 from core import features
 
+from sklearn.metrics import roc_curve
+from sklearn.metrics import precision_recall_curve
+
 # Feature importance graph
 def impgraph(self):
     """
@@ -210,3 +213,44 @@ def grid_image(df, filename, molobj=True, smi='smiles'):  # list of molecules to
     )
     mol_image.save(filename + '.png')  # shold use a better naming scheme to avoid overwrites.
 
+
+
+
+
+def classification_graphs(self):
+
+    if self.dataset in ['BBBP.csv', 'bace.csv']:
+        # Creates and saves a graphical evaluation for single-label classification
+        fpr, tpr, thresholds = roc_curve(self.test_target, self.predictions)
+        plot_roc_curve(fpr, tpr, self.auc_avg, self.acc_avg, self.f1_score_avg)
+        name = self.algorithm + '-' + self.dataset + '-' + self.selected_feat_string  # Creates a unique file name to save the graph with
+        filename = "%-roc_curve.png" % name
+        plt.legend(loc='best')
+        plt.savefig(self.run_name + '_' + filename)
+        plt.close()
+
+
+
+
+        precisions, recalls, thresholds = precision_recall_curve(self.test_target, self.predictions)
+        plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
+        filename3 = "%-rprecision_recall_vs_threshold.png" % name
+        plt.legend(loc='best')
+        plt.savefig(self.run_name + '_' + filename3)
+        plt.close()
+
+
+
+
+def plot_roc_curve(fpr, tpr, auc, acc, f1, label=None):
+    plt.plot(fpr, tpr, linewidth=2, label="Roc_Auc_Score Average{{}} = {}".format(auc))
+    plt.plot([0, 1], [0, 1], 'k--', label="Accuracy_Score Average{{}} = {}".format(acc))
+    plt.plot([0, 1], [0, 1], 'k--', label="F1_Score Average {{}} = {}".format(f1))
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate (Recall)')
+
+
+def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+    plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
+    plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
+    plt.xlabel('Threshold')

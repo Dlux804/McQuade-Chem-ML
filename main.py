@@ -1,6 +1,6 @@
 # TODO: Make main function that asks user what models they would like to initiate
 
-from core import models, Get_Classification
+from core import models, Get_Classification, Get_Task_Type
 from core.storage.misc import cd
 from core.storage.storage import pickle_model, unpickle_model
 import os
@@ -8,6 +8,7 @@ import pathlib
 from time import sleep
 from core.features import featurize
 from core.Get_Classification import get_classification_targets
+from core.Get_Task_Type import Get_Task_Type_1
 import pandas as pd
 
 # Creating a global variable to be imported from all other models
@@ -19,11 +20,11 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-    learner = ['svc', 'knc', 'rfc', 'ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-#    learner = ['rfc']
+#    learner = ['svc', 'knc', 'rf', 'ada', 'svr', 'gdb', 'nn', 'knn']
+    learner = ['rf']
 
     # list of available classification learning algorithms for reference/testing
-    #learner = ['svc', 'knc', 'rfc']
+    #learner = ['svc', 'knc', 'rf']
 
     # list of available regression learning algorithms for reference/testing
 #    learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
@@ -31,15 +32,15 @@ def main():
     # All data sets in dict
     targets = None
     sets = {
-        'BBBP.csv': targets,
-#        'sider.csv': targets,
-#        'clintox.csv': targets,
-        'bace.csv': targets,
-        # 'ESOL.csv': 'water-sol',
-        # 'Lipophilicity-ID.csv': 'exp',
-        # 'water-energy.csv': 'expt',
-        # 'logP14k.csv': 'Kow',
-        # 'jak2_pic50.csv': 'pIC50'
+#       'BBBP.csv': targets,
+       'sider.csv': targets,
+       'clintox.csv': targets,
+       'bace.csv': targets,
+#         'ESOL.csv': 'water-sol',
+         'Lipophilicity-ID.csv': 'exp',
+         'water-energy.csv': 'expt',
+         'logP14k.csv': 'Kow',
+         'jak2_pic50.csv': 'pIC50'
     }
 
     # classification data sets for reference/testing
@@ -67,11 +68,8 @@ def main():
                 if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
                     target = Get_Classification.get_classification_targets(data)
 
-                if data in ['sider.csv', 'clintox.csv'] and alg == 'svc':
-                    pass
-                elif data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv'] and alg in ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']:
-                    pass
-                elif data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv'] and alg in ['svc', 'knc', 'rfc']:
+                checker = Get_Task_Type_1(data,alg)
+                if checker == 0:
                     pass
                 else:
                     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
@@ -103,6 +101,11 @@ def main():
                         model.org_files(zip_only=True)
 
                     # Have files output to output
+
+
+
+
+
 
 
 def single_model():

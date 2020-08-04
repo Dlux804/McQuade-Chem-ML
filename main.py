@@ -131,11 +131,11 @@ def single_model():
     :return: None
     """
 
-    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/testdata'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='svr', dataset='logP14k.csv', target='Kow', feat_meth=[0],
+        model1 = models.MlModel(algorithm='ada', dataset='Lipo-short.csv', target='exp', feat_meth=[1, 3],
                                 tune=False, cv=2, opt_iter=2)
 
         print('done.')
@@ -154,7 +154,7 @@ def single_model():
             model1.pickle_model()
         model1.store()
         model1.org_files(zip_only=True)
-        # model1.QsarDB_export(zip_output=True)
+        model1.QsarDB_export(zip_output=True)
         model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 

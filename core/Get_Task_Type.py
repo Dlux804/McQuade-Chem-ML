@@ -1,3 +1,5 @@
+# This function allows for main.py to skip over algorithm/data set combinations that are not compatible.
+
 def Get_Task_Type_1(data, alg):
     if data in ['sider.csv', 'clintox.csv'] and alg == 'svc':
         checker = 0

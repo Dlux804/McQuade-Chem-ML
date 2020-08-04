@@ -33,12 +33,12 @@ def train_reg(self,n=5):
         start_time = time()
 
         if self.algorithm == 'nn':  # needs fit_params to set epochs and callback
-            self.regressor.fit(self.train_features, self.train_target, **self.fit_params)
+            self.estimator.fit(self.train_features, self.train_target, **self.fit_params)
         else:
-            self.regressor.fit(self.train_features, self.train_target)
+            self.estimator.fit(self.train_features, self.train_target)
 
         # Make predictions
-        predictions = self.regressor.predict(self.test_features)
+        predictions = self.estimator.predict(self.test_features)
         done_time = time()
         fit_time = done_time - start_time
 
@@ -97,10 +97,10 @@ def train_cls(self, n=5):
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         print()
         start_time = time()
-        self.regressor.fit(self.train_features, self.train_target)
+        self.estimator.fit(self.train_features, self.train_target)
 
         # Make predictions
-        predictions = self.regressor.predict(self.test_features)
+        predictions = self.estimator.predict(self.test_features)
         done_time = time()
         fit_time = done_time - start_time
         if self.task_type == 'multi_label_classification': # Contains multi-label evaluation methods, since sider data set and clintox data set are done with multi-target classification.

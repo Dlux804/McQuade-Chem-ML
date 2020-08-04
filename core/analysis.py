@@ -19,7 +19,7 @@ def impgraph(self):
     """
 
     # Get numerical feature importances
-    importances2 = self.regressor.feature_importances_  # used later for graph
+    importances2 = self.estimator.feature_importances_  # used later for graph
 
     # List of tuples with variable and importance
     feature_importances = [(feature, round(importance, 2)) for feature, importance in

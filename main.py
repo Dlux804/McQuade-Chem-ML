@@ -61,14 +61,17 @@ def main():
     # }
 
     for alg in learner: # loop over all learning algorithms
-        # feats=[[0], [0,2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
-        #           [5], [6]] # Use this line to select specific featurizations
-        feats = [[2]]
+        feats=[[0], [0,2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
+                  [5], [6]] # Use this line to select specific featurizations
+        # feats = [[2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items(): # loop over dataset dictionary
+
+                # This gets the target columns for classification data sets (Using target lists in the dictionary causes errors later in the workflow)
                 if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
                     target = Get_Classification.get_classification_targets(data)
 
+                # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
                 checker = Get_Task_Type_1(data,alg)
                 if checker == 0:
                     pass

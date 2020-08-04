@@ -210,10 +210,8 @@ def example_load():
 
 
 if __name__ == "__main__":
-    from sklearn.ensemble import GradientBoostingRegressor
     # main()
     single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
-    # help(GradientBoostingRegressor)

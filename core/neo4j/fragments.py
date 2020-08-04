@@ -59,7 +59,7 @@ def fragments_to_neo(row, g):
                 MERGE (mol)-[:HAS_FRAGMENTS]->(fragment)
                     )
                     ',';',
-        {batchSize:10000, parallel:true, params:{frags:fragment}}) YIELD batches, total
+        {batchSize:100000, parallel:true, params:{frags:fragment}}) YIELD batches, total
     RETURN batches, total
         """
     smiles = str(row['smiles'])

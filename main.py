@@ -136,8 +136,8 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='ada', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 6],
-                                tune=True, cv=2, opt_iter=2)
+        model1 = models.MlModel(algorithm='nn', dataset='ESOL.csv', target='water-sol',
+                                feat_meth=[0, 6], tune=True, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -155,7 +155,7 @@ def single_model():
             model1.pickle_model()
         model1.store()
         model1.org_files(zip_only=True)
-        # model1.QsarDB_export(zip_output=True)
+        model1.QsarDB_export(zip_output=True)
 
 
 def example_run_with_mysql_and_neo4j():
@@ -222,4 +222,4 @@ if __name__ == "__main__":
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # all_output_to_neo4j()
-    QsarDB_import('linear.qdb.zip', zipped=True)
+    QsarDB_import('2017MI1700024.qdb.zip', zipped=True)

@@ -219,7 +219,7 @@ def grid_image(df, filename, molobj=True, smi='smiles'):  # list of molecules to
 
 def classification_graphs(self):
 
-    if self.dataset in ['BBBP.csv', 'bace.csv']:
+    if self.task_type == 'single_label_classification':
         # Creates and saves a graphical evaluation for single-label classification
         fpr, tpr, thresholds = roc_curve(self.test_target, self.predictions)
         plot_roc_curve(fpr, tpr, self.auc_avg, self.acc_avg, self.f1_score_avg)

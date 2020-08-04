@@ -103,7 +103,7 @@ def train_cls(self, n=5):
         predictions = self.regressor.predict(self.test_features)
         done_time = time()
         fit_time = done_time - start_time
-        if self.dataset in ['sider.csv', 'clintox.csv']: # Contains multi-label evaluation methods, since sider data set and clintox data set are done with multi-target classification.
+        if self.task_type == 'multi_label_classification': # Contains multi-label evaluation methods, since sider data set and clintox data set are done with multi-target classification.
             conf = multilabel_confusion_matrix(self.test_target, predictions)
             print("Confusion matrix for each individual label (see key above, labeled as 'target(s):'): ")
             print(conf)
@@ -174,7 +174,7 @@ def train_cls(self, n=5):
     self.acc_avg = stats['acc_avg']
     self.f1_score_avg = stats['f1_score_avg']
 
-    if self.dataset in ['sider.csv', 'clintox.csv']:
+    if self.task_type == 'multi_label_classification':
         print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
         print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
         print()

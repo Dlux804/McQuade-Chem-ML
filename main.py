@@ -20,8 +20,8 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-#    learner = ['svc', 'knc', 'rf', 'ada', 'svr', 'gdb', 'nn', 'knn']
-    learner = ['rf']
+    learner = ['svc', 'knc', 'rf', 'ada', 'svr', 'gdb', 'nn', 'knn']
+#    learner = ['rf']
 
     # list of available classification learning algorithms for reference/testing
     #learner = ['svc', 'knc', 'rf']
@@ -32,11 +32,11 @@ def main():
     # All data sets in dict
     targets = None
     sets = {
-#       'BBBP.csv': targets,
+       'BBBP.csv': targets,
        'sider.csv': targets,
        'clintox.csv': targets,
        'bace.csv': targets,
-#         'ESOL.csv': 'water-sol',
+         'ESOL.csv': 'water-sol',
          'Lipophilicity-ID.csv': 'exp',
          'water-energy.csv': 'expt',
          'logP14k.csv': 'Kow',
@@ -46,10 +46,10 @@ def main():
     # classification data sets for reference/testing
     # sets = {
     #     'BBBP.csv': targets,
-    #     'sider.csv': targets,
-    #     'clintox.csv': targets,
-    #     'bace.csv': targets,
-    # }
+        # 'sider.csv': targets,
+        # 'clintox.csv': targets,
+        # 'bace.csv': targets,
+#    }
 
     # regression data sets for reference/testing
     # sets = {
@@ -61,8 +61,9 @@ def main():
     # }
 
     for alg in learner: # loop over all learning algorithms
-        feats=[[0], [0,2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
-                  [5], [6]] # Use this line to select specific featurizations
+        # feats=[[0], [0,2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
+        #           [5], [6]] # Use this line to select specific featurizations
+        feats = [[2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items(): # loop over dataset dictionary
                 if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:

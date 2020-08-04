@@ -12,7 +12,7 @@ from time import time
 from tensorflow import keras
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tqdm import tqdm
-from sklearn.model_selection import RandomizedSearchCV
+
 # monkey patch to fix skopt and sklearn.  Requires downgrade to sklearn 0.23
 from numpy.ma import MaskedArray
 import sklearn.utils.fixes
@@ -137,22 +137,20 @@ class tqdm_skopt(object):
 
 
 # def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50):
-def hyperTune(self, tuner='bayes', epochs=50, n_jobs=6):
+def hyperTune(self, epochs=50,n_jobs=6):
     """
     Tunes hyper parameters of specified model.
 
     Inputs:
-    :param tuner: tuning algorithm for hyperparameter tuning. Default string is 'bayes' for BayesianOptimization.
-                    Another supported string is 'random' for RandomSearchCV
-    :param epochs: parameters for Keras neural network
-    :param n_jobs: number of parallel jobs (max = folds)
+    algorithm, training features, training targets, hyper-param grid,
+    number of cross validation folds to use, number of optimization iterations,
+
    Keyword arguments
    jobs: number of parallel processes to run.  (Default = -1 --> use all available cores)
    NOTE: jobs has been depreciated since max processes in parallel for Bayes is the number of CV folds
 
    'neg_mean_squared_error',  # scoring function to use (RMSE)
     """
-    # TODO needs update for Classification in terms of scoring
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
     if self.algorithm == "nn":
@@ -161,65 +159,49 @@ def hyperTune(self, tuner='bayes', epochs=50, n_jobs=6):
         self.fit_params = None  # sklearn models don't need fit params
 
     # set up Bayes Search
-    if tuner is 'bayes':
-        tuner = BayesSearchCV(estimator=self.regressor,  # what regressor to use
-                              search_spaces=self.param_grid,  # hyper parameters to search through
-                              fit_params=self.fit_params,
-                              n_iter=self.opt_iter,  # number of combos tried
-                              random_state=42,  # random seed
-                              verbose=3,  # output print level
-                              scoring='neg_mean_squared_error',  # scoring function to use (RMSE)
-                              n_jobs=n_jobs,  # number of parallel jobs (max = folds)
-                              cv=self.cv_folds  # number of cross-val folds to use
-        )
-        self.tune_algorithm_name = str(type(tuner).__name__)
-        # if self.algorithm != 'nn':  # non keras model
-        checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
-        # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
-        self.cp_delta = 0.05  # TODO delta should be dynamic to scale with target value
-        self.cp_n_best = 5
+    bayes = BayesSearchCV(
+        estimator=self.regressor,  # what regressor to use
+        search_spaces=self.param_grid,  # hyper parameters to search through
+        fit_params=self.fit_params,
+        n_iter=self.opt_iter,  # number of combos tried
+        random_state=42,  # random seed
+        verbose=3,  # output print level
+        scoring='neg_mean_squared_error',  # scoring function to use (RMSE)  #TODO needs update for Classification
+        n_jobs=n_jobs,  # number of parallel jobs (max = folds)
+        cv=self.cv_folds  # number of cross-val folds to use
+    )
+    self.tune_algorithm_name = str(type(bayes).__name__)
+    # if self.algorithm != 'nn':  # non keras model
+    checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
+    # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
+    self.cp_delta = 0.05  # TODO delta should be dynamic to scale with target value
+    self.cp_n_best = 5
 
-        """ 
-        Every optimization model in skopt saved all their scores in a built-in list.
-        When called, DeltaYStopper will access this list and sort this list from lowest number to highest number.
-        It then take the difference between the number in the n_best position and the first number and
-        compares it to delta. If the difference is smaller or equal to delta, the optimization will be stopped.
-        """
+    """ 
+    Every optimization model in skopt saved all their scores in a built-in list.
+    When called, DeltaYStopper will access this list and sort this list from lowest number to highest number.
+    It then take the difference between the number in the n_best position and the first number and
+    compares it to delta. If the difference is smaller or equal to delta, the optimization will be stopped.
+    """
 
-        # print("delta and n_best is {0} and {1}".format(self.cp_delta, self.cp_n_best))
-        deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
+    # print("delta and n_best is {0} and {1}".format(self.cp_delta, self.cp_n_best))
+    deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
 
-        # Fit the Bayes search model, use early stopping
-        tuner.fit(self.train_features,
-                  self.train_target,
-                  callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization"),
-                            checkpoint_saver,
-                            deltay]
-                  )
-    elif tuner is 'random':
-        print(self.param_grid)
-        tuner = RandomizedSearchCV(estimator=self.regressor,  # what regressor to use
-                                   param_distributions=self.param_grid,  # hyper parameters to search through
-                                   n_iter=self.opt_iter,  # number of combos tried
-                                   random_state=42,  # random seed
-                                   verbose=3,  # output print level
-                                   scoring='neg_mean_squared_error',  # scoring function to use (RMSE)
-                                   n_jobs=n_jobs,  # number of parallel jobs (max = folds)
-                                   cv=self.cv_folds  # number of cross-val folds to use
-                                   )
-        self.tune_algorithm_name = str(type(tuner).__name__)
-        # Fit the Bayes search model, use early stopping
-        tuner.fit(self.train_features, self.train_target)
-
-
+    # Fit the Bayes search model, use early stopping
+    bayes.fit(self.train_features,
+              self.train_target,
+              callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization"),
+                        checkpoint_saver,
+                        deltay]
+              )
     # else:  # nn no early stopping
     #     bayes.fit(self.train_features,
     #               self.train_target,
     #               callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization")])
 
     # collect best parameters from tuning
-    self.params = tuner.best_params_
-    tune_score = tuner.best_score_
+    self.params = bayes.best_params_
+    tune_score = bayes.best_score_
 
     # update the regressor with best parameters
     self.get_regressor(call=False)

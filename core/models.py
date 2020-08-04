@@ -29,7 +29,7 @@ class MlModel:  # TODO update documentation here
     from core.regressors import get_regressor, hyperTune
     from core.grid import make_grid
     from core.train import train_reg, train_cls
-    from core.analysis import impgraph, pva_graph, permutation_importance
+    from core.analysis import impgraph, pva_graph
     from core.classifiers import get_classifier
 
     from core.features import featurize, data_split

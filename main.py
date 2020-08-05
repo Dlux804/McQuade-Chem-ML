@@ -135,8 +135,8 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='svr', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
-                                tune=True, cv=2, opt_iter=2)
+        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
+                                tune=True, cv=3, opt_iter=100)
 
         print('done.')
         print('Model Type:', model1.algorithm)

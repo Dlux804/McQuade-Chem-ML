@@ -226,8 +226,7 @@ def classification_graphs(self):
         # Creates and saves a graphical evaluation for single-label classification
         fpr, tpr, thresholds = roc_curve(self.test_target, self.predictions)
         plot_roc_curve(fpr, tpr, self.auc_avg, self.acc_avg, self.f1_score_avg)
-        name = self.algorithm + '-' + self.dataset + '-' + self.selected_feat_string  # Creates a unique file name to save the graph with
-        filename = "%-roc_curve.png" % name
+        filename = "roc_curve.png"
         plt.legend(loc='best')
         plt.savefig(self.run_name + '_' + filename)
         plt.close()
@@ -235,7 +234,7 @@ def classification_graphs(self):
 
         precisions, recalls, thresholds = precision_recall_curve(self.test_target, self.predictions)
         plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
-        filename3 = "%-rprecision_recall_vs_threshold.png" % name
+        filename3 = "precision_recall_vs_threshold.png"
         plt.legend(loc='best')
         plt.savefig(self.run_name + '_' + filename3)
         plt.close()

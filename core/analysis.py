@@ -214,10 +214,13 @@ def grid_image(df, filename, molobj=True, smi='smiles'):  # list of molecules to
     mol_image.save(filename + '.png')  # shold use a better naming scheme to avoid overwrites.
 
 
-
-
-
 def classification_graphs(self):
+    """
+    This function creates two graphs for single-label classification.
+
+    The first block creates a roc_curve graph,
+    while the second plot creates a precision/recall vs threshold graph.
+     """
 
     if self.task_type == 'single_label_classification':
         # Creates and saves a graphical evaluation for single-label classification
@@ -230,8 +233,6 @@ def classification_graphs(self):
         plt.close()
 
 
-
-
         precisions, recalls, thresholds = precision_recall_curve(self.test_target, self.predictions)
         plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
         filename3 = "%-rprecision_recall_vs_threshold.png" % name
@@ -240,9 +241,11 @@ def classification_graphs(self):
         plt.close()
 
 
-
-
 def plot_roc_curve(fpr, tpr, auc, acc, f1, label=None):
+    """
+This function is called by the classification_graphs function, and is used to create the roc_curve graph,
+as well as to add labels showing import metrics to the graph.
+     """
     plt.plot(fpr, tpr, linewidth=2, label="Roc_Auc_Score Average{{}} = {}".format(auc))
     plt.plot([0, 1], [0, 1], 'k--', label="Accuracy_Score Average{{}} = {}".format(acc))
     plt.plot([0, 1], [0, 1], 'k--', label="F1_Score Average {{}} = {}".format(f1))
@@ -251,6 +254,10 @@ def plot_roc_curve(fpr, tpr, auc, acc, f1, label=None):
 
 
 def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+    """
+This function is called by the classification_graphs function, and is used to create
+a precision/recall vs threshold graph. 
+     """
     plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
     plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
     plt.xlabel('Threshold')

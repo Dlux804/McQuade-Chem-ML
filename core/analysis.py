@@ -247,8 +247,11 @@ This function is called by the classification_graphs function, and is used to cr
 as well as to add labels showing import metrics to the graph.
      """
     plt.plot(fpr, tpr, linewidth=2, label="Roc_Auc_Score Average{{}} = {}".format(auc))
-    plt.plot([0, 1], [0, 1], 'k--', label="Accuracy_Score Average{{}} = {}".format(acc))
-    plt.plot([0, 1], [0, 1], 'k--', label="F1_Score Average {{}} = {}".format(f1))
+    plt.plot([0, 1], [0, 1], 'k--', label='y=x')
+
+    plt.plot([], [], ' ', label='Accuracy_Score_Average = %.3f' % acc)
+    plt.plot([], [], ' ', label='F1_Score_Average = %.3f' % f1)
+    
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate (Recall)')
 
@@ -256,7 +259,7 @@ as well as to add labels showing import metrics to the graph.
 def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
     """
 This function is called by the classification_graphs function, and is used to create
-a precision/recall vs threshold graph. 
+a precision/recall vs threshold graph.
      """
     plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
     plt.plot(thresholds, recalls[:-1], "g-", label="Recall")

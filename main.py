@@ -21,7 +21,7 @@ def main():
 
     # list of all learning algorithms
 #    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
-    learner = ['svm']
+    learner = ['knn']
 
     # list of available classification learning algorithms for reference/testing
     #learner = ['svm', 'knn', 'rf']
@@ -72,7 +72,7 @@ def main():
                     target = Get_Classification.get_classification_targets(data)
 
                 # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
-                checker = Get_Task_Type_1(data,alg)
+                checker, task_type = Get_Task_Type_1(data,alg)
                 if checker == 0:
                     pass
                 else:
@@ -81,6 +81,7 @@ def main():
                         print('Featurization:', method)
                         print('Dataset:', data)
                         print('Target(s):', target)
+                        print('Task type:', task_type)
                         print()
                         print('Initializing model...', end=' ', flush=True)
                         # initiate model class with algorithm, dataset and target

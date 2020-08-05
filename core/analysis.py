@@ -251,7 +251,7 @@ as well as to add labels showing import metrics to the graph.
 
     plt.plot([], [], ' ', label='Accuracy_Score_Average = %.3f' % acc)
     plt.plot([], [], ' ', label='F1_Score_Average = %.3f' % f1)
-    
+
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate (Recall)')
 

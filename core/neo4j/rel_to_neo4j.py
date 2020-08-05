@@ -120,13 +120,15 @@ def relationships(self, time_dict):
 
     # MLModel to RandomSplit
     g.evaluate("""match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
-               random_seed: $random_seed}), (model:MLModel {name: $run_name}) merge (model)-[:USES_SPLIT]->(split)""",
+               random_seed: $random_seed}), (model:MLModel {name: $run_name}) 
+               merge (model)-[:USES_SPLIT]->(split)""",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
                            'random_seed': self.random_seed, 'run_name': self.run_name})
 
     # MLModel to TrainingSet
     g.evaluate("""match (trainset:TrainSet {trainsize: $training_size, random_seed: $random_seed}), 
-               (model:MLModel {name: $run_name}) merge (model)-[:TRAINS]->(trainset)""",
+               (model:MLModel {name: $run_name}) 
+               merge (model)-[:TRAINS]->(trainset)""",
                parameters={'training_size': self.n_train, 'run_name': self.run_name, 'random_seed': self.random_seed})
 
     # MLModel to TestSet
@@ -197,7 +199,8 @@ def relationships(self, time_dict):
         g.evaluate("""
                         UNWIND $val_smiles as mol
                         match (smiles:Molecule {SMILES: mol}), (validate:ValSet {valsize: $val_size, 
-                        random_seed: $random_seed}) merge (validate)-[:CONTAINS_MOLECULES]->(smiles)""",
+                        random_seed: $random_seed}) 
+                        merge (validate)-[:CONTAINS_MOLECULES]->(smiles)""",
                    parameters={'val_smiles': list(self.val_molecules), 'val_size': self.n_val,
                                'random_seed': self.random_seed})
 

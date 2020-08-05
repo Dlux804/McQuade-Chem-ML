@@ -6,6 +6,7 @@ import os
 from rdkit import RDConfig
 from rdkit.Chem import FragmentCatalog
 from rdkit import Chem
+from math import ceil
 from py2neo import Graph
 import pandas as pd
 # import py2neo
@@ -78,15 +79,23 @@ def insert_fragments(temp_df, graph):
     temp_df = temp_df[['smiles', 'fragments']]
     smiles_frags_dicts = temp_df.to_dict('records')
 
+    number_of_molecules = len(smiles_frags_dicts)
+    number_of_batches = ceil(number_of_molecules/200)
+    counter = 1
+    print(f'There are {number_of_batches} batches of 200 molecules to be inserted')
+
     range_dicts = []
     for index, smiles_frag_dict in enumerate(smiles_frags_dicts):
-        range_dicts.append(smiles_frags_dicts)
-        if index % 2000 == 0:  # Do 2000 molecules at a time to spare memory (in case of a lot of fragments)
+        range_dicts.append(smiles_frag_dict)
+        if index % 200 == 0:  # Do 200 molecules at a time to spare memory and save some time
+            print(f'Inserting batch {counter}')
             tx = graph.begin(autocommit=True)
-            tx.evaluate(mol_feat_query, parameters={"rows": smiles_frags_dicts})
+            tx.evaluate(mol_feat_query, parameters={"rows": range_dicts})
             range_dicts = []
-    tx = graph.begin(autocommit=True)
-    tx.evaluate(mol_feat_query, parameters={"rows": smiles_frags_dicts})
+            counter = counter + 1
+    if range_dicts:
+        tx = graph.begin(autocommit=True)
+        tx.evaluate(mol_feat_query, parameters={"rows": range_dicts})
 
 
 def calculate_number_of_fragments(temp_df):

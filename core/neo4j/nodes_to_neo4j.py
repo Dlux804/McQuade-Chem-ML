@@ -167,13 +167,13 @@ def nodes(self, time_dict):
         temp_df = self.data[['smiles']]
         print('Calculating Fragments')
         temp_df['fragments'] = parallel_apply(temp_df['smiles'], fragments_to_neo, number_of_workers=3,
-                                              loading_bars=True)
+                                              loading_bars=False)
         print("Calculating Number of Fragments")
         num_of_frags = calculate_number_of_fragments(temp_df)
         time_dict['Number of Fragments'] = num_of_frags
         time_dict['Number of Molecules'] = len(temp_df)
         print('Inserting Fragments')
-        insert_fragments(temp_df, graph=g)
+        # insert_fragments(temp_df, graph=g)
         t4 = time.perf_counter()
         print(f"Finished creating molecular fragments in {t4 - t3}sec")
 

@@ -173,7 +173,7 @@ def example_run_with_mysql_and_neo4j(dataset, target):
 
     with cd('output'):  # Have files output to output
         # model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases',
-        #                      initialize_data=True)
+        #                      initialize_data=False)
         model3.featurize(retrieve_from_mysql=False)
         model3.data_split(val=0.1)
         model3.reg()
@@ -213,7 +213,6 @@ def example_load():
 def time_analyze():
     datasets = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
                 'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50'}
-    datasets = {'water-energy.csv': 'expt'}
     time_df = pd.DataFrame(columns=['Dataset', 'Loop', 'Base Nodes', 'Molecules', 'Fragments',
                                     'Features', 'Misc relationships', 'Total Time', 'Number of Molecules',
                                     'Number of Fragments'])
@@ -225,7 +224,7 @@ def time_analyze():
             time_dict['Dataset'] = dataset
             time_dict['Loop'] = str(i)
             time_df = time_df.append(time_dict, ignore_index=True)
-            time_df.to_csv('Time.csv')
+            time_df.to_csv('Time.csv', index=False)
 
 
 if __name__ == "__main__":

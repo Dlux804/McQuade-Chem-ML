@@ -125,9 +125,8 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-
-        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0], tune=True,
-                                cv=2, opt_iter=2)
+        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
+                                tune=True, cv=3, opt_iter=100)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -137,17 +136,16 @@ def single_model():
 
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split(val=0.2)
+        model1.data_split()
         model1.reg()
         model1.run()
         model1.analyze()
         if model1.algorithm != 'nn':  # issues pickling NN models
             model1.pickle_model()
-
         model1.store()
         model1.org_files(zip_only=True)
-        model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j()
+        # model1.QsarDB_export(zip_output=True)
+        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j():

@@ -7,10 +7,14 @@ from sklearn.metrics import mean_squared_error, r2_score, classification_report,
 from rdkit.Chem import PandasTools
 from core import features
 
+
 from sklearn.metrics import roc_curve
 from sklearn.metrics import precision_recall_curve
 
+
 # Feature importance graph
+
+
 def impgraph(self):
     """
     Objective: Make a feature importance graph. I'm limiting this to only rf and gdb since only they have feature
@@ -19,7 +23,9 @@ def impgraph(self):
     """
 
     # Get numerical feature importances
+
     importances2 = self.estimator.feature_importances_  # used later for graph
+
 
     # List of tuples with variable and importance
     feature_importances = [(feature, round(importance, 2)) for feature, importance in
@@ -36,7 +42,6 @@ def impgraph(self):
     varimp = pd.DataFrame([], columns=['variable', 'importance'])
     varimp['variable'] = [self.feature_list[i] for i in indicies]
     varimp['importance'] = importances2[indicies]
-
     # Importance Bar Graph
     plt.rcParams['figure.figsize'] = [15, 9]
 

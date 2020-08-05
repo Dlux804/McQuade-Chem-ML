@@ -45,14 +45,18 @@ def __merge_molecules_and_rdkit2d__(row, g):
 
     mol_feat_query = """
     UNWIND $molecule as molecule
+    With molecule
+    CALL apoc.periodic.iterate('
     MERGE (rdkit2d:FeatureMethod {feature:"rdkit2d"})
-    MERGE (mol:Molecule {SMILES: molecule.smiles})
-        FOREACH (feat in molecule.feats|
+    MERGE (mol:Molecule {SMILES: $mols.smiles})
+        FOREACH (feat in $mols.feats|
             MERGE (feature:Feature {name: feat.name})
             MERGE (mol)-[:HAS_DESCRIPTOR {value: feat.value, feat_name:feat.name}]->(feature)
             MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
                 )
-    
+    ',';',
+        {batchSize:100000, parallel:true, params:{mols:molecule}}) YIELD batches, total
+    RETURN batches, total
     """
 
     row = dict(row)
@@ -123,8 +127,8 @@ def nodes(self):
     g.create(randomsplit)
 
     # Make TestSet node
-    testset = Node("TestSet", name="TestSet", RMSE=rmse, mse=mse, r2=r2, testsize=self.n_test)
-    g.merge(testset, "TestSet", "RMSE")
+    testset = Node("TestSet", name="TestSet", testsize=self.n_test, random_seed=self.random_seed)
+    g.create(testset)
 
     # Make ValidateSet node
     if self.val_percent > 0:
@@ -137,8 +141,14 @@ def nodes(self):
     df_smiles.columns = ['smiles', 'target']  # Change target column header to target
     g.evaluate("""
     UNWIND $molecules as molecule
-    MERGE (mol:Molecule {SMILES: molecule.smiles, name: "Molecule"})
-    SET mol.target = [molecule.target], mol.dataset = [$dataset]
+    With molecule as molecule, $dataset as dataset
+    CALL apoc.periodic.iterate('
+    MERGE (mol:Molecule {SMILES: $mols.smiles, name: "Molecule"})
+    Set mol.dataset = [$data], mol.target = [$mols.target]
+    ',';',
+        {batchSize:100000, parallel:true, params:{mols:molecule, data:dataset}}) YIELD batches, total
+    RETURN batches, total
+    
     """, parameters={'molecules': df_smiles.to_dict('records'), 'dataset': self.dataset})
     t2 = time.perf_counter()
     print(f"Finished creating main ML nodes in {t2-t1}sec")
@@ -162,7 +172,7 @@ def nodes(self):
             print(f"This dataset, {self.dataset}, and its rdkit2d features already exist in the database. Moving on")
         else:  # If not
             print("Creating rdki2d features")
-            df_rdkit2d_features = self.data.filter(regex='smiles|fr_|Count|Num|Charge', axis=1)
+            df_rdkit2d_features = self.data.filter(regex='smiles|fr_|Count|Num|Charge|TPSA|qed', axis=1)
             df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, g=g, axis=1)
             t3 = time.perf_counter()
             print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t3 - t2}sec")

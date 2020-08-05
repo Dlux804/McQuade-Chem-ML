@@ -116,6 +116,8 @@ class MlModel:  # TODO update documentation here
 
     def analyze(self):
         # Variable importance for tree based estimators
+                # if self.feat_meth == [0]:
+        #     self.permutation_importance()
         if self.algorithm in ['rf', 'gdb', 'ada'] and self.feat_meth == [0]:
             self.impgraph()
 

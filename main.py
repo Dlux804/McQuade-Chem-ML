@@ -20,14 +20,14 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-#    learner = ['svc', 'knn', 'rf', 'ada', 'svr', 'gdb', 'nn']
-    learner = ['knn']
+#    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    learner = ['svm']
 
     # list of available classification learning algorithms for reference/testing
-    #learner = ['svc', 'knn', 'rf']
+    #learner = ['svm', 'knn', 'rf']
 
     # list of available regression learning algorithms for reference/testing
-#    learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
+#    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
 
     # All data sets in dict
     targets = None

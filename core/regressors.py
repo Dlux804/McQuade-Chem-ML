@@ -91,7 +91,7 @@ def get_regressor(self, call=False):
     skl_regs = {
         'ada': AdaBoostRegressor,
         'rf': RandomForestRegressor,
-        'svr': SVR,
+        'svm': SVR,
         'gdb': GradientBoostingRegressor,
         'mlp': MLPRegressor,
         'knn': KNeighborsRegressor

@@ -7,16 +7,15 @@ or the combination should be skipped.
 
 """
 def Get_Task_Type_1(data, alg):
-    if data in ['sider.csv', 'clintox.csv'] and alg == 'svc':  # SVC is not compatible with multi-label classification.
+    if data in ['sider.csv', 'clintox.csv'] and alg == 'svm':  # SVC is not compatible with multi-label classification.
         checker = 0
 
         # These classification data sets are not compatible with these regression models
-    elif data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv'] and alg in ['ada', 'svr', 'gdb', 'nn']:
+    elif data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv'] and alg in ['ada', 'gdb', 'nn']:
         checker = 0
 
         # These regression data sets are not compatible with these classification models.
-    elif data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv'] and alg in [
-        'svc']:
+    elif data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv'] and alg in []:
         checker = 0
 
     else: # Checker = 1 when there are no compatibility

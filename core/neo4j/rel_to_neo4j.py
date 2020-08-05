@@ -26,27 +26,27 @@ def relationships(self):
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
 
-    # Merge RandomSplit node
-    g.evaluate(""" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,
-               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
-               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
-
-    # Merge TrainSet node
-    g.evaluate(""" MATCH (n:TrainSet) WITH n.trainsize as trainsize, n.random_seed as seed,
-               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
-
-    # Merge ValSet node
-    g.evaluate(""" MATCH (n:ValSet) WITH n.valsize as valsize, n.random_seed as seed,
-               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
-
-    # Merge TestSet node
-    g.evaluate("""
-            MATCH (n:TestSet) WITH n.testsize as testsize, n.random_seed as seed,
-            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node
-            """)
+    # # Merge RandomSplit node
+    # g.evaluate(""" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,
+    #            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+    #
+    # # Merge TrainSet node
+    # g.evaluate(""" MATCH (n:TrainSet) WITH n.trainsize as trainsize, n.random_seed as seed,
+    #            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+    #
+    # # Merge ValSet node
+    # g.evaluate(""" MATCH (n:ValSet) WITH n.valsize as valsize, n.random_seed as seed,
+    #            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+    #
+    # # Merge TestSet node
+    # g.evaluate("""
+    #         MATCH (n:TestSet) WITH n.testsize as testsize, n.random_seed as seed,
+    #         COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #         CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node
+    #         """)
 
     # Merge Dataset with molecules and RandomSplit
     g.evaluate("""

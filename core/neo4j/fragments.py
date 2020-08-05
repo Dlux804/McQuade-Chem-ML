@@ -7,6 +7,7 @@ from rdkit import RDConfig
 from rdkit.Chem import FragmentCatalog
 from rdkit import Chem
 from math import ceil
+from tqdm import tqdm
 from py2neo import Graph
 import pandas as pd
 # import py2neo
@@ -95,8 +96,8 @@ def insert_fragments(temp_df, graph):
 
     mol_feat_query = """
             UNWIND $rows as row
-                MERGE (mol:Molecule {SMILES: row.smiles})
-                FOREACH (fragment in row.fragments |
+                MERGE (mol:Molecule {SMILES: $row.smiles})
+                FOREACH (fragment in $row.fragments |
                     MERGE (frag:Fragments {name: fragment})
                     MERGE (mol)-[:HAS_FRAGMENTS]->(frag)
                     )
@@ -105,30 +106,15 @@ def insert_fragments(temp_df, graph):
     temp_df = temp_df[['smiles', 'fragments']]
     smiles_frags_dicts = temp_df.to_dict('records')
 
-    number_of_molecules = len(smiles_frags_dicts)
-    number_of_batches = ceil(number_of_molecules/200)
-    counter = 1
-    print(f'There are {number_of_batches} batches of 200 molecules to be inserted')
+    batch = 500
 
-    range_dicts = []
-    for index, smiles_frag_dict in enumerate(smiles_frags_dicts):
-        range_dicts.append(smiles_frag_dict)
-        if index % 200 == 0:  # Do 200 molecules at a time to spare memory and save some time
-            print(f'Inserting batch {counter}')
+    range_molecules = []
+    for index, smiles_frag_dict in tqdm(enumerate(smiles_frags_dicts), total=len(smiles_frags_dicts)):
+        range_molecules.append(smiles_frag_dict)
+        if index % batch == 0:
             tx = graph.begin(autocommit=True)
-            tx.evaluate(mol_feat_query, parameters={"rows": range_dicts})
-            range_dicts = []
-            counter = counter + 1
-    if range_dicts:
+            tx.evaluate(mol_feat_query, parameters={"rows": range_molecules})
+            range_molecules = []
+    if range_molecules:
         tx = graph.begin(autocommit=True)
-        tx.evaluate(mol_feat_query, parameters={"rows": range_dicts})
-
-
-def calculate_number_of_fragments(temp_df):
-
-    counter = 0
-    for frag_list in temp_df['fragments']:
-        counter = counter + len(frag_list)
-
-    print(f'Inserting {counter} relationships between molecules and fragments')
-    return counter
+        tx.evaluate(mol_feat_query, parameters={"rows": range_molecules})

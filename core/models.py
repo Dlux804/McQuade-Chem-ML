@@ -125,21 +125,14 @@ class MlModel:  # TODO update documentation here
 
     def to_neo4j(self, port, username, password):
         # Create Neo4j graphs from pipeline
-
-        time_dict = {'Base Nodes': None, 'Molecules': None, 'Fragments': None, 'Features': None,
-                     'Misc relationships': None, 'Total Time': None, 'Number of Molecules': None,
-                     'Number of Fragments': None}
-
         t1 = default_timer()
         self.neo4j_params = {'port': port, 'username': username, 'password': password}  # Pass Neo4j Parameters
         Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Test connection to Neo4j
-        time_dict = nodes(self, time_dict)  # Create nodes
-        time_dict = relationships(self, time_dict)  # Create relationships
+        nodes(self)  # Create nodes
+        relationships(self)  # Create relationships
         t2 = default_timer() - t1
-        time_dict['Total Time'] = t2
         # print(f"Time it takes to finish graphing {self.run_name}: {t2}sec")
-        return time_dict
 
     def connect_mysql(self, user, password, host, database, initialize_data=False):
         # Gather MySql Parameters

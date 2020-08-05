@@ -45,9 +45,8 @@ def __merge_molecules_and_rdkit2d__(row, g):
         """
 
     mol_feat_query = """
-    UNWIND $molecule as molecule
+    UNWIND $molecule as molecules
     With molecule
-    CALL apoc.periodic.iterate('
     MERGE (rdkit2d:FeatureMethod {feature:"rdkit2d"})
     MERGE (mol:Molecule {SMILES: $mols.smiles})
         FOREACH (feat in $mols.feats|
@@ -55,19 +54,24 @@ def __merge_molecules_and_rdkit2d__(row, g):
             MERGE (mol)-[:HAS_DESCRIPTOR {value: feat.value, feat_name:feat.name}]->(feature)
             MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
                 )
-    ',';',
-        {batchSize:100000, parallel:true, params:{mols:molecule}}) YIELD batches, total
-    RETURN batches, total
     """
 
     row = dict(row)
     smiles = row.pop('smiles')
-
     feats = pd.DataFrame({'name': list(row.keys()), 'value': list(row.values())}).to_dict('records')
+    molecules = {'smiles': smiles, 'feats': feats}
 
-    molecule = {'smiles': smiles, 'feats': feats}
-    tx = g.begin(autocommit=True)
-    tx.evaluate(mol_feat_query, parameters={"molecule": molecule})
+    batch = 2000
+
+    range_molecules = []
+    for index, molecule in enumerate(molecules):
+        range_molecules.append(molecule)
+        if index % batch:
+            tx = g.begin(autocommit=True)
+            tx.evaluate(mol_feat_query, parameters={"molecules": range_molecules})
+    if range_molecules:
+        tx = g.begin(autocommit=True)
+        tx.evaluate(mol_feat_query, parameters={"molecules": range_molecules})
 
 
 def nodes(self):
@@ -143,13 +147,8 @@ def nodes(self):
     g.evaluate("""
     UNWIND $molecules as molecule
     With molecule as molecule, $dataset as dataset
-    CALL apoc.periodic.iterate('
     MERGE (mol:Molecule {SMILES: $mols.smiles, name: "Molecule"})
     Set mol.dataset = [$data], mol.target = [$mols.target]
-    ',';',
-        {batchSize:100000, parallel:true, params:{mols:molecule, data:dataset}}) YIELD batches, total
-    RETURN batches, total
-    
     """, parameters={'molecules': df_smiles.to_dict('records'), 'dataset': self.dataset})
     t2 = time.perf_counter()
     print(f"Finished creating main ML nodes in {t2 - t1}sec")

@@ -10,6 +10,10 @@ from core.features import featurize
 from core.Get_Classification import get_classification_targets
 import pandas as pd
 
+# Temp imports
+from timeit import default_timer
+import pandas as pd
+
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
@@ -134,7 +138,7 @@ def single_model():
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
         model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
-                                tune=True, cv=3, opt_iter=100)
+                                tune=True, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -183,8 +187,9 @@ def example_run_with_mysql_and_neo4j(dataset, target):
         # model3.store()
         # model3.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        time_dict = model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
-        return time_dict
+        start_timer = default_timer()
+        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        return default_timer() - start_timer
 
 
 def example_load():
@@ -208,21 +213,21 @@ def example_load():
     rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
 
-def time_analyze():
+def time_needed():
+
     datasets = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
                 'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50'}
-    time_df = pd.DataFrame(columns=['Dataset', 'Loop', 'Base Nodes', 'Molecules', 'Fragments',
-                                    'Features', 'Misc relationships', 'Total Time', 'Number of Molecules',
-                                    'Number of Fragments'])
+    time_df = pd.DataFrame(columns={'Loop', 'Dataset', 'Time Needed'})
 
     for i in range(2):
-
+        time_dict = {'Loop': None, 'Dataset': None, 'Time Needed': None}
         for dataset, target in datasets.items():
-            time_dict = example_run_with_mysql_and_neo4j(dataset, target)
-            time_dict['Dataset'] = dataset
             time_dict['Loop'] = str(i)
-            time_df = time_df.append(time_dict, ignore_index=True)
-            time_df.to_csv('Time.csv', index=False)
+            time_dict['Dataset'] = dataset
+            time_needed_for_run = example_run_with_mysql_and_neo4j(dataset, target)
+            time_dict['Time Needed'] = time_needed_for_run
+            time_df.append(time_dict, ignore_index=True)
+            time_df.to_csv('Time.csv')
 
 
 if __name__ == "__main__":
@@ -230,5 +235,5 @@ if __name__ == "__main__":
     # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
-    time_analyze()
+    time_needed()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

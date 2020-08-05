@@ -50,6 +50,32 @@ def fragments_to_neo(smiles):
     :return:
     """
 
+    # mol_feat_query = """
+    #     UNWIND $fragments as fragment
+    #     MERGE (mol:Molecule {SMILES: fragment.smiles})
+    #         FOREACH (value in fragment.fragments|
+    #             MERGE (fragment:Fragments {name: value.fragments})
+    #             MERGE (mol)-[:HAS_FRAGMENTS]->(fragment)
+    #                 )
+    #     """
+
+    # mol_feat_query = """
+    #         UNWIND $fragments as fragment
+    #         With fragment
+    #         CALL apoc.periodic.iterate('
+    #         MERGE (mol:Molecule {SMILES: $frags.smiles})
+    #             FOREACH (value in $frags.fragments|
+    #                 MERGE (fragment:Fragments {name: value.fragments})
+    #                 MERGE (mol)-[:HAS_FRAGMENTS]->(fragment)
+    #                     )
+    #                     ',';',
+    #         {batchSize:100000, parallel:true, params:{frags:fragment}}) YIELD batches, total
+    #     RETURN batches, total
+    #         """
+    # smiles = str(row['smiles'])
+
+    # smiles = str(row['smiles'])
+
     # for smiles in tqdm(canonical_smiles, desc="Creating molecular fragments for SMILES"):
     fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
     fparams = FragmentCatalog.FragCatParams(0, 4, fName)  # I need more research and tuning on this one

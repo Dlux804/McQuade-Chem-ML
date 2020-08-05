@@ -11,13 +11,12 @@ def Get_Task_Type_1(data, alg):
         checker = 0
 
         # These classification data sets are not compatible with these regression models
-    elif data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv'] and alg in ['ada', 'svr', 'gdb', 'nn',
-                                                                                  'knn']:
+    elif data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv'] and alg in ['ada', 'svr', 'gdb', 'nn']:
         checker = 0
 
         # These regression data sets are not compatible with these classification models.
     elif data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv'] and alg in [
-        'svc', 'knc']:
+        'svc']:
         checker = 0
 
     else: # Checker = 1 when there are no compatibility

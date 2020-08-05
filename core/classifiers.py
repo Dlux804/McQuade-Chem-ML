@@ -9,7 +9,7 @@ def get_classifier(self):
 
     skl_cls = {
         'svc': SVC,
-        'knc': KNeighborsClassifier,
+        'knn': KNeighborsClassifier,
         'rf': RandomForestClassifier
     }
     if self.algorithm in skl_cls.keys():

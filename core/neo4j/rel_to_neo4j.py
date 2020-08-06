@@ -62,15 +62,14 @@ def relationships(self):
         param_dict = dict(self.params)
         for key in param_dict:
             try:
-                value = param_dict[key].values[0]
                 g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
-                           merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, value),
+                               merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, param_dict[key]),
                            parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key})
             except AttributeError:
                 print(f"Failed to merge relationship with {param_dict[key]}")
     else:  # If not tuned
         g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
-                   merge (model)-[r:USES_ALGORITHM]->(algor)""",
+                       merge (model)-[r:USES_ALGORITHM]->(algor)""",
                    parameters={'algorithm': self.algorithm, 'run_name': self.run_name})
 
     # Algorithm and MLModel to TuningAlg

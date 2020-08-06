@@ -14,7 +14,7 @@ from py2neo import Graph
 from sqlalchemy.exc import OperationalError
 
 
-rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']
+rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv', 'flashpoint2.csv']
 RDLogger.DisableLog('rdApp.*')
 
 cds = ['BBBP.csv', 'HIV.csv', 'bace.csv']

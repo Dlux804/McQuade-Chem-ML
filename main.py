@@ -19,7 +19,8 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # Asking the user to decide between running classification models or regression models
-    c = str(input("Enter c for classification, r for regression: "))
+    # c = str(input("Enter c for classification, r for regression: "))
+    c = 'r'
 
     # Sets up learner and datasets for classification.
     if c == 'c':
@@ -41,21 +42,22 @@ def main():
     if c == 'r':
         # list of available regression learning algorithms
         learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-        #learner = ['gdb', 'nn']
+        learner = ['rf']
 
 
         # list of available featurization methods
         feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
                  [5]]
-        feats = [[0]]#, [0, 2]]  # Change this to change which featurizations are being tested (for regression)
+        feats = [[0], [0,2], [2], [3], [0,3]]#, [0, 2]]  # Change this to change which featurizations are being tested (for regression)
 
         # regression data sets in dict. Key: Filename.csv , Value: Target column header
         sets = {
             'ESOL.csv': 'water-sol',
-            # 'Lipophilicity-ID.csv': 'exp',
-            # 'water-energy.csv': 'expt',
+            'Lipophilicity-ID.csv': 'exp',
+            'water-energy.csv': 'expt',
             # 'logP14k.csv': 'Kow',
-            # 'jak2_pic50.csv': 'pIC50'
+            # 'flashpoint2.csv': 'flashpoint',
+            'jak2_pic50.csv': 'pIC50'
         }
 
     for alg in learner:  # loop over all learning algorithms
@@ -77,10 +79,10 @@ def main():
                         print('Initializing model...', end=' ', flush=True)
                         # initiate model class with algorithm, dataset and target
                         model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                tune=False, cv=3, opt_iter=25)
+                                                tune=True, cv=10, opt_iter=50)
                         print('Done.\n')
 
-                    with cd('dataFiles'):  # Have files output to output
+                    with cd('output'):  # Have files output to output
                         model1.featurize()
                         val = 0.0
                         if alg == 'nn':
@@ -95,6 +97,7 @@ def main():
 
                         model1.store()
                         model1.org_files(zip_only=True)
+                        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
                 if c == 'c':
                     targets = Get_Classification.get_classification_targets(data)  # Gets targets for classification based on the data set being used
@@ -136,8 +139,8 @@ def single_model():
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
 
-        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0], tune=True,
-                                cv=2, opt_iter=2)
+        model1 = models.MlModel(algorithm='rf', dataset='flashpoint2.csv', target='flashpoint', feat_meth=[0], tune=True,
+                                cv=5, opt_iter=50)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -147,7 +150,7 @@ def single_model():
 
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split(val=0.2)
+        model1.data_split(val=0.1)
         model1.reg()
         model1.run()
         model1.analyze()
@@ -156,8 +159,8 @@ def single_model():
 
         model1.store()
         model1.org_files(zip_only=True)
-        model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j()
+        # model1.QsarDB_export(zip_output=True)
+        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j():
@@ -211,9 +214,10 @@ def example_load():
     rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
 
+
 if __name__ == "__main__":
-    # main()
-    single_model()
+    main()
+    # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

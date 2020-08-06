@@ -217,6 +217,7 @@ def time_needed():
 
     datasets = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
                 'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50'}
+    # datasets = {'water-energy.csv': 'expt'}
     time_df = pd.DataFrame(columns={'Loop', 'Dataset', 'Time Needed'})
 
     for i in range(2):
@@ -226,7 +227,7 @@ def time_needed():
             time_dict['Dataset'] = dataset
             time_needed_for_run = example_run_with_mysql_and_neo4j(dataset, target)
             time_dict['Time Needed'] = time_needed_for_run
-            time_df.append(time_dict, ignore_index=True)
+            time_df = time_df.append(time_dict, ignore_index=True)
             time_df.to_csv('Time.csv')
 
 

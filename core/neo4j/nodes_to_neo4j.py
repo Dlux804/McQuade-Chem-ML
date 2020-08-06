@@ -11,6 +11,7 @@ from tqdm import tqdm
 import pandas as pd
 import time
 from core.storage.misc import parallel_apply
+from py2neo.database import ClientError
 # Connect to Neo4j Destop.
 
 
@@ -36,7 +37,7 @@ def prep(self):
     return r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict
 
 
-def __merge_molecules_and_rdkit2d__(row, g):
+def __merge_molecules_and_rdkit2d__(df, graph):
     """
     Objective: For every row in a csv (or dataframe) that contains SMILES and rdkit2d Features, merge SMILES with
     rdkit2d features with its respective feature values
@@ -45,34 +46,53 @@ def __merge_molecules_and_rdkit2d__(row, g):
     :return:
         """
 
+    restraint_strings = ["""
+            CREATE CONSTRAINT ON 
+            (n:Feature) ASSERT n.name IS UNIQUE
+            """,
+            """
+            CREATE CONSTRAINT ON 
+            (n:FeatureMethod) ASSERT n.feature IS UNIQUE
+            """]
+
+    for restraint_string in restraint_strings:
+        try:
+            tx = graph.begin(autocommit=True)
+            tx.evaluate(restraint_string)
+        except ClientError:
+            pass
+
     mol_feat_query = """
-    UNWIND $molecule as molecule
-    MERGE (rdkit2d:FeatureMethod {feature:"rdkit2d"})
-    MERGE (mol:Molecule {SMILES: molecule.smiles})
-        FOREACH (feat in molecule.feats|
+    CALL apoc.periodic.iterate(
+        "
+        UNWIND $molecules as molecule
+        RETURN molecule
+        ",
+        "
+        MERGE (rdkit2d:FeatureMethod {feature:'rdkit2d'})
+        MERGE (mol:Molecule {SMILES: molecule.smiles})
+        FOREACH (feat in molecule.feats | 
             MERGE (feature:Feature {name: feat.name})
-            MERGE (mol)-[:HAS_DESCRIPTOR {value: feat.value, feat_name:feat.name}]->(feature)
+            MERGE (mol)-[:HAS_DESCRIPTOR {value:feat.value, feat_name:feat.name}]->(feature)
             MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
-                )
+            )
+        ",
+        {batchSize:2000, parallel:True, params:{molecules:$molecules}}
+        )
     """
 
-    row = dict(row)
-    smiles = row.pop('smiles')
-    feats = pd.DataFrame({'name': list(row.keys()), 'value': list(row.values())}).to_dict('records')
-    molecules = {'smiles': smiles, 'feats': feats}
+    # TODO make this work without a for loop if possible
+    molecules = []
+    for index, row in df.iterrows():
+        row_feats = []
+        row = dict(row)
+        smiles = row.pop('smiles')
+        for feat_name, feat_value in row.items():
+            row_feats.append({'name': feat_name, 'value': feat_value})
+        molecules.append({'smiles': smiles, 'feats': row_feats})
 
-    batch = 2000
-
-    range_molecules = []
-    for index, molecule in tqdm(enumerate(molecules), total=len(molecules), desc='Features to Neo4j'):
-        range_molecules.append(molecule)
-        if index % batch == 0 and range_molecules:
-            tx = g.begin(autocommit=True)
-            tx.evaluate(mol_feat_query, parameters={"molecules": range_molecules})
-            range_molecules = []
-    if range_molecules:
-        tx = g.begin(autocommit=True)
-        tx.evaluate(mol_feat_query, parameters={"molecules": range_molecules})
+    tx = graph.begin(autocommit=True)
+    tx.evaluate(mol_feat_query, parameters={"molecules": molecules})
 
 
 def nodes(self):
@@ -145,11 +165,25 @@ def nodes(self):
 
     # Create SMILES
     df_smiles.columns = ['smiles', 'target']  # Change target column header to target
+
+    restraint_string = """
+            CREATE CONSTRAINT ON 
+            (n:Molecule) ASSERT n.SMILES IS UNIQUE
+        """
+
+    try:
+        tx = g.begin(autocommit=True)
+        tx.evaluate(restraint_string)
+    except ClientError:
+        pass
+
     g.evaluate("""
-    UNWIND $molecules as molecule
-    MERGE (mol:Molecule {SMILES: molecule.smiles, name: "Molecule"})
-        ON CREATE Set mol.dataset = [$dataset], mol.target = [molecule.target]
-    """, parameters={'molecules': df_smiles.to_dict('records'), 'dataset': self.dataset})
+            UNWIND $molecules as molecule
+            MERGE (mol:Molecule {SMILES: molecule.smiles})
+                ON CREATE Set mol.dataset = [$dataset], mol.target = [molecule.target], mol.name = "Molecule"
+            """,
+               parameters={'molecules': df_smiles.to_dict('records'), 'dataset': self.dataset}
+               )
     t2 = time.perf_counter()
     print(f"Finished creating main ML nodes in {t2 - t1}sec")
 
@@ -178,7 +212,7 @@ def nodes(self):
         else:  # If not
             print("Creating rdki2d features")
             df_rdkit2d_features = self.data.filter(regex='smiles|fr_|Count|Num|Charge|TPSA|qed', axis=1)
-            df_rdkit2d_features.apply(__merge_molecules_and_rdkit2d__, g=g, axis=1)
+            __merge_molecules_and_rdkit2d__(df_rdkit2d_features, graph=g)
             t3 = time.perf_counter()
             print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t3 - t2}sec")
     else:

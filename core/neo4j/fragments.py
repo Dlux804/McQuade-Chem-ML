@@ -9,6 +9,7 @@ from rdkit import Chem
 from math import ceil
 from tqdm import tqdm
 from py2neo import Graph
+from py2neo.database import ClientError
 import pandas as pd
 # import py2neo
 # Connect to Neo4j Destop.
@@ -94,36 +95,36 @@ def fragments_to_neo(smiles):
 
 def insert_fragments(temp_df, graph):
 
+    restraint_string = """
+        CREATE CONSTRAINT ON 
+        (n:Fragments) ASSERT n.name IS UNIQUE
+    """
+
+    try:
+        tx = graph.begin(autocommit=True)
+        tx.evaluate(restraint_string)
+    except ClientError:
+        pass
+
     mol_feat_query = """
+    CALL apoc.periodic.iterate(
+            "
             UNWIND $rows as row
-                MERGE (mol:Molecule {SMILES: row.smiles})
+            RETURN row
+            ",
+            "
+            MERGE (mol:Molecule {SMILES: row.smiles})
                 FOREACH (fragment in row.fragments |
                     MERGE (frag:Fragments {name: fragment})
                     MERGE (mol)-[:HAS_FRAGMENTS]->(frag)
                     )
+            ",
+            {batchSize:1000, parallel:True, params:{rows:$rows}})
             """
 
     temp_df = temp_df[['smiles', 'fragments']]
     smiles_frags_dicts = temp_df.to_dict('records')
 
-    batch = 200
-    counter = 0
-    num_of_batches = ceil(len(smiles_frags_dicts)/batch)
-    batch_counter = 1
+    tx = graph.begin(autocommit=True)
+    tx.evaluate(mol_feat_query, parameters={"rows": smiles_frags_dicts})
 
-    print(f"There are {num_of_batches} batches to insert")
-
-    range_molecules = []
-    for smiles_frag_dict in smiles_frags_dicts:
-        range_molecules.append(smiles_frag_dict)
-        counter = counter + 1
-        if counter == batch and range_molecules:
-            print(f'Inserting batch {batch_counter}')
-            tx = graph.begin(autocommit=True)
-            tx.evaluate(mol_feat_query, parameters={"rows": range_molecules})
-            range_molecules = []
-            counter = 0
-            batch_counter = batch_counter + 1
-    if range_molecules:
-        tx = graph.begin(autocommit=True)
-        tx.evaluate(mol_feat_query, parameters={"rows": range_molecules})

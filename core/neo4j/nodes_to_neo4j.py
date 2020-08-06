@@ -77,7 +77,7 @@ def __merge_molecules_and_rdkit2d__(df, graph):
             MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
             )
         ",
-        {batchSize:2000, parallel:True, params:{molecules:$molecules}}
+        {batchSize:4000, parallel:True, params:{molecules:$molecules}}
         )
     """
 

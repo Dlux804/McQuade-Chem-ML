@@ -7,6 +7,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 from core.neo4j.fragments import fragments_to_neo, insert_fragments
 from core.neo4j import fragments
+from tqdm import tqdm
 import pandas as pd
 import time
 from core.storage.misc import parallel_apply
@@ -45,11 +46,10 @@ def __merge_molecules_and_rdkit2d__(row, g):
         """
 
     mol_feat_query = """
-    UNWIND $molecule as molecules
-    With molecule
+    UNWIND $molecule as molecule
     MERGE (rdkit2d:FeatureMethod {feature:"rdkit2d"})
-    MERGE (mol:Molecule {SMILES: $mols.smiles})
-        FOREACH (feat in $mols.feats|
+    MERGE (mol:Molecule {SMILES: molecule.smiles})
+        FOREACH (feat in molecule.feats|
             MERGE (feature:Feature {name: feat.name})
             MERGE (mol)-[:HAS_DESCRIPTOR {value: feat.value, feat_name:feat.name}]->(feature)
             MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
@@ -64,11 +64,12 @@ def __merge_molecules_and_rdkit2d__(row, g):
     batch = 2000
 
     range_molecules = []
-    for index, molecule in enumerate(molecules):
+    for index, molecule in tqdm(enumerate(molecules), total=len(molecules), desc='Features to Neo4j'):
         range_molecules.append(molecule)
-        if index % batch:
+        if index % batch == 0 and range_molecules:
             tx = g.begin(autocommit=True)
             tx.evaluate(mol_feat_query, parameters={"molecules": range_molecules})
+            range_molecules = []
     if range_molecules:
         tx = g.begin(autocommit=True)
         tx.evaluate(mol_feat_query, parameters={"molecules": range_molecules})
@@ -146,9 +147,8 @@ def nodes(self):
     df_smiles.columns = ['smiles', 'target']  # Change target column header to target
     g.evaluate("""
     UNWIND $molecules as molecule
-    With molecule as molecule, $dataset as dataset
-    MERGE (mol:Molecule {SMILES: $mols.smiles, name: "Molecule"})
-    Set mol.dataset = [$data], mol.target = [$mols.target]
+    MERGE (mol:Molecule {SMILES: molecule.smiles, name: "Molecule"})
+        ON CREATE Set mol.dataset = [$dataset], mol.target = [molecule.target]
     """, parameters={'molecules': df_smiles.to_dict('records'), 'dataset': self.dataset})
     t2 = time.perf_counter()
     print(f"Finished creating main ML nodes in {t2 - t1}sec")

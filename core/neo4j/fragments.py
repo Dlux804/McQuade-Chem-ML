@@ -96,8 +96,8 @@ def insert_fragments(temp_df, graph):
 
     mol_feat_query = """
             UNWIND $rows as row
-                MERGE (mol:Molecule {SMILES: $row.smiles})
-                FOREACH (fragment in $row.fragments |
+                MERGE (mol:Molecule {SMILES: row.smiles})
+                FOREACH (fragment in row.fragments |
                     MERGE (frag:Fragments {name: fragment})
                     MERGE (mol)-[:HAS_FRAGMENTS]->(frag)
                     )
@@ -106,15 +106,24 @@ def insert_fragments(temp_df, graph):
     temp_df = temp_df[['smiles', 'fragments']]
     smiles_frags_dicts = temp_df.to_dict('records')
 
-    batch = 500
+    batch = 200
+    counter = 0
+    num_of_batches = ceil(len(smiles_frags_dicts)/batch)
+    batch_counter = 1
+
+    print(f"There are {num_of_batches} batches to insert")
 
     range_molecules = []
-    for index, smiles_frag_dict in tqdm(enumerate(smiles_frags_dicts), total=len(smiles_frags_dicts)):
+    for smiles_frag_dict in smiles_frags_dicts:
         range_molecules.append(smiles_frag_dict)
-        if index % batch == 0:
+        counter = counter + 1
+        if counter == batch and range_molecules:
+            print(f'Inserting batch {batch_counter}')
             tx = graph.begin(autocommit=True)
             tx.evaluate(mol_feat_query, parameters={"rows": range_molecules})
             range_molecules = []
+            counter = 0
+            batch_counter = batch_counter + 1
     if range_molecules:
         tx = graph.begin(autocommit=True)
         tx.evaluate(mol_feat_query, parameters={"rows": range_molecules})

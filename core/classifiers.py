@@ -8,14 +8,12 @@ def get_classifier(self):
     # Create Dictionary of classifiers to be called with self.algorithm as key.
 
     skl_cls = {
-        'svc': SVC,
-        'knc': KNeighborsClassifier,
+        'svm': SVC,
+        'knn': KNeighborsClassifier,
         'rf': RandomForestClassifier
     }
     if self.algorithm in skl_cls.keys():
-        self.regressor = skl_cls[self.algorithm]()
-        # TODO refactor self.regressor to something more general (learner? method? algorithm? ESTIMATOR)
-        self.task_type = 'classification'
+        self.estimator = skl_cls[self.algorithm]()
     else:
         pass
 

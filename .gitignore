@@ -3,3 +3,4 @@
 output/*
 core/nn_opt.ipynb
 py_module/
+.idea/dictionaries/user.xml

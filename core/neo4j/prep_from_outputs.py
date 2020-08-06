@@ -70,13 +70,13 @@ class Prep:
         self.test_molecules = split_molecules(df_from_data, 'test')
         self.val_molecules = split_molecules(df_from_data, 'val')
         self.feat_meth = df_from_attributes['feat_meth'].values[0]
-        self.tune_algorithm_name = df_from_attributes['tune_algorithm_name'].values[0]
         if self.tuned:
             self.cv_folds = int(df_from_attributes['cv_folds'].values[0])
             self.tune_time = float(df_from_attributes['tune_time'].values[0])
             self.cp_delta = float(df_from_attributes['cp_delta'].values[0])
             self.cp_n_best = int(df_from_attributes['cp_n_best'].values[0])
             self.opt_iter = int(df_from_attributes['opt_iter'].values[0])
+            self.tune_algorithm_name = df_from_attributes['tune_algorithm_name'].values[0]
         else:
             self.cv_folds = 0
             self.tune_time = 0

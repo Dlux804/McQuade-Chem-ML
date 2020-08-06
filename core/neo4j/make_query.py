@@ -2,6 +2,7 @@
 Objective: Batch submit time and memory intensive imports using APOC.
 """
 from py2neo import ClientError
+# TODO Add docstring
 
 
 class Query:

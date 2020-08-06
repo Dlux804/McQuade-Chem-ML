@@ -36,8 +36,8 @@ class Query:
         else:
             mol_rdkit2d_query = """
             UNWIND $molecule as molecule
-            MERGE (rdkit2d:FeatureMethod {feature:"rdkit2d"})
             MATCH (mol:Molecule {SMILES: molecule.smiles})
+            MERGE (rdkit2d:FeatureMethod {feature:"rdkit2d"})
             FOREACH (feat in molecule.feats|
                 MERGE (feature:Feature {name: feat.name})
                 MERGE (mol)-[:HAS_DESCRIPTOR {value: feat.value, feat_name:feat.name}]->(feature)

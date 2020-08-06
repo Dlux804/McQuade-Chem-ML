@@ -9,11 +9,12 @@ from time import sleep
 from core.features import featurize
 from core.Get_Classification import get_classification_targets
 from core.Get_Task_Type import Get_Task_Type_1
+
 import pandas as pd
 
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
-
+from core.neo4j import output_to_neo4j
 
 def main():
     os.chdir(ROOT_DIR)  # Start in root directory
@@ -125,8 +126,8 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
-                                tune=True, cv=3, opt_iter=100)
+        model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
+                                tune=False, cv=3, opt_iter=3)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -136,7 +137,8 @@ def single_model():
 
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split()
+        val = 0.0
+        model1.data_split(val=val)
         model1.reg()
         model1.run()
         model1.analyze()
@@ -145,7 +147,7 @@ def single_model():
         model1.store()
         model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j():
@@ -198,10 +200,16 @@ def example_load():
     mse = mean_squared_error(pva['actual'], pva['predicted'])
     rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
+def zip2neo():
+    """Function for automated loading of previously run models into neo4j."""
+    output_to_neo4j.output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+
+
 
 if __name__ == "__main__":
-      main()
-#    single_model()
+    # main()
+    single_model()
+    zip2neo()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

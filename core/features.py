@@ -17,7 +17,6 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     Keyword arguments:
     feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
-
     feat_meth = self.feat_meth
     df = self.data
     df['smiles'] = canonical_smiles(list(df['smiles']))  # Turn SMILES into CANONICAL SMILES
@@ -31,6 +30,9 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
         feat_meth = [int(x) for x in input(
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
     selected_feat = [feat_sets[i] for i in feat_meth]
+
+    self.selected_feat_string = '-'.join(selected_feat) # This variable will be used later in train.py for giving classification roc graph a unique file name.
+
     self.feat_method_name = selected_feat
 
     # Get data from MySql if called

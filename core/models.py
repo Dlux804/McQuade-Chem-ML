@@ -29,7 +29,7 @@ class MlModel:  # TODO update documentation here
     from core.regressors import get_regressor, hyperTune
     from core.grid import make_grid
     from core.train import train_reg, train_cls
-    from core.analysis import impgraph, pva_graph
+    from core.analysis import impgraph, pva_graph, classification_graphs
     from core.classifiers import get_classifier
 
     from core.features import featurize, data_split
@@ -47,10 +47,12 @@ class MlModel:  # TODO update documentation here
         self.dataset = dataset
 
         # Sets self.task_type based on which dataset is being used.
-        if self.dataset in cds or self.dataset in multi_label_classification_datasets:
-            self.task_type = 'classification'
+        if self.dataset in cds:
+            self.task_type = 'single_label_classification'
         elif self.dataset in rds:
             self.task_type = 'regression'
+        elif self.dataset in multi_label_classification_datasets:
+            self.task_type = 'multi_label_classification'
         else:
             raise Exception(
                 '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
@@ -70,7 +72,7 @@ class MlModel:  # TODO update documentation here
         # ingest data.  collect full data frame (self.data)
         # collect pandas series of the SMILES (self.smiles_col)
 
-        if self.dataset in multi_label_classification_datasets:
+        if self.task_type == 'multi_label_classification':
             self.data, self.smiles_series = ingest.load_smiles(self, dataset,
                                                                drop=False)  # Makes drop = False for multi-target classification
         else:
@@ -95,7 +97,7 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'regression':
             self.get_regressor(call=False)  # returns instantiated model estimator
 
-        if self.task_type == 'classification':
+        if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.get_classifier()
 
     def run(self):
@@ -109,19 +111,22 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'regression':
             self.train_reg()
 
-        if self.task_type == 'classification':
+        if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.train_cls()
 
     def analyze(self):
         # Variable importance for tree based estimators
-        # if self.feat_meth == [0]:
+                # if self.feat_meth == [0]:
         #     self.permutation_importance()
-        if self.algorithm in ['rf', 'gdb', 'rfc', 'ada'] and self.feat_meth == [0]:
+        if self.algorithm in ['rf', 'gdb', 'ada'] and self.feat_meth == [0]:
             self.impgraph()
 
         # make predicted vs actual graph
-        self.pva_graph()
-        # TODO Make classification graphing function
+        if self.task_type == 'regression':
+            self.pva_graph()
+
+        if self.task_type in ['single_label_classification', 'multi_label_classification']:
+            self.classification_graphs()
 
     def to_neo4j(self, port, username, password):
         # Create Neo4j graphs from pipeline

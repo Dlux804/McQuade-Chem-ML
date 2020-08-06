@@ -65,7 +65,7 @@ def represent_algorithm():
     This representation follows the "Letters and Numbers" rule explained in naming_schemes_v2.pptx in the naming branch
     :return:
     """
-    algorithm_list = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn', 'nn', 'svc', 'knc', 'rfc']  # Out current supported algorithm
+    algorithm_list = ['ada', 'rf', 'gdb', 'mlp', 'knn', 'nn', 'svm']  # Out current supported algorithm
     represent = [algor[0].upper() for algor in algorithm_list]  # List of algorithm's first letter with upper case
     dictionary = {}
     for algor, rep in zip(algorithm_list, represent):  # Looping through two lists at the same time

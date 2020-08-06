@@ -8,7 +8,7 @@ from rdkit.Chem import FragmentCatalog
 from rdkit import Chem
 from py2neo import Graph
 import pandas as pd
-from core.neo4j import batch_submit
+from core.neo4j.make_query import Query
 # Connect to Neo4j Destop.
 
 # TODO REDO DOCSTRINGS
@@ -46,10 +46,11 @@ def fragments_to_neo(row, size, g):
             usually much less than the actual amount). I'm not sure why
     :param g:
     :param row:
+    :param size
     :return:
     """
 
-    fragment_query = batch_submit.__fragment_query__(size)
+    fragment_query = Query(size=size).__fragment_query__()  # Call query
     smiles = str(row['smiles'])
 
     # for smiles in tqdm(canonical_smiles, desc="Creating molecular fragments for SMILES"):

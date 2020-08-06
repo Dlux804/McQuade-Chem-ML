@@ -5,7 +5,7 @@ Objective: The goal of this script is to create relationships in Neo4j directly 
 from py2neo import Graph
 from core.neo4j.nodes_to_neo4j import prep
 import time
-
+from core.neo4j.make_query import Query
 
 # Merge to Neo4j Destop.
 
@@ -13,7 +13,7 @@ import time
 # TODO REDO DOCSTRINGS
 
 
-def relationships(self):
+def relationships(self, from_output=False):
     """
     Objective: Create relationships in Neo4j based on our ontology directly from the pipeline.
     Intent: I want this script to only create relationships for the nodes in Neo4j. There are also some node merging
@@ -23,10 +23,11 @@ def relationships(self):
     """
     print("Creating relationships...")
     t1 = time.perf_counter()
-    r2, mse, rmse, df_smiles, test_mol_dict = prep(self)
+    df_smiles, test_mol_dict, data_size = prep(self)
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
-
+    query = Query(size=data_size)
+    query.__check_for_constraints__(g)
     # # Update molecules's properties: target value, dataset, target name
     # g.evaluate("""
     # MATCH (mol:Molecule {SMILES: $mols.smiles, name: "Molecule"})
@@ -71,20 +72,20 @@ def relationships(self):
 
     # Merge MLModel to Algorithm
     if self.tuned:  # If tuned
-        param_dict = dict(self.params)
-        print(param_dict)
+        if not from_output:
+            self.params = dict(self.params)
         try:
             g.evaluate("""
                 MATCH (algor:Algorithm {name: $algorithm, tuned: $tuned}), (model:MLModel {name: $run_name})
                 merge (model)-[r:USES_ALGORITHM]->(algor) Set r = $param, r.tuned = $tuned """,
-                           parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'param': param_dict,
+                           parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'param': self.params,
                                        'tuned': self.tuned})
         except TypeError:  # Adaboost's parameter causing problem
-            param_dict['base_estimator'] = str(param_dict['base_estimator'])  # Turn based_estimator to string
+            self.params['base_estimator'] = str(self.params['base_estimator'])  # Turn based_estimator to string
             g.evaluate("""
                     MATCH (algor:Algorithm {name: $algorithm, tuned: $tuned}), (model:MLModel {name: $run_name})
                     merge (model)-[r:USES_ALGORITHM]->(algor) Set r = $param, r.tuned = $tuned """,
-                       parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'param': param_dict,
+                       parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'param': self.params,
                                    'tuned': self.tuned})
     else:  # If not tuned
         g.evaluate("""MATCH (algor:Algorithm {name: $algorithm, tuned: $tuned}), (model:MLModel {name: $run_name})
@@ -133,10 +134,11 @@ def relationships(self):
     g.evaluate("""
             MATCH (testset:TestSet {testsize: $test_size, random_seed: $random_seed}), (model:MLModel {name: $run_name})
             merge (model)-[r:PREDICTS]->(testset)
-            Set r.rmse = $rmse, r.mse = $mse, r.r2 = $r2
+            Set r.rmse_avg = $rmse, r.mse_avg = $mse, r.r2_avg = $r2
                """,
-               parameters={'test_size': self.n_test, 'rmse': rmse, 'mse': mse, 'r2': r2, 'run_name': self.run_name,
-                           'random_seed': self.random_seed})
+               parameters={'test_size': self.n_test, 'rmse': self.predictions_stats['rmse_avg'],
+                           'mse': self.predictions_stats['mse_avg'], 'r2': self.predictions_stats['r2_avg'],
+                           'run_name': self.run_name, 'random_seed': self.random_seed})
 
     # MLModel to feature method
     g.evaluate("""
@@ -151,7 +153,7 @@ def relationships(self):
                (trainset:TrainSet {trainsize: $training_size, random_seed: $random_seed})
                merge (trainset)<-[:MAKES_SPLIT]-(split)-[:MAKES_SPLIT]->(testset)""",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
-                           'test_size': self.n_test, 'rmse': rmse, 'training_size': self.n_train,
+                           'test_size': self.n_test, 'training_size': self.n_train,
                            'random_seed': self.random_seed})
 
     # Merge Dataset to TrainSet and TestSet
@@ -160,7 +162,7 @@ def relationships(self):
         random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, random_seed: $random_seed})
         MERGE (trainset)<-[:SPLITS_INTO]-(dataset)-[:SPLITS_INTO]->(testset)
     """, parameters={'dataset': self.dataset, 'training_size': self.n_train, 'random_seed': self.random_seed,
-                     'test_size': self.n_test, 'rmse': rmse})
+                     'test_size': self.n_test})
 
     # Merge TrainSet with its molecules
     g.evaluate("""

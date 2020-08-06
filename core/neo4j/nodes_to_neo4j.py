@@ -9,7 +9,7 @@ from core.neo4j.fragments import fragments_to_neo
 from core.neo4j import fragments
 import pandas as pd
 import time
-from core.neo4j import batch_submit
+from core.neo4j.make_query import Query
 
 
 def prep(self):
@@ -19,15 +19,13 @@ def prep(self):
             class instances for these data since they can be easily obtained with one ot two lines of code each.
     """
     pva = self.predictions
-    r2 = r2_score(pva['actual'], pva['pred_avg'])  # r2 values
-    mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
-    rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
+    data_size = len(self.data['smiles'])
     # self.data['smiles'] = canonical_smiles
     df_smiles = self.data.iloc[:, [1, 2]]
 
     test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
                                   'uncertainty': list(pva['pred_std'])}).to_dict('records')
-    return r2, mse, rmse, df_smiles, test_mol_dict
+    return df_smiles, test_mol_dict, data_size
 
 
 def __dataset_record__(self, g):
@@ -43,20 +41,17 @@ def __dataset_record__(self, g):
 
 
 def __make_molecules__(df_records, dataset, target_name, size, g):
-    """"""
+    """
+    Objective: Create SMILES nodes and
+    :param df_records:
+    :param dataset:
+    :param target_name:
+    :param size:
+    :param g:
+    :return:
+    """
     t1 = time.perf_counter()
-    # molecule_query = """
-    #     UNWIND $molecules as molecule
-    #     With molecule as molecule, $dataset as dataset, $target_name as target_name
-    #     CALL apoc.periodic.iterate('
-    #     MERGE (mol:Molecule {SMILES: $mols.smiles, name: "Molecule"})
-    #     Set mol.dataset = [$data], mol.target = [$mols.target], mol.target_name = [$exp]
-    #     ',';',
-    #     {batchSize:100000, parallel:true, params:{mols:molecule, data:dataset, exp:target_name}}) YIELD batches, total
-    #     RETURN batches, total
-    #
-    #     """
-    molecule_query = batch_submit.__make_molecules_query__(size)
+    molecule_query = Query(size=size).__make_molecules_query__()
     g.evaluate(molecule_query, parameters={'molecules': df_records, 'dataset': dataset, 'target_name': target_name})
     t2 = time.perf_counter()
     print(f"Finished creating molecules in {t2 - t1}sec")
@@ -71,23 +66,7 @@ def __merge_molecules_and_rdkit2d__(row, size, g):
     :return:
         """
 
-    # mol_rdkit2d_query = """
-    #     # UNWIND $molecule as molecule
-    #     # With molecule
-    #     # CALL apoc.periodic.iterate('
-    #     # Match (mol:Molecule {SMILES: $mols.smiles, name: "Molecule"})
-    #     # MERGE (rdkit2d:FeatureMethod {feature:"rdkit2d"})
-    #     #
-    #     #     FOREACH (feat in $mols.feats|
-    #     #         MERGE (feature:Feature {name: feat.name})
-    #     #         MERGE (mol)-[:HAS_DESCRIPTOR {value: feat.value, feat_name:feat.name}]->(feature)
-    #     #         MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
-    #     #             )
-    #     # ',';',
-    #     #     {batchSize:100000, parallel:true, params:{mols:molecule}}) YIELD batches, total
-    #     # RETURN batches, total
-    #     # """
-    mol_rdkit2d_query = batch_submit.__molecules_and_rdkit2d_query__(size)
+    mol_rdkit2d_query = Query(size=size).__molecules_and_rdkit2d_query__()
     row = dict(row)
     smiles = row.pop('smiles')
 
@@ -98,7 +77,7 @@ def __merge_molecules_and_rdkit2d__(row, size, g):
     tx.evaluate(mol_rdkit2d_query, parameters={"molecule": molecule})
 
 
-def nodes(self):
+def nodes(self, from_output=False):
     """
     Objective: Create or merge Neo4j nodes from data collected from the ML pipeline
     Intent: While most of the nodes are merged, some need to be created instead because:
@@ -117,9 +96,10 @@ def nodes(self):
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
 
-    r2, mse, rmse, df_smiles, test_mol_dict = prep(self)
+    df_smiles, test_mol_dict, data_size = prep(self)
 
-    data_size = len(self.data['smiles'])
+    query = Query(size=data_size)
+    query.__check_for_constraints__(g)
 
     # Make algorithm node
     if self.algorithm == "nn":
@@ -183,13 +163,13 @@ def nodes(self):
     if record > 0:
         print(f"This dataset, {self.dataset} already exists in the database. Skipping fragments, and rdkit2d features")
     else:  # If unique dataset
-
+        __make_molecules__(df_records=df_smiles.to_dict('records'), dataset=self.dataset, target_name=self.target_name,
+                           size=data_size, g=g)  # Make molecules
         t3 = time.perf_counter()
         self.data[['smiles']].apply(fragments_to_neo, size=data_size, g=g, axis=1)  # Create molecular fragments
         t4 = time.perf_counter()
         print(f"Finished creating molecular fragments in {t4 - t3}sec")
-        __make_molecules__(df_records=df_smiles.to_dict('records'), dataset=self.dataset, target_name=self.target_name,
-                           size=data_size, g=g)  # Make molecules
+
         if 'rdkit2d' in self.feat_method_name:  # rdkit2d in feat method name
             t5 = time.perf_counter()
             print("Creating rdki2d features")

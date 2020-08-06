@@ -181,6 +181,7 @@ def data_split(self, test=0.2, val=0, random=None):
 
     else:
         pval = 0
+        self.n_val = 0
 
     self.n_train = self.train_features.shape[0]
     ptrain = self.n_train / self.n_tot * 100

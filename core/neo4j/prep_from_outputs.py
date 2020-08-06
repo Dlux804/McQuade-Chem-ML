@@ -18,6 +18,12 @@ def split_molecules(df_from_data, split):
     return df_molecules
 
 
+def str2bool(v):
+    return v.lower() in ("yes", "true", "t", "1")
+
+
+
+
 class Prep:
     """
     Objective: Class containing all the data needed for creating nodes and relationships from output files
@@ -39,7 +45,7 @@ class Prep:
         self.run_name = df_from_attributes['run_name'].values[0]
         self.algorithm = df_from_attributes['algorithm'].values[0]
         self.feat_method_name = df_from_attributes['feat_method_name'].values[0]
-        self.tuned = str(df_from_attributes['tuned'].values[0])
+        self.tuned = str2bool(str(df_from_attributes['tuned'].values[0]))
         self.n_test = int(df_from_attributes['n_test'])
         self.feat_time = float(df_from_attributes['feat_time'])
         self.date = df_from_attributes['date'].values[0]

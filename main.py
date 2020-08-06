@@ -127,7 +127,7 @@ def single_model():
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
         model1 = models.MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
-                                tune=False, cv=3, opt_iter=3)
+                                tune=True, cv=3, opt_iter=3)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -208,7 +208,7 @@ def zip2neo():
 
 if __name__ == "__main__":
     # main()
-    single_model()
+    # single_model()
     zip2neo()
     # example_load()
     # example_run_with_mysql_and_neo4j()

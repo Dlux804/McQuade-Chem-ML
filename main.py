@@ -1,6 +1,6 @@
 # TODO: Make main function that asks user what models they would like to initiate
 
-from core import models, Get_Classification
+from core import models, Get_Classification, Get_Task_Type
 from core.storage.misc import cd
 from core.storage.storage import pickle_model, unpickle_model
 import os
@@ -8,6 +8,7 @@ import pathlib
 from time import sleep
 from core.features import featurize
 from core.Get_Classification import get_classification_targets
+from core.Get_Task_Type import Get_Task_Type_1
 import pandas as pd
 
 # Creating a global variable to be imported from all other models
@@ -18,109 +19,98 @@ def main():
     os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
 
-    # Asking the user to decide between running classification models or regression models
-    c = str(input("Enter c for classification, r for regression: "))
+    # list of all learning algorithms
+#    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    learner = ['knn']
 
-    # Sets up learner and datasets for classification.
-    if c == 'c':
-        # list of available classification learning algorithms
-        learner = ['svc', 'knc', 'rf']
-        #learner = [] # Use this line to test specific models instead of iterating
+    # list of available classification learning algorithms for reference/testing
+    #learner = ['svm', 'knn', 'rf']
 
+    # list of available regression learning algorithms for reference/testing
+#    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
 
-        targets = None
-        sets = {
-            'BBBP.csv': targets,
-            'sider.csv': targets,
-            'clintox.csv': targets,
-            'bace.csv': targets,
-        }
+    # All data sets in dict
+    targets = None
+    sets = {
+       'BBBP.csv': targets,
+       'sider.csv': targets,
+       'clintox.csv': targets,
+       'bace.csv': targets,
+         'ESOL.csv': 'water-sol',
+         'Lipophilicity-ID.csv': 'exp',
+         'water-energy.csv': 'expt',
+         'logP14k.csv': 'Kow',
+         'jak2_pic50.csv': 'pIC50'
+    }
 
+    # classification data sets for reference/testing
+    # sets = {
+    #     'BBBP.csv': targets,
+        # 'sider.csv': targets,
+        # 'clintox.csv': targets,
+        # 'bace.csv': targets,
+#    }
 
-    # Sets up learner, featurizations, and data sets for regression
-    if c == 'r':
-        # list of available regression learning algorithms
-        learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-        #learner = ['gdb', 'nn']
+    # regression data sets for reference/testing
+    # sets = {
+    #     'ESOL.csv': 'water-sol',
+    #     'Lipophilicity-ID.csv': 'exp',
+    #     'water-energy.csv': 'expt',
+    #     'logP14k.csv': 'Kow',
+    #     'jak2_pic50.csv': 'pIC50'
+    # }
 
-
-        # list of available featurization methods
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
-                 [5]]
-        feats = [[0]]#, [0, 2]]  # Change this to change which featurizations are being tested (for regression)
-
-        # regression data sets in dict. Key: Filename.csv , Value: Target column header
-        sets = {
-            'ESOL.csv': 'water-sol',
-            # 'Lipophilicity-ID.csv': 'exp',
-            # 'water-energy.csv': 'expt',
-            # 'logP14k.csv': 'Kow',
-            # 'jak2_pic50.csv': 'pIC50'
-        }
-
-    for alg in learner:  # loop over all learning algorithms
-        # The following if statements set featurization options based on if the
-        # model needs normalized data (currently only set up for the classification models)
-        if c == 'c':
-            feats = Get_Classification.get_classification_feats(alg) # Selects featurizations for classification based on the model being ran
-
+    for alg in learner: # loop over all learning algorithms
+        feats=[[0], [0,2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
+                  [5], [6]] # Use this line to select specific featurizations
+        # feats = [[2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items(): # loop over dataset dictionary
 
+                # This gets the target columns for classification data sets (Using target lists in the dictionary causes errors later in the workflow)
+                if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
+                    target = Get_Classification.get_classification_targets(data)
 
-                if c == 'r':  # Runs the models/featurizations for regression
+                # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
+                checker, task_type = Get_Task_Type_1(data,alg)
+                if checker == 0:
+                    pass
+                else:
                     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
                         print('Model Type:', alg)
                         print('Featurization:', method)
                         print('Dataset:', data)
+                        print('Target(s):', target)
+                        print('Task type:', task_type)
                         print()
                         print('Initializing model...', end=' ', flush=True)
                         # initiate model class with algorithm, dataset and target
-                        model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                tune=False, cv=3, opt_iter=25)
+
+                        model = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
+                                               tune=False, cv=3, opt_iter=25)
                         print('Done.\n')
 
-                    with cd('dataFiles'):  # Have files output to output
-                        model1.featurize()
+                    with cd('dataFiles'):
+                        # Runs classification model
+                        model.featurize()  # Featurize molecules
                         val = 0.0
                         if alg == 'nn':
                             val = 0.1
-
-                        model1.data_split(val=val)
-                        model1.reg()
-                        model1.run()
-                        model1.analyze()
-                        if model1.algorithm != 'nn':
-                            model1.pickle_model()
-
-                        model1.store()
-                        model1.org_files(zip_only=True)
-
-                if c == 'c':
-                    targets = Get_Classification.get_classification_targets(data)  # Gets targets for classification based on the data set being used
-
-                    if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
-                        pass
-                    else:
-                        # change active directory
-                        with cd('dataFiles'):
-                            print('Now in:', os.getcwd())
-                            print('Initializing model...', end=' ', flush=True)
-
-                            # initiate model class with algorithm, dataset and target
-                            model = models.MlModel(alg, data, targets, method)
-                            print('done.')
-
-                        print('Model Type:', alg)
-                        print('Featurization:', method)
-                        print('Dataset:', data)
-                        print('Target(s):', targets)
-                        print()
-                        # Runs classification model
-                        model.featurize()  # Featurize molecules
-                        model.data_split()
+                        model.data_split(val=val)
                         model.reg()
                         model.run()  # Runs the models/featurizations for classification
+                        model.analyze()
+                        if model.algorithm != 'nn':
+                            model.pickle_model()
+                        model.store()
+                        model.org_files(zip_only=True)
+
+                    # Have files output to output
+
+
+
+
+
 
 
 def single_model():
@@ -135,9 +125,8 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-
-        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0], tune=True,
-                                cv=2, opt_iter=2)
+        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
+                                tune=True, cv=3, opt_iter=100)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -147,17 +136,16 @@ def single_model():
 
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split(val=0.2)
+        model1.data_split()
         model1.reg()
         model1.run()
         model1.analyze()
         if model1.algorithm != 'nn':  # issues pickling NN models
             model1.pickle_model()
-
         model1.store()
         model1.org_files(zip_only=True)
-        model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j()
+        # model1.QsarDB_export(zip_output=True)
+        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j():
@@ -212,8 +200,8 @@ def example_load():
 
 
 if __name__ == "__main__":
-    # main()
-    single_model()
+      main()
+#    single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

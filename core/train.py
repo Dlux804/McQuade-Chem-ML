@@ -7,8 +7,9 @@ from sklearn.model_selection import cross_val_predict
 import pandas as pd
 from tqdm import tqdm
 from time import sleep
-
-
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve
+from sklearn.metrics import precision_recall_curve
 def train_reg(self,n=5):
     """
     Function to train the model n times and collect basic statistics about results.
@@ -32,12 +33,12 @@ def train_reg(self,n=5):
         start_time = time()
 
         if self.algorithm == 'nn':  # needs fit_params to set epochs and callback
-            self.regressor.fit(self.train_features, self.train_target, **self.fit_params)
+            self.estimator.fit(self.train_features, self.train_target, **self.fit_params)
         else:
-            self.regressor.fit(self.train_features, self.train_target)
+            self.estimator.fit(self.train_features, self.train_target)
 
         # Make predictions
-        predictions = self.regressor.predict(self.test_features)
+        predictions = self.estimator.predict(self.test_features)
         done_time = time()
         fit_time = done_time - start_time
 
@@ -96,20 +97,19 @@ def train_cls(self, n=5):
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         print()
         start_time = time()
-        self.regressor.fit(self.train_features, self.train_target)
+        self.estimator.fit(self.train_features, self.train_target)
 
         # Make predictions
-        predictions = self.regressor.predict(self.test_features)
+        predictions = self.estimator.predict(self.test_features)
         done_time = time()
         fit_time = done_time - start_time
-        if self.dataset in ['sider.csv', 'clintox.csv']: # Contains multi-label evaluation methods, since sider data set and clintox data set are done with multi-target classification.
+        if self.task_type == 'multi_label_classification': # Contains multi-label evaluation methods, since sider data set and clintox data set are done with multi-target classification.
             conf = multilabel_confusion_matrix(self.test_target, predictions)
             print("Confusion matrix for each individual label (see key above, labeled as 'target(s):'): ")
             print(conf)
             print()
 
-            RF_pred = cross_val_predict(self.regressor, self.train_features, self.train_target, cv=3)
-            f1_score1[i] = f1_score(self.train_target, RF_pred, average="macro")
+            f1_score1[i] = f1_score(self.test_target, predictions, average="macro")
 
             print()
             auc[i] = roc_auc_score(self.test_target, predictions)
@@ -119,17 +119,26 @@ def train_cls(self, n=5):
             cls = pd.DataFrame([], columns=['actual', 'predicted'])
             cls['actual'] = self.test_target
             cls['predicted'] = predictions
+
             acc[i] = accuracy_score(cls['actual'], cls['predicted'])
 
-            # TODO fix confusion matrix and classificaiton report metrics
+
+            f1_score1[i] = f1_score(cls['actual'], cls['predicted'], average="macro")
+
+
             conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
             print()
             print('Confusion matrix for this run: ')
             print(conf[i])
 
-            clsrep = classification_report(cls['actual'], cls['predicted'])
+
+            clsrep = classification_report(cls['actual'], cls['predicted'], output_dict=True)
+            report = classification_report(cls['actual'], cls['predicted'])
             print('Classification report for this run: ')
-            print(clsrep)
+            print(report)
+            self.clsrepdf = pd.DataFrame(clsrep).transpose()
+
+
             auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
             t[i] = fit_time
 
@@ -159,19 +168,19 @@ def train_cls(self, n=5):
         'f1_score_avg': f1_score1.mean(),
         'f1_score_std': f1_score1.std()
     }
-    self.predictions = cls_multi
+    self.predictions = predictions
     self.predictions_stats = stats
+    self.auc_avg = stats['auc_avg']
+    self.acc_avg = stats['acc_avg']
+    self.f1_score_avg = stats['f1_score_avg']
 
-    if self.dataset in ['sider.csv', 'clintox.csv']:
+    if self.task_type == 'multi_label_classification':
         print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
         print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
         print()
     else:
         print('Average accuracy score = %.3f' % stats['acc_avg'], '+- %.3f' % stats['acc_std'])
         print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
+        print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
         print()
-
-
-
-
 

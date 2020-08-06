@@ -8,7 +8,7 @@ from rdkit.Chem import FragmentCatalog
 from rdkit import Chem
 from py2neo import Graph
 import pandas as pd
-# import py2neo
+from core.neo4j import batch_submit
 # Connect to Neo4j Destop.
 
 # TODO REDO DOCSTRINGS
@@ -36,7 +36,7 @@ def canonical_smiles(smiles_list):
     return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
 
 
-def fragments_to_neo(row, g):
+def fragments_to_neo(row, size, g):
     """
     Objective: Create fragments and import them into Neo4j based on our ontology
     Intent: This script is based on Adam's "mol_frag.ipynb" file in his deepml branch, which is based on rdkit's
@@ -49,19 +49,7 @@ def fragments_to_neo(row, g):
     :return:
     """
 
-    mol_feat_query = """
-        UNWIND $fragments as fragment
-        With fragment
-        CALL apoc.periodic.iterate('
-        MERGE (mol:Molecule {SMILES: $frags.smiles})
-            FOREACH (value in $frags.fragments|
-                MERGE (fragment:Fragments {name: value.fragments})
-                MERGE (mol)-[:HAS_FRAGMENTS]->(fragment)
-                    )
-                    ',';',
-        {batchSize:100000, parallel:true, params:{frags:fragment}}) YIELD batches, total
-    RETURN batches, total
-        """
+    fragment_query = batch_submit.__fragment_query__(size)
     smiles = str(row['smiles'])
 
     # for smiles in tqdm(canonical_smiles, desc="Creating molecular fragments for SMILES"):
@@ -79,4 +67,4 @@ def fragments_to_neo(row, g):
     fragment_df = pd.DataFrame({'fragments': frag_list}).to_dict('records')
     fragment = {'smiles': smiles, 'fragments': fragment_df}
     tx = g.begin(autocommit=True)
-    tx.evaluate(mol_feat_query, parameters={"fragments": fragment})
+    tx.evaluate(fragment_query, parameters={"fragments": fragment})

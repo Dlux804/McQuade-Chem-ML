@@ -135,18 +135,17 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
-                                tune=True, cv=3, opt_iter=100)
+        model1 = models.MlModel(algorithm='svr', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[3],
+                                tune=False, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)
         print('Dataset:', model1.dataset)
         print()
-
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split()
+        model1.data_split(val=0.1)
         model1.reg()
         model1.run()
         model1.analyze()

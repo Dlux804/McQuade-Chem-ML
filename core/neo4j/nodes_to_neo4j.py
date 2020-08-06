@@ -10,6 +10,7 @@ from core.neo4j import fragments
 import pandas as pd
 import time
 from core.neo4j.make_query import Query
+from core.storage.dictionary import target_name_grid
 # TODO Add docstring
 
 
@@ -41,7 +42,7 @@ def __dataset_record__(self, g):
     return len(list(record))
 
 
-def __make_molecules__(df_records, dataset, target_name, size, g):
+def __make_molecules__(df_records, dataset, size, g):
     """
     Objective: Create SMILES nodes and
     :param df_records:
@@ -52,8 +53,8 @@ def __make_molecules__(df_records, dataset, target_name, size, g):
     :return:
     """
     t1 = time.perf_counter()
-    molecule_query = Query(size=size).__make_molecules_query__()
-    g.evaluate(molecule_query, parameters={'molecules': df_records, 'dataset': dataset, 'target_name': target_name})
+    molecule_query = Query(size=size).__make_molecules_query__(target_name=target_name_grid(dataset))
+    g.evaluate(molecule_query, parameters={'molecules': df_records, 'dataset': dataset})
     t2 = time.perf_counter()
     print(f"Finished creating molecules in {t2 - t1}sec")
 
@@ -164,8 +165,8 @@ def nodes(self, from_output=False):
     if record > 0:
         print(f"This dataset, {self.dataset} already exists in the database. Skipping fragments, and rdkit2d features")
     else:  # If unique dataset
-        __make_molecules__(df_records=df_smiles.to_dict('records'), dataset=self.dataset, target_name=self.target_name,
-                           size=data_size, g=g)  # Make molecules
+        # Make molecules
+        __make_molecules__(df_records=df_smiles.to_dict('records'), dataset=self.dataset, size=data_size, g=g)
         t3 = time.perf_counter()
         self.data[['smiles']].apply(fragments_to_neo, size=data_size, g=g, axis=1)  # Create molecular fragments
         t4 = time.perf_counter()

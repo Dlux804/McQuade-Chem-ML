@@ -48,25 +48,25 @@ class Query:
         """
         return mol_rdkit2d_query
 
-    def __make_molecules_query__(self):
+    def __make_molecules_query__(self, target_name):
         """"""
         if self.size >= 10000:
             molecule_query = """
         UNWIND $molecules as molecule
-        With molecule as molecule, $dataset as dataset, $target_name as target_name
+        With molecule as molecule, $dataset as dataset
         CALL apoc.periodic.iterate('
         MERGE (mol:Molecule {SMILES: $mols.smiles, name: "Molecule"})
-        Set mol.dataset = [$data], mol.target = [$mols.target]
+        Set mol.dataset = [$data], mol.%s = [$mols.target]
         ',';',
-        {batchSize:100000, parallel:true, params:{mols:molecule, data:dataset, exp:target_name}}) YIELD batches, total
+        {batchSize:100000, parallel:true, params:{mols:molecule, data:dataset}}) YIELD batches, total
             RETURN batches, total
-                """
+                """ % target_name
         else:
             molecule_query = """
                     UNWIND $molecules as molecule
                     MERGE (mol:Molecule {SMILES: molecule.smiles, name: "Molecule"})
-                    Set mol.dataset = [$dataset], mol.target = [molecule.target], mol.target_name = [$target_name]
-                    """
+                    Set mol.dataset = [$dataset], mol.%s = [molecule.target]
+                    """ % target_name
         return molecule_query
 
     def __fragment_query__(self):

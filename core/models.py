@@ -1,17 +1,17 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade and Ferri research groups.
 '''
-from core import ingest
-from core.storage.mysql_storage import MLMySqlConn
-from numpy.random import randint
-from core import name
+from timeit import default_timer
 
-from core.neo4j.nodes_to_neo4j import nodes
-from core.neo4j.rel_to_neo4j import relationships
+from numpy.random import randint
 from rdkit import RDLogger
-import time
 from py2neo import Graph
 from sqlalchemy.exc import OperationalError
+
+from core.ingest import load_smiles
+from core.name import name
+from core.neo4j import nodes, relationships
+from core.storage import MLMySqlConn
 
 
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']
@@ -33,9 +33,7 @@ class MlModel:  # TODO update documentation here
     from core.classifiers import get_classifier
 
     from core.features import featurize, data_split
-    from core.storage.storage import pickle_model, store, org_files
-    from core.storage.mysql_storage import featurize_from_mysql
-    from core.storage.qsardq_export import QsarDB_export
+    from core.storage import pickle_model, store, org_files, featurize_from_mysql, QsarDB_export
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """
@@ -72,14 +70,14 @@ class MlModel:  # TODO update documentation here
         # ingest data.  collect full data frame (self.data)
         # collect pandas series of the SMILES (self.smiles_col)
 
-        if self.task_type == 'multi_label_classification':
-            self.data, self.smiles_series = ingest.load_smiles(self, dataset,
-                                                               drop=False)  # Makes drop = False for multi-target classification
+        if self.dataset in multi_label_classification_datasets:
+            # Makes drop = False for multi-target classification
+            self.data, self.smiles_series = load_smiles(self, dataset, drop=False)
         else:
-            self.data, self.smiles_series = ingest.load_smiles(self, dataset)
+            self.data, self.smiles_series = load_smiles(self, dataset)
 
         # define run name used to save all outputs of model
-        self.run_name = name.name(self)
+        self.run_name = name(self)
 
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None
@@ -130,14 +128,14 @@ class MlModel:  # TODO update documentation here
 
     def to_neo4j(self, port, username, password):
         # Create Neo4j graphs from pipeline
-        t1 = time.perf_counter()
+        t1 = default_timer()
         self.neo4j_params = {'port': port, 'username': username, 'password': password}  # Pass Neo4j Parameters
         Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Test connection to Neo4j
         nodes(self)  # Create nodes
         relationships(self)  # Create relationships
-        t2 = time.perf_counter()
-        print(f"Time it takes to finish graphing {self.run_name}: {t2 - t1}sec")
+        t2 = default_timer() - t1
+        # print(f"Time it takes to finish graphing {self.run_name}: {t2}sec")
 
     def connect_mysql(self, user, password, host, database, initialize_data=False):
         # Gather MySql Parameters

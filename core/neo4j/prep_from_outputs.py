@@ -2,12 +2,14 @@
 Objective: This script stores all data from output files. The data will then be used to create nodes and
 relationships based on our ontology to Neo4j
 """
-from core.neo4j import rel_to_neo4j, nodes_to_neo4j, fragments
-import numpy as np
-from sklearn.metrics import mean_squared_error, r2_score
-import pandas as pd
 import re
+
+import numpy as np
+import pandas as pd
 from py2neo import Graph
+from sklearn.metrics import mean_squared_error, r2_score
+
+from core.neo4j import rel_to_neo4j, nodes_to_neo4j, fragments
 
 # TODO ADD DOCSTRING EXPLAINING ALL VARIABLES
 

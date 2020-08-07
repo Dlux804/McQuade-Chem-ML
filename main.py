@@ -1,15 +1,12 @@
 # TODO: Make main function that asks user what models they would like to initiate
-
-from core import models, Get_Classification, Get_Task_Type
-from core.storage.misc import cd
-from core.storage.storage import pickle_model, unpickle_model
 import os
 import pathlib
-from time import sleep
-from core.features import featurize
-from core.Get_Classification import get_classification_targets
-from core.Get_Task_Type import Get_Task_Type_1
+
 import pandas as pd
+from timeit import default_timer
+
+from core import MlModel, get_classification_targets, Get_Task_Type_1
+from core.storage import cd, pickle_model, unpickle_model
 
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
@@ -69,7 +66,7 @@ def main():
 
                 # This gets the target columns for classification data sets (Using target lists in the dictionary causes errors later in the workflow)
                 if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
-                    target = Get_Classification.get_classification_targets(data)
+                    target = get_classification_targets(data)
 
                 # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
                 checker, task_type = Get_Task_Type_1(data,alg)
@@ -86,7 +83,7 @@ def main():
                         print('Initializing model...', end=' ', flush=True)
                         # initiate model class with algorithm, dataset and target
 
-                        model = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
+                        model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
                                                tune=False, cv=3, opt_iter=25)
                         print('Done.\n')
 
@@ -108,11 +105,6 @@ def main():
                     # Have files output to output
 
 
-
-
-
-
-
 def single_model():
     """
     This model is for debugging, similiar to the lines at the bottom of models.py. This is meant
@@ -125,8 +117,8 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
-                                tune=True, cv=3, opt_iter=100)
+        model1 = MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
+                                tune=True, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -148,12 +140,12 @@ def single_model():
         model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
-def example_run_with_mysql_and_neo4j():
+def example_run_with_mysql_and_neo4j(dataset, target):
     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = models.MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0, 4],
+        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0],
                                 tune=True, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
@@ -162,20 +154,22 @@ def example_run_with_mysql_and_neo4j():
         print()
 
     with cd('output'):  # Have files output to output
-        model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases',
-                             initialize_data=True)
-        model3.featurize(retrieve_from_mysql=True)
+        # model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases',
+        #                      initialize_data=False)
+        model3.featurize(retrieve_from_mysql=False)
         model3.data_split(val=0.1)
         model3.reg()
         model3.run()
         model3.analyze()
-        if model3.algorithm != 'nn':  # issues pickling NN models
-            model3.pickle_model()
+        # if model3.algorithm != 'nn':  # issues pickling NN models
+        #     model3.pickle_model()
 
-        model3.store()
-        model3.org_files(zip_only=True)
+        # model3.store()
+        # model3.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
+        start_timer = default_timer()
         model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        return default_timer() - start_timer
 
 
 def example_load():
@@ -199,9 +193,28 @@ def example_load():
     rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
 
+def time_needed():
+
+    datasets = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
+                'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50'}
+    datasets = {'water-energy.csv': 'expt'}
+    time_df = pd.DataFrame(columns={'Loop', 'Dataset', 'Time Needed'})
+
+    for i in range(2):
+        time_dict = {'Loop': None, 'Dataset': None, 'Time Needed': None}
+        for dataset, target in datasets.items():
+            time_dict['Loop'] = str(i)
+            time_dict['Dataset'] = dataset
+            time_needed_for_run = example_run_with_mysql_and_neo4j(dataset, target)
+            time_dict['Time Needed'] = time_needed_for_run
+            time_df = time_df.append(time_dict, ignore_index=True)
+            time_df.to_csv('Time.csv')
+
+
 if __name__ == "__main__":
-      main()
-#    single_model()
+    # main()
+    # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
+    time_needed()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

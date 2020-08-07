@@ -1,12 +1,11 @@
 """
 Objective: The goal of this script is to create relationships in Neo4j directly from the pipeline using class instances
 """
-
-from py2neo import Graph
-from core.neo4j.nodes_to_neo4j import prep
 import time
 
-# Merge to Neo4j Destop.
+from py2neo import Graph
+
+from core.neo4j.nodes_to_neo4j import prep
 
 
 # TODO REDO DOCSTRINGS
@@ -26,27 +25,27 @@ def relationships(self):
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
 
-    # Merge RandomSplit node
-    g.evaluate(""" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,
-               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
-               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
-    
-    # Merge TrainSet node
-    g.evaluate(""" MATCH (n:TrainSet) WITH n.trainsize as trainsize, n.random_seed as seed,
-               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
-
-    # Merge ValSet node
-    g.evaluate(""" MATCH (n:ValSet) WITH n.valsize as valsize, n.random_seed as seed,
-               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
-
-    # Merge TestSet node
-    g.evaluate("""
-            MATCH (n:TestSet) WITH n.testsize as testsize, n.random_seed as seed,
-            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node
-            """)
+    # # Merge RandomSplit node
+    # g.evaluate(""" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,
+    #            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+    #
+    # # Merge TrainSet node
+    # g.evaluate(""" MATCH (n:TrainSet) WITH n.trainsize as trainsize, n.random_seed as seed,
+    #            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+    #
+    # # Merge ValSet node
+    # g.evaluate(""" MATCH (n:ValSet) WITH n.valsize as valsize, n.random_seed as seed,
+    #            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+    #
+    # # Merge TestSet node
+    # g.evaluate("""
+    #         MATCH (n:TestSet) WITH n.testsize as testsize, n.random_seed as seed,
+    #         COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #         CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node
+    #         """)
 
     # Merge Dataset with molecules and RandomSplit
     g.evaluate("""
@@ -69,11 +68,18 @@ def relationships(self):
         param_dict = dict(self.params)
         for key in param_dict:
             try:
-                g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
-                           merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, param_dict[key]),
-                           parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key})
+                value = param_dict[key].values[0]
             except AttributeError:
-                print(f"Failed to merge relationship with {param_dict[key]}")
+                value = param_dict[key]
+            g.evaluate("""
+                        MATCH (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
+                        MERGE (model)-[r:USES_ALGORITHM]->(algor) 
+                            SET r.%s = "%s" 
+                        """ % (key, value),
+                       parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key}
+                       )
+            # except AttributeError:
+            #     print(f"Failed to merge relationship with {key}, with a value of {param_dict[key]}")
     else:  # If not tuned
         g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
                    merge (model)-[r:USES_ALGORITHM]->(algor)""",

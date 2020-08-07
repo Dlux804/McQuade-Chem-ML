@@ -9,8 +9,7 @@ from rdkit.Chem import MolFromSmiles
 from rdkit import RDLogger
 
 from core import ingest
-from core.storage import cd
-from core.storage.misc import compress_fingerprint, decompress_fingerprint
+from core.storage.misc import compress_fingerprint, decompress_fingerprint, cd
 
 
 RDLogger.DisableLog('rdApp.*')

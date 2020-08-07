@@ -5,7 +5,7 @@ import pathlib
 import pandas as pd
 from timeit import default_timer
 
-from core import MlModel, get_classification_targets, get_classification_feats
+from core import MlModel, get_classification_targets, Get_Task_Type_1
 from core.storage import cd, pickle_model, unpickle_model
 
 # Creating a global variable to be imported from all other models
@@ -16,52 +16,57 @@ def main():
     os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
 
-    # Asking the user to decide between running classification models or regression models
-    c = str(input("Enter c for classification, r for regression: "))
+    # list of all learning algorithms
+#    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    learner = ['knn']
 
-    # Sets up learner and datasets for classification.
-    if c == 'c':
-        # list of available classification learning algorithms
-        learner = ['svc', 'knc', 'rf']
-        # learner = [] # Use this line to test specific models instead of iterating
+    # list of available classification learning algorithms for reference/testing
+    #learner = ['svm', 'knn', 'rf']
 
-        targets = None
-        sets = {
-            'BBBP.csv': targets,
-            'sider.csv': targets,
-            'clintox.csv': targets,
-            'bace.csv': targets,
-        }
+    # list of available regression learning algorithms for reference/testing
+#    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
 
-    # Sets up learner, featurizations, and data sets for regression
-    if c == 'r':
-        # list of available regression learning algorithms
-        learner = ['ada', 'rf', 'svr', 'gdb', 'nn', 'knn']
-        # learner = ['gdb', 'nn']
+    # All data sets in dict
+    targets = None
+    sets = {
+       'BBBP.csv': targets,
+       'sider.csv': targets,
+       'clintox.csv': targets,
+       'bace.csv': targets,
+         'ESOL.csv': 'water-sol',
+         'Lipophilicity-ID.csv': 'exp',
+         'water-energy.csv': 'expt',
+         'logP14k.csv': 'Kow',
+         'jak2_pic50.csv': 'pIC50'
+    }
 
-        # list of available featurization methods
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3], [4],
-                 [5]]
-        feats = [[0]]  # , [0, 2]]  # Change this to change which featurizations are being tested (for regression)
+    # classification data sets for reference/testing
+    # sets = {
+    #     'BBBP.csv': targets,
+        # 'sider.csv': targets,
+        # 'clintox.csv': targets,
+        # 'bace.csv': targets,
+#    }
 
-        # regression data sets in dict. Key: Filename.csv , Value: Target column header
-        sets = {
-            'ESOL.csv': 'water-sol',
-            # 'Lipophilicity-ID.csv': 'exp',
-            # 'water-energy.csv': 'expt',
-            # 'logP14k.csv': 'Kow',
-            # 'jak2_pic50.csv': 'pIC50'
-        }
+    # regression data sets for reference/testing
+    # sets = {
+    #     'ESOL.csv': 'water-sol',
+    #     'Lipophilicity-ID.csv': 'exp',
+    #     'water-energy.csv': 'expt',
+    #     'logP14k.csv': 'Kow',
+    #     'jak2_pic50.csv': 'pIC50'
+    # }
 
-    for alg in learner:  # loop over all learning algorithms
-        # The following if statements set featurization options based on if the
-        # model needs normalized data (currently only set up for the classification models)
-        if c == 'c':
-            feats = get_classification_feats(
-                alg)  # Selects featurizations for classification based on the model being ran
-
+    for alg in learner: # loop over all learning algorithms
+        feats=[[0], [0,2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
+                  [5], [6]] # Use this line to select specific featurizations
+        # feats = [[2]]
         for method in feats:  # loop over the featurization methods
-            for data, target in sets.items():  # loop over dataset dictionary
+            for data, target in sets.items(): # loop over dataset dictionary
+
+                # This gets the target columns for classification data sets (Using target lists in the dictionary causes errors later in the workflow)
+                if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
+                    target = get_classification_targets(data)
 
                 # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
                 checker, task_type = Get_Task_Type_1(data,alg)
@@ -77,8 +82,9 @@ def main():
                         print()
                         print('Initializing model...', end=' ', flush=True)
                         # initiate model class with algorithm, dataset and target
-                        model1 = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                tune=False, cv=3, opt_iter=25)
+
+                        model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
+                                               tune=False, cv=3, opt_iter=25)
                         print('Done.\n')
 
                     with cd('dataFiles'):
@@ -97,15 +103,6 @@ def main():
                         model.org_files(zip_only=True)
 
                     # Have files output to output
-
-
-                if c == 'c':
-                    targets = get_classification_targets(
-                        data)  # Gets targets for classification based on the data set being used
-                            # initiate model class with algorithm, dataset and target
-                            model = MlModel(alg, data, targets, method)
-                            print('done.')
-
 
 
 def single_model():

@@ -217,7 +217,7 @@ def time_needed():
 
     datasets = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
                 'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50'}
-    # datasets = {'water-energy.csv': 'expt'}
+    # datasets = {'logP14k.csv': 'Kow'}
     time_df = pd.DataFrame(columns={'Loop', 'Dataset', 'Time Needed'})
 
     for i in range(2):

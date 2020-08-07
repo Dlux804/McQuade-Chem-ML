@@ -119,7 +119,7 @@ def insert_fragments(temp_df, graph):
                     MERGE (mol)-[:HAS_FRAGMENTS]->(frag)
                     )
             ",
-            {batchSize:4000, parallel:True, params:{rows:$rows}})
+            {batchSize:2000, parallel:True, params:{rows:$rows}})
             """
 
     temp_df = temp_df[['smiles', 'fragments']]

@@ -12,6 +12,8 @@ import pandas as pd
 import time
 from core.storage.misc import parallel_apply
 from py2neo.database import ClientError
+
+
 # Connect to Neo4j Destop.
 
 
@@ -50,7 +52,7 @@ def __merge_molecules_and_rdkit2d__(df, graph):
             CREATE CONSTRAINT ON 
             (n:Feature) ASSERT n.name IS UNIQUE
             """,
-            """
+                         """
             CREATE CONSTRAINT ON 
             (n:FeatureMethod) ASSERT n.feature IS UNIQUE
             """]
@@ -63,23 +65,35 @@ def __merge_molecules_and_rdkit2d__(df, graph):
             pass
 
     mol_feat_query = """
-    CALL apoc.periodic.iterate(
-        "
-        UNWIND $molecules as molecule
-        RETURN molecule
-        ",
-        "
-        MERGE (rdkit2d:FeatureMethod {feature:'rdkit2d'})
-        MERGE (mol:Molecule {SMILES: molecule.smiles})
-        FOREACH (feat in molecule.feats | 
-            MERGE (feature:Feature {name: feat.name})
-            MERGE (mol)-[:HAS_DESCRIPTOR {value:feat.value, feat_name:feat.name}]->(feature)
-            MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
+        CALL apoc.periodic.iterate(
+            "
+            UNWIND $molecules as molecule
+            RETURN molecule
+            ",
+            "
+            MERGE (rdkit2d:FeatureMethod {feature:'rdkit2d'})
+            MERGE (mol:Molecule {SMILES: molecule.smiles})
+            FOREACH (feat in molecule.feats | 
+                MERGE (feature:Feature {name: feat.name})
+                MERGE (mol)-[:HAS_DESCRIPTOR {value:feat.value, feat_name:feat.name}]->(feature)
+                MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
+                )
+            ",
+            {batchSize:2000, parallel:True, params:{molecules:$molecules}}
             )
-        ",
-        {batchSize:4000, parallel:True, params:{molecules:$molecules}}
-        )
-    """
+        """
+
+    mol_feat_query = """
+        MERGE (rdkit2d:FeatureMethod {feature:'rdkit2d'})
+        WITH rdkit2d
+            UNWIND $molecules as molecule
+                MERGE (mol:Molecule {SMILES: molecule.smiles})
+                FOREACH (feat in molecule.feats | 
+                    MERGE (feature:Feature {name: feat.name})
+                    MERGE (mol)-[:HAS_DESCRIPTOR {value:feat.value, feat_name:feat.name}]->(feature)
+                    MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
+                )
+        """
 
     # TODO make this work without a for loop if possible
     molecules = []
@@ -91,8 +105,17 @@ def __merge_molecules_and_rdkit2d__(df, graph):
             row_feats.append({'name': feat_name, 'value': feat_value})
         molecules.append({'smiles': smiles, 'feats': row_feats})
 
-    tx = graph.begin(autocommit=True)
-    tx.evaluate(mol_feat_query, parameters={"molecules": molecules})
+    # APOC is slower in this part than using UNWIND alone
+    range_molecules = []
+    for index, molecule in enumerate(molecules):
+        range_molecules.append(molecule)
+        if index % 2000 == 0 and index != 0:
+            tx = graph.begin(autocommit=True)
+            tx.evaluate(mol_feat_query, parameters={"molecules": range_molecules})
+            range_molecules = []
+    if range_molecules:
+        tx = graph.begin(autocommit=True)
+        tx.evaluate(mol_feat_query, parameters={"molecules": range_molecules})
 
 
 def nodes(self):
@@ -226,4 +249,3 @@ def nodes(self):
     # Make dataset node
     dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)
     g.merge(dataset, "DataSet", "data")
-

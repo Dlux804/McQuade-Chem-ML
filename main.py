@@ -125,7 +125,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='svr', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[3],
+        model1 = models.MlModel(algorithm='svm', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[3],
                                 tune=False, cv=2, opt_iter=2)
 
         print('done.')
@@ -199,8 +199,8 @@ def example_load():
 
 
 if __name__ == "__main__":
-      main()
-#    single_model()
+      # main()
+   single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

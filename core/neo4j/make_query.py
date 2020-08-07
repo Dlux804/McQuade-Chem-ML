@@ -8,10 +8,13 @@ from py2neo import ClientError
 class Query:
 
     def __init__(self, graph):
-        self.graph = graph
+        self.graph = graph  # Connecting python to Neo4j using py2neo
 
     def __molecules_and_rdkit2d_query__(self):
-        """"""
+        """
+        Objective: Cypher query that creates nodes and relationships between SMILES and rdkit2d features
+        :return:
+        """
         restraint_strings = ["""
                     CREATE CONSTRAINT ON 
                     (n:Feature) ASSERT n.name IS UNIQUE
@@ -41,7 +44,11 @@ class Query:
         return mol_rdkit2d_query
 
     def __make_molecules_query__(self, target_name):
-        """"""
+        """
+        Objective: Cypher Query to make molecule nodes and their properties
+        :param target_name: True name of target column. The name is stored in core/storage/dictionaries.py
+        :return:
+        """
         restraint_string = """
                     CREATE CONSTRAINT ON 
                     (n:Molecule) ASSERT n.SMILES IS UNIQUE
@@ -55,13 +62,16 @@ class Query:
         molecule_query = """
             UNWIND $molecules as molecule
             MERGE (mol:Molecule {SMILES: molecule.smiles})
-                ON CREATE Set mol.dataset = [$dataset], mol.%s = [molecule.target], mol.name = "Molecule"
+                ON CREATE Set mol.dataset = [$dataset], mol.%s = molecule.target, mol.name = "Molecule"
             """ % target_name
 
         return molecule_query
 
     def __fragment_query__(self):
-        """"""
+        """
+        Objective: Cypher query that creates nodes for fragments
+        :return:
+        """
         restraint_string = """
                 CREATE CONSTRAINT ON 
                 (n:Fragments) ASSERT n.name IS UNIQUE

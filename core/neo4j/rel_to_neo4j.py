@@ -49,7 +49,6 @@ def relationships(self, from_output=False):
                 CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node
                 """)
 
-
     # Merge Dataset with RandomSplit
     g.evaluate("""
             MATCH (dataset:DataSet {data: $dataset}), 

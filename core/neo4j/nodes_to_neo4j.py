@@ -6,7 +6,6 @@ import pandas as pd
 import time
 from core.neo4j.make_query import Query
 from core.storage.dictionary import target_name_grid
-# TODO Add docstring
 from py2neo import Graph, Node
 
 from core.neo4j.fragments import fragments_to_neo, insert_fragments
@@ -29,7 +28,7 @@ def prep(self):
     actual = pva['actual']
     pva_predictions = pva.drop(['pred_avg', 'pred_std', 'smiles', 'actual'], axis=1)
 
-    average_error = list(pva_predictions.sub(actual, axis=0).mean(axis=1))
+    average_error = list(pva_predictions.sub(actual, axis=0).mean(axis=1))  # Calculate avg prediction error
     test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
                                   'uncertainty': list(pva['pred_std']),
                                   'error': average_error}).to_dict('records')
@@ -41,6 +40,7 @@ def __dataset_record__(self, graph):
     Objective: Return record of dataset in the current database. If it's larger than 0, we can skip time and memory
                 intensive functions
     :param self:
+    :param graph
     :return:
     """
 
@@ -48,17 +48,17 @@ def __dataset_record__(self, graph):
     return len(list(record))
 
 
-def __make_molecules__(df_records, dataset, graph):
+def __make_molecules__(dict_records, dataset, graph):
     """
-    Objective: Create SMILES nodes and
-    :param df_records:
-    :param dataset:
-    :param graph:
+    Objective: Create SMILES nodes and their properties such as dataset and target value
+    :param dict_records: Dictionary records that contain all SMILES and target value
+    :param dataset: The dataset that the SMILES belong to
+    :param graph: Connecting python to Neo4j
     :return:
     """
     t1 = time.perf_counter()
     molecule_query = Query(graph=graph).__make_molecules_query__(target_name=target_name_grid(dataset))
-    graph.evaluate(molecule_query, parameters={'molecules': df_records, 'dataset': dataset})
+    graph.evaluate(molecule_query, parameters={'molecules': dict_records, 'dataset': dataset})
     t2 = time.perf_counter()
     print(f"Finished creating molecules in {t2 - t1}sec")
 
@@ -167,7 +167,6 @@ def nodes(self):
     testset = Node("TestSet", name="TestSet", testsize=self.n_test, random_seed=self.random_seed)
     g.create(testset)
 
-
     # Make ValidateSet node
     if self.val_percent > 0:
         valset = Node("ValSet", name="ValidateSet", valsize=self.n_val, random_seed=self.random_seed)
@@ -180,21 +179,20 @@ def nodes(self):
     # SET FUNCTION WILL UPDATE DUPLICATE VALUES TO LIST
     df_smiles.columns = ['smiles', 'target']  # Change target column header to target
 
-    # Creating Molecular Fragments
-    # Check to see if we have created fragments for this run's dataset
+    # Check to see if we have created fragments and molecules for this run's dataset
     record = __dataset_record__(self, graph=g)
-    if record > 0:
+    if record > 0:  # If found dataset
         print(f"This dataset, {self.dataset} already exists in the database. Skipping fragments, and rdkit2d features")
     else:  # If unique dataset
         # Make molecules
-        __make_molecules__(df_records=df_smiles.to_dict('records'), dataset=self.dataset, graph=g)
+        __make_molecules__(dict_records=df_smiles.to_dict('records'), dataset=self.dataset, graph=g)
         t3 = time.perf_counter()
         df_for_fragments = df_smiles.drop(['target'], axis=1)
         print('Calculating Fragments')
         df_for_fragments['fragments'] = parallel_apply(df_for_fragments['smiles'], fragments_to_neo, number_of_workers=3
                                                        , loading_bars=False)
         print('Inserting Fragments')
-        insert_fragments(df_for_fragments, graph=g)
+        insert_fragments(df_for_fragments, graph=g)  # Make fragments
         t4 = time.perf_counter()
         print(f"Finished creating molecular fragments in {t4 - t3}sec")
 

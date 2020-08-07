@@ -24,9 +24,13 @@ def prep(self):
     data_size = len(self.data['smiles'])
     # self.data['smiles'] = canonical_smiles
     df_smiles = self.data.iloc[:, [1, 2]]
+    actual = pva['actual']
+    pva_predictions = pva.drop(['pred_avg', 'pred_std', 'smiles', 'actual'], axis=1)
 
+    average_error = list(pva_predictions.sub(actual, axis=0).mean(axis=1))
     test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
-                                  'uncertainty': list(pva['pred_std'])}).to_dict('records')
+                                  'uncertainty': list(pva['pred_std']),
+                                  'error': average_error}).to_dict('records')
     return df_smiles, test_mol_dict, data_size
 
 

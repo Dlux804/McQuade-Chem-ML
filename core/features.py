@@ -1,12 +1,13 @@
-from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
-import pandas as pd
-from sklearn.model_selection import train_test_split
-import numpy as np
 from time import time, sleep
-from sklearn.preprocessing import StandardScaler
+
+import pandas as pd
+import numpy as np
 from tqdm import tqdm
 from rdkit import Chem
 from core.neo4j.fragments import canonical_smiles
+from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 
 def featurize(self, not_silent=True, retrieve_from_mysql=False):

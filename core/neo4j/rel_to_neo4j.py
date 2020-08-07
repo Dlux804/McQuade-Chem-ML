@@ -3,11 +3,10 @@ Objective: The goal of this script is to create relationships in Neo4j directly 
 """
 
 from py2neo import Graph
-from core.neo4j.nodes_to_neo4j import prep
 import time
 from core.neo4j.make_query import Query
 
-# Merge to Neo4j Destop.
+from core.neo4j.nodes_to_neo4j import prep
 
 
 # TODO REDO DOCSTRINGS
@@ -26,35 +25,30 @@ def relationships(self, from_output=False):
     df_smiles, test_mol_dict, data_size = prep(self)
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
-    query = Query(size=data_size)
-    query.__check_for_constraints__(g)
-    # # Update molecules's properties: target value, dataset, target name
-    # g.evaluate("""
-    # MATCH (mol:Molecule {SMILES: $mols.smiles, name: "Molecule"})
-    # Set mol.dataset = mol.dataset + [$data], mol.target_name = mol.target_name + [target_name]
-    # """, parameters={'data': self.dataset, 'target_name': self.target_name})
-
+    query = Query(graph=g)
+    query.__check_for_constraints__()
     # Merge RandomSplit node
     g.evaluate(""" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,
-               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
-               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+                   COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+                   CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
 
     # Merge TrainSet node
     g.evaluate(""" MATCH (n:TrainSet) WITH n.trainsize as trainsize, n.random_seed as seed,
-               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+                   COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
+                   CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
 
     # Merge ValSet node
     g.evaluate(""" MATCH (n:ValSet) WITH n.valsize as valsize, n.random_seed as seed,
-               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+                   COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
+                   CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
 
     # Merge TestSet node
     g.evaluate("""
-            MATCH (n:TestSet) WITH n.testsize as testsize, n.random_seed as seed,
-            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node
-            """)
+                MATCH (n:TestSet) WITH n.testsize as testsize, n.random_seed as seed,
+                COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
+                CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node
+                """)
+
 
     # Merge Dataset with RandomSplit
     g.evaluate("""
@@ -78,8 +72,8 @@ def relationships(self, from_output=False):
             g.evaluate("""
                 MATCH (algor:Algorithm {name: $algorithm, tuned: $tuned}), (model:MLModel {name: $run_name})
                 merge (model)-[r:USES_ALGORITHM]->(algor) Set r = $param, r.tuned = $tuned """,
-                           parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'param': self.params,
-                                       'tuned': self.tuned})
+                       parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'param': self.params,
+                                   'tuned': self.tuned})
         except TypeError:  # Adaboost's parameter causing problem
             self.params['base_estimator'] = str(self.params['base_estimator'])  # Turn based_estimator to string
             g.evaluate("""
@@ -108,7 +102,7 @@ def relationships(self, from_output=False):
         g.evaluate("""MATCH (tuning_alg:NotTuned), (algor:Algorithm {name: $algorithm, tuned: $tuned})
                    merge (algor)-[:NOT_TUNED]->(tuning_alg)""",
                    parameters={'algorithm': self.algorithm, 'tuned': self.tuned})
-    
+
     # MLModel to DataSet
     g.evaluate("""MATCH (dataset:DataSet {data: $dataset}), (model:MLModel {name: $run_name})
                merge (model)-[:USES_DATASET]->(dataset)""",

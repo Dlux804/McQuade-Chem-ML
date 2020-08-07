@@ -1,9 +1,10 @@
 import os
 import re
 import shutil
+
+import xml.etree.cElementTree as ET
 from lxml import etree
 from rdkit.Chem import MolFromSmiles, MolToMolBlock
-import xml.etree.cElementTree as ET
 from sklearn2pmml import PMMLPipeline, sklearn2pmml
 
 

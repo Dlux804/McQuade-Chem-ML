@@ -63,11 +63,17 @@ def main():
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
-                if c == 'r':  # Runs the models/featurizations for regression
+                # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
+                checker, task_type = Get_Task_Type_1(data,alg)
+                if checker == 0:
+                    pass
+                else:
                     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
                         print('Model Type:', alg)
                         print('Featurization:', method)
                         print('Dataset:', data)
+                        print('Target(s):', target)
+                        print('Task type:', task_type)
                         print()
                         print('Initializing model...', end=' ', flush=True)
                         # initiate model class with algorithm, dataset and target
@@ -75,48 +81,31 @@ def main():
                                                 tune=False, cv=3, opt_iter=25)
                         print('Done.\n')
 
-                    with cd('dataFiles'):  # Have files output to output
-                        model1.featurize()
+                    with cd('dataFiles'):
+                        # Runs classification model
+                        model.featurize()  # Featurize molecules
                         val = 0.0
                         if alg == 'nn':
                             val = 0.1
+                        model.data_split(val=val)
+                        model.reg()
+                        model.run()  # Runs the models/featurizations for classification
+                        model.analyze()
+                        if model.algorithm != 'nn':
+                            model.pickle_model()
+                        model.store()
+                        model.org_files(zip_only=True)
 
-                        model1.data_split(val=val)
-                        model1.reg()
-                        model1.run()
-                        model1.analyze()
-                        if model1.algorithm != 'nn':
-                            model1.pickle_model()
+                    # Have files output to output
 
-                        model1.store()
-                        model1.org_files(zip_only=True)
 
                 if c == 'c':
                     targets = get_classification_targets(
                         data)  # Gets targets for classification based on the data set being used
-
-                    if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
-                        pass
-                    else:
-                        # change active directory
-                        with cd('dataFiles'):
-                            print('Now in:', os.getcwd())
-                            print('Initializing model...', end=' ', flush=True)
-
                             # initiate model class with algorithm, dataset and target
                             model = MlModel(alg, data, targets, method)
                             print('done.')
 
-                        print('Model Type:', alg)
-                        print('Featurization:', method)
-                        print('Dataset:', data)
-                        print('Target(s):', targets)
-                        print()
-                        # Runs classification model
-                        model.featurize()  # Featurize molecules
-                        model.data_split()
-                        model.reg()
-                        model.run()  # Runs the models/featurizations for classification
 
 
 def single_model():

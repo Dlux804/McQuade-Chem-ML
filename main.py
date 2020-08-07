@@ -1,13 +1,12 @@
 # TODO: Make main function that asks user what models they would like to initiate
-from core import MlModel, get_classification_targets, get_classification_feats
-from core.storage import cd, pickle_model, unpickle_model
-
 import os
 import pathlib
-import pandas as pd
 
-# Temp imports
+import pandas as pd
 from timeit import default_timer
+
+from core import MlModel, get_classification_targets, get_classification_feats
+from core.storage import cd, pickle_model, unpickle_model
 
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root

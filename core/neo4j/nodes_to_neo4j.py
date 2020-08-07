@@ -5,8 +5,7 @@ import time
 
 import numpy as np
 import pandas as pd
-from py2neo import Graph, Node
-from py2neo.database import ClientError
+from py2neo import Graph, Node, database
 from sklearn.metrics import mean_squared_error, r2_score
 
 from core.neo4j.fragments import fragments_to_neo, insert_fragments
@@ -58,7 +57,7 @@ def __merge_molecules_and_rdkit2d__(df, graph):
         try:
             tx = graph.begin(autocommit=True)
             tx.evaluate(restraint_string)
-        except ClientError:
+        except database.ClientError:
             pass
 
     mol_feat_query = """
@@ -194,7 +193,7 @@ def nodes(self):
     try:
         tx = g.begin(autocommit=True)
         tx.evaluate(restraint_string)
-    except ClientError:
+    except database.ClientError:
         pass
 
     g.evaluate("""

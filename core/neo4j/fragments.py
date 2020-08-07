@@ -7,7 +7,7 @@ import os
 from rdkit import RDConfig
 from rdkit import Chem
 from rdkit.Chem import FragmentCatalog
-from py2neo.database import ClientError
+from py2neo import database
 
 # TODO REDO DOCSTRINGS
 
@@ -98,7 +98,7 @@ def insert_fragments(temp_df, graph):
     try:
         tx = graph.begin(autocommit=True)
         tx.evaluate(restraint_string)
-    except ClientError:
+    except database.ClientError:
         pass
 
     mol_feat_query = """

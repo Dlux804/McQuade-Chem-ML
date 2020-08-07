@@ -3,16 +3,11 @@ Objectvie: Create molecular fragments, import them into Neo4j and add them into 
 """
 
 import os
+
 from rdkit import RDConfig
-from rdkit.Chem import FragmentCatalog
 from rdkit import Chem
-from math import ceil
-from tqdm import tqdm
-from py2neo import Graph
+from rdkit.Chem import FragmentCatalog
 from py2neo.database import ClientError
-import pandas as pd
-# import py2neo
-# Connect to Neo4j Destop.
 
 # TODO REDO DOCSTRINGS
 

@@ -1,16 +1,18 @@
-from sqlalchemy import create_engine
-from sqlalchemy.exc import ProgrammingError
-import pandas as pd
 import os
 from pathlib import Path
 from time import time
 
-from core import ingest
-from core.storage.misc import cd
-from core.storage.storage import compress_fingerprint, decompress_fingerprint
-
+import pandas as pd
+from sqlalchemy import create_engine
+from sqlalchemy.exc import ProgrammingError
 from rdkit.Chem import MolFromSmiles
 from rdkit import RDLogger
+
+from core import ingest
+from core.storage import cd
+from core.storage.misc import compress_fingerprint, decompress_fingerprint
+
+
 RDLogger.DisableLog('rdApp.*')
 
 

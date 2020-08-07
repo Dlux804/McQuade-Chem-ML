@@ -1,17 +1,17 @@
 '''
 This code was written by Adam Luxon and team as part of the McQuade and Ferri research groups.
 '''
-from core import ingest
-from core.storage.mysql_storage import MLMySqlConn
-from numpy.random import randint
-from core import name
-
-from core.neo4j.nodes_to_neo4j import nodes
-from core.neo4j.rel_to_neo4j import relationships
-from rdkit import RDLogger
 from timeit import default_timer
+
+from numpy.random import randint
+from rdkit import RDLogger
 from py2neo import Graph
 from sqlalchemy.exc import OperationalError
+
+from core.ingest import load_smiles
+from core.name import name
+from core.neo4j import nodes, relationships
+from core.storage import MLMySqlConn
 
 
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']
@@ -33,9 +33,7 @@ class MlModel:  # TODO update documentation here
     from core.classifiers import get_classifier
 
     from core.features import featurize, data_split
-    from core.storage.storage import pickle_model, store, org_files
-    from core.storage.mysql_storage import featurize_from_mysql
-    from core.storage.qsardq_export import QsarDB_export
+    from core.storage import pickle_model, store, org_files, featurize_from_mysql, QsarDB_export
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
         """
@@ -71,13 +69,13 @@ class MlModel:  # TODO update documentation here
         # collect pandas series of the SMILES (self.smiles_col)
 
         if self.dataset in multi_label_classification_datasets:
-            self.data, self.smiles_series = ingest.load_smiles(self, dataset,
-                                                               drop=False)  # Makes drop = False for multi-target classification
+            # Makes drop = False for multi-target classification
+            self.data, self.smiles_series = load_smiles(self, dataset, drop=False)
         else:
-            self.data, self.smiles_series = ingest.load_smiles(self, dataset)
+            self.data, self.smiles_series = load_smiles(self, dataset)
 
         # define run name used to save all outputs of model
-        self.run_name = name.name(self)
+        self.run_name = name(self)
 
         if not tune:  # if no tuning, no optimization iterations or CV folds.
             self.opt_iter = None

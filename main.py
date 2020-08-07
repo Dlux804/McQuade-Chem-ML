@@ -1,18 +1,13 @@
 # TODO: Make main function that asks user what models they would like to initiate
+from core import MlModel, get_classification_targets, get_classification_feats
+from core.storage import cd, pickle_model, unpickle_model
 
-from core import models, Get_Classification
-from core.storage.misc import cd
-from core.storage.storage import pickle_model, unpickle_model
 import os
 import pathlib
-from time import sleep
-from core.features import featurize
-from core.Get_Classification import get_classification_targets
 import pandas as pd
 
 # Temp imports
 from timeit import default_timer
-import pandas as pd
 
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
@@ -63,7 +58,7 @@ def main():
         # The following if statements set featurization options based on if the
         # model needs normalized data (currently only set up for the classification models)
         if c == 'c':
-            feats = Get_Classification.get_classification_feats(
+            feats = get_classification_feats(
                 alg)  # Selects featurizations for classification based on the model being ran
 
         for method in feats:  # loop over the featurization methods
@@ -77,7 +72,7 @@ def main():
                         print()
                         print('Initializing model...', end=' ', flush=True)
                         # initiate model class with algorithm, dataset and target
-                        model1 = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
+                        model1 = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
                                                 tune=False, cv=3, opt_iter=25)
                         print('Done.\n')
 
@@ -98,7 +93,7 @@ def main():
                         model1.org_files(zip_only=True)
 
                 if c == 'c':
-                    targets = Get_Classification.get_classification_targets(
+                    targets = get_classification_targets(
                         data)  # Gets targets for classification based on the data set being used
 
                     if (data == 'sider.csv' or data == 'clintox.csv') and alg == 'svc':
@@ -110,7 +105,7 @@ def main():
                             print('Initializing model...', end=' ', flush=True)
 
                             # initiate model class with algorithm, dataset and target
-                            model = models.MlModel(alg, data, targets, method)
+                            model = MlModel(alg, data, targets, method)
                             print('done.')
 
                         print('Model Type:', alg)
@@ -137,7 +132,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = models.MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
+        model1 = MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
                                 tune=True, cv=2, opt_iter=2)
 
         print('done.')
@@ -165,7 +160,7 @@ def example_run_with_mysql_and_neo4j(dataset, target):
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = models.MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0],
+        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0],
                                 tune=True, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)

@@ -1,12 +1,11 @@
 """
 Objective: The goal of this script is to create relationships in Neo4j directly from the pipeline using class instances
 """
-
-from py2neo import Graph
-from core.neo4j.nodes_to_neo4j import prep
 import time
 
-# Merge to Neo4j Destop.
+from py2neo import Graph
+
+from core.neo4j.nodes_to_neo4j import prep
 
 
 # TODO REDO DOCSTRINGS

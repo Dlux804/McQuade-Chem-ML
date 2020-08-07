@@ -1,20 +1,17 @@
 """
 Objective: The goal of this script is to create nodes in Neo4j directly from the pipeline using class instances
 """
+import time
 
-from py2neo import Graph, Node
-from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
+import pandas as pd
+from py2neo import Graph, Node
+from py2neo.database import ClientError
+from sklearn.metrics import mean_squared_error, r2_score
+
 from core.neo4j.fragments import fragments_to_neo, insert_fragments
 from core.neo4j import fragments
-from tqdm import tqdm
-import pandas as pd
-import time
 from core.storage.misc import parallel_apply
-from py2neo.database import ClientError
-
-
-# Connect to Neo4j Destop.
 
 
 # TODO REDO DOCSTRINGS

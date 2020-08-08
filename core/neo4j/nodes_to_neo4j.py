@@ -212,7 +212,8 @@ def nodes(self):
         g.merge(feature_method, "FeatureMethod", "feature")
 
     # Make dataset node
-    dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)
+    dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset,
+                   measurement=target_name_grid(self.dataset), tasktype=self.task_type)
     g.merge(dataset, "DataSet", "data")
     t7 = time.perf_counter()
     print(f"Finished creating nodes in {t7-t1}sec")

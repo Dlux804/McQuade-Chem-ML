@@ -54,6 +54,7 @@ class Prep:
         self.predictions_stats = __df_to_dict__(predictions_stats)
         self.run_name = df_from_attributes['run_name'].values[0]
         self.algorithm = df_from_attributes['algorithm'].values[0]
+        self.task_type = df_from_attributes['task_type'].value[0]
         self.feat_method_name = df_from_attributes['feat_method_name'].values[0]
         self.tuned = str(df_from_attributes['tuned'].values[0])
         self.n_test = int(df_from_attributes['n_test'])

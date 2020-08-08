@@ -156,7 +156,6 @@ def nodes(self):
     train_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet", random_seed=self.random_seed)
     g.create(train_set)
 
-
     # Since we can't use merge with multiple properties, I will merge RandomSplit nodes later on
     randomsplit = Node("RandomSplit", name="RandomSplit", test_percent=self.test_percent,
                        train_percent=self.train_percent, random_seed=self.random_seed,

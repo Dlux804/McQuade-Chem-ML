@@ -21,6 +21,7 @@ def relationships(self, from_output=False):
             statements with 30+ variables, trying to figure out which Cypher correlates to what variable in Python
     """
     print("Creating relationships...")
+    self.tuned = str(self.tuned).capitalize()
     t1 = time.perf_counter()
     df_smiles, test_mol_dict, data_size = prep(self)
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],

@@ -110,6 +110,7 @@ def nodes(self):
     Note: If you want to know why I put number of features in a list (line 77), read my note located in
                                                                                                 "prep_from_output"
     """
+    self.tuned = str(self.tuned).capitalize()
     t1 = time.perf_counter()
     print("Creating Nodes for %s" % self.run_name)
 
@@ -129,6 +130,8 @@ def nodes(self):
                                COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
                                CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
     else:
+        print(self.tuned)
+        print(type(self.tuned))
         algor = Node("Algorithm", name=self.algorithm, source="sklearn", tuned=self.tuned)
         g.create(algor)
         g.evaluate(""" MATCH (n:Algorithm) WITH n.name AS name, n.tuned as tuned,

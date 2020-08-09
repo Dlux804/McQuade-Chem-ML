@@ -36,10 +36,9 @@ def canonical_smiles(smiles_list):
     return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
 
 
-
-def fragments_to_neo(smiles):
+def smiles_to_frag(smiles):
     """
-    Objective: Create fragments and import them into Neo4j based on our ontology
+    Objective: Create fragments
     Intent: This script is based on Adam's "mol_frag.ipynb" file in his deepml branch, which is based on rdkit's
             https://www.rdkit.org/docs/GettingStartedInPython.html. I still need some council on this one since we can
             tune how much fragment this script can generate for one SMILES. Also, everything (line 69 to 77)

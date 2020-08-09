@@ -116,8 +116,8 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
-                         tune=True, cv=2, opt_iter=2)
+        model1 = MlModel(algorithm='svm', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
+                         tune=True, cv=5, opt_iter=100)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -126,7 +126,7 @@ def single_model():
         print()
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split(val=0.1)
+        model1.data_split()
         model1.reg()
         model1.run()
         model1.analyze()

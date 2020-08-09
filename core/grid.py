@@ -121,6 +121,7 @@ def svr_paramgrid():
         'kernel': Categorical(['rbf', 'poly', 'linear']),
         'C': Real(10 ** -3, 10 ** 2, 'log-uniform'),
         'gamma': Real(10 ** -3, 10 ** 0, 'log-uniform'),
+        'coef0': Real(0, 0.3),
         'epsilon': Real(0.1, 0.6),
         'degree': Integer(1, 5)
     }

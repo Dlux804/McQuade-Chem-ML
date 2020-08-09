@@ -110,6 +110,7 @@ def nodes(self):
     Note: If you want to know why I put number of features in a list (line 77), read my note located in
                                                                                                 "prep_from_output"
     """
+    self.tuned = str(self.tuned).capitalize()
     t1 = time.perf_counter()
     print("Creating Nodes for %s" % self.run_name)
 

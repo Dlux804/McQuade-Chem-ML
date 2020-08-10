@@ -29,41 +29,26 @@ def relationships(self, from_output=False):
               password=self.neo4j_params["password"])  # Define graph for function
     query = Query(graph=g)
     query.__check_for_constraints__()
-    # Merge RandomSplit node
-    g.evaluate(""" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,
-                   COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
-                   CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
-
-    # Merge TrainSet node
-    g.evaluate(""" MATCH (n:TrainSet) WITH n.trainsize as trainsize, n.random_seed as seed,
-                   COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-                   CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
-
-    # Merge ValSet node
-    g.evaluate(""" MATCH (n:ValSet) WITH n.valsize as valsize, n.random_seed as seed,
-                   COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-                   CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
-
-    # Merge TestSet node
-    g.evaluate("""
-                MATCH (n:TestSet) WITH n.testsize as testsize, n.random_seed as seed,
-                COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 
-                CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node
-                """)
 
     # Merge Dataset with RandomSplit
     g.evaluate("""
-            MATCH (dataset:DataSet {data: $dataset}), 
-            (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, random_seed: $random_seed})
-            merge (split)-[:SPLITS_DATASET]->(dataset)
-    """, parameters={'dataset': self.dataset, 'test_percent': self.test_percent,
-                     'train_percent': self.train_percent, 'random_seed': self.random_seed})
+                MATCH (dataset:DataSet {data: $dataset}), 
+                    (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
+                        random_seed: $random_seed})
+                MERGE (split)-[:SPLITS_DATASET]->(dataset)
+                """,
+               parameters={'dataset': self.dataset, 'test_percent': self.test_percent,
+                           'train_percent': self.train_percent, 'random_seed': self.random_seed}
+               )
+
     # Merge FeatureList to FeatureMethod
     g.evaluate("""
-        UNWIND $method_name as name
-        MATCH (method:FeatureMethod {feature:name}), (featurelist:FeatureList {feat_ID: $feat_ID})
-        merge (featurelist)<-[:CONTRIBUTES_TO]-(method)
-        """, parameters={'feat_ID': self.feat_meth, 'method_name': self.feat_method_name})
+                UNWIND $method_name as name
+                MATCH (method:FeatureMethod {feature:name}), (featurelist:FeatureList {feat_ID: $feat_ID})
+                MERGE (featurelist)<-[:CONTRIBUTES_TO]-(method)
+                """,
+               parameters={'feat_ID': self.feat_meth, 'method_name': self.feat_method_name}
+               )
 
     # Merge MLModel to Algorithm
     if self.tuned:  # If tuned
@@ -71,21 +56,32 @@ def relationships(self, from_output=False):
             self.params = dict(self.params)
         try:
             g.evaluate("""
-                MATCH (algor:Algorithm {name: $algorithm, tuned: $tuned}), (model:MLModel {name: $run_name})
-                merge (model)-[r:USES_ALGORITHM]->(algor) Set r = $param, r.tuned = $tuned """,
+                        MATCH (algor:Algorithm {name: $algorithm, tuned: $tuned}), (model:MLModel {name: $run_name})
+                        MERGE (model)-[r:USES_ALGORITHM]->(algor) 
+                            SET r = $param, r.tuned = $tuned 
+                        """,
                        parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'param': self.params,
-                                   'tuned': self.tuned})
+                                   'tuned': self.tuned}
+                       )
+
         except TypeError:  # Adaboost's parameter causing problem
             self.params['base_estimator'] = str(self.params['base_estimator'])  # Turn based_estimator to string
             g.evaluate("""
-                    MATCH (algor:Algorithm {name: $algorithm, tuned: $tuned}), (model:MLModel {name: $run_name})
-                    merge (model)-[r:USES_ALGORITHM]->(algor) Set r = $param, r.tuned = $tuned """,
+                        MATCH (algor:Algorithm {name: $algorithm, tuned: $tuned}), (model:MLModel {name: $run_name})
+                        MERGE (model)-[r:USES_ALGORITHM]->(algor) 
+                            SET r = $param, r.tuned = $tuned 
+                        """,
                        parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'param': self.params,
-                                   'tuned': self.tuned})
+                                   'tuned': self.tuned}
+                       )
+
     else:  # If not tuned
-        g.evaluate("""MATCH (algor:Algorithm {name: $algorithm, tuned: $tuned}), (model:MLModel {name: $run_name})
-                   merge (model)-[r:USES_ALGORITHM]->(algor)""",
-                   parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'tuned': self.tuned})
+        g.evaluate("""
+                    MATCH (algor:Algorithm {name: $algorithm, tuned: $tuned}), (model:MLModel {name: $run_name})
+                    MERGE (model)-[r:USES_ALGORITHM]->(algor)
+                    """,
+                   parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'tuned': self.tuned}
+                   )
 
     # Algorithm and MLModel to TuningAlg
     if self.tuned:  # If tuned

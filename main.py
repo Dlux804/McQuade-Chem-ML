@@ -8,6 +8,8 @@ from timeit import default_timer
 from core import MlModel, get_classification_targets, Get_Task_Type_1
 from core.storage import cd, pickle_model, unpickle_model, QsarDBImport
 
+from core.neo4j.model_to_neo4j_dev import ModelOrFileToNeo4j
+
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
@@ -116,7 +118,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
+        model1 = MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
                          tune=True, cv=2, opt_iter=2)
 
         print('done.')
@@ -210,12 +212,13 @@ def time_needed():
 
 
 if __name__ == "__main__":
-      # main()
-    single_model()
-
+    # main()
+    # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # time_needed()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
-    qsar_model = QsarDBImport('2017MI1700024.qdb.zip', zipped=True)
-    qsar_model.to_neo4j()
+    # qsar_model = QsarDBImport('2017MI1700024.qdb.zip', zipped=True)
+    # qsar_model.to_neo4j()
+    model = unpickle_model('GE021_20200810-122448.pkl')
+    ModelOrFileToNeo4j(model=model)

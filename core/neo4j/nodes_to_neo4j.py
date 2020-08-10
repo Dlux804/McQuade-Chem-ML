@@ -8,7 +8,7 @@ from core.neo4j.make_query import Query
 from core.storage.dictionary import target_name_grid
 from py2neo import Graph, Node
 
-from core.neo4j.fragments import fragments_to_neo, insert_fragments
+from core.neo4j.fragments import calculate_fragments, insert_fragments
 from core.storage.misc import parallel_apply
 
 
@@ -189,7 +189,7 @@ def nodes(self):
         t3 = time.perf_counter()
         df_for_fragments = df_smiles.drop(['target'], axis=1)
         print('Calculating Fragments')
-        df_for_fragments['fragments'] = parallel_apply(df_for_fragments['smiles'], fragments_to_neo, number_of_workers=3
+        df_for_fragments['fragments'] = parallel_apply(df_for_fragments['smiles'], calculate_fragments, number_of_workers=3
                                                        , loading_bars=False)
         print('Inserting Fragments')
         insert_fragments(df_for_fragments, graph=g)  # Make fragments

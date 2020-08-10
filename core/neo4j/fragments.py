@@ -11,6 +11,7 @@ from core.neo4j.make_query import Query
 from rdkit.Chem import FragmentCatalog
 from py2neo import ClientError
 
+
 # TODO REDO DOCSTRINGS
 
 
@@ -36,8 +37,7 @@ def canonical_smiles(smiles_list):
     return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
 
 
-
-def fragments_to_neo(smiles):
+def calculate_fragments(smiles):
     """
     Objective: Create fragments and import them into Neo4j based on our ontology
     Intent: This script is based on Adam's "mol_frag.ipynb" file in his deepml branch, which is based on rdkit's
@@ -62,7 +62,6 @@ def fragments_to_neo(smiles):
 
 
 def insert_fragments(df_for_fragments, graph):
-
     fragment_query = Query(graph=graph).__fragment_query__()
 
     df_for_fragments = df_for_fragments[['smiles', 'fragments']]
@@ -70,4 +69,3 @@ def insert_fragments(df_for_fragments, graph):
 
     tx = graph.begin(autocommit=True)
     tx.evaluate(fragment_query, parameters={"rows": smiles_frags_dicts})
-

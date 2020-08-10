@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from rdkit import Chem
+from core.neo4j.fragments import canonical_smiles
 from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -19,7 +20,7 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     feat_meth = self.feat_meth
     df = self.data
-
+    df['smiles'] = canonical_smiles(list(df['smiles']))  # Turn SMILES into CANONICAL SMILES
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']

@@ -87,6 +87,6 @@ def output_to_neo4j(port, username, password):
         prep = Prep(df_from_attributes, df_from_predictions, df_from_data)
         prep.to_neo4j(port=port, username=username, password=password)
 
-
 # You can uncomment this to run the process of importing data from output files into Neo4j based on our ontology
-# output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+if __name__ == '__main__':
+    output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

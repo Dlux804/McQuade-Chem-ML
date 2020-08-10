@@ -1,15 +1,14 @@
 """
 Objective: The goal of this script is to create nodes in Neo4j directly from the pipeline using class instances
 """
-import time
 
-import numpy as np
 import pandas as pd
-from py2neo import Graph, Node, ClientError
-from sklearn.metrics import mean_squared_error, r2_score
+import time
+from core.neo4j.make_query import Query
+from core.storage.dictionary import target_name_grid
+from py2neo import Graph, Node
 
 from core.neo4j.fragments import fragments_to_neo, insert_fragments
-from core.neo4j import fragments
 from core.storage.misc import parallel_apply
 
 
@@ -22,17 +21,46 @@ def prep(self):
     Intent: I want to have one function that calculates the data I need for the ontology. I don't think we need
             class instances for these data since they can be easily obtained with one ot two lines of code each.
     """
-    canonical_smiles = fragments.canonical_smiles(list(self.data['smiles']))
     pva = self.predictions
-    r2 = r2_score(pva['actual'], pva['pred_avg'])  # r2 values
-    mse = mean_squared_error(pva['actual'], pva['pred_avg'])  # mse values
-    rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))  # rmse values
-    self.data['smiles'] = canonical_smiles
+    data_size = len(self.data['smiles'])
+    # self.data['smiles'] = canonical_smiles
     df_smiles = self.data.iloc[:, [1, 2]]
+    actual = pva['actual']
+    pva_predictions = pva.drop(['pred_avg', 'pred_std', 'smiles', 'actual'], axis=1)
 
+    average_error = list(pva_predictions.sub(actual, axis=0).mean(axis=1))  # Calculate avg prediction error
     test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
-                                  'uncertainty': list(pva['pred_std'])}).to_dict('records')
-    return r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict
+                                  'uncertainty': list(pva['pred_std']),
+                                  'error': average_error}).to_dict('records')
+    return df_smiles, test_mol_dict, data_size
+
+
+def __dataset_record__(self, graph):
+    """
+    Objective: Return record of dataset in the current database. If it's larger than 0, we can skip time and memory
+                intensive functions
+    :param self:
+    :param graph
+    :return:
+    """
+
+    record = graph.run("""MATCH (n:DataSet {data:"%s"}) RETURN n""" % self.dataset)
+    return len(list(record))
+
+
+def __make_molecules__(dict_records, dataset, graph):
+    """
+    Objective: Create SMILES nodes and their properties such as dataset and target value
+    :param dict_records: Dictionary records that contain all SMILES and target value
+    :param dataset: The dataset that the SMILES belong to
+    :param graph: Connecting python to Neo4j
+    :return:
+    """
+    t1 = time.perf_counter()
+    molecule_query = Query(graph=graph).__make_molecules_query__(target_name=target_name_grid(dataset))
+    graph.evaluate(molecule_query, parameters={'molecules': dict_records, 'dataset': dataset})
+    t2 = time.perf_counter()
+    print(f"Finished creating molecules in {t2 - t1}sec")
 
 
 def __merge_molecules_and_rdkit2d__(df, graph):
@@ -40,56 +68,11 @@ def __merge_molecules_and_rdkit2d__(df, graph):
     Objective: For every row in a csv (or dataframe) that contains SMILES and rdkit2d Features, merge SMILES with
     rdkit2d features with its respective feature values
     Intent: Created to be used with dataframe's apply function.
-    :param row: A row in a csv
-    :return:
+    :param df:
+    :param graph:
         """
 
-    restraint_strings = ["""
-            CREATE CONSTRAINT ON 
-            (n:Feature) ASSERT n.name IS UNIQUE
-            """,
-                         """
-            CREATE CONSTRAINT ON 
-            (n:FeatureMethod) ASSERT n.feature IS UNIQUE
-            """]
-
-    for restraint_string in restraint_strings:
-        try:
-            tx = graph.begin(autocommit=True)
-            tx.evaluate(restraint_string)
-        except ClientError:
-            pass
-
-    mol_feat_query = """
-        CALL apoc.periodic.iterate(
-            "
-            UNWIND $molecules as molecule
-            RETURN molecule
-            ",
-            "
-            MERGE (rdkit2d:FeatureMethod {feature:'rdkit2d'})
-            MERGE (mol:Molecule {SMILES: molecule.smiles})
-            FOREACH (feat in molecule.feats | 
-                MERGE (feature:Feature {name: feat.name})
-                MERGE (mol)-[:HAS_DESCRIPTOR {value:feat.value, feat_name:feat.name}]->(feature)
-                MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
-                )
-            ",
-            {batchSize:2000, parallel:True, params:{molecules:$molecules}}
-            )
-        """
-
-    mol_feat_query = """
-        MERGE (rdkit2d:FeatureMethod {feature:'rdkit2d'})
-        WITH rdkit2d
-            UNWIND $molecules as molecule
-                MERGE (mol:Molecule {SMILES: molecule.smiles})
-                FOREACH (feat in molecule.feats | 
-                    MERGE (feature:Feature {name: feat.name})
-                    MERGE (mol)-[:HAS_DESCRIPTOR {value:feat.value, feat_name:feat.name}]->(feature)
-                    MERGE (feature)<-[r:CALCULATES]-(rdkit2d)
-                )
-        """
+    mol_rdkit2d_query = Query(graph=graph).__molecules_and_rdkit2d_query__()
 
     # TODO make this work without a for loop if possible
     molecules = []
@@ -107,11 +90,11 @@ def __merge_molecules_and_rdkit2d__(df, graph):
         range_molecules.append(molecule)
         if index % 2000 == 0 and index != 0:
             tx = graph.begin(autocommit=True)
-            tx.evaluate(mol_feat_query, parameters={"molecules": range_molecules})
+            tx.evaluate(mol_rdkit2d_query, parameters={"molecules": range_molecules})
             range_molecules = []
     if range_molecules:
         tx = graph.begin(autocommit=True)
-        tx.evaluate(mol_feat_query, parameters={"molecules": range_molecules})
+        tx.evaluate(mol_rdkit2d_query, parameters={"molecules": range_molecules})
 
 
 def nodes(self):
@@ -128,21 +111,30 @@ def nodes(self):
                                                                                                 "prep_from_output"
     """
     t1 = time.perf_counter()
+    self.tuned = str(self.tuned).capitalize()
     print("Creating Nodes for %s" % self.run_name)
 
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
 
-    r2, mse, rmse, canonical_smiles, df_smiles, test_mol_dict = prep(self)
+    df_smiles, test_mol_dict, data_size = prep(self)
+
+    query = Query(graph=g)
+    query.__check_for_constraints__()
 
     # Make algorithm node
     if self.algorithm == "nn":
         algor = Node("Algorithm", name=self.algorithm, source="Keras", tuned=self.tuned)
-        g.merge(algor, "Algorithm", "name")
+        g.create(algor)
+        g.evaluate(""" MATCH (n:Algorithm) WITH n.name AS name, n.tuned as tuned,
+                               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+                               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
     else:
         algor = Node("Algorithm", name=self.algorithm, source="sklearn", tuned=self.tuned)
-        g.merge(algor, "Algorithm", "name")
-
+        g.create(algor)
+        g.evaluate(""" MATCH (n:Algorithm) WITH n.name AS name, n.tuned as tuned,
+                               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+                               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
     # Make Tuner node
     if self.tuned:
         tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name)
@@ -179,63 +171,41 @@ def nodes(self):
     if self.val_percent > 0:
         valset = Node("ValSet", name="ValidateSet", valsize=self.n_val, random_seed=self.random_seed)
         g.create(valset)
+
     else:
         pass
 
     # Create SMILES
+    # SET FUNCTION WILL UPDATE DUPLICATE VALUES TO LIST
     df_smiles.columns = ['smiles', 'target']  # Change target column header to target
 
-    restraint_string = """
-            CREATE CONSTRAINT ON 
-            (n:Molecule) ASSERT n.SMILES IS UNIQUE
-        """
-
-    try:
-        tx = g.begin(autocommit=True)
-        tx.evaluate(restraint_string)
-    except ClientError:
-        pass
-
-    g.evaluate("""
-            UNWIND $molecules as molecule
-            MERGE (mol:Molecule {SMILES: molecule.smiles})
-                ON CREATE Set mol.dataset = [$dataset], mol.target = [molecule.target], mol.name = "Molecule"
-            """,
-               parameters={'molecules': df_smiles.to_dict('records'), 'dataset': self.dataset}
-               )
-    t2 = time.perf_counter()
-    print(f"Finished creating main ML nodes in {t2 - t1}sec")
-
-    # Creating Molecular Fragments
-    # Check to see if we have created fragments for this run's dataset
-    record = g.run("""MATCH (n:DataSet {data:"%s"}) RETURN n""" % self.dataset)
-    if len(list(record)) > 0:  # If yes, then skip
-        print(f"This dataset, {self.dataset}, and its fragments already exist in the database. Moving on")
-    else:  # If not, then make fragments
+    # Check to see if we have created fragments and molecules for this run's dataset
+    record = __dataset_record__(self, graph=g)
+    if record > 0:  # If found dataset
+        print(f"This dataset, {self.dataset} already exists in the database. Skipping fragments, and rdkit2d features")
+    else:  # If unique dataset
+        # Make molecules
+        __make_molecules__(dict_records=df_smiles.to_dict('records'), dataset=self.dataset, graph=g)
         t3 = time.perf_counter()
-        temp_df = self.data[['smiles']]
+        df_for_fragments = df_smiles.drop(['target'], axis=1)
         print('Calculating Fragments')
-        temp_df['fragments'] = parallel_apply(temp_df['smiles'], fragments_to_neo, number_of_workers=3,
-                                              loading_bars=False)
+        df_for_fragments['fragments'] = parallel_apply(df_for_fragments['smiles'], fragments_to_neo, number_of_workers=3
+                                                       , loading_bars=False)
         print('Inserting Fragments')
-        insert_fragments(temp_df, graph=g)
+        insert_fragments(df_for_fragments, graph=g)  # Make fragments
         t4 = time.perf_counter()
         print(f"Finished creating molecular fragments in {t4 - t3}sec")
 
-    # Merge rdkit2d features with molecules
-    if 'rdkit2d' in self.feat_method_name:  # rdkit2d in feat method name
-        # Check if rdkit2d already exist for this dataset
-        record = g.run("""MATCH (n:DataSet {data:$dataset}) RETURN n""", parameters={'dataset': self.dataset})
-        if len(list(record)) > 0:  # Already created rdkit2d feature for this dataset
-            print(f"This dataset, {self.dataset}, and its rdkit2d features already exist in the database. Moving on")
-        else:  # If not
+        if 'rdkit2d' in self.feat_method_name:  # rdkit2d in feat method name
+            t5 = time.perf_counter()
             print("Creating rdki2d features")
-            df_rdkit2d_features = self.data.filter(regex='smiles|fr_|Count|Num|Charge|TPSA|qed', axis=1)
-            __merge_molecules_and_rdkit2d__(df_rdkit2d_features, graph=g)
-            t3 = time.perf_counter()
-            print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t3 - t2}sec")
-    else:
-        pass
+            df_rdkit2d_features = self.data.filter(regex='smiles|fr_|Count|Num|Charge|TPSA|qed|%s' % self.target_name,
+                                                   axis=1)
+            __merge_molecules_and_rdkit2d__(df_rdkit2d_features, graph=g)  # Make rdkit2d
+            t6 = time.perf_counter()
+            print(f"Finished creating nodes and relationships between SMILES and rdkit2d features in {t6 - t5}sec")
+        else:
+            pass
 
     # Make FeatureMethod node
     for feat in self.feat_method_name:
@@ -243,5 +213,8 @@ def nodes(self):
         g.merge(feature_method, "FeatureMethod", "feature")
 
     # Make dataset node
-    dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset, measurement=self.target_name)
+    dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset,
+                   measurement=target_name_grid(self.dataset), tasktype=self.task_type, datasize=data_size)
     g.merge(dataset, "DataSet", "data")
+    t7 = time.perf_counter()
+    print(f"Finished creating nodes in {t7-t1}sec")

@@ -135,7 +135,7 @@ class MlModel:  # TODO update documentation here
         nodes(self)  # Create nodes
         relationships(self)  # Create relationships
         t2 = default_timer() - t1
-        # print(f"Time it takes to finish graphing {self.run_name}: {t2}sec")
+        print(f"Time it takes to finish graphing {self.run_name}: {t2}sec")
 
     def connect_mysql(self, user, password, host, database, initialize_data=False):
         # Gather MySql Parameters

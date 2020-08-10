@@ -11,7 +11,6 @@ from core.storage import cd, pickle_model, unpickle_model, QsarDBImport
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
-
 def main():
     os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
@@ -117,18 +116,17 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
-                                tune=True, cv=2, opt_iter=2)
+        model1 = MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
+                         tune=True, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)
         print('Dataset:', model1.dataset)
         print()
-
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split()
+        model1.data_split(val=0.1)
         model1.reg()
         model1.run()
         model1.analyze()
@@ -212,8 +210,9 @@ def time_needed():
 
 
 if __name__ == "__main__":
-    # main()
-    # single_model()
+      # main()
+    single_model()
+
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # time_needed()

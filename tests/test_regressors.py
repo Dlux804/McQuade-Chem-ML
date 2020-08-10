@@ -15,12 +15,12 @@ os.chdir(ROOT_DIR)
 def test_nn_get_regressor(__data_split_model__):
     model1 = __data_split_model__
     model1.get_regressor()
-    assert model1.regressor, "Can't call for regressor object"
+    assert model1.estimator, "Can't call for regressor object"
     assert type(model1.fit_params) is dict, "fit params is not a dictionary"
     assert model1.task_type == 'regression'
 
 
-sklearn_list = ['ada', 'svr', 'rf', 'gdb', 'mlp', 'knn']
+sklearn_list = ['ada', 'svm', 'rf', 'gdb', 'mlp', 'knn']
 
 
 @pytest.mark.parametrize('algorithm', sklearn_list)
@@ -29,7 +29,7 @@ def test_sklearn_get_regressor(__data_split_model__):
     model1 = __data_split_model__
     model1.get_regressor()
     assert model1.task_type == 'regression'
-    assert str(model1.regressor)
+    assert str(model1.estimator)
 
 
 sklearn_list.remove('knn')

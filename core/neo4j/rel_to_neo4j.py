@@ -67,7 +67,7 @@ def relationships(self, from_output=False):
         """, parameters={'feat_ID': self.feat_meth, 'method_name': self.feat_method_name})
 
     # Merge MLModel to Algorithm
-    if self.tuned:  # If tuned
+    if self.tuned is "True":  # If tuned
         if not from_output:
             self.params = dict(self.params)
         try:
@@ -89,7 +89,7 @@ def relationships(self, from_output=False):
                    parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'tuned': self.tuned})
 
     # Algorithm and MLModel to TuningAlg
-    if self.tuned:  # If tuned
+    if self.tuned is "True":  # If tuned
         g.evaluate("""MATCH (tuning_alg:TuningAlg), (algor:Algorithm {name: $algorithm, tuned: $tuned}), 
                     (model:MLModel {name: $run_name})
                    merge (algor)-[:USES_TUNING]->(tuning_alg)
@@ -156,7 +156,7 @@ def relationships(self, from_output=False):
     g.evaluate("""
         MATCH (dataset:DataSet {data: $dataset}), (trainset:TrainSet {trainsize: $training_size, 
         random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, random_seed: $random_seed})
-        MERGE (trainset)<-[:SPLITS_INTO]-(dataset)-[:SPLITS_INTO]->(testset)
+        MERGE (trainset)<-[:SPLITS_INTO_TRAIN]-(dataset)-[:SPLITS_INTO_TEST]->(testset)
     """, parameters={'dataset': self.dataset, 'training_size': self.n_train, 'random_seed': self.random_seed,
                      'test_size': self.n_test})
 
@@ -201,7 +201,7 @@ def relationships(self, from_output=False):
         # Merge Validate with DataSet
         g.evaluate("""MATCH (validate:ValSet {valsize: $val_size, random_seed: $random_seed}), 
                         (dataset:DataSet {data: $dataset})
-                      merge (dataset)-[:SPLITS_INTO]->(validate)
+                      merge (dataset)-[:SPLITS_INTO_VAL]->(validate)
         """, parameters={'val_size': self.n_val, 'dataset': self.dataset, 'random_seed': self.random_seed})
     else:
         pass

@@ -137,7 +137,7 @@ def nodes(self):
                                COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
                                CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
     # Make Tuner node
-    if self.tuned:
+    if self.tuned is "True":
         tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name)
         g.merge(tuning_algorithm, "TuningAlg", "algorithm")
     else:
@@ -150,7 +150,7 @@ def nodes(self):
     g.merge(model, "MLModel", "name")
 
     # Make FeatureList node
-    feat_list = Node("FeatureList", name="FeatureList", num=self.feature_length, feat_ID=self.feat_meth,
+    feat_list = Node("FeatureList", name="FeatureList", feat_length=self.feature_length, feat_ID=self.feat_meth,
                      featuure_lists=str(self.feature_list))
     g.merge(feat_list, "FeatureList", "feat_ID")
 

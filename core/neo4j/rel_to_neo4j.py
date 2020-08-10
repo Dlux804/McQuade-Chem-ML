@@ -163,7 +163,7 @@ def relationships(self, from_output=False):
     g.evaluate("""
         UNWIND $train_smiles as mol
         MATCH (trainset:TrainSet {trainsize: $training_size, random_seed: $random_seed}), (smiles:Molecule {SMILES:mol})
-        merge (smiles)<-[:CONTAINS_MOLECULES]-(trainset)""",
+        merge (smiles)<-[:CONTAINS_TRAINED_MOLECULES]-(trainset)""",
                parameters={'train_smiles': list(self.train_molecules), 'training_size': self.n_train,
                            'random_seed': self.random_seed})
 
@@ -193,7 +193,7 @@ def relationships(self, from_output=False):
         g.evaluate("""
                         UNWIND $val_smiles as mol
                         MATCH (smiles:Molecule {SMILES: mol}), (validate:ValSet {valsize: $val_size, 
-                        random_seed: $random_seed}) merge (validate)-[:CONTAINS_MOLECULES]->(smiles)""",
+                        random_seed: $random_seed}) merge (validate)-[:CONTAINS_VALIDATED_MOLECULES]->(smiles)""",
                    parameters={'val_smiles': list(self.val_molecules), 'val_size': self.n_val,
                                'random_seed': self.random_seed})
 

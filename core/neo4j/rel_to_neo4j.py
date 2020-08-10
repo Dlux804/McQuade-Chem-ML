@@ -7,8 +7,6 @@ from py2neo import Graph
 
 from core.neo4j.nodes_to_neo4j import prep
 
-# Merge to Neo4j Destop.
-# g = Graph("bolt://localhost:11002", user="neo4j", password="1234")
 
 # TODO REDO DOCSTRINGS
 
@@ -27,21 +25,28 @@ def relationships(self):
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
 
-    # Merge RandomSplit node
-    g.evaluate(" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,"
-               "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
-               "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
-    
-    # Merge TrainSet node
-    g.evaluate(" MATCH (n:TrainSet) WITH n.trainsize as trainsize, n.random_seed as seed,"
-               "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
-               "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
+    # # Merge RandomSplit node
+    # g.evaluate(""" MATCH (n:RandomSplit) WITH n.test_percent AS test, n.train_percent as train, n.random_seed as seed,
+    #            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+    #
+    # # Merge TrainSet node
+    # g.evaluate(""" MATCH (n:TrainSet) WITH n.trainsize as trainsize, n.random_seed as seed,
+    #            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+    #
+    # # Merge ValSet node
+    # g.evaluate(""" MATCH (n:ValSet) WITH n.valsize as valsize, n.random_seed as seed,
+    #            COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #            CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+    #
+    # # Merge TestSet node
+    # g.evaluate("""
+    #         MATCH (n:TestSet) WITH n.testsize as testsize, n.random_seed as seed,
+    #         COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
+    #         CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node
+    #         """)
 
-    # Merge ValSet node
-    g.evaluate(" MATCH (n:ValSet) WITH n.valsize as valsize, n.random_seed as seed,"
-               "COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1 "
-               "CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node")
-    
     # Merge Dataset with molecules and RandomSplit
     g.evaluate("""
             UNWIND $molecules as mol
@@ -64,11 +69,17 @@ def relationships(self):
         for key in param_dict:
             try:
                 value = param_dict[key].values[0]
-                g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
-                           merge (model)-[r:USES_ALGORITHM]->(algor) Set r.%s = "%s" """ % (key, value),
-                           parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key})
             except AttributeError:
-                print(f"Failed to merge relationship with {param_dict[key]}")
+                value = param_dict[key]
+            g.evaluate("""
+                        MATCH (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
+                        MERGE (model)-[r:USES_ALGORITHM]->(algor) 
+                            SET r.%s = "%s" 
+                        """ % (key, value),
+                       parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'key': key}
+                       )
+            # except AttributeError:
+            #     print(f"Failed to merge relationship with {key}, with a value of {param_dict[key]}")
     else:  # If not tuned
         g.evaluate("""match (algor:Algorithm {name: $algorithm}), (model:MLModel {name: $run_name})
                    merge (model)-[r:USES_ALGORITHM]->(algor)""",
@@ -111,9 +122,13 @@ def relationships(self):
                parameters={'training_size': self.n_train, 'run_name': self.run_name, 'random_seed': self.random_seed})
 
     # MLModel to TestSet
-    g.evaluate("""match (testset:TestSet {testsize: $test_size, RMSE: $rmse}), (model:MLModel {name: $run_name})
-               merge (model)-[:PREDICTS]->(testset)""",
-               parameters={'test_size': self.n_test, 'rmse': rmse, 'run_name': self.run_name})
+    g.evaluate("""
+            match (testset:TestSet {testsize: $test_size, random_seed: $random_seed}), (model:MLModel {name: $run_name})
+            merge (model)-[r:PREDICTS]->(testset)
+            Set r.rmse = $rmse, r.mse = $mse, r.r2 = $r2
+               """,
+               parameters={'test_size': self.n_test, 'rmse': rmse, 'mse': mse, 'r2': r2, 'run_name': self.run_name,
+                           'random_seed': self.random_seed})
 
     # MLModel to feature method, FeatureList to feature method
     g.evaluate("""
@@ -124,7 +139,7 @@ def relationships(self):
 
     # Merge RandomSplit to TrainSet and TestSet
     g.evaluate("""match (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
-               random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, RMSE: $rmse}), 
+               random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, random_seed: $random_seed}), 
                (trainset:TrainSet {trainsize: $training_size, random_seed: $random_seed})
                merge (trainset)<-[:MAKES_SPLIT]-(split)-[:MAKES_SPLIT]->(testset)""",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
@@ -134,7 +149,7 @@ def relationships(self):
     # Merge Dataset to TrainSet and TestSet
     g.evaluate("""
         MATCH (dataset:DataSet {data: $dataset}), (trainset:TrainSet {trainsize: $training_size, 
-        random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, RMSE: $rmse})
+        random_seed: $random_seed}), (testset:TestSet {testsize: $test_size, random_seed: $random_seed})
         MERGE (trainset)<-[:SPLITS_INTO]-(dataset)-[:SPLITS_INTO]->(testset)
     """, parameters={'dataset':self.dataset, 'training_size': self.n_train, 'random_seed': self.random_seed,
                      'test_size': self.n_test, 'rmse': rmse})
@@ -150,10 +165,11 @@ def relationships(self):
 
     # Merge TestSet with its molecules
     g.evaluate("""
-            UNWIND $parameters as row
-            match (testset:TestSet {testsize: $test_size, RMSE: $rmse}) merge (smiles:Molecule {SMILES: row.smiles}) 
-            merge (testset)-[:CONTAINS_MOLECULES {predicted_value: row.predicted, uncertainty:row.uncertainty}]->(smiles)
-        """, parameters={'parameters': test_mol_dict, 'test_size': self.n_test, 'rmse': rmse})
+        UNWIND $parameters as row
+        match (testset:TestSet {testsize: $test_size, random_seed: $random_seed}) 
+        merge (smiles:Molecule {SMILES: row.smiles}) 
+        merge (testset)-[:CONTAINS_MOLECULES {predicted_value: row.predicted, uncertainty:row.uncertainty}]->(smiles)
+        """, parameters={'parameters': test_mol_dict, 'test_size': self.n_test, 'random_seed': self.random_seed})
 
     if self.val_percent > 0:
         # Merge RandomSplit to Validation

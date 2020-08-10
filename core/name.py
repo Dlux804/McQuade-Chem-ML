@@ -2,7 +2,7 @@ import os
 import pathlib
 from datetime import datetime
 
-from core.storage import cd
+from core.storage.misc import cd
 """
 Objective: A systematic way to create a unique name for every single machine learning run
 This code follows the "Letters and Numbers" rule explained in naming_schemes_v2.pptx in the naming branch
@@ -66,7 +66,7 @@ def represent_algorithm():
     This representation follows the "Letters and Numbers" rule explained in naming_schemes_v2.pptx in the naming branch
     :return:
     """
-    algorithm_list = ['ada', 'rf', 'svr', 'gdb', 'mlp', 'knn', 'nn', 'svc', 'knc', 'rfc']  # Out current supported algorithm
+    algorithm_list = ['ada', 'rf', 'gdb', 'mlp', 'knn', 'nn', 'svm']  # Out current supported algorithm
     represent = [algor[0].upper() for algor in algorithm_list]  # List of algorithm's first letter with upper case
     dictionary = {}
     for algor, rep in zip(algorithm_list, represent):  # Looping through two lists at the same time
@@ -74,7 +74,7 @@ def represent_algorithm():
     return dictionary
 
 
-def get_run_name(self):
+def name(self):
     """
     Give a unique name to a machine learning run
     :return: A unique name to a machine learning run

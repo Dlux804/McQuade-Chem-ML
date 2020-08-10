@@ -4,12 +4,12 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from rdkit import Chem
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
 from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 
-def featurize(self, not_silent=True):
+def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     Caclulate molecular features.
     Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
@@ -18,6 +18,7 @@ def featurize(self, not_silent=True):
     feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
     feat_meth = self.feat_meth
+    df = self.data
 
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
@@ -30,8 +31,15 @@ def featurize(self, not_silent=True):
             'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
     selected_feat = [feat_sets[i] for i in feat_meth]
 
+    self.selected_feat_string = '-'.join(selected_feat) # This variable will be used later in train.py for giving classification roc graph a unique file name.
+
     self.feat_method_name = selected_feat
-    df = self.data
+
+    # Get data from MySql if called
+    if retrieve_from_mysql:
+        print("Pulling data from MySql")
+        self.featurize_from_mysql()
+        return
 
     if not_silent:  # Add option to silence messages
         print("You have selected the following featurizations: ", end="   ", flush=True)
@@ -86,7 +94,7 @@ def featurize(self, not_silent=True):
     self.feat_time = feat_time
 
 
-def data_split(self, test=0.2, val=0):
+def data_split(self, test=0.2, val=0, random=None):
     """
     Take in a data frame, the target column name (exp).
     Returns a numpy array with the target variable,
@@ -113,7 +121,6 @@ def data_split(self, test=0.2, val=0):
 
     else:
         features = self.data.drop([self.target_name, 'smiles'], axis=1)
-
     # save list of strings of features
     self.feature_list = list(features.columns)
     self.feature_length = len(self.feature_list)

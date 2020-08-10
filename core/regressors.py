@@ -72,12 +72,12 @@ def wrapKeras(self, build_func=build_nn):
     # if model has been tuned, it should have 'parrams' attribute
     # create regressor instance with tuned parameters
     if hasattr(self, 'params'):
-        self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape,
+        self.estimator = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape,
                                                                     **self.params)
 
     # has not been tuned and no params have been supplied, so use default.
     else:
-        self.regressor = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape)
+        self.estimator = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape)
 
 
 def get_regressor(self, call=False):
@@ -90,7 +90,7 @@ def get_regressor(self, call=False):
     skl_regs = {
         'ada': AdaBoostRegressor,
         'rf': RandomForestRegressor,
-        'svr': SVR,
+        'svm': SVR,
         'gdb': GradientBoostingRegressor,
         'mlp': MLPRegressor,
         'knn': KNeighborsRegressor
@@ -100,14 +100,14 @@ def get_regressor(self, call=False):
 
         # if want callable regressor
         if call:
-            self.regressor = skl_regs[self.algorithm]
+            self.estimator = skl_regs[self.algorithm]
 
         # return instance with either default or tuned params
         else:
             if hasattr(self, 'params'):  # has been tuned
-                self.regressor = skl_regs[self.algorithm](**self.params)
+                self.estimator = skl_regs[self.algorithm](**self.params)
             else:  # use default params
-                self.regressor = skl_regs[self.algorithm]()
+                self.estimator = skl_regs[self.algorithm]()
 
     if self.algorithm == 'nn':  # neural network
 
@@ -159,7 +159,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
 
     # set up Bayes Search
     bayes = BayesSearchCV(
-        estimator=self.regressor,  # what regressor to use
+        estimator=self.estimator,  # what regressor to use
         search_spaces=self.param_grid,  # hyper parameters to search through
         fit_params=self.fit_params,
         n_iter=self.opt_iter,  # number of combos tried

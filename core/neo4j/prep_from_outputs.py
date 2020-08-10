@@ -57,7 +57,7 @@ class Prep:
         self.random_seed = int(df_from_attributes['random_seed'].values[0])
         self.params_list = list(df_from_attributes.filter(regex='params.'))
         self.canonical_smiles = fragments.canonical_smiles(list(df_from_data['smiles']))
-        self.target_array = list(df_from_data['target'])
+        self.target_array = list(df_from_data[self.target_name])
         self.n_val = int(df_from_attributes['n_val'])
         self.predictions = df_from_predictions
         pva = self.predictions
@@ -73,10 +73,6 @@ class Prep:
         self.val_molecules = split_molecules(df_from_data, 'val')
         self.feat_meth = df_from_attributes['feat_meth'].values[0]
         self.tune_algorithm_name = df_from_attributes['tune_algorithm_name'].values[0]
-        if "rdkit2d" in self.feat_method_name:
-            self.rdkit2d_features = df_from_data.loc[:, 'smiles':'qed']
-        else:
-            pass
         if self.tuned:
             self.cv_folds = int(df_from_attributes['cv_folds'].values[0])
             self.tune_time = float(df_from_attributes['tune_time'].values[0])

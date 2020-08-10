@@ -259,7 +259,7 @@ def make_grid(self):
     grids = {
         "ada" : ada_paramgrid,
         'rf' : rf_paramgrid,
-        'svr': svr_paramgrid,
+        'svm': svr_paramgrid,
         'gdb': gdb_paramgrid,
         'mlp': mlp_paramgrid,
         'knn': knn_paramgrid,

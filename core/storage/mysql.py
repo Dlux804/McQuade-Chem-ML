@@ -1,6 +1,6 @@
 import os
-from time import time
 from pathlib import Path
+from time import time
 
 import pandas as pd
 from sqlalchemy import create_engine
@@ -9,10 +9,10 @@ from rdkit.Chem import MolFromSmiles
 from rdkit import RDLogger
 
 from core import ingest
-from core.storage.misc import cd, compress_fingerprint, decompress_fingerprint
+from core.storage.misc import compress_fingerprint, decompress_fingerprint, cd
+
 
 RDLogger.DisableLog('rdApp.*')
-bad_datasets = ['cmc.csv']  # This dataset seems to be giving me a hard time
 
 
 class MLMySqlConn:
@@ -160,7 +160,7 @@ class MLMySqlConn:
             data = data.merge(df, on=same_columns)
         return data
 
-    def insert_all_data_mysql(self):
+    def insert_data_mysql(self):
         """
         The is to featurize and insert all the featurized data into MySql from datafiles. Goes through the entire
         datafiles folder, featurizing each dataset with each feature method. This will only 'run' once natively, even
@@ -170,6 +170,8 @@ class MLMySqlConn:
 
         :return:
         """
+
+        bad_datasets = ['cmc.csv']  # This dataset seems to be giving me a hard time
 
         # Pull datasets
         datasets_dir = str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'
@@ -215,29 +217,15 @@ class MLMySqlConn:
                         print(f'Created {dataset}_{feat_name}')
 
 
-def initialize_tables(self):
-    mysql_conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
-                             host=self.mysql_params['host'], database=self.mysql_params['database'])
-    for feat in self.feat_meth:
-        feat_name = mysql_conn.feat_sets[feat]
-        if self.dataset not in bad_datasets and not mysql_conn.table_exist(dataset=self.dataset, feat_name=feat_name):
-            print(feat_name, self.dataset)
-            self.feat_meth = [feat]
-            self.featurize(not_silent=False)
-            self.data = compress_fingerprint(self.data)
-            self.data.to_sql(f'{self.dataset}_{feat_name}', mysql_conn.conn, if_exists='fail')
-            print(f'Created {self.dataset}_{feat_name}')
-
-
 def featurize_from_mysql(self):
+
     """
+
     Is a wrapper for featurizing data using MySql server
 
     :param self: MLModel object
     :return:
     """
-
-    print("Pulling data from MySql")
 
     # Pull data from MySql server
     if self.mysql_params is None:
@@ -245,6 +233,5 @@ def featurize_from_mysql(self):
     start_feat = time()
     mysql_conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
                              host=self.mysql_params['host'], database=self.mysql_params['database'])
-    self.feat_method_name = [mysql_conn.feat_sets[i] for i in self.feat_meth]
     self.data = mysql_conn.retrieve_data(dataset=self.dataset, feat_meth=self.feat_meth)
     self.feat_time = time() - start_feat

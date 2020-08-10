@@ -6,28 +6,12 @@ import subprocess
 import platform
 import shutil
 from time import sleep
+from tqdm import tqdm
 from contextlib import contextmanager
 
 import pandas as pd
 import numpy as np
-from tqdm import tqdm
-
-
-class NumpyEncoder(json.JSONEncoder):
-    """
-    Modifies JSONEncoder to convert numpy arrays to lists first.
-    """
-
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
-
-
-def foo(self, string):
-    print('\n', self.algorithm)
-    print(string)
-    return string
+import concurrent.futures as cf
 
 
 @contextmanager
@@ -44,6 +28,71 @@ def cd(newdir):
     finally:
         # print('Switching back to previous PATH:', prevdir)
         os.chdir(prevdir)
+
+# Example usage
+'''
+os.chdir('/home')
+
+with cd('/tmp'):
+    # ...
+    raise Exception("There's no place like home.")
+# Directory is now back to '/home'.
+'''
+
+
+def __aw__(df_column, function, **props):
+    """
+    Wrapper function for parallel apply. Actual runs the pandas.apply on an individual CPU.
+    """
+
+    new_df_column = df_column.apply(function, **props)
+    return new_df_column
+
+
+def parallel_apply(df_column, function, number_of_workers, loading_bars, **props):
+    """
+    This function will run pandas.apply in parallel depending on the number of CPUS the user specifies.
+    """
+
+    steps = len(df_column) / number_of_workers
+    mid_dfs = []
+    for x in range(number_of_workers):
+        if x == number_of_workers - 1:
+            mid_dfs.append(df_column.iloc[int(steps * x):])
+        else:
+            mid_dfs.append(df_column.iloc[int(steps * x):int(steps * (x + 1))])
+
+    main_df = None
+    with cf.ProcessPoolExecutor(max_workers=number_of_workers) as executor:
+
+        results = []
+        for mid_df in mid_dfs:
+            results.append(executor.submit(__aw__, mid_df, function, **props))
+
+        if loading_bars:
+            for f in tqdm.tqdm(cf.as_completed(results), total=number_of_workers):
+                if main_df is None:
+                    main_df = f.result()
+                else:
+                    main_df = main_df.append(f.result())
+        else:
+            for f in cf.as_completed(results):
+                if main_df is None:
+                    main_df = f.result()
+                else:
+                    main_df = main_df.append(f.result())
+    return main_df
+
+
+class NumpyEncoder(json.JSONEncoder):
+    """
+    Modifies JSONEncoder to convert numpy arrays to lists first.
+    """
+
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 
 def __clean_up_params__(params):
@@ -101,12 +150,7 @@ def store(self):
 
         # grab pandas related objects for export to csv
         if isinstance(v, pd.core.frame.DataFrame) or isinstance(v, pd.core.series.Series):
-            if k == "data":  # Rename target column to a more general one
-                if self.dataset not in self.multi_label_classification_datasets:
-                    v = v.rename(columns={self.target_name: "target"})
-                v.to_csv(self.run_name + '_' + k + '.csv')
-
-            elif k != "smiles_series":
+            if k != "smiles_series":
                 objs.append(k)
                 dfs.append(k)
                 v.to_csv(self.run_name + '_' + k + '.csv')
@@ -226,9 +270,8 @@ def compress_fingerprint(df):
                               fingerprint_array_column_name: fingerprint_column_lists}).astype(str)
         # Get the original dataframe, minus the fingerprint columns
         df = df[df.columns.difference(fingerprint_columns)]
-
         # Join the new dataframes together
-        df = df.merge(fp_df, on='smiles')
+        df = pd.concat([df, fp_df], axis=1)
     return df
 
 

@@ -3,11 +3,12 @@ from matplotlib import cm
 
 import numpy as np
 import pandas as pd
-from rdkit.Chem import PandasTools
 from sklearn.metrics import mean_squared_error, r2_score, classification_report, confusion_matrix, accuracy_score, roc_auc_score
+from rdkit.Chem import PandasTools
+from sklearn.metrics import roc_curve
+from sklearn.metrics import precision_recall_curve
 
 
-# Feature importance graph
 def impgraph(self):
     """
     Objective: Make a feature importance graph. I'm limiting this to only rf and gdb since only they have feature
@@ -16,7 +17,9 @@ def impgraph(self):
     """
 
     # Get numerical feature importances
-    importances2 = self.regressor.feature_importances_  # used later for graph
+
+    importances2 = self.estimator.feature_importances_  # used later for graph
+
 
     # List of tuples with variable and importance
     feature_importances = [(feature, round(importance, 2)) for feature, importance in
@@ -33,7 +36,6 @@ def impgraph(self):
     varimp = pd.DataFrame([], columns=['variable', 'importance'])
     varimp['variable'] = [self.feature_list[i] for i in indicies]
     varimp['importance'] = importances2[indicies]
-
     # Importance Bar Graph
     plt.rcParams['figure.figsize'] = [15, 9]
 
@@ -56,6 +58,7 @@ def impgraph(self):
     ax.xaxis.grid(False)  # remove just xaxis grid
 
     plt.savefig(self.run_name + '_importance-graph.png')
+    plt.close()
     # self.impgraph = plt
     self.varimp = varimp
 
@@ -209,3 +212,53 @@ def grid_image(df, filename, molobj=True, smi='smiles'):  # list of molecules to
     )
     mol_image.save(filename + '.png')  # shold use a better naming scheme to avoid overwrites.
 
+
+def classification_graphs(self):
+    """
+    This function creates two graphs for single-label classification.
+
+    The first block creates a roc_curve graph,
+    while the second plot creates a precision/recall vs threshold graph.
+     """
+
+    if self.task_type == 'single_label_classification':
+        # Creates and saves a graphical evaluation for single-label classification
+        fpr, tpr, thresholds = roc_curve(self.test_target, self.predictions)
+        plot_roc_curve(fpr, tpr, self.auc_avg, self.acc_avg, self.f1_score_avg)
+        filename = "roc_curve.png"
+        plt.legend(loc='best')
+        plt.savefig(self.run_name + '_' + filename)
+        plt.close()
+
+
+        precisions, recalls, thresholds = precision_recall_curve(self.test_target, self.predictions)
+        plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
+        filename3 = "precision_recall_vs_threshold.png"
+        plt.legend(loc='best')
+        plt.savefig(self.run_name + '_' + filename3)
+        plt.close()
+
+
+def plot_roc_curve(fpr, tpr, auc, acc, f1, label=None):
+    """
+This function is called by the classification_graphs function, and is used to create the roc_curve graph,
+as well as to add labels showing import metrics to the graph.
+     """
+    plt.plot(fpr, tpr, linewidth=2, label="Roc_Auc_Score Average{{}} = {}".format(auc))
+    plt.plot([0, 1], [0, 1], 'k--', label='y=x')
+
+    plt.plot([], [], ' ', label='Accuracy_Score_Average = %.3f' % acc)
+    plt.plot([], [], ' ', label='F1_Score_Average = %.3f' % f1)
+
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate (Recall)')
+
+
+def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+    """
+This function is called by the classification_graphs function, and is used to create
+a precision/recall vs threshold graph.
+     """
+    plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
+    plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
+    plt.xlabel('Threshold')

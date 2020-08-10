@@ -6,7 +6,7 @@ import pandas as pd
 from timeit import default_timer
 
 from core import MlModel, get_classification_targets, Get_Task_Type_1
-from core.storage import cd, pickle_model, unpickle_model
+from core.storage import cd, pickle_model, unpickle_model, QsarDBImport
 
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
@@ -216,5 +216,7 @@ if __name__ == "__main__":
     # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
-    time_needed()
+    # time_needed()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+    qsar_model = QsarDBImport('2017MI1700024.qdb.zip', zipped=True)
+    qsar_model.to_neo4j()

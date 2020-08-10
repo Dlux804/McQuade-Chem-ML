@@ -112,6 +112,7 @@ def nodes(self):
     """
     self.tuned = str(self.tuned).capitalize()
     t1 = time.perf_counter()
+    self.tuned = str(self.tuned).capitalize()
     print("Creating Nodes for %s" % self.run_name)
 
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
@@ -214,7 +215,7 @@ def nodes(self):
 
     # Make dataset node
     dataset = Node("DataSet", name="Dataset", source="Moleculenet", data=self.dataset,
-                   measurement=target_name_grid(self.dataset), tasktype=self.task_type)
+                   measurement=target_name_grid(self.dataset), tasktype=self.task_type, datasize=data_size)
     g.merge(dataset, "DataSet", "data")
     t7 = time.perf_counter()
     print(f"Finished creating nodes in {t7-t1}sec")

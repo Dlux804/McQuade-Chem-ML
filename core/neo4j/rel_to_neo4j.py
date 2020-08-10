@@ -23,6 +23,8 @@ def relationships(self, from_output=False):
     print("Creating relationships...")
     self.tuned = str(self.tuned).capitalize()
     t1 = time.perf_counter()
+    self.tuned = str(self.tuned).capitalize()
+
     df_smiles, test_mol_dict, data_size = prep(self)
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
@@ -162,7 +164,7 @@ def relationships(self, from_output=False):
     g.evaluate("""
         UNWIND $train_smiles as mol
         MATCH (trainset:TrainSet {trainsize: $training_size, random_seed: $random_seed}), (smiles:Molecule {SMILES:mol})
-        merge (smiles)<-[:CONTAINS_MOLECULES]-(trainset)""",
+        merge (smiles)<-[:CONTAINS_TRAINED_MOLECULES]-(trainset)""",
                parameters={'train_smiles': list(self.train_molecules), 'training_size': self.n_train,
                            'random_seed': self.random_seed})
 
@@ -171,8 +173,9 @@ def relationships(self, from_output=False):
     UNWIND $parameters as row
     MATCH (testset:TestSet {testsize: $test_size, random_seed: $random_seed}), (smiles:Molecule {SMILES: row.smiles}) 
     merge (testset)-[:PREDICTS_MOL_PROP {predicted_value: row.predicted, uncertainty:row.uncertainty, 
-                                            error_avg: row.error}]->(smiles)
-        """, parameters={'parameters': test_mol_dict, 'test_size': self.n_test, 'random_seed': self.random_seed})
+                                            error_avg: row.error, run_name: $run_name}]->(smiles)
+        """, parameters={'parameters': test_mol_dict, 'test_size': self.n_test, 'random_seed': self.random_seed,
+                         'run_name': self.run_name})
 
     if self.val_percent > 0:
         # Merge RandomSplit to Validation
@@ -191,7 +194,7 @@ def relationships(self, from_output=False):
         g.evaluate("""
                         UNWIND $val_smiles as mol
                         MATCH (smiles:Molecule {SMILES: mol}), (validate:ValSet {valsize: $val_size, 
-                        random_seed: $random_seed}) merge (validate)-[:CONTAINS_MOLECULES]->(smiles)""",
+                        random_seed: $random_seed}) merge (validate)-[:CONTAINS_VALIDATED_MOLECULES]->(smiles)""",
                    parameters={'val_smiles': list(self.val_molecules), 'val_size': self.n_val,
                                'random_seed': self.random_seed})
 

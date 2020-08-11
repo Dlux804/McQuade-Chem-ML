@@ -8,7 +8,7 @@ from core.neo4j.make_query import Query
 from core.storage.dictionary import target_name_grid
 from py2neo import Graph, Node
 
-from core.neo4j.fragments import fragments_to_neo, insert_fragments
+from core.neo4j.fragments import smiles_to_frag, insert_fragments
 from core.storage.misc import parallel_apply
 
 
@@ -110,6 +110,7 @@ def nodes(self):
     Note: If you want to know why I put number of features in a list (line 77), read my note located in
                                                                                                 "prep_from_output"
     """
+    self.tuned = str(self.tuned).capitalize()
     t1 = time.perf_counter()
     self.tuned = str(self.tuned).capitalize()
     print("Creating Nodes for %s" % self.run_name)
@@ -136,7 +137,7 @@ def nodes(self):
                                COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
                                CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
     # Make Tuner node
-    if self.tuned:
+    if self.tuned is "True":
         tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name)
         g.merge(tuning_algorithm, "TuningAlg", "algorithm")
     else:
@@ -145,11 +146,11 @@ def nodes(self):
 
     # Make MLModel nodes
     model = Node("MLModel", name=self.run_name, feat_time=self.feat_time, date=self.date, train_time=self.tune_time,
-                 test_time=float(self.predictions_stats["time_avg"]))
+                 test_time=float(self.predictions_stats["time_avg"]), tasktype=self.task_type)
     g.merge(model, "MLModel", "name")
 
     # Make FeatureList node
-    feat_list = Node("FeatureList", name="FeatureList", num=self.feature_length, feat_ID=self.feat_meth,
+    feat_list = Node("FeatureList", name="FeatureList", feat_length=self.feature_length, feat_ID=self.feat_meth,
                      featuure_lists=str(self.feature_list))
     g.merge(feat_list, "FeatureList", "feat_ID")
 
@@ -189,7 +190,7 @@ def nodes(self):
         t3 = time.perf_counter()
         df_for_fragments = df_smiles.drop(['target'], axis=1)
         print('Calculating Fragments')
-        df_for_fragments['fragments'] = parallel_apply(df_for_fragments['smiles'], fragments_to_neo, number_of_workers=3
+        df_for_fragments['fragments'] = parallel_apply(df_for_fragments['smiles'], smiles_to_frag, number_of_workers=3
                                                        , loading_bars=False)
         print('Inserting Fragments')
         insert_fragments(df_for_fragments, graph=g)  # Make fragments

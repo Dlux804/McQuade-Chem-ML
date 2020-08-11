@@ -16,8 +16,9 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-#    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
-    learner = ['knn']
+    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    # learner = ['rf', 'ada', 'gdb', 'nn']
+    # learner = ['knn']
 
     # list of available classification learning algorithms for reference/testing
     #learner = ['svm', 'knn', 'rf']
@@ -25,19 +26,23 @@ def main():
     # list of available regression learning algorithms for reference/testing
 #    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
 
+    # All tune option
+    tune_option = [False, True]
+
+    # Random seed option
+    random_seed_option = [42, None]
     # All data sets in dict
-    targets = None
-    sets = {
-       'BBBP.csv': targets,
-       'sider.csv': targets,
-       'clintox.csv': targets,
-       'bace.csv': targets,
-         'ESOL.csv': 'water-sol',
-         'Lipophilicity-ID.csv': 'exp',
-         'water-energy.csv': 'expt',
-         'logP14k.csv': 'Kow',
-         'jak2_pic50.csv': 'pIC50'
-    }
+    # sets = {
+    #    'BBBP.csv': targets,
+    #    'sider.csv': targets,
+    #    'clintox.csv': targets,
+    #    'bace.csv': targets,
+    #      'ESOL.csv': 'water-sol',
+    #      'Lipophilicity-ID.csv': 'exp',
+    #      'water-energy.csv': 'expt',
+    #      'logP14k.csv': 'Kow',
+    #      'jak2_pic50.csv': 'pIC50'
+    # }
 
     # classification data sets for reference/testing
     # sets = {
@@ -48,27 +53,23 @@ def main():
 #    }
 
     # regression data sets for reference/testing
-    # sets = {
-    #     'ESOL.csv': 'water-sol',
-    #     'Lipophilicity-ID.csv': 'exp',
-    #     'water-energy.csv': 'expt',
-    #     'logP14k.csv': 'Kow',
-    #     'jak2_pic50.csv': 'pIC50'
-    # }
+    sets = {
+        'ESOL.csv': 'water-sol'
+    }
 
-    for alg in learner: # loop over all learning algorithms
-        feats=[[0], [0,2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
-                  [5], [6]] # Use this line to select specific featurizations
+    for alg in learner:  # loop over all learning algorithms
+        feats = [[0], [1], [2], [3], [4], [5], [6], [0, 2], [0, 3],
+                 [0, 4], [0, 5], [0, 6]]  # Use this line to select specific featurizations
         # feats = [[2]]
         for method in feats:  # loop over the featurization methods
-            for data, target in sets.items(): # loop over dataset dictionary
+            for data, target in sets.items():  # loop over dataset dictionary
 
                 # This gets the target columns for classification data sets (Using target lists in the dictionary causes errors later in the workflow)
                 if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
                     target = get_classification_targets(data)
 
                 # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
-                checker, task_type = Get_Task_Type_1(data,alg)
+                checker, task_type = Get_Task_Type_1(data, alg)
                 if checker == 0:
                     pass
                 else:
@@ -83,10 +84,10 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                               tune=False, cv=3, opt_iter=25)
+                                        tune=True, cv=5, opt_iter=100)
                         print('Done.\n')
 
-                    with cd('dataFiles'):
+                    with cd('output'):
                         # Runs classification model
                         model.featurize()  # Featurize molecules
                         val = 0.0
@@ -100,7 +101,7 @@ def main():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-
+                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 
@@ -116,9 +117,10 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
-                         tune=True, cv=2, opt_iter=2)
-
+        model1 = MlModel(algorithm='svm', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
+                         tune=True, cv=5, opt_iter=100)
+        # model1 = MlModel(algorithm='svm', dataset='Lipo-short.csv', target='exp', feat_meth=[2],
+        #                  tune=True, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)
@@ -126,7 +128,7 @@ def single_model():
         print()
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split(val=0.1)
+        model1.data_split()
         model1.reg()
         model1.run()
         model1.analyze()
@@ -210,8 +212,8 @@ def time_needed():
 
 
 if __name__ == "__main__":
-      # main()
-    single_model()
+    main()
+    # single_model()
 
     # example_load()
     # example_run_with_mysql_and_neo4j()

@@ -96,6 +96,11 @@ class ModelOrOutputToNeo4j:
         if self.json_data is None:
             raise Exception("Could not parse json data")
 
+        # Here for reference if you want to view attributes stored in json file
+
+        # for label, value in self.json_data.items():
+        #     print(label, value)
+
         if not self.json_data['tuned']:
             self.tune_algorithm_name = str(None)
         else:
@@ -105,10 +110,6 @@ class ModelOrOutputToNeo4j:
         train_data = self.model_data.loc[self.model_data['in_set'] == 'train']
         val_data = self.model_data.loc[self.model_data['in_set'] == 'val']
         self.spilt_data = {'TestSet': test_data, 'TrainSet': train_data, 'ValSet': val_data}
-
-        # Here for reference if you want to view attributes stored in json file
-        # for label, value in self.json_data.items():
-        #     print(label, value)
 
         self.check_for_constraints()
         self.create_main_nodes()
@@ -122,41 +123,54 @@ class ModelOrOutputToNeo4j:
 
         constraint_check_strings = [
             """
-        CREATE CONSTRAINT unique_MLModel_name
-        ON (n:Model)
+        CREATE CONSTRAINT ON (n:Model)
         ASSERT n.name IS UNIQUE
         """,
 
             """
-        CREATE CONSTRAINT unique_FeatureList_feat_ID
-        ON (n:FeatureList)
+        CREATE CONSTRAINT ON (n:FeatureList)
         ASSERT n.feat_IDs IS UNIQUE
         """,
 
             """
-        CREATE CONSTRAINT unique_Dataset_name
-        ON (n:Dataset)
+        CREATE CONSTRAINT ON (n:Dataset)
         ASSERT n.data IS UNIQUE
         """,
 
             """
-        CREATE CONSTRAINT ON 
-        (n:Fragment) 
+        CREATE CONSTRAINT ON (n:Fragment) 
         ASSERT n.name IS UNIQUE        
         """,
 
             """
-        CREATE CONSTRAINT ON 
-        (n:Molecule) 
+        CREATE CONSTRAINT ON (n:Molecule) 
         ASSERT n.smiles IS UNIQUE    
         """,
 
             """
-        CREATE CONSTRAINT ON 
-        (n:Feature) 
+        CREATE CONSTRAINT ON (n:Feature) 
+        ASSERT n.name IS UNIQUE      
+        """,
+
+            """
+        CREATE CONSTRAINT ON (n:TuningAlg) 
+        ASSERT n.algorithm IS UNIQUE      
+        """,
+
+            """
+        CREATE CONSTRAINT ON (n:Algorithm) 
+        ASSERT n.name IS UNIQUE      
+        """,
+
+            """
+        CREATE CONSTRAINT ON (n:Set) 
+        ASSERT n.name IS UNIQUE      
+        """,
+
+            """
+        CREATE CONSTRAINT ON (n:FeatureMethod) 
         ASSERT n.name IS UNIQUE      
         """
-
         ]
 
         for constraint_check_string in constraint_check_strings:

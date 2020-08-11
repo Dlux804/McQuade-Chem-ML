@@ -264,7 +264,7 @@ class ModelOrOutputToNeo4j:
 
                 target_name_for_neo4j = self.target_name_gird[self.json_data['dataset']]
                 size = len(molecules)
-                rel_dict = {'TrainSet': 'trained_with', 'TestSet': 'predicts', 'Valset': 'validates'}
+                rel_dict = {'TrainSet': 'trained_with', 'TestSet': 'predicts', 'ValSet': 'validated_by'}
 
                 query = """
                         MATCH (model:Model {name: $run_name})

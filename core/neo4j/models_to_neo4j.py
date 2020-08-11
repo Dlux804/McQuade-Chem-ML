@@ -46,8 +46,8 @@ class ModelOrOutputToNeo4j:
 
         # Here for reference if you want to view attributes stored in json file
 
-        # for label, value in self.json_data.items():
-        #     print(label, value)
+        for label, value in self.json_data.items():
+            print(label, value)
 
         self.target_name_gird = {
             'ESOL.csv': 'water_sol',
@@ -59,7 +59,7 @@ class ModelOrOutputToNeo4j:
         }
 
         if not self.json_data['tuned']:
-            self.tune_algorithm_name = str(None)
+            self.tune_algorithm_name = None
         else:
             self.tune_algorithm_name = self.json_data['tune_algorithm_name']
 
@@ -173,11 +173,6 @@ class ModelOrOutputToNeo4j:
         """,
 
             """
-        CREATE CONSTRAINT ON (n:TuningAlg) 
-        ASSERT n.algorithm IS UNIQUE      
-        """,
-
-            """
         CREATE CONSTRAINT ON (n:Algorithm) 
         ASSERT n.name IS UNIQUE      
         """,
@@ -204,16 +199,14 @@ class ModelOrOutputToNeo4j:
             MERGE (model:Model {name: $model_name})
             ON CREATE SET model.data = $date, model.feat_time = $feat_time, model.test_time = $test_time,
                 model.train_time = $train_time, model.seed = $seed, model.test_percent = $test_percent,
-                model.train_percent = $train_percent, model.val_percent = $val_percent
+                model.train_percent = $train_percent, model.val_percent = $val_percent,
+                model.tuning_algorithm = $tune_algorithm_name
         
                 MERGE (dataset:Dataset {data: $data})
                     ON CREATE SET dataset.size = $dataset_size, dataset.target = $target, dataset.source = $source,
                         dataset.task_type = $task_type
                         
                     MERGE (model)-[:uses_dataset]->(dataset)
-                    
-                MERGE (tuning:TuningAlg {algorithm: $tune_algorithm_name})
-                    MERGE (model)-[:tuned_with]->(tuning)
                     
                 MERGE (algo:Algorithm {name: $algo_name, source: 'sklearn'})
                     MERGE (model)-[:uses_algorithm]->(algo)
@@ -231,11 +224,10 @@ class ModelOrOutputToNeo4j:
                         'train_time': js['tune_time'], 'seed': js['random_seed'],
                         'test_percent': js['test_percent'], 'train_percent': js['train_percent'],
                         'val_percent': js['val_percent'],
+                        'tune_algorithm_name': self.tune_algorithm_name,
 
                         'data': js['dataset'], 'dataset_size': js['n_tot'], 'target': js['target_name'],
                         'source': 'MolecularNetAI', 'task_type': js['task_type'],
-
-                        'tune_algorithm_name': self.tune_algorithm_name,
 
                         'algo_name': js['algorithm'],
 
@@ -257,6 +249,17 @@ class ModelOrOutputToNeo4j:
     def merge_molecules_with_sets(self):
 
         for datatype, df in self.spilt_data.items():
+
+            if datatype == 'TestSet':
+                r2_avg = self.json_data['predictions_stats']['r2_avg']
+                r2_std = self.json_data['predictions_stats']['r2_std']
+                mse_avg = self.json_data['predictions_stats']['mse_avg']
+                mse_std = self.json_data['predictions_stats']['mse_std']
+                rmse_avg = self.json_data['predictions_stats']['rmse_avg']
+                rmse_std = self.json_data['predictions_stats']['rmse_std']
+            else:
+                r2_avg = r2_std = mse_avg = mse_std = rmse_avg = rmse_std = None
+
             if len(df) > 0:
                 df = df[['smiles', self.json_data['target_name']]]
                 df = df.rename(columns={self.json_data['target_name']: 'target'})
@@ -269,7 +272,9 @@ class ModelOrOutputToNeo4j:
                 query = """
                         MATCH (model:Model {name: $run_name})
                         MERGE (set:Set {run_name: $run_name, name: $set_type})
-                            ON CREATE SET set.size = $size
+                            ON CREATE SET set.size = $size, set.r2_avg = $r2_avg, set.r2_std = $r2_std,
+                                set.mse_avg = $mse_avg, set.mse_std = $mse_std, set.rmse_avg = $rmse_avg,
+                                set.rmse_std = $rmse_std
                         MERGE (model)-[:%s]->(set)
 
                         WITH set
@@ -281,7 +286,9 @@ class ModelOrOutputToNeo4j:
                         """ % (rel_dict[datatype], target_name_for_neo4j)
 
                 self.molecule_query_loop(molecules, query, target=self.json_data['target_name'],
-                                         run_name=self.json_data['run_name'], set_type=datatype, size=size)
+                                         run_name=self.json_data['run_name'], set_type=datatype, size=size,
+                                         r2_avg=r2_avg, r2_std=r2_std, mse_avg=mse_avg, mse_std=mse_std,
+                                         rmse_avg=rmse_avg, rmse_std=rmse_std)
 
     def merge_molecules_with_dataset(self):
 

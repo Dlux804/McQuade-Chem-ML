@@ -213,10 +213,15 @@ def time_needed():
 
 if __name__ == "__main__":
     # main()
-    single_model()
+    # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # time_needed()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
     # qsar_model = QsarDBImport('2017MI1700024.qdb.zip', zipped=True)
     # qsar_model.to_neo4j()
+
+    from core.neo4j import ModelOrOutputToNeo4j
+
+    model = unpickle_model('GE021_20200811-122326.pkl')
+    ModelOrOutputToNeo4j(model=model)

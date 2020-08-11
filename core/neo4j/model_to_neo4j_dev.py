@@ -16,23 +16,23 @@ from core.neo4j.fragments import calculate_fragments
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 
-class ModelOrFileToNeo4j:
+class ModelOrOutputToNeo4j:
 
-    def __init__(self, model=None, zipped_out_dir=None, port="bolt://localhost:7687", username="neo4j",
-                 password="password"):
+    def __init__(self, model=None, zipped_out_dir=None, molecules_per_batch=2000, port="bolt://localhost:7687",
+                 username="neo4j", password="password"):
         if model is None and zipped_out_dir is None:
             raise Exception("Must specify weather model or zipped_out_dir")
         if model is not None and zipped_out_dir is not None:
             raise Exception("Cannot be both a model and zipped output dir")
 
+        self.batch = molecules_per_batch
         self.json_data = None
         self.model_data = None
-        self.predictions_data = None
         self.graph = Graph(port, username=username, password=password)
 
         if model is not None:
 
-            # Use slightly modified script from of store() used for model outputs
+            # Use slightly modified script of store() used for model outputs
 
             all_raw_dfs = {}
 
@@ -67,7 +67,6 @@ class ModelOrFileToNeo4j:
 
             self.json_data = json.loads(json.dumps(d, cls=NumpyEncoder))
             self.model_data = all_raw_dfs['data']
-            self.predictions_data = all_raw_dfs['predictions']
 
         else:  # zipped_out_dir=True
 
@@ -83,8 +82,6 @@ class ModelOrFileToNeo4j:
                 file_type = file_name.split('_')
                 file_type = file_type[len(file_type) - 1]
 
-                if file_type == 'predictions':
-                    self.predictions_data = pd.read_csv(f'{safety_string}/{file}')
                 if file_type == 'data':
                     self.model_data = pd.read_csv(f'{safety_string}/{file}')
                 if file_type == 'attributes':
@@ -96,8 +93,6 @@ class ModelOrFileToNeo4j:
 
         if self.model_data is None:
             raise Exception("Could not parse model data")
-        if self.predictions_data is None:
-            raise Exception("Could not parse predictions data")
         if self.json_data is None:
             raise Exception("Could not parse json data")
 
@@ -109,14 +104,19 @@ class ModelOrFileToNeo4j:
         test_data = self.model_data.loc[self.model_data['in_set'] == 'test']
         train_data = self.model_data.loc[self.model_data['in_set'] == 'train']
         val_data = self.model_data.loc[self.model_data['in_set'] == 'val']
-
         self.spilt_data = {'TestSet': test_data, 'TrainSet': train_data, 'ValSet': val_data}
+
+        # Here for reference if you want to view attributes stored in json file
+        # for label, value in self.json_data.items():
+        #     print(label, value)
+
         self.check_for_constraints()
         self.create_main_nodes()
         self.merge_molecules_with_sets()
         self.merge_molecules_with_dataset()
         self.merge_molecules_with_frags()
         self.merge_molecules_with_feats()
+        self.merge_feats_with_rdkit2d()
 
     def check_for_constraints(self):
 
@@ -161,16 +161,11 @@ class ModelOrFileToNeo4j:
 
         for constraint_check_string in constraint_check_strings:
             try:
-                tx = self.graph.begin(autocommit=True)
-                tx.evaluate(constraint_check_string)
+                self.graph.evaluate(constraint_check_string)
             except ClientError:
                 pass
 
     def create_main_nodes(self):
-
-        # Here for reference if you want to view attributes stored in json file
-        # for label, value in self.json_data.items():
-        #     print(label, value)
 
         js = self.json_data
 
@@ -220,36 +215,44 @@ class ModelOrFileToNeo4j:
                         }
         )
 
+    def molecule_query_loop(self, molecules, query, **params):
+        range_molecules = []
+        for index, molecule in enumerate(molecules):
+            range_molecules.append(molecule)
+            if index % self.batch == 0 and index != 0:
+                self.graph.evaluate(query, parameters={'molecules': range_molecules, **params})
+                range_molecules = []
+        if range_molecules:
+            self.graph.evaluate(query, parameters={'molecules': range_molecules, **params})
+
     def merge_molecules_with_sets(self):
-
-        def __loop__(molecules, target, graph, run_name, set_type):
-            target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
-            molecules = molecules.to_dict('records')
-            size = len(molecules)
-            rel_dict = {'TrainSet': 'trained_with', 'TestSet': 'predicts', 'Valset': 'validates'}
-
-            graph.evaluate("""
-                            MATCH (model:Model {name: $run_name})
-                            MERGE (set:Set {run_name: $run_name, name: $set_type})
-                                ON CREATE SET set.size = $size
-                            MERGE (model)-[:%s]->(set)
-                                
-                            WITH set
-                            UNWIND $molecules as molecule
-                                MERGE (mol:Molecule {smiles: molecule.smiles})
-                                    SET mol.%s = molecule.target
-                                MERGE (set)-[:contains_molecule]->(mol)
-
-                            """ % (rel_dict[set_type], target_name_for_neo4j),
-                           parameters={'molecules': molecules, 'target': target, 'run_name': run_name,
-                                       'set_type': set_type, 'size': size}
-                           )
 
         for datatype, df in self.spilt_data.items():
             if len(df) > 0:
                 df = df[['smiles', self.json_data['target_name']]]
                 df = df.rename(columns={self.json_data['target_name']: 'target'})
-                __loop__(df, self.json_data['target_name'], self.graph, self.json_data['run_name'], datatype)
+
+                target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
+                molecules = df.to_dict('records')
+                size = len(molecules)
+                rel_dict = {'TrainSet': 'trained_with', 'TestSet': 'predicts', 'Valset': 'validates'}
+
+                query = """
+                        MATCH (model:Model {name: $run_name})
+                        MERGE (set:Set {run_name: $run_name, name: $set_type})
+                            ON CREATE SET set.size = $size
+                        MERGE (model)-[:%s]->(set)
+
+                        WITH set
+                        UNWIND $molecules as molecule
+                            MERGE (mol:Molecule {smiles: molecule.smiles})
+                                SET mol.%s = molecule.target
+                            MERGE (set)-[:contains_molecule]->(mol)
+
+                        """ % (rel_dict[datatype], target_name_for_neo4j)
+
+                self.molecule_query_loop(molecules, query, target=self.json_data['target_name'],
+                                         run_name=self.json_data['run_name'], set_type=datatype, size=size)
 
     def merge_molecules_with_dataset(self):
 
@@ -259,35 +262,35 @@ class ModelOrFileToNeo4j:
 
         target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
 
-        self.graph.evaluate("""
-                            
-                            MATCH (dataset:Dataset {data: $dataset})
-                            UNWIND $molecules as molecule
-                                MERGE (mol:Molecule {smiles: molecule.smiles})
-                                    SET mol.%s = molecule.target
-                                MERGE (dataset)-[:contains_molecule]->(mol)
-                                
-                            """ % target_name_for_neo4j,
-                            parameters={'dataset': self.json_data['dataset'], 'molecules': molecules}
-                            )
+        query = """
+                                    
+                MATCH (dataset:Dataset {data: $dataset})
+                UNWIND $molecules as molecule
+                    MERGE (mol:Molecule {smiles: molecule.smiles})
+                        SET mol.%s = molecule.target
+                    MERGE (dataset)-[:contains_molecule]->(mol)
+                    
+                """ % target_name_for_neo4j
+
+        self.molecule_query_loop(molecules, query, dataset=self.json_data['dataset'])
 
     def merge_molecules_with_frags(self):
         df = self.model_data[['smiles']]
         df['fragments'] = df['smiles'].apply(calculate_fragments)
         molecules = df.to_dict('records')
 
-        self.graph.evaluate("""
-        
-                            UNWIND $molecules as molecule
-                                MERGE (mol:Molecule {smiles: molecule.smiles})
-                                    FOREACH (fragment in molecule.fragments |
-                                        MERGE (frag:Fragment {name: fragment})
-                                        MERGE (mol)-[:has_fragment]->(frag)
-                                        )
-        
-                            """,
-                            parameters={'molecules': molecules}
+        query = """
+                
+                UNWIND $molecules as molecule
+                    MERGE (mol:Molecule {smiles: molecule.smiles})
+                        FOREACH (fragment in molecule.fragments |
+                            MERGE (frag:Fragment {name: fragment})
+                            MERGE (mol)-[:has_fragment]->(frag)
                             )
+
+                """
+
+        self.molecule_query_loop(molecules, query)
 
     def merge_molecules_with_feats(self):
 
@@ -309,15 +312,35 @@ class ModelOrFileToNeo4j:
         df['feats'] = feat_dicts
         molecules = df.to_dict('records')
 
+        query = """
+                
+                UNWIND $molecules as molecule
+                    MERGE (mol:Molecule {smiles: molecule.smiles})
+                    FOREACH (feature in molecule.feats |
+                        MERGE (feat:Feature {name: feature.name})
+                        MERGE (mol)-[:has_descriptor {value: feature.value}]->(feat)
+                        )
+
+                """
+
+        self.molecule_query_loop(molecules, query)
+
+    def merge_feats_with_rdkit2d(self):
+
+        if 'rdkit2d' not in self.json_data['feat_method_name']:
+            return
+
+        feats = [feat for feat in self.json_data['feature_list']
+                 if re.search(r'fr_|Count|Num|Charge|TPSA|qed|%s', feat)]
+
         self.graph.evaluate("""
         
-                            UNWIND $molecules as molecule
-                                MERGE (mol:Molecule {smiles: molecule.smiles})
-                                FOREACH (feature in molecule.feats |
-                                    MERGE (feat:Feature {name: feature.name})
-                                    MERGE (mol)-[:has_descriptor {value: feature.value}]->(feat)
-                                    )
+                            MERGE (feature_meth:FeatureMethod {name: 'rdkit2d'})
+                            WITH feature_meth
+                            UNWIND $feats as feat
+                                MERGE (feature:Feature {name: feat}) 
+                                MERGE (feature_meth)-[:uses_feature_method]->(feature)
         
                             """,
-                            parameters={'molecules': molecules}
+                            parameters={'feats': feats}
                             )

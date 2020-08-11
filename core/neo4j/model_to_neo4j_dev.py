@@ -18,7 +18,7 @@ warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 class ModelOrOutputToNeo4j:
 
-    def __init__(self, model=None, zipped_out_dir=None, molecules_per_batch=2000, port="bolt://localhost:7687",
+    def __init__(self, model=None, zipped_out_dir=None, molecules_per_batch=5000, port="bolt://localhost:7687",
                  username="neo4j", password="password"):
         if model is None and zipped_out_dir is None:
             raise Exception("Must specify weather model or zipped_out_dir")
@@ -231,9 +231,9 @@ class ModelOrOutputToNeo4j:
             if len(df) > 0:
                 df = df[['smiles', self.json_data['target_name']]]
                 df = df.rename(columns={self.json_data['target_name']: 'target'})
+                molecules = df.to_dict('records')
 
                 target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
-                molecules = df.to_dict('records')
                 size = len(molecules)
                 rel_dict = {'TrainSet': 'trained_with', 'TestSet': 'predicts', 'Valset': 'validates'}
 
@@ -333,14 +333,14 @@ class ModelOrOutputToNeo4j:
         feats = [feat for feat in self.json_data['feature_list']
                  if re.search(r'fr_|Count|Num|Charge|TPSA|qed|%s', feat)]
 
-        self.graph.evaluate("""
+        query = """
         
-                            MERGE (feature_meth:FeatureMethod {name: 'rdkit2d'})
-                            WITH feature_meth
-                            UNWIND $feats as feat
-                                MERGE (feature:Feature {name: feat}) 
-                                MERGE (feature_meth)-[:uses_feature_method]->(feature)
-        
-                            """,
-                            parameters={'feats': feats}
-                            )
+                MERGE (feature_meth:FeatureMethod {name: 'rdkit2d'})
+                WITH feature_meth
+                UNWIND $feats as feat
+                    MERGE (feature:Feature {name: feat}) 
+                    MERGE (feature_meth)-[:uses_feature_method]->(feature)
+
+                """
+
+        self.graph.evaluate(query, parameters={'feats': feats})

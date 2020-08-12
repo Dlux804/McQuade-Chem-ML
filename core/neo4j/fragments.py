@@ -3,13 +3,13 @@ Objectvie: Create molecular fragments, import them into Neo4j and add them into 
 """
 
 import os
+
 from rdkit import RDConfig
-from rdkit.Chem import FragmentCatalog
 from rdkit import Chem
-from py2neo import Graph
-import pandas as pd
-# import py2neo
+from core.neo4j.make_query import Query
 # Connect to Neo4j Destop.
+from rdkit.Chem import FragmentCatalog
+from py2neo import ClientError
 
 # TODO REDO DOCSTRINGS
 
@@ -36,47 +36,37 @@ def canonical_smiles(smiles_list):
     return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
 
 
-def fragments_to_neo(row, g):
+def smiles_to_frag(smiles):
     """
-    Objective: Create fragments and import them into Neo4j based on our ontology
+    Objective: Create fragments
     Intent: This script is based on Adam's "mol_frag.ipynb" file in his deepml branch, which is based on rdkit's
             https://www.rdkit.org/docs/GettingStartedInPython.html. I still need some council on this one since we can
             tune how much fragment this script can generate for one SMILES. Also, everything (line 69 to 77)
             needs to be under a for loop or else it will break (as in not generating the correct amount of fragments,
             usually much less than the actual amount). I'm not sure why
-    :param g:
-    :param row:
+    :param smiles:
     :return:
     """
-
-    mol_feat_query = """
-        UNWIND $fragments as fragment
-        With fragment
-        CALL apoc.periodic.iterate('
-        MERGE (mol:Molecule {SMILES: $frags.smiles})
-            FOREACH (value in $frags.fragments|
-                MERGE (fragment:Fragments {name: value.fragments})
-                MERGE (mol)-[:HAS_FRAGMENTS]->(fragment)
-                    )
-                    ',';',
-        {batchSize:100000, parallel:true, params:{frags:fragment}}) YIELD batches, total
-    RETURN batches, total
-        """
-    smiles = str(row['smiles'])
-
-    # for smiles in tqdm(canonical_smiles, desc="Creating molecular fragments for SMILES"):
     fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
     fparams = FragmentCatalog.FragCatParams(0, 4, fName)  # I need more research and tuning on this one
     fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
     fcgen = FragmentCatalog.FragCatGenerator()
     mol = Chem.MolFromSmiles(smiles)
     fcount = fcgen.AddFragsFromMol(mol, fcat)
-    print("This SMILES, %s, has %d fragments" % (smiles, fcount))
+    # print("This SMILES, %s, has %d fragments" % (smiles, fcount))
     frag_list = []
     for frag in range(fcount):
         frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
+    return frag_list
 
-    fragment_df = pd.DataFrame({'fragments': frag_list}).to_dict('records')
-    fragment = {'smiles': smiles, 'fragments': fragment_df}
-    tx = g.begin(autocommit=True)
-    tx.evaluate(mol_feat_query, parameters={"fragments": fragment})
+
+def insert_fragments(df_for_fragments, graph):
+
+    fragment_query = Query(graph=graph).__fragment_query__()
+
+    df_for_fragments = df_for_fragments[['smiles', 'fragments']]
+    smiles_frags_dicts = df_for_fragments.to_dict('records')
+
+    tx = graph.begin(autocommit=True)
+    tx.evaluate(fragment_query, parameters={"rows": smiles_frags_dicts})
+

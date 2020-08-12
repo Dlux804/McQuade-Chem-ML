@@ -1,6 +1,6 @@
+import cirpy
 import pandas as pd
 from rdkit import Chem
-import cirpy
 
 
 def load_smiles(self, file, drop=True):

@@ -1,5 +1,5 @@
 """
-Objective: Test functionality of essential functions in storage.py
+Objective: Test functionality of essential functions in misc.py
 """
 import numpy as np
 import os

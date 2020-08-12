@@ -107,6 +107,8 @@ def get_regressor(self, call=False):
         else:
             if hasattr(self, 'params'):  # has been tuned
                 self.estimator = skl_regs[self.algorithm](**self.params)
+            elif self.algorithm in ['gdb', 'rf']:
+                self.estimator = skl_regs[self.algorithm](ccp_alpha=0.1)
             else:  # use default params
                 self.estimator = skl_regs[self.algorithm]()
 
@@ -137,7 +139,7 @@ class tqdm_skopt(object):
 
 
 # def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50):
-def hyperTune(self, epochs=50,n_jobs=6):
+def hyperTune(self, epochs=50, n_jobs=6):
     """
     Tunes hyper parameters of specified model.
 
@@ -179,11 +181,13 @@ def hyperTune(self, epochs=50,n_jobs=6):
     # if self.algorithm != 'nn':  # non keras model
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
     # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
-    self.cp_delta = 0.05  # TODO delta should be dynamic to scale with target value
+    # TODO try different scaling with delta
+    delta_std = (0.05 - self.train_target.min())/(self.train_target.max() - self.train_target.min())  # Min max scaling
+    self.cp_delta = delta_std * (self.train_target.max() - self.train_target.min()) + self.train_target.min()
     self.cp_n_best = 5
 
     """ 
-    Every optimization model in skopt saved all their scores in a built-in list.
+    Every optimization model in skopt saved all their scores in a built-in lists.
     When called, DeltaYStopper will access this list and sort this list from lowest number to highest number.
     It then take the difference between the number in the n_best position and the first number and
     compares it to delta. If the difference is smaller or equal to delta, the optimization will be stopped.
@@ -193,11 +197,11 @@ def hyperTune(self, epochs=50,n_jobs=6):
     deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
 
     # Fit the Bayes search model, use early stopping
+
     bayes.fit(self.train_features,
               self.train_target,
               callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization"),
-                        checkpoint_saver,
-                        deltay]
+                        checkpoint_saver, deltay]
               )
     # else:  # nn no early stopping
     #     bayes.fit(self.train_features,

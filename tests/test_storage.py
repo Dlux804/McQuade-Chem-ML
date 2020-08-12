@@ -1,10 +1,10 @@
 """
-Objective: Test functionality of essential functions in storage.py
+Objective: Test functionality of essential functions in misc.py
 """
 import numpy as np
 import os
 import pandas as pd
-from core.storage.storage import unpickle_model
+from core.storage.misc import unpickle_model
 import pytest
 from main import ROOT_DIR
 from tests.model_fixture import __run_all__, __model_object__, delete_files

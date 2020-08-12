@@ -7,7 +7,7 @@ import glob
 from core import models
 from core.storage import misc
 import pytest
-from core.storage.storage import unpickle_model
+from core.storage.misc import unpickle_model
 # from main import ROOT_DIR
 # # change working directory to
 # os.chdir(ROOT_DIR)

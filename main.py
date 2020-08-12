@@ -31,18 +31,19 @@ def main():
 
     # Random seed option
     random_seed_option = [42, None]
+    targets = None
     # All data sets in dict
-    # sets = {
-    #    'BBBP.csv': targets,
-    #    'sider.csv': targets,
-    #    'clintox.csv': targets,
-    #    'bace.csv': targets,
-    #      'ESOL.csv': 'water-sol',
-    #      'Lipophilicity-ID.csv': 'exp',
-    #      'water-energy.csv': 'expt',
-    #      'logP14k.csv': 'Kow',
-    #      'jak2_pic50.csv': 'pIC50'
-    # }
+    sets = {
+       'BBBP.csv': targets,
+       'sider.csv': targets,
+       'clintox.csv': targets,
+       'bace.csv': targets,
+         # 'ESOL.csv': 'water-sol',
+         # 'Lipophilicity-ID.csv': 'exp',
+         # 'water-energy.csv': 'expt',
+         # 'logP14k.csv': 'Kow',
+         # 'jak2_pic50.csv': 'pIC50'
+    }
 
     # classification data sets for reference/testing
     # sets = {
@@ -53,9 +54,9 @@ def main():
 #    }
 
     # regression data sets for reference/testing
-    sets = {
-        'ESOL.csv': 'water-sol'
-    }
+    # sets = {
+    #     'ESOL.csv': 'water-sol'
+    # }
 
     for alg in learner:  # loop over all learning algorithms
         feats = [[0], [1], [2], [3], [4], [5], [6], [0, 2], [0, 3],
@@ -69,7 +70,7 @@ def main():
                     target = get_classification_targets(data)
 
                 # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
-                checker, task_type = Get_Task_Type_1(data, alg)
+                checker, task_type, tune = Get_Task_Type_1(data, alg)
                 if checker == 0:
                     pass
                 else:
@@ -84,7 +85,7 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=True, cv=5, opt_iter=100)
+                                        tune=tune, cv=5, opt_iter=100)
                         print('Done.\n')
 
                     with cd('output'):
@@ -101,7 +102,9 @@ def main():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+
+                        if data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']:
+                            model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 

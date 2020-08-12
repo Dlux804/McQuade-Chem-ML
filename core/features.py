@@ -20,7 +20,9 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     feat_meth = self.feat_meth
     df = self.data
-    df['smiles'] = canonical_smiles(list(df['smiles']))  # Turn SMILES into CANONICAL SMILES
+    if self.task_type == 'regression':
+        df['smiles'] = canonical_smiles(list(df['smiles']))  # Turn SMILES into CANONICAL SMILES
+
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
                  'morganchiral3counts', 'atompaircounts']

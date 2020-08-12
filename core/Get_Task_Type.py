@@ -33,4 +33,11 @@ def Get_Task_Type_1(data, alg):
     elif data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']:
         task_type = 'Regression'
 
-    return checker, task_type
+
+    # The following is here as hyper-parameter tuning for support vector classifier does not currently work properly.
+    if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv'] and alg == 'svm':
+        tune = False
+    else:
+        tune = True
+
+    return checker, task_type, tune

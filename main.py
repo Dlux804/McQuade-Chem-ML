@@ -21,7 +21,7 @@ def main():
 
     # list of all learning algorithms
 #    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
-    learner = ['knn']
+    learner = ['svm']
 
     # list of available classification learning algorithms for reference/testing
     #learner = ['svm', 'knn', 'rf']
@@ -87,7 +87,7 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = models.MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                               tune=False, cv=3, opt_iter=25)
+                                               tune=True, cv=3, opt_iter=25)
                         print('Done.\n')
 
                     with cd('dataFiles'):

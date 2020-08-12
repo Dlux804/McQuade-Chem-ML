@@ -158,6 +158,11 @@ def hyperTune(self, epochs=50,n_jobs=6):
     else:
         self.fit_params = None  # sklearn models don't need fit params
 
+    if self.task_type in ['single_label_classification', 'multi_label_classification']:
+        scoring = None
+    if self.task_type == 'regression':
+        scoring = 'neg_mean_squared_error'
+
     # set up Bayes Search
     bayes = BayesSearchCV(
         estimator=self.estimator,  # what regressor to use
@@ -166,7 +171,7 @@ def hyperTune(self, epochs=50,n_jobs=6):
         n_iter=self.opt_iter,  # number of combos tried
         random_state=42,  # random seed
         verbose=3,  # output print level
-        scoring='neg_mean_squared_error',  # scoring function to use (RMSE)  #TODO needs update for Classification
+        scoring=scoring,  # scoring function to use (RMSE)
         n_jobs=n_jobs,  # number of parallel jobs (max = folds)
         cv=self.cv_folds  # number of cross-val folds to use
     )
@@ -204,7 +209,12 @@ def hyperTune(self, epochs=50,n_jobs=6):
     tune_score = bayes.best_score_
 
     # update the regressor with best parameters
-    self.get_regressor(call=False)
+    if self.task_type == 'regression':
+        self.get_regressor(call=False)
+
+    if self.task_type in ['single_label_classification', 'multi_label_classification']:
+        self.get_classifier(call=False)
+
 
     # Calculate time to tune parameters
     stop_tune = time()

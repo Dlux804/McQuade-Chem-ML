@@ -119,7 +119,7 @@ def single_model():
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
         model1 = MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
-                         tune=True, cv=2, opt_iter=2)
+                         tune=False, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -221,7 +221,10 @@ if __name__ == "__main__":
     # qsar_model = QsarDBImport('2017MI1700024.qdb.zip', zipped=True)
     # qsar_model.to_neo4j()
 
-    from core.neo4j import ModelOrOutputToNeo4j
+    # from core.neo4j import ModelOrOutputToNeo4j
+    #
+    # model = unpickle_model('GE021_20200811-122326.pkl')
+    # ModelOrOutputToNeo4j(model=model)
 
-    model = unpickle_model('GE021_20200811-122326.pkl')
-    ModelOrOutputToNeo4j(model=model)
+    model = QsarDBImport('2017MI1700024.qdb.zip', zipped=True)
+    model.to_neo4j()

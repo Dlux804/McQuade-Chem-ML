@@ -6,75 +6,86 @@ import zipfile
 import warnings
 
 import pandas as pd
+from numpy import nan
 from pandas.core.common import SettingWithCopyWarning
 from py2neo import Graph, ClientError
 from rdkit import RDConfig
 from rdkit.Chem import FragmentCatalog, MolFromSmiles
 
 from core.storage.misc import __clean_up_param_grid_item__, NumpyEncoder
+from core.storage.dictionary import target_name_grid
 
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 
 class ModelOrOutputToNeo4j:
 
-    def __init__(self, model=None, zipped_out_dir=None, molecules_per_batch=5000, port="bolt://localhost:7687",
-                 username="neo4j", password="password"):
-        if model is None and zipped_out_dir is None:
-            raise Exception("Must specify weather model or zipped_out_dir")
-        if model is not None and zipped_out_dir is not None:
-            raise Exception("Cannot be both a model and zipped output dir")
+    def __init__(self, model=None, zipped_out_dir=None, qsar_obj=None, molecules_per_batch=5000,
+                 port="bolt://localhost:7687", username="neo4j", password="password"):
 
         self.batch = molecules_per_batch
         self.model = model
         self.zipped_out_dir = zipped_out_dir
-
-        self.json_data = None
-        self.model_data = None
+        self.qsar_obj = qsar_obj
         self.graph = Graph(port, username=username, password=password)
 
+        self.verify_input_variables()
+
+        self.parsed_models = None
+
         if model is not None:
-            self.json_data, self.model_data = self.initialize_model_object()
+            self.parsed_models = self.initialize_model_object()
 
-        else:  # zipped_out_dir=True
-            self.json_data, self.model_data = self.initialize_output_dir()
+        elif zipped_out_dir is not None:
+            self.parsed_models = self.initialize_output_dir()
 
-        if self.model_data is None:
-            raise Exception("Could not parse model data")
-        if self.json_data is None:
-            raise Exception("Could not parse json data")
+        elif qsar_obj is not None:
+            self.parsed_models = self.initialize_qsar_obj()
 
-        # Here for reference if you want to view attributes stored in json file
+        for model in self.parsed_models:
+            self.model_data = model['model_data']
+            self.json_data = model['json_data']
 
-        for label, value in self.json_data.items():
-            print(label, value)
+            if self.model_data is None:
+                raise ValueError("Could not parse model data")
+            if self.json_data is None:
+                raise ValueError("Could not parse json data")
 
-        self.target_name_gird = {
-            'ESOL.csv': 'water_sol',
-            'Lipophilicity-ID.csv': 'logP',
-            'water-energy.csv': 'hydration_energy',
-            'logP14k.csv': 'logP_kow',
-            'jak2_pic50.csv': 'pIC50',
-            'Lipo-short.csv': 'logP'
-        }
+            # Here for reference if you want to view attributes stored in json file
 
-        if not self.json_data['tuned']:
-            self.tune_algorithm_name = None
-        else:
-            self.tune_algorithm_name = self.json_data['tune_algorithm_name']
+            # for label, value in self.json_data.items():
+            #     print(label, value)
 
-        test_data = self.model_data.loc[self.model_data['in_set'] == 'test']
-        train_data = self.model_data.loc[self.model_data['in_set'] == 'train']
-        val_data = self.model_data.loc[self.model_data['in_set'] == 'val']
-        self.spilt_data = {'TestSet': test_data, 'TrainSet': train_data, 'ValSet': val_data}
+            if not self.json_data['tuned']:
+                self.tune_algorithm_name = str(None)
+            else:
+                self.tune_algorithm_name = self.json_data['tune_algorithm_name']
 
-        self.check_for_constraints()
-        self.create_main_nodes()
-        self.merge_molecules_with_sets()
-        self.merge_molecules_with_dataset()
-        self.merge_molecules_with_frags()
-        self.merge_molecules_with_feats()
-        self.merge_feats_with_rdkit2d()
+            test_data = self.model_data.loc[self.model_data['in_set'] == 'test']
+            train_data = self.model_data.loc[self.model_data['in_set'] == 'train']
+            val_data = self.model_data.loc[self.model_data['in_set'] == 'val']
+            self.spilt_data = {'TestSet': test_data, 'TrainSet': train_data, 'ValSet': val_data}
+
+            self.check_for_constraints()
+            self.create_main_nodes()
+            self.merge_molecules_with_sets()
+            self.merge_molecules_with_dataset()
+            self.merge_molecules_with_frags()
+            self.merge_molecules_with_feats()
+            self.merge_feats_with_rdkit2d()
+
+    def verify_input_variables(self):
+        conflicting_variables = [self.model, self.zipped_out_dir, self.qsar_obj]
+        found_non_none_type_var = False
+        for conflicting_variable in conflicting_variables:
+            if conflicting_variable is not None and found_non_none_type_var is True:
+                raise ValueError("Multiple objects (model_object, output_dir, or qsar_dir) "
+                                 "to initialize inputted, please only specify one")
+            elif conflicting_variable is not None:
+                found_non_none_type_var = True
+        if not found_non_none_type_var:
+            raise ValueError("Object to input into Neo4j not found, please speciiy model_object,"
+                             "output_dir, or qsar_dir")
 
     def initialize_model_object(self):
         # Use slightly modified script of store() used for model outputs
@@ -112,7 +123,10 @@ class ModelOrOutputToNeo4j:
 
         json_data = json.loads(json.dumps(d, cls=NumpyEncoder))
         model_data = all_raw_dfs['data']
-        return json_data, model_data
+        json_data['is_qsarDB'] = False
+        json_data['source'] = 'MolecularNetAI'
+        model = [{'model_data': model_data, 'json_data': json_data}]
+        return model
 
     def initialize_output_dir(self):
         json_data = None
@@ -137,7 +151,45 @@ class ModelOrOutputToNeo4j:
                 json_data = json.loads(json_data)
 
         shutil.rmtree(safety_string, ignore_errors=True)
-        return json_data, model_data
+        json_data['is_qsarDB'] = False
+        json_data['source'] = 'MolecularNetAI'
+        model = [{'model_data': model_data, 'json_data': json_data}]
+        return model
+
+    def initialize_qsar_obj(self):
+        models = []
+        for model in self.qsar_obj:
+            model_data = model['all_data']
+            json_data = {}
+
+            json_data['test_percent'] = round(model['n']['testing'] / model['n_total'], 2)
+            json_data['train_percent'] = round(model['n']['training'] / model['n_total'], 2)
+            json_data['val_percent'] = round(model['n']['validation'] / model['n_total'], 2)
+
+            json_data['predictions_stats'] = {'r2_avg': model['r2'], 'mse_avg': model['mse'], 'rmse_avg': model['rmse'],
+                                              'time_avg': nan}
+
+            json_data['run_name'] = model['Name']
+            json_data['feature_list'] = model['feats']
+            json_data['source'] = 'QsarDB'
+            json_data['algorithm'] = model['algorithm']
+            json_data['task_type'] = model['task_type']
+            json_data['target_name'] = model['target_name']
+            json_data['n_tot'] = model['n_total']
+            json_data['dataset'] = model['dataset']
+
+            json_data['date'] = None
+            json_data['feat_time'] = None
+            json_data['tune_time'] = None
+            json_data['random_seed'] = None
+            json_data['tuned'] = None
+            json_data['feat_meth'] = None
+            json_data['feat_method_name'] = []
+
+            json_data['is_qsarDB'] = True
+
+            models.append({'model_data': model_data, 'json_data': json_data})
+        return models
 
     def check_for_constraints(self):
 
@@ -197,26 +249,23 @@ class ModelOrOutputToNeo4j:
             """
         
             MERGE (model:Model {name: $model_name})
-            ON CREATE SET model.data = $date, model.feat_time = $feat_time, model.test_time = $test_time,
-                model.train_time = $train_time, model.seed = $seed, model.test_percent = $test_percent,
-                model.train_percent = $train_percent, model.val_percent = $val_percent,
-                model.tuning_algorithm = $tune_algorithm_name
+            ON CREATE SET model.date = $date, model.feat_time = $feat_time, model.test_time = $test_time,
+                model.train_time = $train_time, model.seed = $seed
+        
+                // Split node is a hidden node, no property to merge on
+                MERGE (model)-[:uses_split]->(:Split {train_percent: $train_percent, test_percent: $test_percent,
+                    val_percent: $val_percent})
+                    
+                MERGE (tuning:Tuning {name: $tune_algorithm_name})
+                    MERGE (model)-[:tuned_with]->(tuning)
         
                 MERGE (dataset:Dataset {data: $data})
                     ON CREATE SET dataset.size = $dataset_size, dataset.target = $target, dataset.source = $source,
                         dataset.task_type = $task_type
-                        
                     MERGE (model)-[:uses_dataset]->(dataset)
                     
                 MERGE (algo:Algorithm {name: $algo_name, source: 'sklearn'})
                     MERGE (model)-[:uses_algorithm]->(algo)
-            
-                MERGE (featlist:FeatureList {feat_IDs: $feat_IDs})
-                    MERGE (model)-[:featurized_by]->(featlist)
-                    WITH featlist
-                    UNWIND $feature_methods as feature_method
-                        MERGE (featmeth:FeatureMethod {name: feature_method})
-                        MERGE (featlist)-[:contains_feature_method]->(featmeth)
         
             """,
             parameters={'date': js['date'], 'feat_time': js['feat_time'], 'model_name': js['run_name'],
@@ -227,7 +276,7 @@ class ModelOrOutputToNeo4j:
                         'tune_algorithm_name': self.tune_algorithm_name,
 
                         'data': js['dataset'], 'dataset_size': js['n_tot'], 'target': js['target_name'],
-                        'source': 'MolecularNetAI', 'task_type': js['task_type'],
+                        'source': js['source'], 'task_type': js['task_type'],
 
                         'algo_name': js['algorithm'],
 
@@ -235,6 +284,30 @@ class ModelOrOutputToNeo4j:
                         'feature_methods': js['feat_method_name'],
                         }
         )
+
+    def merge_featlist_with_model(self):
+
+        js = self.json_data
+
+        if not self.json_data['is_qsarDB']:
+
+            self.graph.evaluate(
+                """
+            
+                MATCH (model:Model {name: $model_name})
+                MERGE (featlist:FeatureList {feat_IDs: $feat_IDs})
+                    MERGE (model)-[:featurized_by]->(featlist)
+                    WITH featlist
+                    UNWIND $feature_methods as feature_method
+                        MERGE (featmeth:FeatureMethod {name: feature_method})
+                        MERGE (featlist)-[:contains_feature_method]->(featmeth)
+            
+                """,
+                parameters={'model_name': js['run_name'],
+                            'feat_IDs': js['feat_meth'],
+                            'feature_methods': js['feat_method_name']
+                            }
+                )
 
     def molecule_query_loop(self, molecules, query, **params):
         range_molecules = []
@@ -250,13 +323,21 @@ class ModelOrOutputToNeo4j:
 
         for datatype, df in self.spilt_data.items():
 
-            if datatype == 'TestSet':
+            if datatype == 'TestSet' and not self.json_data['is_qsarDB']:
                 r2_avg = self.json_data['predictions_stats']['r2_avg']
                 r2_std = self.json_data['predictions_stats']['r2_std']
                 mse_avg = self.json_data['predictions_stats']['mse_avg']
                 mse_std = self.json_data['predictions_stats']['mse_std']
                 rmse_avg = self.json_data['predictions_stats']['rmse_avg']
                 rmse_std = self.json_data['predictions_stats']['rmse_std']
+            elif self.json_data['is_qsarDB']:
+                rd = {'TrainSet': 'training', 'TestSet': 'testing', 'ValSet': 'validation'}
+                r2_avg = self.json_data['predictions_stats']['r2_avg'][rd[datatype]]
+                mse_avg = self.json_data['predictions_stats']['mse_avg'][rd[datatype]]
+                rmse_avg = self.json_data['predictions_stats']['rmse_avg'][rd[datatype]]
+                rmse_std = None
+                mse_std = None
+                r2_std = None
             else:
                 r2_avg = r2_std = mse_avg = mse_std = rmse_avg = rmse_std = None
 
@@ -265,7 +346,9 @@ class ModelOrOutputToNeo4j:
                 df = df.rename(columns={self.json_data['target_name']: 'target'})
                 molecules = df.to_dict('records')
 
-                target_name_for_neo4j = self.target_name_gird[self.json_data['dataset']]
+                target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
+                if target_name_for_neo4j is None:
+                    target_name_for_neo4j = self.json_data['target_name']
                 size = len(molecules)
                 rel_dict = {'TrainSet': 'trained_with', 'TestSet': 'predicts', 'ValSet': 'validated_by'}
 
@@ -275,12 +358,12 @@ class ModelOrOutputToNeo4j:
                             ON CREATE SET set.size = $size, set.r2_avg = $r2_avg, set.r2_std = $r2_std,
                                 set.mse_avg = $mse_avg, set.mse_std = $mse_std, set.rmse_avg = $rmse_avg,
                                 set.rmse_std = $rmse_std
-                        MERGE (model)-[:%s]->(set)
+                        MERGE (model)-[:`%s`]->(set)
 
                         WITH set
                         UNWIND $molecules as molecule
                             MERGE (mol:Molecule {smiles: molecule.smiles})
-                                SET mol.%s = molecule.target
+                                SET mol.`%s` = molecule.target
                             MERGE (set)-[:contains_molecule]->(mol)
 
                         """ % (rel_dict[datatype], target_name_for_neo4j)
@@ -296,14 +379,16 @@ class ModelOrOutputToNeo4j:
         df = df.rename(columns={self.json_data['target_name']: 'target'})
         molecules = df.to_dict('records')
 
-        target_name_for_neo4j = self.target_name_gird[self.json_data['dataset']]
+        target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
+        if target_name_for_neo4j is None:
+            target_name_for_neo4j = self.json_data['target_name']
 
         query = """
                                     
                 MATCH (dataset:Dataset {data: $dataset})
                 UNWIND $molecules as molecule
                     MERGE (mol:Molecule {smiles: molecule.smiles})
-                        SET mol.%s = molecule.target
+                        SET mol.`%s` = molecule.target
                     MERGE (dataset)-[:contains_molecule]->(mol)
                     
                 """ % target_name_for_neo4j

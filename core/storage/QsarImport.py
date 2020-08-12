@@ -8,17 +8,19 @@ import numpy as np
 from rdkit.Chem import MolFromMolFile, MolToSmiles, MolFromSmiles
 from sklearn.metrics import mean_squared_error, r2_score
 
+from core.neo4j import ModelOrOutputToNeo4j
+
 
 class QsarDBImport:
 
     def __init__(self, directory, zipped=False, cleanup_unzipped_dir=True):
 
-        def __combine_dfs__(df1, df2):
+        def __combine_dfs__(df1, df2, how='inner'):
             if df1['Compound Id'].dtype != 'object':
                 df1['Compound Id'] = df1['Compound Id'].astype(str)
             if df2['Compound Id'].dtype != 'object':
                 df2['Compound Id'] = df2['Compound Id'].astype(str)
-            return df1.merge(df2, on='Compound Id', how='inner')
+            return df1.merge(df2, on='Compound Id', how=how)
 
         raw_dir = None
         if zipped:
@@ -40,6 +42,13 @@ class QsarDBImport:
             if os.path.exists(directory + '/' + qdb_dir):
                 raw_dir = directory
                 directory = directory + '/' + qdb_dir
+
+        archive_xml = directory + '/archive.xml'
+        archive_xml = ET.parse(archive_xml).getroot()
+        for parent in archive_xml:
+            tag = parent.tag.split('}')[1]
+            if tag == 'Name':
+                all_models_dataset = parent.text
 
         """Work on compounds dir"""
         root_compounds_dir = directory + '/' + 'compounds'
@@ -102,6 +111,7 @@ class QsarDBImport:
                     descriptors.append(Name)
             temp_descriptors_dicts[Id] = Name
 
+        feats = []
         for desc in [f.name for f in os.scandir(desc_dir) if f.is_dir()]:
             desc_id = desc
             desc_csv = desc_dir + f'/{desc}/values'
@@ -110,15 +120,13 @@ class QsarDBImport:
             current_col = list(desc_csv.columns)
             current_col.remove('Compound Id')
             current_col = current_col[0]
+            feats.append(temp_descriptors_dicts[desc_id])
 
             desc_csv = desc_csv.rename(columns={current_col: temp_descriptors_dicts[desc_id]})
             compound_data = __combine_dfs__(compound_data, desc_csv)
 
         # Clean up compound_data for other dataframes
-        all_data = compound_data
-        all_data.to_csv('dev.csv')
         if 'rdkit-smiles' in list(compound_data.columns):
-            compound_data = compound_data[['Compound Id', 'rdkit-smiles']]
             compound_data = compound_data.rename(columns={'rdkit-smiles': 'smiles'})
 
         elif 'daylight-smiles' in list(compound_data.columns):
@@ -126,12 +134,15 @@ class QsarDBImport:
                 return MolToSmiles(MolFromSmiles(smiles))
 
             compound_data['daylight-smiles'] = compound_data['daylight-smiles'].apply(__daylight_to_rdkit__)
-            compound_data = compound_data[['Compound Id', 'daylight-smiles']]
-            compound_data = compound_data.rename(columns={'rdkit-smiles': 'smiles'})
+            compound_data = compound_data.rename(columns={'daylight-smiles': 'smiles'})
 
         else:
             # TODO convert cas/inchi/name to smiles if needed
             compound_data = compound_data['Compound Id']
+
+        all_data = compound_data
+        # all_data.to_csv('dev.csv')
+        compound_data = compound_data[['Compound Id', 'smiles']]
 
         # Gather Model(s) structures
         models = []
@@ -146,21 +157,46 @@ class QsarDBImport:
                 if label == 'Id':
                     model_props['Id'] = value
                 if label == 'PropertyId':
-                    model_props['PropertyId'] = value.split('\t')
+                    model_props['PropertyId'] = value.split('\t')[0]
+                if label == 'Name':
+                    model_props['Name'] = value
             models.append(model_props)
+
+        for model in models:
+            pmml = root_models_dir + f'/{model["Id"]}/pmml'
+            pmml = ET.parse(pmml).getroot()
+            model['algorithm'] = pmml[1].tag.split('}')[1]
+            model['task_type'] = model['algorithm'].lower().split('model')[0]
+            model['dataset'] = all_models_dataset
 
         # Gather raw data from models
         properties_dir = directory + '/' + 'properties'
         for model in models:
-            props = model['PropertyId']
+            prop = model['PropertyId']
+
+            properties_xml = properties_dir + '/properties.xml'
+            properties_xml = ET.parse(properties_xml).getroot()
+            id_found = False
+            for parent in properties_xml:
+                for child in parent:
+                    label = child.tag.split('}')[1]
+                    value = child.text
+                    if label == 'Id' and value == prop:
+                        id_found = True
+                    if id_found and label == 'Name':
+                        target_name = value
+                        model['target_name'] = value
+
             raw_data = None
-            for prop in props:
-                property_csv = properties_dir + f'/{prop}/values'
-                property_csv = pd.read_csv(property_csv, sep='\t')
-                if raw_data is None:
-                    raw_data = __combine_dfs__(compound_data, property_csv)
-                else:
-                    raw_data = __combine_dfs__(raw_data, property_csv)
+            property_csv = properties_dir + f'/{prop}/values'
+            property_csv = pd.read_csv(property_csv, sep='\t')
+            current_property_column = list(property_csv.columns)[1]
+            property_csv = property_csv.rename({current_property_column: target_name})
+            if raw_data is None:
+                raw_data = __combine_dfs__(compound_data, property_csv)
+            else:
+                raw_data = __combine_dfs__(raw_data, property_csv)
+            all_data = __combine_dfs__(all_data, property_csv, how='outer')
             model['raw_data'] = raw_data
             model['n_total'] = len(raw_data)
 
@@ -169,7 +205,7 @@ class QsarDBImport:
         predictions_xml = predictions_dir + '/predictions.xml'
         predictions_xml = ET.parse(predictions_xml).getroot()
         for model in models:
-            model['n'] = {'training': None, 'testing': None, 'validation': None}
+            model['n'] = {'training': 0, 'testing': 0, 'validation': 0}
             model['r2'] = {'training': None, 'testing': None, 'validation': None}
             model['mse'] = {'training': None, 'testing': None, 'validation': None}
             model['rmse'] = {'training': None, 'testing': None, 'validation': None}
@@ -217,6 +253,22 @@ class QsarDBImport:
                     model['mse'][set_type] = mse
                     model['rmse'][set_type] = rmse
 
+            val_molecules = list(model['validation_predicted']['smiles'])
+            train_molecules = list(model['training_predicted']['smiles'])
+
+            # Logic to seperate data in test/train/val
+            def __fetch_set__(smiles):
+                if smiles in val_molecules:
+                    return 'test'
+                elif smiles in train_molecules:
+                    return 'train'
+                else:
+                    return 'val'
+
+            model['all_data'] = all_data
+            model['all_data']['in_set'] = model['all_data']['smiles'].apply(__fetch_set__)
+            model['feats'] = feats
+
         if cleanup_unzipped_dir and zipped:
             if raw_dir is not None:
                 shutil.rmtree(raw_dir, ignore_errors=True)
@@ -227,5 +279,4 @@ class QsarDBImport:
         self.models = models
 
     def to_neo4j(self):
-        for model in self.models:
-            print(model)
+        ModelOrOutputToNeo4j(qsar_obj=self.models)

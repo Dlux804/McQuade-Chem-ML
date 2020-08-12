@@ -278,5 +278,6 @@ class QsarDBImport:
         self.all_data = all_data
         self.models = models
 
-    def to_neo4j(self):
-        ModelOrOutputToNeo4j(qsar_obj=self.models)
+    def to_neo4j(self, molecules_per_batch=5000, port="bolt://localhost:7687", username="neo4j", password="password"):
+        ModelOrOutputToNeo4j(qsar_obj=self.models, molecules_per_batch=molecules_per_batch, port=port,
+                             username=username, password=password)

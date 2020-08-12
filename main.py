@@ -6,7 +6,7 @@ import pandas as pd
 from timeit import default_timer
 
 from core import MlModel, get_classification_targets, Get_Task_Type_1
-from core.storage import cd, pickle_model, unpickle_model, QsarDBImport
+from core.storage import cd, pickle_model, unpickle_model, QsarToNeo4j
 
 from core.neo4j import ModelOrOutputToNeo4j
 
@@ -226,5 +226,4 @@ if __name__ == "__main__":
     # model = unpickle_model('GE021_20200811-122326.pkl')
     # ModelOrOutputToNeo4j(model=model)
 
-    model = QsarDBImport('2017MI1700024.qdb.zip', zipped=True)
-    model.to_neo4j()
+    model = QsarToNeo4j('Q13-26-0009.qdb.zip', zipped=True)

@@ -158,36 +158,30 @@ class ModelOrOutputToNeo4j:
 
     def initialize_qsar_obj(self):
         models = []
-        for model in self.qsar_obj:
-            model_data = model['all_data']
-            json_data = {}
-
-            json_data['test_percent'] = round(model['n']['testing'] / model['n_total'], 2)
-            json_data['train_percent'] = round(model['n']['training'] / model['n_total'], 2)
-            json_data['val_percent'] = round(model['n']['validation'] / model['n_total'], 2)
-
-            json_data['predictions_stats'] = {'r2_avg': model['r2'], 'mse_avg': model['mse'], 'rmse_avg': model['rmse'],
-                                              'time_avg': nan}
-
-            json_data['run_name'] = model['Name']
-            json_data['feature_list'] = model['feats']
-            json_data['source'] = 'QsarDB'
-            json_data['algorithm'] = model['algorithm']
-            json_data['task_type'] = model['task_type']
-            json_data['target_name'] = model['target_name']
-            json_data['n_tot'] = model['n_total']
-            json_data['dataset'] = model['dataset']
-
-            json_data['date'] = None
-            json_data['feat_time'] = None
-            json_data['tune_time'] = None
-            json_data['random_seed'] = None
-            json_data['tuned'] = None
-            json_data['feat_meth'] = None
-            json_data['feat_method_name'] = []
-
-            json_data['is_qsarDB'] = True
-
+        for model in self.qsar_obj.models:
+            model_data = model.raw_data
+            json_data = {'test_percent': round(model.n['testing'] / model.n_total, 2),
+                         'train_percent': round(model.n['training'] / model.n_total, 2),
+                         'val_percent': round(model.n['validation'] / model.n_total, 2),
+                         'predictions_stats': {'r2_avg': model.r2, 'mse_avg': model.mse,
+                                               'rmse_avg': model.rmse,
+                                               'time_avg': nan},
+                         'run_name': model.name,
+                         'feature_list': self.qsar_obj.feats,
+                         'algorithm': model.algorithm,
+                         'task_type': model.task_type,
+                         'target_name': model.target_name,
+                         'n_tot': model.n_total,
+                         'dataset': self.qsar_obj.dataset,
+                         'date': None,
+                         'feat_time': None,
+                         'tune_time': None,
+                         'random_seed': None,
+                         'tuned': False,
+                         'feat_meth': None,
+                         'feat_method_name': [],
+                         'is_qsarDB': True,
+                         'source': 'QsarDB'}
             models.append({'model_data': model_data, 'json_data': json_data})
         return models
 

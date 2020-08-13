@@ -63,12 +63,15 @@ def impgraph(self):
     self.varimp = varimp
 
 
-def pva_graph(self, scaled=''):
+def pva_graph(self, use_scaled=False):
     """
     Make Predicted vs. Actual graph with prediction uncertainty.
     Pass dataframe from multipredict function. Return a graph.
     """
-    pva = self.predictions
+    if use_scaled:
+        pva = self.scaled_prediction
+    else:
+        pva = self.predictions
     r2 = r2_score(pva['actual'], pva['pred_avg'])
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))
@@ -112,7 +115,10 @@ def pva_graph(self, scaled=''):
     # ax = plt.axes()
     plt.xlabel('True', fontsize=14)
     plt.ylabel('Predicted', fontsize=14)
-    plt.title(self.run_name + f' Predicted vs. Actual{scaled}')
+    if use_scaled:
+        plt.title(self.run_name + f' Predicted vs. Actual (scaled)')
+    else:
+        plt.title(self.run_name + f' Predicted vs. Actual')
 
     plt.plot(lims, lims, 'k-', label='y=x')
     plt.plot([], [], ' ', label='R^2 = %.3f' % r2)
@@ -127,7 +133,10 @@ def pva_graph(self, scaled=''):
     fig.patch.set_facecolor('blue')  # Will change background color
     fig.patch.set_alpha(0.0)  # Makes background transparent
 
-    plt.savefig(self.run_name+'_' + f'PVA{scaled}.png')
+    if use_scaled:
+        plt.savefig(self.run_name+'_' + f'PVA_scaled.png')
+    else:
+        plt.savefig(self.run_name + '_' + f'PVA.png')
     # plt.show()
     # self.pva_graph = plt
     # return plt

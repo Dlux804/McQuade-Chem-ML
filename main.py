@@ -102,9 +102,7 @@ def main():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-
-                        if data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']:
-                            model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 

@@ -110,7 +110,6 @@ def nodes(self):
     Note: If you want to know why I put number of features in a list (line 77), read my note located in
                                                                                                 "prep_from_output"
     """
-    self.tuned = str(self.tuned).capitalize()
     t1 = time.perf_counter()
     self.tuned = str(self.tuned).capitalize()
     print("Creating Nodes for %s" % self.run_name)
@@ -125,19 +124,15 @@ def nodes(self):
 
     # Make algorithm node
     if self.algorithm == "nn":
-        algor = Node("Algorithm", name=self.algorithm, source="Keras", tuned=self.tuned)
-        g.create(algor)
-        g.evaluate(""" MATCH (n:Algorithm) WITH n.name AS name, n.tuned as tuned,
-                               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
-                               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+        algor = Node("Algorithm", name=self.algorithm, source="Keras")
+        g.merge(algor, "Algorithm", "name")
+
     else:
-        algor = Node("Algorithm", name=self.algorithm, source="sklearn", tuned=self.tuned)
-        g.create(algor)
-        g.evaluate(""" MATCH (n:Algorithm) WITH n.name AS name, n.tuned as tuned,
-                               COLLECT(n) AS nodelist, COUNT(*) AS count WHERE count > 1
-                               CALL apoc.refactor.mergeNodes(nodelist) YIELD node RETURN node""")
+        algor = Node("Algorithm", name=self.algorithm, source="sklearn")
+        g.merge(algor, "Algorithm", "name")
+
     # Make Tuner node
-    if self.tuned is "True":
+    if self.tuned == 'True':
         tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name)
         g.merge(tuning_algorithm, "TuningAlg", "algorithm")
     else:
@@ -155,8 +150,8 @@ def nodes(self):
     g.merge(feat_list, "FeatureList", "feat_ID")
 
     # Make TrainSet node
-    train_set = Node("TrainSet", trainsize=self.n_train, name="TrainSet", random_seed=self.random_seed)
-    g.create(train_set)
+    trainset = Node("TrainSet", trainsize=self.n_train, name="TrainSet", run_name=self.run_name)
+    g.merge(trainset, "TrainSet", "run_name")
 
     # Since we can't use merge with multiple properties, I will merge RandomSplit nodes later on
     randomsplit = Node("RandomSplit", name="RandomSplit", test_percent=self.test_percent,
@@ -165,13 +160,13 @@ def nodes(self):
     g.create(randomsplit)
 
     # Make TestSet node
-    testset = Node("TestSet", name="TestSet", testsize=self.n_test, random_seed=self.random_seed)
-    g.create(testset)
+    testset = Node("TestSet", name="TestSet", testsize=self.n_test, run_name=self.run_name)
+    g.merge(testset, "TestSet", 'run_name')
 
     # Make ValidateSet node
     if self.val_percent > 0:
-        valset = Node("ValSet", name="ValidateSet", valsize=self.n_val, random_seed=self.random_seed)
-        g.create(valset)
+        valset = Node("ValSet", name="ValSet", valsize=self.n_val, run_name=self.run_name)
+        g.merge(valset, "ValSet", 'run_name')
 
     else:
         pass
@@ -190,8 +185,8 @@ def nodes(self):
         t3 = time.perf_counter()
         df_for_fragments = df_smiles.drop(['target'], axis=1)
         print('Calculating Fragments')
-        df_for_fragments['fragments'] = parallel_apply(df_for_fragments['smiles'], smiles_to_frag, number_of_workers=3
-                                                       , loading_bars=False)
+        df_for_fragments['fragments'] = parallel_apply(df_for_fragments['smiles'], smiles_to_frag, number_of_workers=3,
+                                                       loading_bars=False)
         print('Inserting Fragments')
         insert_fragments(df_for_fragments, graph=g)  # Make fragments
         t4 = time.perf_counter()

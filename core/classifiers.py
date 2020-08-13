@@ -1,6 +1,6 @@
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
 
 def get_classifier(self, call=False):
     """Returns model specific classifier function."""
@@ -10,7 +10,10 @@ def get_classifier(self, call=False):
     skl_cls = {
         'svm': SVC,
         'knn': KNeighborsClassifier,
-        'rf': RandomForestClassifier
+        'rf': RandomForestClassifier,
+        'linearSVC': LinearSVC,
+        'ada': AdaBoostClassifier,
+        'gdb': GradientBoostingClassifier
     }
     # if self.algorithm in skl_cls.keys():
     #     self.estimator = skl_cls[self.algorithm]()

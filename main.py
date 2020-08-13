@@ -16,12 +16,12 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+   # learner = ['linearSVC', 'svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
     # learner = ['rf', 'ada', 'gdb', 'nn']
-    # learner = ['knn']
+    learner = ['gdb']
 
     # list of available classification learning algorithms for reference/testing
-    #learner = ['svm', 'knn', 'rf']
+   # learner = ['linearSVC', 'svm', 'knn', 'rf', 'ada', 'gdb']
 
     # list of available regression learning algorithms for reference/testing
 #    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
@@ -38,11 +38,11 @@ def main():
        'sider.csv': targets,
        'clintox.csv': targets,
        'bace.csv': targets,
-         # 'ESOL.csv': 'water-sol',
-         # 'Lipophilicity-ID.csv': 'exp',
-         # 'water-energy.csv': 'expt',
-         # 'logP14k.csv': 'Kow',
-         # 'jak2_pic50.csv': 'pIC50'
+         'ESOL.csv': 'water-sol',
+         'Lipophilicity-ID.csv': 'exp',
+         'water-energy.csv': 'expt',
+         'logP14k.csv': 'Kow',
+         'jak2_pic50.csv': 'pIC50'
     }
 
     # classification data sets for reference/testing

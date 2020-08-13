@@ -265,7 +265,8 @@ def make_grid(self):
         'gdb': gdb_paramgrid,
         'mlp': mlp_paramgrid,
         'knn': knn_paramgrid,
-        'nn': keras_paramgrid
+        'nn': keras_paramgrid,
+        'linearSVC': svr_paramgrid
     }
     self.param_grid = grids[self.algorithm]()
     # return grids[method]()

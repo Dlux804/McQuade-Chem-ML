@@ -13,6 +13,7 @@ from core.neo4j import ModelOrOutputToNeo4j
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
+
 def main():
     os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
@@ -193,30 +194,11 @@ def example_load():
     rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
 
-def time_needed():
-
-    datasets = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
-                'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50'}
-    datasets = {'water-energy.csv': 'expt'}
-    time_df = pd.DataFrame(columns={'Loop', 'Dataset', 'Time Needed'})
-
-    for i in range(2):
-        time_dict = {'Loop': None, 'Dataset': None, 'Time Needed': None}
-        for dataset, target in datasets.items():
-            time_dict['Loop'] = str(i)
-            time_dict['Dataset'] = dataset
-            time_needed_for_run = example_run_with_mysql_and_neo4j(dataset, target)
-            time_dict['Time Needed'] = time_needed_for_run
-            time_df = time_df.append(time_dict, ignore_index=True)
-            time_df.to_csv('Time.csv')
-
-
 if __name__ == "__main__":
     # main()
     # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
-    # time_needed()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
     # qsar_model = QsarDBImport('2017MI1700024.qdb.zip', zipped=True)
     # qsar_model.to_neo4j()
@@ -226,4 +208,4 @@ if __name__ == "__main__":
     # model = unpickle_model('GE021_20200811-122326.pkl')
     # ModelOrOutputToNeo4j(model=model)
 
-    model = QsarToNeo4j('Q13-26-0009.qdb.zip', zipped=True)
+    QsarToNeo4j('Qsar_examples/2000JCICS1337.zip', zipped=True)

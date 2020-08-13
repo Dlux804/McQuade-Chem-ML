@@ -34,10 +34,12 @@ class QsarToNeo4j:
         self.gather_data_in_pmmls()
         self.gather_property_data()
         self.calculate_model_data()
+        self.cleanup_dir()
         self.to_neo4j()
 
     @staticmethod
     def __combine_dfs__(df1, df2, how='inner'):
+
         if df1['Compound Id'].dtype != 'object':
             df1['Compound Id'] = df1['Compound Id'].astype(str)
         if df2['Compound Id'].dtype != 'object':
@@ -112,7 +114,8 @@ class QsarToNeo4j:
             compounds_cargos_dicts.append(compound_cargos)
         if compounds_cargos_dicts:
             cargos_df = pd.DataFrame(compounds_cargos_dicts)
-            return self.__combine_dfs__(compound_data, cargos_df)
+            compound_data = self.__combine_dfs__(compound_data, cargos_df)
+        return compound_data
 
     def add_desc_to_compound_data(self):
         # Gather information in descriptors columns
@@ -136,6 +139,7 @@ class QsarToNeo4j:
             ids_to_names[Id] = Name
 
         feats = []
+        compound_data = self.compound_data
         for desc in [f.name for f in os.scandir(desc_dir) if f.is_dir()]:
             desc_id = desc
             desc_csv = desc_dir + f'/{desc}/values'
@@ -147,7 +151,7 @@ class QsarToNeo4j:
             feats.append(ids_to_names[desc_id])
 
             desc_csv = desc_csv.rename(columns={current_col: ids_to_names[desc_id]})
-            compound_data = self.__combine_dfs__(self.compound_data, desc_csv)
+            compound_data = self.__combine_dfs__(desc_csv, self.compound_data)
         return compound_data, feats
 
     def cleanup_compound_data(self):
@@ -163,7 +167,6 @@ class QsarToNeo4j:
 
         else:
             # TODO convert cas/inchi/name to smiles if needed
-            # compound_data = compound_data['Compound Id']
             raise TypeError("Could not generate or parse smiles in directory. Missing rdmol file and daylight-smiles")
 
         self.compound_data = self.compound_data.dropna(subset=['smiles'])
@@ -191,10 +194,15 @@ class QsarToNeo4j:
     def gather_data_in_pmmls(self):
         root_models_dir = self.directory + '/' + 'models'
         for model in self.models:
-            pmml = root_models_dir + f'/{model.model_id}/pmml'
-            pmml = ET.parse(pmml).getroot()
-            model.algorithm = pmml[1].tag.split('}')[1]
-            model.task_type = model.algorithm.lower().split('model')[0]
+            for i in range(3):
+                try:
+                    pmml = root_models_dir + f'/{model.model_id}/pmml'
+                    pmml = ET.parse(pmml).getroot()
+                    model.algorithm = pmml[i].attrib['functionName']
+                    task_type = pmml[i].tag.split('}')[1]
+                    model.task_type = task_type.lower().split('model')[0]
+                except KeyError:
+                    pass
 
     def gather_property_data(self):
         properties_dir = self.directory + '/' + 'properties'
@@ -221,7 +229,6 @@ class QsarToNeo4j:
             model.raw_data = self.__combine_dfs__(self.compound_data, property_csv)
             model.raw_data = model.raw_data.dropna(subset=['smiles'])
             model.n_total = len(model.raw_data)
-            model.raw_data.to_csv('dev.csv')
 
     def calculate_model_data(self):
         predictions_dir = self.directory + '/' + 'predictions'
@@ -255,22 +262,29 @@ class QsarToNeo4j:
                     df = self.compound_data[['Compound Id', 'smiles']]
                     predictions_csv = predictions_dir + f'/{set_name}/values'
                     predictions_csv = pd.read_csv(predictions_csv, sep='\t')
-                    predicted_data = self.__combine_dfs__(df, predictions_csv)
-                    predicted_data_compound_ids = predicted_data[['Compound Id']]
-                    actual_data = model.raw_data
-                    actual_data = self.__combine_dfs__(actual_data, predicted_data_compound_ids)
-
+                    predicted_data = self.__combine_dfs__(predictions_csv, df)
                     pred_column = list(predicted_data.columns.difference(['Compound Id', 'smiles']))[0]
-                    act_column = model.target_name
+                    predicted_data = predicted_data.dropna(subset=[pred_column])
+                    predicted_data = predicted_data[['Compound Id', pred_column]]
 
-                    r2 = r2_score(actual_data[act_column], predicted_data[pred_column])
-                    mse = mean_squared_error(actual_data[act_column], predicted_data[pred_column])
-                    rmse = np.sqrt(mean_squared_error(actual_data[act_column], predicted_data[pred_column]))
-                    model.n[set_type] = len(predicted_data)
-                    model.r2[set_type] = r2
-                    model.mse[set_type] = mse
-                    model.rmse[set_type] = rmse
-                    model.molecules[set_type] = list(actual_data['smiles'])
+                    actual_data = model.raw_data
+                    act_column = model.target_name
+                    actual_data = actual_data.dropna(subset=[act_column])
+                    actual_data = actual_data[['Compound Id', 'smiles', act_column]]
+
+                    combined_data = self.__combine_dfs__(predicted_data, actual_data)
+                    combined_data = combined_data.dropna(subset=[pred_column, act_column])
+                    combined_data.to_csv('dev.csv')
+
+                    if len(combined_data) > 0:
+                        r2 = r2_score(combined_data[act_column], combined_data[pred_column])
+                        mse = mean_squared_error(combined_data[act_column], combined_data[pred_column])
+                        rmse = np.sqrt(mean_squared_error(combined_data[act_column], combined_data[pred_column]))
+                        model.n[set_type] = len(combined_data)
+                        model.r2[set_type] = r2
+                        model.mse[set_type] = mse
+                        model.rmse[set_type] = rmse
+                        model.molecules[set_type] = list(combined_data['smiles'])
 
             val_molecules = model.molecules['validation']
             train_molecules = model.molecules['training']
@@ -285,6 +299,10 @@ class QsarToNeo4j:
                     return 'val'
 
             model.raw_data['in_set'] = model.raw_data['smiles'].apply(__fetch_set__)
+
+    def cleanup_dir(self):
+        if self.cleanup and self.zipped:
+            shutil.rmtree(self.directory, ignore_errors=True)
 
     def to_neo4j(self):
         ModelOrOutputToNeo4j(qsar_obj=self, molecules_per_batch=self.molecules_per_batch, port=self.port,

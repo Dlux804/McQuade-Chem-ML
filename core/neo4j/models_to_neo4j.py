@@ -165,7 +165,7 @@ class ModelOrOutputToNeo4j:
                          'val_percent': round(model.n['validation'] / model.n_total, 2),
                          'predictions_stats': {'r2_avg': model.r2, 'mse_avg': model.mse,
                                                'rmse_avg': model.rmse,
-                                               'time_avg': nan},
+                                               'time_avg': None},
                          'run_name': model.name,
                          'feature_list': self.qsar_obj.feats,
                          'algorithm': model.algorithm,
@@ -263,7 +263,7 @@ class ModelOrOutputToNeo4j:
         
             """,
             parameters={'date': js['date'], 'feat_time': js['feat_time'], 'model_name': js['run_name'],
-                        'test_time': float(js['predictions_stats']['time_avg']),
+                        'test_time': js['predictions_stats']['time_avg'],
                         'train_time': js['tune_time'], 'seed': js['random_seed'],
                         'test_percent': js['test_percent'], 'train_percent': js['train_percent'],
                         'val_percent': js['val_percent'],

@@ -286,7 +286,6 @@ class QsarToNeo4j:
 
                     combined_data = self.__combine_dfs__(predicted_data, actual_data)
                     combined_data = combined_data.dropna(subset=[pred_column, act_column])
-                    combined_data.to_csv('dev.csv')
 
                     if len(combined_data) > 0:
                         r2 = r2_score(combined_data[act_column], combined_data[pred_column])

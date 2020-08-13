@@ -194,6 +194,14 @@ def example_load():
     rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
 
+def Qsar_import_examples():
+    for directory in os.listdir('Qsar_examples'):
+        directory = 'Qsar_examples/' + directory
+        print(directory)
+        QsarToNeo4j(directory, zipped=True)
+        print(f'Passed!! {directory}')
+
+
 if __name__ == "__main__":
     # main()
     # single_model()
@@ -202,10 +210,5 @@ if __name__ == "__main__":
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
     # qsar_model = QsarDBImport('2017MI1700024.qdb.zip', zipped=True)
     # qsar_model.to_neo4j()
+    Qsar_import_examples()
 
-    # from core.neo4j import ModelOrOutputToNeo4j
-    #
-    # model = unpickle_model('GE021_20200811-122326.pkl')
-    # ModelOrOutputToNeo4j(model=model)
-
-    QsarToNeo4j('Qsar_examples/2000JCICS1337.zip', zipped=True)

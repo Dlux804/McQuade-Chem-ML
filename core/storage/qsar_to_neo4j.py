@@ -53,7 +53,7 @@ class QsarToNeo4j:
             extension = unzipped_directory_file_name.pop(-1)
 
             if extension != 'zip':
-                raise Exception("Zipped folders should have a .zip extension")
+                raise TypeError("Zipped folders should have a .zip extension")
 
             unzipped_directory_file_name = ".".join(unzipped_directory_file_name)
 
@@ -143,7 +143,7 @@ class QsarToNeo4j:
         for desc in [f.name for f in os.scandir(desc_dir) if f.is_dir()]:
             desc_id = desc
             desc_csv = desc_dir + f'/{desc}/values'
-            desc_csv = pd.read_csv(desc_csv, sep='\t')
+            desc_csv = pd.read_csv(desc_csv, sep='\t', encoding='cp1252')
 
             current_col = list(desc_csv.columns)
             current_col.remove('Compound Id')
@@ -161,12 +161,18 @@ class QsarToNeo4j:
 
         elif 'daylight-smiles' in list(self.compound_data.columns):
             def __daylight_to_rdkit__(smiles):
-                return MolToSmiles(MolFromSmiles(smiles))
+                try:
+                    return MolToSmiles(MolFromSmiles(smiles))
+                except TypeError:
+                    return np.nan
             self.compound_data['daylight-smiles'] = self.compound_data['daylight-smiles'].apply(__daylight_to_rdkit__)
+            self.compound_data = self.compound_data.loc[self.compound_data['daylight-smiles'] != np.nan]
             self.compound_data = self.compound_data.rename(columns={'daylight-smiles': 'smiles'})
 
         else:
             # TODO convert cas/inchi/name to smiles if needed
+            print(f'Can not parse smiles for {self.directory}')
+            self.cleanup_dir()
             raise TypeError("Could not generate or parse smiles in directory. Missing rdmol file and daylight-smiles")
 
         self.compound_data = self.compound_data.dropna(subset=['smiles'])
@@ -194,10 +200,10 @@ class QsarToNeo4j:
     def gather_data_in_pmmls(self):
         root_models_dir = self.directory + '/' + 'models'
         for model in self.models:
-            for i in range(3):
+            pmml = root_models_dir + f'/{model.model_id}/pmml'
+            pmml = ET.parse(pmml).getroot()
+            for i in range(len(pmml)):
                 try:
-                    pmml = root_models_dir + f'/{model.model_id}/pmml'
-                    pmml = ET.parse(pmml).getroot()
                     model.algorithm = pmml[i].attrib['functionName']
                     task_type = pmml[i].tag.split('}')[1]
                     model.task_type = task_type.lower().split('model')[0]
@@ -234,6 +240,12 @@ class QsarToNeo4j:
         predictions_dir = self.directory + '/' + 'predictions'
         predictions_xml = predictions_dir + '/predictions.xml'
         predictions_xml = ET.parse(predictions_xml).getroot()
+
+        good_models = []
+        for model in self.models:
+            if len(model.raw_data) > 0:
+                good_models.append(model)
+        self.models = good_models
 
         for model in self.models:
             model.n = {'training': 0, 'testing': 0, 'validation': 0}

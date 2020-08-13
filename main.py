@@ -19,59 +19,59 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-#    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    #    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
     learner = ['knn']
 
     # list of available classification learning algorithms for reference/testing
-    #learner = ['svm', 'knn', 'rf']
+    # learner = ['svm', 'knn', 'rf']
 
     # list of available regression learning algorithms for reference/testing
-#    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
+    #    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
 
     # All data sets in dict
-    targets = None
-    sets = {
-       'BBBP.csv': targets,
-       'sider.csv': targets,
-       'clintox.csv': targets,
-       'bace.csv': targets,
-         'ESOL.csv': 'water-sol',
-         'Lipophilicity-ID.csv': 'exp',
-         'water-energy.csv': 'expt',
-         'logP14k.csv': 'Kow',
-         'jak2_pic50.csv': 'pIC50'
-    }
+    # targets = None
+    # sets = {
+    #    'BBBP.csv': targets,
+    #    'sider.csv': targets,
+    #    'clintox.csv': targets,
+    #    'bace.csv': targets,
+    #      'ESOL.csv': 'water-sol',
+    #      'Lipophilicity-ID.csv': 'exp',
+    #      'water-energy.csv': 'expt',
+    #      'logP14k.csv': 'Kow',
+    #      'jak2_pic50.csv': 'pIC50'
+    # }
 
     # classification data sets for reference/testing
     # sets = {
     #     'BBBP.csv': targets,
-        # 'sider.csv': targets,
-        # 'clintox.csv': targets,
-        # 'bace.csv': targets,
-#    }
+    # 'sider.csv': targets,
+    # 'clintox.csv': targets,
+    # 'bace.csv': targets,
+    #    }
 
     # regression data sets for reference/testing
-    # sets = {
-    #     'ESOL.csv': 'water-sol',
-    #     'Lipophilicity-ID.csv': 'exp',
-    #     'water-energy.csv': 'expt',
-    #     'logP14k.csv': 'Kow',
-    #     'jak2_pic50.csv': 'pIC50'
-    # }
+    sets = {
+        'ESOL.csv': 'water-sol',
+        'Lipophilicity-ID.csv': 'exp',
+        'water-energy.csv': 'expt',
+        'logP14k.csv': 'Kow',
+        'jak2_pic50.csv': 'pIC50'
+    }
 
-    for alg in learner: # loop over all learning algorithms
-        feats=[[0], [0,2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
-                  [5], [6]] # Use this line to select specific featurizations
+    for alg in learner:  # loop over all learning algorithms
+        feats = [[0], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
+                 [5], [6]]  # Use this line to select specific featurizations
         # feats = [[2]]
         for method in feats:  # loop over the featurization methods
-            for data, target in sets.items(): # loop over dataset dictionary
+            for data, target in sets.items():  # loop over dataset dictionary
 
                 # This gets the target columns for classification data sets (Using target lists in the dictionary causes errors later in the workflow)
                 if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
                     target = get_classification_targets(data)
 
                 # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
-                checker, task_type = Get_Task_Type_1(data,alg)
+                checker, task_type = Get_Task_Type_1(data, alg)
                 if checker == 0:
                     pass
                 else:
@@ -86,10 +86,10 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                               tune=False, cv=3, opt_iter=25)
+                                        tune=False, cv=3, opt_iter=25)
                         print('Done.\n')
 
-                    with cd('dataFiles'):
+                    with cd('no'):
                         # Runs classification model
                         model.featurize()  # Featurize molecules
                         val = 0.0
@@ -119,7 +119,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = MlModel(algorithm='gdb', dataset='ESOL.csv', target='water-sol', feat_meth=[0, 2],
+        model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
                          tune=False, cv=2, opt_iter=2)
 
         print('done.')
@@ -133,12 +133,12 @@ def single_model():
         model1.reg()
         model1.run()
         model1.analyze()
-        if model1.algorithm != 'nn':  # issues pickling NN models
-            model1.pickle_model()
+        # if model1.algorithm != 'nn':  # issues pickling NN models
+        #     model1.pickle_model()
         model1.store()
         model1.org_files(zip_only=True)
-        # model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        # # model1.QsarDB_export(zip_output=True)
+        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j(dataset, target):
@@ -147,7 +147,7 @@ def example_run_with_mysql_and_neo4j(dataset, target):
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
         model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0],
-                                tune=True, cv=2, opt_iter=2)
+                         tune=True, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
         print('Featurization:', model3.feat_meth)
@@ -202,13 +202,22 @@ def Qsar_import_examples():
         print(f'Passed!! {directory}')
 
 
+def output_dir_to_neo4j():
+    head_dir = 'no'
+    for directory in os.listdir(head_dir):
+        directory = head_dir + '/' + directory
+        print(directory)
+        ModelOrOutputToNeo4j(zipped_out_dir=directory, molecules_per_batch=5000, port="bolt://localhost:7687",
+                             username="neo4j", password="password")
+
+
 if __name__ == "__main__":
     # main()
-    # single_model()
+    single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
     # qsar_model = QsarDBImport('2017MI1700024.qdb.zip', zipped=True)
     # qsar_model.to_neo4j()
-    Qsar_import_examples()
-
+    # Qsar_import_examples()
+    # output_dir_to_neo4j()

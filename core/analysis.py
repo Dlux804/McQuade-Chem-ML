@@ -63,7 +63,7 @@ def impgraph(self):
     self.varimp = varimp
 
 
-def pva_graph(self):
+def pva_graph(self, scaled=''):
     """
     Make Predicted vs. Actual graph with prediction uncertainty.
     Pass dataframe from multipredict function. Return a graph.
@@ -112,7 +112,7 @@ def pva_graph(self):
     # ax = plt.axes()
     plt.xlabel('True', fontsize=14)
     plt.ylabel('Predicted', fontsize=14)
-    plt.title(self.run_name + ' Predicted vs. Actual')
+    plt.title(self.run_name + f' Predicted vs. Actual{scaled}')
 
     plt.plot(lims, lims, 'k-', label='y=x')
     plt.plot([], [], ' ', label='R^2 = %.3f' % r2)
@@ -127,7 +127,7 @@ def pva_graph(self):
     fig.patch.set_facecolor('blue')  # Will change background color
     fig.patch.set_alpha(0.0)  # Makes background transparent
 
-    plt.savefig(self.run_name+'_' + 'PVA.png')
+    plt.savefig(self.run_name+'_' + f'PVA{scaled}.png')
     # plt.show()
     # self.pva_graph = plt
     # return plt

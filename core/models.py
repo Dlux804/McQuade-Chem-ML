@@ -122,6 +122,10 @@ class MlModel:  # TODO update documentation here
         # make predicted vs actual graph
         if self.task_type == 'regression':
             self.pva_graph()
+            predictions = self.predictions  # Temp and bootleg solution, plot both actual pva and scaled pva
+            self.predictions = self.scaled_prediction
+            self.pva_graph(scaled=' (scaled)')
+            self.predictions = predictions
 
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.classification_graphs()

@@ -65,14 +65,16 @@ def train_reg(self,n=5):
     scaled_mse = np.empty(n)
     scaled_rmse = np.empty(n)
 
-    # Drop smiles (and save them) and calculate max/min values of entire predicted dataframe
+    # Drop smiles (and save them) then calculate max/min values of entire predicted dataframe
     smiles = pva_multi['smiles']
     pva_multi_scaled = pva_multi.drop('smiles', axis=1)
     data_max = max(pva_multi_scaled.max())  # Find abs min/max of predicted data
     data_min = min(pva_multi_scaled.min())
 
-    # Calculate r2, rmse, mse or for each pva columns
+    # Logic to scale the predicted data
     pva_multi_scaled = (pva_multi_scaled - data_min) / (data_max - data_min)
+
+    # Calculate r2, rmse, mse or for each pva columns
     for i, predicted_column in enumerate(predicted_columns):
         scaled_r2[i] = r2_score(pva_multi_scaled['actual'], pva_multi_scaled[predicted_column])
         scaled_mse[i] = mean_squared_error(pva_multi_scaled['actual'], pva_multi_scaled[predicted_column])

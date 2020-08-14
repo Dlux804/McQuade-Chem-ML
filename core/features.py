@@ -22,8 +22,8 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     df = self.data
     df['smiles'] = canonical_smiles(list(df['smiles']))  # Turn SMILES into CANONICAL SMILES
     # available featurization options
-    feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
-                 'morganchiral3counts', 'atompaircounts']
+    feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts', 'morganchiral3counts',
+                 'atompaircounts']
 
     if feat_meth is None:  # ask for features
         print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))

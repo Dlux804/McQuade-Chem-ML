@@ -170,17 +170,15 @@ def data_split(self, test=0.2, val=0, random=None):
             random_state=self.random_seed)
         # Define smiles that go with the different sets
         # Use temp dummy variables for splitting molecules up the same way
-        temp_train_molecules, self.val_molecules, temp_train_target, temp_val_target = train_test_split(
+        self.train_molecules, self.val_molecules, temp_train_target, temp_val_target = train_test_split(
             self.train_molecules,
             temp_train_target,
             test_size=b,
             random_state=self.random_seed)
         # scale the validation features too
         self.val_features = scaler.transform(self.val_features)
-
         self.n_val = self.val_features.shape[0]
         pval = self.n_val / self.n_tot * 100
-
     else:
         pval = 0
 

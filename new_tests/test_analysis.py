@@ -7,20 +7,20 @@ import os, glob
 from new_tests.model_fixture import __unpickle_model__, delete_files, __assert_results__
 
 
-@pytest.mark.parametrize('directory, pkl', [('pickle/run', 'ada_run.pkl')])
-def test_graph(__unpickle_model__):
-    """
-    Objective: Test analysis.py's main graphing function. Check if it can produces a PVA graph and and importance-graph
-                for one of the algorithm that has that feature
-    Note: While I could check for importance graph for other algorithms, I'm worried about file size. These files
-            can reach 1MB even with a dataset of 10 data points.
-    :param __unpickle_model__:
-    :return:
-    """
-    model1 = __unpickle_model__
-    model1.analyze()
-    assert os.path.isfile(''.join([model1.run_name, '_PVA.png'])), "No PVA graph found"
-    assert os.path.isfile(''.join([model1.run_name, '_importance-graph.png'])), "No importance graph found"
+# @pytest.mark.parametrize('directory, pkl', [('pickle/run', 'ada_run.pkl')])
+# def test_graph(__unpickle_model__):
+#     """
+#     Objective: Test analysis.py's main graphing function. Check if it can produces a PVA graph and and importance-graph
+#                 for one of the algorithm that has that feature
+#     Note: While I could check for importance graph for other algorithms, I'm worried about file size. These files
+#             can reach 1MB even with a dataset of 10 data points.
+#     :param __unpickle_model__:
+#     :return:
+#     """
+#     model1 = __unpickle_model__
+#     model1.analyze()
+#     assert os.path.isfile(''.join([model1.run_name, '_PVA.png'])), "No PVA graph found"
+#     assert os.path.isfile(''.join([model1.run_name, '_importance-graph.png'])), "No importance graph found"
     # delete_files(model1.run_name)
 
 

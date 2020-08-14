@@ -7,7 +7,7 @@ import pandas as pd
 from core.storage.misc import unpickle_model
 import pytest
 from main import ROOT_DIR
-from tests.model_fixture import __run_all__, __model_object__, delete_files
+from tests.model_fixture import __run_all__, __model_object__, delete_files, __assert_results__
 # change working directory to
 os.chdir(ROOT_DIR)
 
@@ -37,9 +37,9 @@ def test_pickle(__run_all__):
     pva = pd.DataFrame([], columns=['actual', 'predicted'])
     pva['actual'] = model2.test_target
     pva['predicted'] = predictions
-    assert r2_score(pva['actual'], pva['predicted']) < 0.8
-    assert mean_squared_error(pva['actual'], pva['predicted']) > 0.5
-    assert np.sqrt(mean_squared_error(pva['actual'], pva['predicted'])) > 0.5
+    assert r2_score(pva['actual'], pva['predicted']) < 0.9
+    assert mean_squared_error(pva['actual'], pva['predicted']) > 0.2
+    assert np.sqrt(mean_squared_error(pva['actual'], pva['predicted'])) > 0.2
     delete_files(model1.run_name)
 
 

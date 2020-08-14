@@ -18,7 +18,7 @@ from core.storage.dictionary import target_name_grid
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 
-class ModelOrOutputToNeo4j:
+class ModelToNeo4j:
 
     def __init__(self, model=None, zipped_out_dir=None, qsar_obj=None, molecules_per_batch=5000,
                  port="bolt://localhost:7687", username="neo4j", password="password"):

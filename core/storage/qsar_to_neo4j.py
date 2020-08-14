@@ -10,7 +10,7 @@ import numpy as np
 from rdkit.Chem import MolFromMolFile, MolToSmiles, MolFromSmiles
 from sklearn.metrics import mean_squared_error, r2_score
 
-from core.neo4j import ModelOrOutputToNeo4j
+from core.neo4j import ModelToNeo4j
 
 
 class QsarToNeo4j:
@@ -334,8 +334,8 @@ class QsarToNeo4j:
             shutil.rmtree(self.directory, ignore_errors=True)
 
     def to_neo4j(self):
-        ModelOrOutputToNeo4j(qsar_obj=self, molecules_per_batch=self.molecules_per_batch, port=self.port,
-                             username=self.username, password=self.password)
+        ModelToNeo4j(qsar_obj=self, molecules_per_batch=self.molecules_per_batch, port=self.port,
+                     username=self.username, password=self.password)
 
 
 class QsarModel:

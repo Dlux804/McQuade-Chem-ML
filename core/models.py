@@ -11,7 +11,7 @@ from sqlalchemy.exc import OperationalError
 from core.ingest import load_smiles
 from core.name import name
 from core.storage import MLMySqlConn
-from core.neo4j import ModelOrOutputToNeo4j
+from core.neo4j import ModelToNeo4j
 
 
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']
@@ -134,7 +134,7 @@ class MlModel:  # TODO update documentation here
         self.neo4j_params = {'port': port, 'username': username, 'password': password}  # Pass Neo4j Parameters
         Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Test connection to Neo4j
-        ModelOrOutputToNeo4j(model=self, port=port, molecules_per_batch=5000, username=username, password=password)
+        ModelToNeo4j(model=self, port=port, molecules_per_batch=5000, username=username, password=password)
         t2 = default_timer() - t1
         print(f"Time it takes to finish graphing {self.run_name}: {t2}sec")
 

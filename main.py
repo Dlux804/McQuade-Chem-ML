@@ -8,7 +8,7 @@ from timeit import default_timer
 from core import MlModel, get_classification_targets, Get_Task_Type_1
 from core.storage import cd, pickle_model, unpickle_model, QsarToNeo4j
 
-from core.neo4j import ModelOrOutputToNeo4j
+from core.neo4j import ModelToNeo4j
 
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
@@ -209,8 +209,8 @@ def output_dir_to_neo4j():
     for directory in os.listdir(head_dir):
         directory = head_dir + '/' + directory
         print(directory)
-        ModelOrOutputToNeo4j(zipped_out_dir=directory, molecules_per_batch=5000, port="bolt://localhost:7687",
-                             username="neo4j", password="password")
+        ModelToNeo4j(zipped_out_dir=directory, molecules_per_batch=5000, port="bolt://localhost:7687",
+                     username="neo4j", password="password")
 
 
 if __name__ == "__main__":

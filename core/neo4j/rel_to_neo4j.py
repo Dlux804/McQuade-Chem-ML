@@ -152,8 +152,8 @@ def relationships(self, from_output=False):
     g.evaluate("""
     UNWIND $parameters as row
     MATCH (testset:TestSet {run_name: $run_name}), (smiles:Molecule {SMILES: row.smiles}) 
-    MERGE (testset)-[:PREDICTS_MOL_PROP {predicted_value: row.predicted, uncertainty:row.uncertainty, 
-                                            error_avg: row.error}]->(smiles)
+    MERGE (testset)-[:PREDICTS_MOL_PROP {predicted_average: row.predicted_average, uncertainty:row.uncertainty, 
+                                            average_error: row.average_error}]->(smiles)
         """, parameters={'parameters': test_mol_dict, 'run_name': self.run_name})
 
     if self.val_percent > 0:

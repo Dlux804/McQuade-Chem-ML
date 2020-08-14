@@ -29,9 +29,9 @@ def prep(self):
     pva_predictions = pva.drop(['pred_avg', 'pred_std', 'smiles', 'actual'], axis=1)
 
     average_error = list(pva_predictions.sub(actual, axis=0).mean(axis=1))  # Calculate avg prediction error
-    test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted': list(pva['pred_avg']),
+    test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'predicted_average': list(pva['pred_avg']),
                                   'uncertainty': list(pva['pred_std']),
-                                  'error': average_error}).to_dict('records')
+                                  'average_error': average_error}).to_dict('records')
     return df_smiles, test_mol_dict, data_size
 
 

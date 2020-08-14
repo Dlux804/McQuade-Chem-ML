@@ -265,12 +265,12 @@ a precision/recall vs threshold graph.
     plt.xlabel('Threshold')
 
 
-def learning_curve(self):
-    train_sizes = [1, self.n_train*0.2, self.n_train*0.4, self.n_train*0.6, self.n_train*0.8, self.n_train]
-    train_sizes, train_scores, validation_scores = learning_curve(self.estimator, self.train_features, self.train_target
-                                                                  , train_sizes=train_sizes, cv=self.cv_folds,
+def learning_curves(self):
+    train_sizes, train_scores, validation_scores = learning_curve(self.estimator, X=self.train_features,
+                                                                  y=self.train_target, cv=self.cv_folds,
                                                                   scoring='neg_mean_squared_error')
     train_scores_mean = np.sqrt(-train_scores.mean(axis=1))
+    print(train_scores_mean)
     validation_scores_mean = np.sqrt(-validation_scores.mean(axis=1))
 
     plt.rcParams['figure.figsize'] = [12, 9]

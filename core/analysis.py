@@ -134,6 +134,74 @@ def pva_graph(self):
     # return plt
 
 
+def plot_learning_curves(self):
+    # Set the style
+    plt.style.use('bmh')
+    fig, axes = plt.subplots(1, 3, figsize=(20, 5))
+    axes[0].set_xlabel("Training Size")
+    axes[0].set_ylabel("MSE")
+    axes[0].set_title("Learning curves of %s" % self.run_name)
+
+    train_sizes, train_scores, test_scores, fit_times, _ = \
+                                                        learning_curve(estimator=self.estimator, X=self.train_features,
+                                                                       y=self.train_target, cv=5,
+                                                                       scoring='neg_mean_squared_error',
+                                                                       train_sizes=np.linspace(.1, 1.0, 5),
+                                                                       return_times=True)
+    train_scores_mean = -np.mean(train_scores, axis=1)
+    train_scores_std = -np.std(train_scores, axis=1)
+    test_scores_mean = -np.mean(test_scores, axis=1)
+    test_scores_std = -np.std(test_scores, axis=1)
+    fit_times_mean = np.mean(fit_times, axis=1)
+    fit_times_std = np.std(fit_times, axis=1)
+
+    # Plot learning curve
+    axes[0].grid(b=True)
+    axes[0].fill_between(train_sizes, train_scores_mean - train_scores_std,
+                         train_scores_mean + train_scores_std, alpha=0.1,
+                         color="r")
+    axes[0].fill_between(train_sizes, test_scores_mean - test_scores_std,
+                         test_scores_mean + test_scores_std, alpha=0.1,
+                         color="g")
+    axes[0].plot(train_sizes, train_scores_mean, 'o-', color="r",
+                 label="Training score")
+    axes[0].plot(train_sizes, test_scores_mean, 'o-', color="g",
+                 label="Cross-validation score")
+
+    xlim = [np.min([axes[0].get_xlim()]),
+            np.max([axes[0].get_xlim()])
+            ]
+    ylim = [np.min([axes[0].get_ylim()]),
+            np.max([axes[0].get_ylim()])
+            ]
+    axes[0].set_ylim(ylim)
+    axes[0].set_xlim(xlim)
+    axes[0].legend(loc="best", prop={'size': 13}, facecolor='w', edgecolor='k', shadow=True)
+
+    # Plot n_samples vs fit_times
+
+    axes[1].grid(b=True)
+    axes[1].plot(train_sizes, fit_times_mean, 'o-')
+    axes[1].fill_between(train_sizes, fit_times_mean - fit_times_std,
+                         fit_times_mean + fit_times_std, alpha=0.1)
+    axes[1].set_xlabel("Training Size")
+    axes[1].set_ylabel("fit_times (sec)")
+    axes[1].set_title("Scalability of %s" % self.run_name)
+
+    # Plot fit_time vs score
+    axes[2].grid(b=True)
+    axes[2].plot(fit_times_mean, test_scores_mean, 'o-')
+    axes[2].fill_between(fit_times_mean, test_scores_mean - test_scores_std,
+                         test_scores_mean + test_scores_std, alpha=0.1)
+    axes[2].set_xlabel("fit_times (sec)")
+    axes[2].set_ylabel("MSE")
+    axes[2].set_title("Performance of %s" % self.run_name)
+
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
+    fig.savefig(self.run_name + '_learning_curve.png')
+
+
 def plotter(x, y, filename=None, xlabel='', ylabel=''):
     """
     General plotting function for creating an XY scatter plot.
@@ -263,36 +331,3 @@ a precision/recall vs threshold graph.
     plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
     plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
     plt.xlabel('Threshold')
-
-
-def learning_curves(self):
-    train_sizes, train_scores, validation_scores = learning_curve(self.estimator, X=self.train_features,
-                                                                  y=self.train_target, cv=self.cv_folds,
-                                                                  scoring='neg_mean_squared_error')
-    train_scores_mean = np.sqrt(-train_scores.mean(axis=1))
-    print(train_scores_mean)
-    validation_scores_mean = np.sqrt(-validation_scores.mean(axis=1))
-
-    plt.rcParams['figure.figsize'] = [12, 9]
-    plt.style.use('bmh')
-    fig, ax = plt.subplots()
-    # ax = plt.axes()
-    plt.ylabel('RMSE', fontsize=14)
-    plt.xlabel('Training set size', fontsize=14)
-    plt.title("Learing curve for %s" % self.run_name)
-    # set axis limits
-    lims = [np.min([ax.get_xlim(), ax.get_ylim()]),
-            np.max([ax.get_xlim(), ax.get_ylim()])
-            ]
-    plt.plot(train_sizes, train_scores_mean, label='Training error')
-    plt.plot(train_sizes, validation_scores_mean, label='Validation error')
-    ax.set_aspect('equal')
-    ax.set_xlim(lims)
-    ax.set_ylim(lims)
-    # plt.axis([-2,5,-2,5]) #[-2,5,-2,5]
-    ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
-
-    fig.patch.set_facecolor('blue')  # Will change background color
-    fig.patch.set_alpha(0.0)  # Makes background transparent
-    plt.savefig(self.run_name+"_learning_curve.png")
-

@@ -11,7 +11,6 @@ from rdkit.Chem import MolFromMolFile, MolToSmiles, MolFromSmiles
 from sklearn.metrics import mean_squared_error, r2_score
 
 from core.neo4j import ModelOrOutputToNeo4j
-from core.ingest import resolveID
 
 
 class QsarToNeo4j:

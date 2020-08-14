@@ -152,7 +152,7 @@ def relationships(self, from_output=False):
     g.evaluate("""
     UNWIND $parameters as row
     MATCH (testset:TestSet {run_name: $run_name}), (smiles:Molecule {SMILES: row.smiles}) 
-    MERGE (testset)-[:PREDICTS_MOL_PROP {predicted_average: row.predicted_average, uncertainty:row.uncertainty, 
+    MERGE (testset)-[:PREDICTS_MOL_PROP {average_prediction: row.average_prediction, uncertainty:row.uncertainty, 
                                             average_error: row.average_error}]->(smiles)
         """, parameters={'parameters': test_mol_dict, 'run_name': self.run_name})
 

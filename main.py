@@ -55,15 +55,19 @@ def main():
 
     # regression data sets for reference/testing
     sets = {
-        'ESOL.csv': 'water-sol'
+        'ESOL.csv': 'water-sol',
+        'Lipophilicity-ID.csv': 'exp',
+        'water-energy.csv': 'expt',
+        'logP14k.csv': 'Kow',
+        'jak2_pic50.csv': 'pIC50'
     }
     for random_seed in random_seed_option:
         for tune in tune_option:
             for alg in learner:  # loop over all learning algorithms
                 # feats = [[2], [3], [4], [5], [6], [0, 2], [0, 3],  # Incomplete runs for tuned rf
                 #          [0, 4], [0, 5], [0, 6]]  # Use this line to select specific featurizations
-                feats = [[0], [2], [3], [4], [5], [6], [0, 2], [0, 3],
-                         [0, 4], [0, 5], [0, 6]]  # Use this line to select specific featurizations
+                feats = [[0], [1], [2], [3], [4], [5], [0, 1], [0, 2],
+                         [0, 3], [0, 4], [0, 5]]  # Use this line to select specific featurizations
 
                 # feats = [[2]]
                 for method in feats:  # loop over the featurization methods
@@ -118,14 +122,12 @@ def single_model():
     :return: None
     """
 
-    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/testdata'):  # Initialize model
+    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
-        # initiate model class with algorithm, dataset and targetnn
-        # model1 = MlModel(algorithm='rf', dataset='ESOL.csv', target='water-sol', feat_meth=[0],
-        #                  tune=False, cv=5, opt_iter=100, random=40)
-        model1 = MlModel(algorithm='svm', dataset='Lipo-short.csv', target='exp', feat_meth=[2],
-                         tune=True, cv=2, opt_iter=2)
+        # initiate model class with algorithm, dataset and target
+        model1 = MlModel(algorithm='svm', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
+                         tune=True, cv=2, opt_iter=2, random=40)
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)
@@ -136,11 +138,11 @@ def single_model():
         model1.data_split()
         model1.reg()
         model1.run()
-        # model1.analyze()
-        # if model1.algorithm != 'nn':  # issues pickling NN models
-        #     model1.pickle_model()
-        # model1.store()
-        # model1.org_files(zip_only=True)
+        model1.analyze()
+        if model1.algorithm != 'nn':  # issues pickling NN models
+            model1.pickle_model()
+        model1.store()
+        model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
         model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 

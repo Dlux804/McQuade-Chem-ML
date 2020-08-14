@@ -6,7 +6,6 @@ import zipfile
 import warnings
 
 import pandas as pd
-from numpy import nan
 from pandas.core.common import SettingWithCopyWarning
 from py2neo import Graph, ClientError
 from rdkit import RDConfig
@@ -23,25 +22,43 @@ class ModelToNeo4j:
     def __init__(self, model=None, zipped_out_dir=None, qsar_obj=None, molecules_per_batch=5000,
                  port="bolt://localhost:7687", username="neo4j", password="password"):
 
+        """
+
+        The point of this file is to simply our Neo4j scripts. The logic for how data is inserted into Neo4j has
+        not changed from our previous versions. Rather this is meant to act as a more easily to follow version
+        of what we had before. This is a completely inclusive file that will take a model object, zipped output
+        directory, or qsar_obj (from QsarDB zipped directory) and directly pipe it into Neo4j.
+
+        The goal of this file was to simply data import, and add code readability
+
+        :param model: A model object, mostly called from withen model object, model.to_neo4j(**params)
+        :param zipped_out_dir:  A created output directory from pipeline.
+        :param qsar_obj: A QsarDB qdb database object generated from qsar_to_neo4j.py
+        :param molecules_per_batch: How many molecules to insert in batches (highly recommended not to exceed 10,000)
+        :param port: Port to connect to for neo4j
+        :param username: Username for Neo4j
+        :param password: Password
+        """
+
         self.batch = molecules_per_batch
         self.model = model
         self.zipped_out_dir = zipped_out_dir
         self.qsar_obj = qsar_obj
         self.graph = Graph(port, username=username, password=password)
-
-        self.verify_input_variables()
-
         self.parsed_models = None
 
+        # Make sure variable do not clash
+        self.verify_input_variables()
+
+        # Parse data depending on input
         if model is not None:
             self.parsed_models = self.initialize_model_object()
-
         elif zipped_out_dir is not None:
             self.parsed_models = self.initialize_output_dir()
-
         elif qsar_obj is not None:
             self.parsed_models = self.initialize_qsar_obj()
 
+        # Insert each model (QsarDBs can have multiple models in them)
         for model in self.parsed_models:
             self.model_data = model['model_data']
             self.json_data = model['json_data']
@@ -61,26 +78,36 @@ class ModelToNeo4j:
             else:
                 self.tune_algorithm_name = self.json_data['tune_algorithm_name']
 
+            # Gather test/train/val data into organized bins
             test_data = self.model_data.loc[self.model_data['in_set'] == 'test']
             train_data = self.model_data.loc[self.model_data['in_set'] == 'train']
             val_data = self.model_data.loc[self.model_data['in_set'] == 'val']
             self.spilt_data = {'TestSet': test_data, 'TrainSet': train_data, 'ValSet': val_data}
 
+            # Generate and merge core nodes (Very fast)
             self.check_for_constraints()
             self.create_main_nodes()
             self.merge_model_with_tuning()
-            self.merge_featlist_with_model()
+            self.merge_featlist_and_featmeths_with_model()
             self.merge_feats_with_rdkit2d()
+            self.merge_molecules_with_sets()
 
-            # If dataset does not exist in neo4j graph
+            # If dataset does not exist in neo4j graph, merge molecules and fragments (sorta slow, 5 secs to 7 mins)
             if not self.check_for_dataset():
-                self.merge_molecules_with_sets()
                 self.merge_molecules_with_dataset()
                 self.merge_molecules_with_frags()
                 self.merge_molecules_with_feats()
 
     def verify_input_variables(self):
-        conflicting_variables = [self.model, self.zipped_out_dir, self.qsar_obj]
+        """
+
+        A model object, zipped_output_dir, and/or QsarDB can not be passed at the same time. Make sure that only
+        one is being passed. And make sure that a object of some sort is being passed
+
+        :return:
+        """
+
+        conflicting_variables = [self.model, self.zipped_out_dir, self.qsar_obj]  # Variables to check
         found_non_none_type_var = False
         for conflicting_variable in conflicting_variables:
             if conflicting_variable is not None and found_non_none_type_var is True:
@@ -93,6 +120,15 @@ class ModelToNeo4j:
                              "output_dir, or qsar_dir")
 
     def initialize_model_object(self):
+        """
+
+        The goal is to have all the data being piped to Neo4j be the exact same. It is a lot easier to format
+        the model object data to the output data rather than the other way around (how we were doing it before).
+        Our current store() is basically what is being done here, but is slightly modified to not actually create
+        output files
+
+        :return:
+        """
         # Use slightly modified script of store() used for model outputs
 
         all_raw_dfs = {}
@@ -134,10 +170,22 @@ class ModelToNeo4j:
         return model
 
     def initialize_output_dir(self):
+        """
+
+        The data above was formatted to this data. All that is being done here is pulling out the attibutes.json
+        and predictions.csv files and saved.
+
+        This function is not optimal, as the entire directory is extracted before pulling out the json and csv file.
+        We should find a way to pull out specific files out of a zipped directory
+
+        :return:
+        """
+
         json_data = None
         model_data = None
         safety_string = '$$temp$$output$$dont$$copy$$this$$name$$:)$$'
 
+        # TODO not extract entire zipped directory
         with zipfile.ZipFile(str(self.zipped_out_dir), 'r') as zip_ref:
             zip_ref.extractall(safety_string)
 
@@ -162,6 +210,15 @@ class ModelToNeo4j:
         return model
 
     def initialize_qsar_obj(self):
+        """
+
+        The messiest way we have to import data. QsarDB data is very different from our current data. A lot of love
+        was put in to format to our current output files. This function is just pulling out the information that is
+        generated in qsar_to_neo4j.py
+
+        :return:
+        """
+
         models = []
         for model in self.qsar_obj.models:
             model_data = model.raw_data
@@ -192,6 +249,13 @@ class ModelToNeo4j:
 
     def check_for_constraints(self):
 
+        """
+
+        This function makes sure that all the nodes have their proper constraints
+
+        :return:
+        """
+
         node_unique_prop_dict = {'MLModel': 'name',
                                  'Algorithm': 'name',
                                  'RandomSpilt': 'run_name',
@@ -219,6 +283,17 @@ class ModelToNeo4j:
                 pass
 
     def create_main_nodes(self):
+
+        """
+
+        This is probably the most important function, and the one we will likely modify with time. This function
+        creates all the main nodes and the relationships to and from them. Here we can easily add and drop relationships
+        to these core nodes.
+
+        Please do not merge molecules or features in this functions :)
+
+        :return:
+        """
 
         js = self.json_data
 
@@ -275,6 +350,14 @@ class ModelToNeo4j:
 
     def merge_model_with_tuning(self):
 
+        """
+
+        Separate function to merge the model to the tuning nodes. This was separate because it is possible that
+        models are not tuned, and we want to makes sure a node isn't created if the model is not merged.
+
+        :return:
+        """
+
         if self.tune_algorithm_name is not None:
             self.graph.evaluate(
                 """
@@ -288,7 +371,7 @@ class ModelToNeo4j:
                             'tune_algorithm_name': self.tune_algorithm_name}
             )
 
-    def merge_featlist_with_model(self):
+    def merge_featlist_and_featmeths_with_model(self):
 
         js = self.json_data
 
@@ -314,7 +397,7 @@ class ModelToNeo4j:
 
     def merge_feats_with_rdkit2d(self):
 
-        if 'rdkit2d' not in self.json_data['feat_method_name']:
+        if 'rdkit2d' not in self.json_data['feat_method_name']:  # Note how this is only done for rdkit2d (Sorry Qsar)
             return
 
         feats = [feat for feat in self.json_data['feature_list']
@@ -332,20 +415,19 @@ class ModelToNeo4j:
 
         self.graph.evaluate(query, parameters={'feats': feats})
 
-    def check_for_dataset(self):
-
-        check = self.graph.evaluate(
-            """
-            MATCH (dataset:DataSet {data: $data})-[:CONTAINS_MOLECULE]->(:Molecule)
-            RETURN dataset LIMIT 1
-            """,
-            parameters={'data': self.json_data['dataset']}
-        )
-        if check is not None:
-            return True
-        return False
-
     def molecule_query_loop(self, molecules, query, **params):
+
+        """
+
+        Loop for molecule queries. We do not want to merge 14k molecules at once, that is sure way to kill a computer.
+        So a set batch number is set, and we do not insert more molecules at once than the batch number allows for.
+
+        :param molecules:
+        :param query:
+        :param params:
+        :return:
+        """
+
         range_molecules = []
         for index, molecule in enumerate(molecules):
             range_molecules.append(molecule)
@@ -356,6 +438,16 @@ class ModelToNeo4j:
             self.graph.evaluate(query, parameters={'molecules': range_molecules, **params})
 
     def merge_molecules_with_sets(self):
+
+        """
+
+        This will generate the data in the relationships relating models to Train/Test/Val sets. As well as the
+        molecules inside of those sets. How the rmse, mse, r2 is calculate for each dataset differs slighty, so
+        that has to be accounted for. Plus many models may not have a test/val set, so that has to be considered
+        as well.
+
+        :return:
+        """
 
         for datatype, df in self.spilt_data.items():
 
@@ -437,6 +529,28 @@ class ModelToNeo4j:
                                          scaled_mse_std=scaled_mse_std, scaled_rmse_std=scaled_rmse_std
                                          )
 
+    def check_for_dataset(self):
+
+        """
+
+        This function will check and see if the dataset is already in the database. If it is, then we dont want
+        to have to re-calculate the fragments and features. While this does not take too, too long. It is still
+        good to save time if we can
+
+        :return:
+        """
+
+        check = self.graph.evaluate(
+            """
+            MATCH (dataset:DataSet {data: $data})-[:CONTAINS_MOLECULE]->(:Molecule)
+            RETURN dataset LIMIT 1
+            """,
+            parameters={'data': self.json_data['dataset']}
+        )
+        if check is not None:
+            return True
+        return False
+
     def merge_molecules_with_dataset(self):
 
         df = self.model_data[['smiles', self.json_data['target_name']]]
@@ -500,6 +614,14 @@ class ModelToNeo4j:
         self.molecule_query_loop(molecules, query)
 
     def merge_molecules_with_feats(self):
+
+        """
+
+        Frist we make sure that rdkit2d was used, then merge the molecules to the features with the values of the
+        descriptor
+
+        :return:
+        """
 
         if 'rdkit2d' not in self.json_data['feat_method_name']:
             return

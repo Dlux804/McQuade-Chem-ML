@@ -22,13 +22,13 @@ jobs:
 
       # Download and cache dependencies
       # Multiple caches are used to increase the chance of a cache hit (source: https://circleci.com/docs/2.0/caching/)
-      - restore_cache:
-          keys:
-            - v2-condareqs-{{ .Branch }}-{{ checksum "env_init/mlapp.yml" }}
-            - v2-condareqs-{{ .Branch }}
-            - v2-condareqs
-            # fallback to using the latest cache if no exact match is found
-            - v2-condareqs-
+#      - restore_cache:
+#          keys:
+#            - v2-condareqs-{{ .Branch }}-{{ checksum "env_init/mlapp.yml" }}
+#            - v2-condareqs-{{ .Branch }}
+#            - v2-condareqs
+#            # fallback to using the latest cache if no exact match is found
+#            - v2-condareqs-
 
         # Install the necessary Python packages
         # activate conda env for future use
@@ -39,7 +39,7 @@ jobs:
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
       - save_cache:
-          key: v2-condareqs-{{ .Branch }}-{{ checksum "env_init/mlapp.yml" }}
+          key: v2-condareqs-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "env_init/mlapp.yml" }}
           paths:
             - ~/py_modules
       # run tests!

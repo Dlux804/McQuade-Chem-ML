@@ -128,7 +128,7 @@ class MlModel:  # TODO update documentation here
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.classification_graphs()
 
-    def to_neo4j(self, port, username, password):
+    def to_neo4j(self, port="bolt://localhost:7687", username="neo4j", password="password"):
         # Create Neo4j graphs from pipeline
         t1 = default_timer()
         self.neo4j_params = {'port': port, 'username': username, 'password': password}  # Pass Neo4j Parameters

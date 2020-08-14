@@ -72,10 +72,12 @@ class ModelOrOutputToNeo4j:
             self.merge_featlist_with_model()
             self.merge_feats_with_rdkit2d()
 
-            self.merge_molecules_with_sets()
-            self.merge_molecules_with_dataset()
-            self.merge_molecules_with_frags()
-            self.merge_molecules_with_feats()
+            # If dataset does not exist in neo4j graph
+            if not self.check_for_dataset():
+                self.merge_molecules_with_sets()
+                self.merge_molecules_with_dataset()
+                self.merge_molecules_with_frags()
+                self.merge_molecules_with_feats()
 
     def verify_input_variables(self):
         conflicting_variables = [self.model, self.zipped_out_dir, self.qsar_obj]
@@ -87,7 +89,7 @@ class ModelOrOutputToNeo4j:
             elif conflicting_variable is not None:
                 found_non_none_type_var = True
         if not found_non_none_type_var:
-            raise ValueError("Object to input into Neo4j not found, please speciiy model_object,"
+            raise ValueError("Object to input into Neo4j not found, please specify model_object,"
                              "output_dir, or qsar_dir")
 
     def initialize_model_object(self):
@@ -190,51 +192,29 @@ class ModelOrOutputToNeo4j:
 
     def check_for_constraints(self):
 
-        constraint_check_strings = [
-            """
-        CREATE CONSTRAINT ON (n:Model)
-        ASSERT n.name IS UNIQUE
-        """,
+        node_unique_prop_dict = {'MLModel': 'name',
+                                 'Algorithm': 'name',
+                                 'RandomSpilt': 'run_name',
+                                 'DataSet': 'data',
+                                 'TestSet': 'run_name',
+                                 'TrainSet': 'run_name',
+                                 'ValSet': 'run_name',
+                                 'Tuning': 'name',
+                                 'FeatureList': 'feat_IDs',
+                                 'FeatureMethod': 'name',
+                                 'Feature': 'name',
+                                 'Fragment': 'name',
+                                 'Molecule': 'smiles'
+                                 }
 
-            """
-        CREATE CONSTRAINT ON (n:FeatureList)
-        ASSERT n.feat_IDs IS UNIQUE
-        """,
+        for node, prop in node_unique_prop_dict.items():
 
-            """
-        CREATE CONSTRAINT ON (n:DataSet)
-        ASSERT n.data IS UNIQUE
-        """,
-
-            """
-        CREATE CONSTRAINT ON (n:Fragment) 
-        ASSERT n.name IS UNIQUE        
-        """,
-
-            """
-        CREATE CONSTRAINT ON (n:Molecule) 
-        ASSERT n.smiles IS UNIQUE    
-        """,
-
-            """
-        CREATE CONSTRAINT ON (n:Feature) 
-        ASSERT n.name IS UNIQUE      
-        """,
-
-            """
-        CREATE CONSTRAINT ON (n:Algorithm) 
-        ASSERT n.name IS UNIQUE      
-        """,
-
-            """
-        CREATE CONSTRAINT ON (n:FeatureMethod) 
-        ASSERT n.name IS UNIQUE      
-        """
-        ]
-
-        for constraint_check_string in constraint_check_strings:
+            constraint_string = """
+                        CREATE CONSTRAINT ON (n:%s)
+                        ASSERT n.%s IS UNIQUE
+                        """ % (node, prop)
             try:
-                self.graph.evaluate(constraint_check_string)
+                self.graph.evaluate(constraint_string)
             except ClientError:
                 pass
 
@@ -249,8 +229,10 @@ class ModelOrOutputToNeo4j:
             ON CREATE SET model.date = $date, model.feat_time = $feat_time, model.test_time = $test_time,
                 model.train_time = $train_time, model.seed = $seed
 
-                MERGE (model)-[:USES_SPLIT]->(spilt:RandomSpilt {train_percent: $train_percent, 
-                    test_percent: $test_percent, val_percent: $val_percent})
+                MERGE (spilt:RandomSpilt {run_name: $model_name})
+                    ON CREATE SET spilt.train_percent = $train_percent, spilt.test_percent = $test_percent, 
+                        spilt.val_percent = $val_percent 
+                    MERGE (model)-[:USES_SPLIT]->(spilt)
         
                 MERGE (dataset:DataSet {data: $data})
                     ON CREATE SET dataset.size = $dataset_size, dataset.target = $target, dataset.source = $source,
@@ -294,7 +276,6 @@ class ModelOrOutputToNeo4j:
     def merge_model_with_tuning(self):
 
         if self.tune_algorithm_name is not None:
-
             self.graph.evaluate(
                 """
         
@@ -312,7 +293,6 @@ class ModelOrOutputToNeo4j:
         js = self.json_data
 
         if not self.json_data['is_qsarDB']:
-
             self.graph.evaluate(
                 """
             
@@ -330,7 +310,7 @@ class ModelOrOutputToNeo4j:
                             'feat_IDs': js['feat_meth'],
                             'feature_methods': js['feat_method_name']
                             }
-                )
+            )
 
     def merge_feats_with_rdkit2d(self):
 
@@ -352,6 +332,19 @@ class ModelOrOutputToNeo4j:
 
         self.graph.evaluate(query, parameters={'feats': feats})
 
+    def check_for_dataset(self):
+
+        check = self.graph.evaluate(
+            """
+            MATCH (dataset:DataSet {data: $data})-[:CONTAINS_MOLECULE]->(:Molecule)
+            RETURN dataset LIMIT 1
+            """,
+            parameters={'data': self.json_data['dataset']}
+        )
+        if check is not None:
+            return True
+        return False
+
     def molecule_query_loop(self, molecules, query, **params):
         range_molecules = []
         for index, molecule in enumerate(molecules):
@@ -362,29 +355,43 @@ class ModelOrOutputToNeo4j:
         if range_molecules:
             self.graph.evaluate(query, parameters={'molecules': range_molecules, **params})
 
-    def check_for_dataset(self):
-        pass
-
     def merge_molecules_with_sets(self):
 
         for datatype, df in self.spilt_data.items():
 
+            # Gather data
             if datatype == 'TestSet' and not self.json_data['is_qsarDB']:
-                r2_avg = self.json_data['predictions_stats']['r2_avg']
-                r2_std = self.json_data['predictions_stats']['r2_std']
-                mse_avg = self.json_data['predictions_stats']['mse_avg']
-                mse_std = self.json_data['predictions_stats']['mse_std']
-                rmse_avg = self.json_data['predictions_stats']['rmse_avg']
-                rmse_std = self.json_data['predictions_stats']['rmse_std']
+                pred_stats = self.json_data['predictions_stats']
+                r2_avg = pred_stats['r2_avg']
+                r2_std = pred_stats['r2_std']
+                mse_avg = pred_stats['mse_avg']
+                mse_std = pred_stats['mse_std']
+                rmse_avg = pred_stats['rmse_avg']
+                rmse_std = pred_stats['rmse_std']
+
+                scaled_pred_stats = self.json_data['scaled_predictions_stats']
+                scaled_r2_avg = scaled_pred_stats['r2_avg_scaled']
+                scaled_r2_std = scaled_pred_stats['r2_std_scaled']
+                scaled_mse_avg = scaled_pred_stats['mse_avg_scaled']
+                scaled_mse_std = scaled_pred_stats['mse_std_scaled']
+                scaled_rmse_avg = scaled_pred_stats['rmse_avg_scaled']
+                scaled_rmse_std = scaled_pred_stats['rmse_std_scaled']
             elif self.json_data['is_qsarDB']:
                 rd = {'TrainSet': 'training', 'TestSet': 'testing', 'ValSet': 'validation'}
                 r2_avg = self.json_data['predictions_stats']['r2_avg'][rd[datatype]]
                 mse_avg = self.json_data['predictions_stats']['mse_avg'][rd[datatype]]
                 rmse_avg = self.json_data['predictions_stats']['rmse_avg'][rd[datatype]]
-                rmse_std = mse_std = r2_std = None
-            else:
-                r2_avg = r2_std = mse_avg = mse_std = rmse_avg = rmse_std = None
 
+                rmse_std = mse_std = r2_std = None
+                scaled_r2_avg = scaled_mse_avg = scaled_rmse_avg = None
+                scaled_r2_std = scaled_mse_std = scaled_rmse_std = None
+            else:
+                r2_std = mse_std = rmse_std = None
+                r2_avg = mse_avg = rmse_avg = None
+                scaled_r2_avg = scaled_r2_std = scaled_mse_avg = scaled_mse_std = None
+                scaled_rmse_avg = scaled_rmse_std = None
+
+            # If dataset exists
             if len(df) > 0:
                 df = df[['smiles', self.json_data['target_name']]]
                 df = df.rename(columns={self.json_data['target_name']: 'target'})
@@ -406,7 +413,11 @@ class ModelOrOutputToNeo4j:
                         MERGE (model)-[set_rel:`%s`]->(set)
                             ON CREATE SET set_rel.size = $size, set_rel.r2_avg = $r2_avg, set_rel.r2_std = $r2_std, 
                                 set_rel.mse_avg = $mse_avg, set_rel.mse_std = $mse_std, set_rel.rmse_avg = $rmse_avg, 
-                                set_rel.rmse_std = $rmse_std
+                                set_rel.rmse_std = $rmse_std,
+                                
+                                set_rel.scaled_r2_avg = $scaled_r2_avg, set_rel.scaled_mse_avg = $scaled_mse_avg,
+                                set_rel.scaled_rmse_avg = $scaled_rmse_avg, set_rel.scaled_r2_std = $scaled_r2_std,
+                                set_rel.scaled_mse_std = $scaled_mse_std, set_rel.scaled_rmse_std = $scaled_rmse_std
 
                         WITH set
                         UNWIND $molecules as molecule
@@ -415,11 +426,16 @@ class ModelOrOutputToNeo4j:
                             MERGE (set)-[:%s]->(mol)
 
                         """ % (datatype, rel_dict[datatype], target_name_for_neo4j, mol_dataset_dict[datatype])
-
                 self.molecule_query_loop(molecules, query, target=self.json_data['target_name'],
                                          run_name=self.json_data['run_name'], set_type=datatype, size=size,
+
                                          r2_avg=r2_avg, r2_std=r2_std, mse_avg=mse_avg, mse_std=mse_std,
-                                         rmse_avg=rmse_avg, rmse_std=rmse_std)
+                                         rmse_avg=rmse_avg, rmse_std=rmse_std,
+
+                                         scaled_r2_avg=scaled_r2_avg, scaled_mse_avg=scaled_mse_avg,
+                                         scaled_rmse_avg=scaled_rmse_avg, scaled_r2_std=scaled_r2_std,
+                                         scaled_mse_std=scaled_mse_std, scaled_rmse_std=scaled_rmse_std
+                                         )
 
     def merge_molecules_with_dataset(self):
 
@@ -440,7 +456,6 @@ class ModelOrOutputToNeo4j:
                     MERGE (dataset)-[:CONTAINS_MOLECULE]->(mol)
                     
                 """ % target_name_for_neo4j
-
         self.molecule_query_loop(molecules, query, dataset=self.json_data['dataset'])
 
     def merge_molecules_with_frags(self):
@@ -482,7 +497,6 @@ class ModelOrOutputToNeo4j:
                             )
 
                 """
-
         self.molecule_query_loop(molecules, query)
 
     def merge_molecules_with_feats(self):
@@ -515,5 +529,4 @@ class ModelOrOutputToNeo4j:
                         )
 
                 """
-
         self.molecule_query_loop(molecules, query)

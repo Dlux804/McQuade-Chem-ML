@@ -127,7 +127,7 @@ def single_model():
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
         model1 = MlModel(algorithm='svm', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
-                         tune=True, cv=2, opt_iter=2, random=40)
+                         tune=False, cv=2, opt_iter=2, random=40)
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)
@@ -135,7 +135,7 @@ def single_model():
         print()
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split()
+        model1.data_split(val=0.1)
         model1.reg()
         model1.run()
         model1.analyze()
@@ -168,11 +168,11 @@ def example_run_with_mysql_and_neo4j(dataset, target):
         model3.reg()
         model3.run()
         model3.analyze()
-        # if model3.algorithm != 'nn':  # issues pickling NN models
-        #     model3.pickle_model()
+        if model3.algorithm != 'nn':  # issues pickling NN models
+            model3.pickle_model()
 
-        # model3.store()
-        # model3.org_files(zip_only=True)
+        model3.store()
+        model3.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
         start_timer = default_timer()
         model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

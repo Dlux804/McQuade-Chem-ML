@@ -7,6 +7,7 @@ from sklearn.metrics import mean_squared_error, r2_score, classification_report,
 from rdkit.Chem import PandasTools
 from sklearn.metrics import roc_curve
 from sklearn.metrics import precision_recall_curve
+from sklearn.model_selection import learning_curve
 
 
 def impgraph(self):
@@ -262,3 +263,10 @@ a precision/recall vs threshold graph.
     plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
     plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
     plt.xlabel('Threshold')
+
+
+def learning_curve(self):
+    train_sizes = [1, self.n_train*0.2, self.n_train*0.4, self.n_train*0.6, self.n_train*0.8, self.n_train]
+    train_sizes, train_scores, validation_scores = learning_curve(self.estimator, self.train_features, self.train_target
+                                                                  , train_sizes=train_sizes, cv=self.cv_folds,
+                                                                  scoring='neg_mean_squared_error')

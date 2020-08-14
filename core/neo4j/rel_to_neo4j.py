@@ -83,10 +83,6 @@ def relationships(self, from_output=False):
                                'cv_folds': self.cv_folds, 'tunTime': self.tune_time, 'cp_delta': self.cp_delta,
                                'cp_n_best': self.cp_n_best, 'opt_iter': self.opt_iter, 'tuned': self.tuned,
                                'tuner': self.tune_algorithm_name})
-    else:  # If not tuned
-        g.evaluate("""MATCH (tuning_alg:NotTuned), (algor:Algorithm {name: $algorithm})
-                   MERGE (algor)-[:NOT_TUNED]->(tuning_alg)""",
-                   parameters={'algorithm': self.algorithm, 'tuned': self.tuned})
 
     # MLModel to DataSet
     g.evaluate("""MATCH (dataset:DataSet {data: $dataset}), (model:MLModel {name: $run_name})

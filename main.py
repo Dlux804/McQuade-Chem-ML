@@ -127,7 +127,7 @@ def single_model():
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
         model1 = MlModel(algorithm='svm', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
-                         tune=True, cv=2, opt_iter=2, random=40)
+                         tune=False, cv=2, opt_iter=2, random=40)
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)

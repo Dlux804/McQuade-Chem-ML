@@ -86,7 +86,7 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=False, cv=3, opt_iter=25)
+                                        tune=True, cv=3, opt_iter=25)
                         print('Done.\n')
 
                     with cd('no'):
@@ -121,7 +121,7 @@ def single_model():
         # initiate model class with algorithm, dataset and target
         # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=5, random=10)
-        model1 = MlModel(algorithm='gdb', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0],
+        model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
                          tune=False, cv=2, opt_iter=5, random=10)
 
         print('done.')
@@ -134,13 +134,13 @@ def single_model():
         model1.data_split(val=0.1)
         model1.reg()
         model1.run()
-        model1.analyze()
+        # model1.analyze()
         # if model1.algorithm != 'nn':  # issues pickling NN models
         #     model1.pickle_model()
-        model1.store()
-        model1.org_files(zip_only=True)
+        # model1.store()
+        # model1.org_files(zip_only=True)
         # # model1.QsarDB_export(zip_output=True)
-        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j(dataset, target):
@@ -215,10 +215,10 @@ def output_dir_to_neo4j():
 
 if __name__ == "__main__":
     # main()
-    # single_model()
+    single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
     # Qsar_import_examples()
     # output_dir_to_neo4j()
-    QsarToNeo4j('2012ECM185.zip')
+    # QsarToNeo4j('2012ECM185.zip')

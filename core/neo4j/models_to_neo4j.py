@@ -57,7 +57,7 @@ class ModelOrOutputToNeo4j:
             #     print(label, value)
 
             if not self.json_data['tuned']:
-                self.tune_algorithm_name = str(None)
+                self.tune_algorithm_name = None
             else:
                 self.tune_algorithm_name = self.json_data['tune_algorithm_name']
 
@@ -68,11 +68,14 @@ class ModelOrOutputToNeo4j:
 
             self.check_for_constraints()
             self.create_main_nodes()
+            self.merge_model_with_tuning()
+            self.merge_featlist_with_model()
+            self.merge_feats_with_rdkit2d()
+
             self.merge_molecules_with_sets()
             self.merge_molecules_with_dataset()
             self.merge_molecules_with_frags()
             self.merge_molecules_with_feats()
-            self.merge_feats_with_rdkit2d()
 
     def verify_input_variables(self):
         conflicting_variables = [self.model, self.zipped_out_dir, self.qsar_obj]
@@ -199,7 +202,7 @@ class ModelOrOutputToNeo4j:
         """,
 
             """
-        CREATE CONSTRAINT ON (n:Dataset)
+        CREATE CONSTRAINT ON (n:DataSet)
         ASSERT n.data IS UNIQUE
         """,
 
@@ -242,24 +245,33 @@ class ModelOrOutputToNeo4j:
         self.graph.evaluate(
             """
         
-            MERGE (model:Model {name: $model_name})
+            MERGE (model:MLModel {name: $model_name})
             ON CREATE SET model.date = $date, model.feat_time = $feat_time, model.test_time = $test_time,
                 model.train_time = $train_time, model.seed = $seed
+
+                MERGE (model)-[:USES_SPLIT]->(spilt:RandomSpilt {train_percent: $train_percent, 
+                    test_percent: $test_percent, val_percent: $val_percent})
         
-                // Split node is a hidden node, no property to merge on
-                MERGE (model)-[:uses_split]->(:Split {train_percent: $train_percent, test_percent: $test_percent,
-                    val_percent: $val_percent})
-                    
-                MERGE (tuning:Tuning {name: $tune_algorithm_name})
-                    MERGE (model)-[:tuned_with]->(tuning)
-        
-                MERGE (dataset:Dataset {data: $data})
+                MERGE (dataset:DataSet {data: $data})
                     ON CREATE SET dataset.size = $dataset_size, dataset.target = $target, dataset.source = $source,
                         dataset.task_type = $task_type
-                    MERGE (model)-[:uses_dataset]->(dataset)
+                    MERGE (model)-[:USES_DATASET]->(dataset)
+                    MERGE (spilt)-[:SPLITS_DATASET]->(dataset)
+                    
+                MERGE (testset:TestSet {run_name: $model_name, name: 'TestSet'})
+                MERGE (dataset)-[:SPILTS_INTO_TEST]->(testset)
+                MERGE (spilt)-[:MAKES_SPLIT]->(testset)
+                
+                MERGE (trainset:TrainSet {run_name: $model_name, name: 'TrainSet'})
+                MERGE (dataset)-[:SPILTS_INTO_TRAIN]->(trainset)
+                MERGE (spilt)-[:MAKES_SPLIT]->(trainset)
+                
+                MERGE (valset:ValSet {run_name: $model_name, name: 'ValSet'})
+                MERGE (dataset)-[:SPILTS_INTO_VAL]->(valset)
+                MERGE (spilt)-[:MAKES_SPLIT]->(valset)
                     
                 MERGE (algo:Algorithm {name: $algo_name, source: 'sklearn'})
-                    MERGE (model)-[:uses_algorithm]->(algo)
+                    MERGE (model)-[:USES_ALGORITHM]->(algo)
         
             """,
             parameters={'date': js['date'], 'feat_time': js['feat_time'], 'model_name': js['run_name'],
@@ -279,6 +291,22 @@ class ModelOrOutputToNeo4j:
                         }
         )
 
+    def merge_model_with_tuning(self):
+
+        if self.tune_algorithm_name is not None:
+
+            self.graph.evaluate(
+                """
+        
+                MATCH (model:MLModel {name: $model_name}) 
+                MERGE (tuning:Tuning {name: $tune_algorithm_name})
+                MERGE (model)-[:USES_TUNING]->(tuning)
+                
+                """,
+                parameters={'model_name': self.json_data['run_name'],
+                            'tune_algorithm_name': self.tune_algorithm_name}
+            )
+
     def merge_featlist_with_model(self):
 
         js = self.json_data
@@ -288,13 +316,14 @@ class ModelOrOutputToNeo4j:
             self.graph.evaluate(
                 """
             
-                MATCH (model:Model {name: $model_name})
+                MATCH (model:MLModel {name: $model_name})
                 MERGE (featlist:FeatureList {feat_IDs: $feat_IDs})
-                    MERGE (model)-[:featurized_by]->(featlist)
-                    WITH featlist
+                    MERGE (model)-[:USES_FACTORIZATION]->(featlist)
+                    WITH featlist, model
                     UNWIND $feature_methods as feature_method
                         MERGE (featmeth:FeatureMethod {name: feature_method})
-                        MERGE (featlist)-[:contains_feature_method]->(featmeth)
+                        MERGE (featmeth)-[:CONTRIBUTES_TO]->(featlist)
+                        MERGE (model)-[:USES_FACTORIZATION]->(featmeth)
             
                 """,
                 parameters={'model_name': js['run_name'],
@@ -302,6 +331,26 @@ class ModelOrOutputToNeo4j:
                             'feature_methods': js['feat_method_name']
                             }
                 )
+
+    def merge_feats_with_rdkit2d(self):
+
+        if 'rdkit2d' not in self.json_data['feat_method_name']:
+            return
+
+        feats = [feat for feat in self.json_data['feature_list']
+                 if re.search(r'fr_|Count|Num|Charge|TPSA|qed|%s', feat)]
+
+        query = """
+
+                MERGE (feature_meth:FeatureMethod {name: 'rdkit2d'})
+                WITH feature_meth
+                UNWIND $feats as feat
+                    MERGE (feature:Feature {name: feat}) 
+                    MERGE (feature_meth)-[:CALCULATES]->(feature)
+
+                """
+
+        self.graph.evaluate(query, parameters={'feats': feats})
 
     def molecule_query_loop(self, molecules, query, **params):
         range_molecules = []
@@ -312,6 +361,9 @@ class ModelOrOutputToNeo4j:
                 range_molecules = []
         if range_molecules:
             self.graph.evaluate(query, parameters={'molecules': range_molecules, **params})
+
+    def check_for_dataset(self):
+        pass
 
     def merge_molecules_with_sets(self):
 
@@ -329,9 +381,7 @@ class ModelOrOutputToNeo4j:
                 r2_avg = self.json_data['predictions_stats']['r2_avg'][rd[datatype]]
                 mse_avg = self.json_data['predictions_stats']['mse_avg'][rd[datatype]]
                 rmse_avg = self.json_data['predictions_stats']['rmse_avg'][rd[datatype]]
-                rmse_std = None
-                mse_std = None
-                r2_std = None
+                rmse_std = mse_std = r2_std = None
             else:
                 r2_avg = r2_std = mse_avg = mse_std = rmse_avg = rmse_std = None
 
@@ -344,23 +394,27 @@ class ModelOrOutputToNeo4j:
                 if target_name_for_neo4j is None:
                     target_name_for_neo4j = self.json_data['target_name']
                 size = len(molecules)
-                rel_dict = {'TrainSet': 'trained_with', 'TestSet': 'predicts', 'ValSet': 'validated_by'}
+                rel_dict = {'TrainSet': 'TRAINS', 'TestSet': 'PREDICTS', 'ValSet': 'VALIDATES'}
+                mol_dataset_dict = {'TrainSet': 'CONTAINS_TRAINED_MOLECULE',
+                                    'TestSet': 'CONTAINS_PREDICTED_MOLECULE',
+                                    'ValSet': 'CONTAINS_VALIDATED_MOLECULE'}
 
                 query = """
-                        MATCH (model:Model {name: $run_name})
-                        MERGE (set:Set {run_name: $run_name, name: $set_type})
-                            ON CREATE SET set.size = $size, set.r2_avg = $r2_avg, set.r2_std = $r2_std,
-                                set.mse_avg = $mse_avg, set.mse_std = $mse_std, set.rmse_avg = $rmse_avg,
-                                set.rmse_std = $rmse_std
-                        MERGE (model)-[:`%s`]->(set)
+                        MATCH (model:MLModel {name: $run_name})
+                        MATCH (set:%s {run_name: $run_name, name: $set_type})
+                        
+                        MERGE (model)-[set_rel:`%s`]->(set)
+                            ON CREATE SET set_rel.size = $size, set_rel.r2_avg = $r2_avg, set_rel.r2_std = $r2_std, 
+                                set_rel.mse_avg = $mse_avg, set_rel.mse_std = $mse_std, set_rel.rmse_avg = $rmse_avg, 
+                                set_rel.rmse_std = $rmse_std
 
                         WITH set
                         UNWIND $molecules as molecule
                             MERGE (mol:Molecule {smiles: molecule.smiles})
                                 SET mol.`%s` = molecule.target
-                            MERGE (set)-[:contains_molecule]->(mol)
+                            MERGE (set)-[:%s]->(mol)
 
-                        """ % (rel_dict[datatype], target_name_for_neo4j)
+                        """ % (datatype, rel_dict[datatype], target_name_for_neo4j, mol_dataset_dict[datatype])
 
                 self.molecule_query_loop(molecules, query, target=self.json_data['target_name'],
                                          run_name=self.json_data['run_name'], set_type=datatype, size=size,
@@ -379,11 +433,11 @@ class ModelOrOutputToNeo4j:
 
         query = """
                                     
-                MATCH (dataset:Dataset {data: $dataset})
+                MATCH (dataset:DataSet {data: $dataset})
                 UNWIND $molecules as molecule
                     MERGE (mol:Molecule {smiles: molecule.smiles})
                         SET mol.`%s` = molecule.target
-                    MERGE (dataset)-[:contains_molecule]->(mol)
+                    MERGE (dataset)-[:CONTAINS_MOLECULE]->(mol)
                     
                 """ % target_name_for_neo4j
 
@@ -424,7 +478,7 @@ class ModelOrOutputToNeo4j:
                     MERGE (mol:Molecule {smiles: molecule.smiles})
                         FOREACH (fragment in molecule.fragments |
                             MERGE (frag:Fragment {name: fragment})
-                            MERGE (mol)-[:has_fragment]->(frag)
+                            MERGE (mol)-[:HAS_FRAGMENT]->(frag)
                             )
 
                 """
@@ -457,29 +511,9 @@ class ModelOrOutputToNeo4j:
                     MERGE (mol:Molecule {smiles: molecule.smiles})
                     FOREACH (feature in molecule.feats |
                         MERGE (feat:Feature {name: feature.name})
-                        MERGE (mol)-[:has_descriptor {value: feature.value}]->(feat)
+                        MERGE (mol)-[:HAS_DESCRIPTOR {value: feature.value}]->(feat)
                         )
 
                 """
 
         self.molecule_query_loop(molecules, query)
-
-    def merge_feats_with_rdkit2d(self):
-
-        if 'rdkit2d' not in self.json_data['feat_method_name']:
-            return
-
-        feats = [feat for feat in self.json_data['feature_list']
-                 if re.search(r'fr_|Count|Num|Charge|TPSA|qed|%s', feat)]
-
-        query = """
-        
-                MERGE (feature_meth:FeatureMethod {name: 'rdkit2d'})
-                WITH feature_meth
-                UNWIND $feats as feat
-                    MERGE (feature:Feature {name: feat}) 
-                    MERGE (feature_meth)-[:uses_feature_method]->(feature)
-
-                """
-
-        self.graph.evaluate(query, parameters={'feats': feats})

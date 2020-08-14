@@ -31,7 +31,7 @@ def test_pickle(__run_all__):
     model2 = unpickle_model(''.join([model1.run_name, '.pkl']))
     model2.run()
     # Make predictions
-    predictions = model2.regressor.predict(model2.test_features)
+    predictions = model2.estimator.predict(model2.test_features)
 
     # Dataframe for replicate_model
     pva = pd.DataFrame([], columns=['actual', 'predicted'])

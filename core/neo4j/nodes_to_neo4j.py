@@ -135,9 +135,7 @@ def nodes(self):
     if ast.literal_eval(self.tuned):
         tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name)
         g.merge(tuning_algorithm, "TuningAlg", "algorithm")
-    else:
-        tuning_algorithm = Node("NotTuned", name="NotTuned")
-        g.merge(tuning_algorithm, "NotTuned", "name")
+
 
     # Make MLModel nodes
     model = Node("MLModel", name=self.run_name, feat_time=self.feat_time, date=self.date, train_time=self.tune_time,

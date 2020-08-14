@@ -7,7 +7,7 @@ import time
 from core.neo4j.make_query import Query
 from core.storage.dictionary import target_name_grid
 from py2neo import Graph, Node
-
+import ast
 from core.neo4j.fragments import smiles_to_frag, insert_fragments
 from core.storage.misc import parallel_apply
 
@@ -132,7 +132,7 @@ def nodes(self):
         g.merge(algor, "Algorithm", "name")
 
     # Make Tuner node
-    if self.tuned == 'True':
+    if ast.literal_eval(self.tuned):
         tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name)
         g.merge(tuning_algorithm, "TuningAlg", "algorithm")
     else:

@@ -5,7 +5,7 @@ Objective: The goal of this script is to create relationships in Neo4j directly 
 from py2neo import Graph
 import time
 from core.neo4j.make_query import Query
-
+import ast
 from core.neo4j.nodes_to_neo4j import prep
 
 
@@ -49,7 +49,7 @@ def relationships(self, from_output=False):
         """, parameters={'feat_ID': self.feat_meth, 'method_name': self.feat_method_name})
 
     # MERGE MLModel to Algorithm
-    if self.tuned is "True":  # If tuned
+    if ast.literal_eval(self.tuned):  # If tuned
         if not from_output:
             self.params = dict(self.params)
         try:
@@ -71,7 +71,7 @@ def relationships(self, from_output=False):
                    parameters={'algorithm': self.algorithm, 'run_name': self.run_name, 'tuned': self.tuned})
 
     # Algorithm and MLModel to TuningAlg
-    if self.tuned == "True":  # If tuned
+    if ast.literal_eval(self.tuned):  # If tuned
         g.evaluate("""MATCH (tuning_alg:TuningAlg {algorithm:$tuner}), (algor:Algorithm {name: $algorithm}), 
                     (model:MLModel {name: $run_name})
                    MERGE (algor)-[:USES_TUNING]->(tuning_alg)
@@ -130,7 +130,7 @@ def relationships(self, from_output=False):
     g.evaluate("""MATCH (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
                random_seed: $random_seed}), (testset:TestSet {run_name: $run_name}), 
                (trainset:TrainSet {run_name: $run_name})
-               MERGE (trainset)<-[:MAKES_SPLIT]-(split)-[:MAKES_SPLIT]->(testset)""",
+               MERGE (trainset)<-[:MAKES_TRAIN_SPLIT]-(split)-[:MAKES_TEST_SPLIT]->(testset)""",
                parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent, 
                            'run_name': self.run_name, 'random_seed': self.random_seed})
 
@@ -160,7 +160,7 @@ def relationships(self, from_output=False):
         # MERGE RandomSplit to Validation
         g.evaluate("""MATCH (split:RandomSplit {test_percent: $test_percent, train_percent: $train_percent, 
                    random_seed: $random_seed}), (valset:ValSet {run_name: $run_name}) 
-                   MERGE (split)-[:MAKES_SPLIT]->(valset)""",
+                   MERGE (split)-[:MAKES_VAL_SPLIT]->(valset)""",
                    parameters={'test_percent': self.test_percent, 'train_percent': self.train_percent,
                                'run_name': self.run_name, 'random_seed': self.random_seed})
 

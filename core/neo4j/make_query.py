@@ -125,7 +125,30 @@ class Query:
         CREATE CONSTRAINT unique_Dataset_name
         ON (n:Dataset)
         ASSERT n.data IS UNIQUE
-        """
+        """,
+            """
+        CREATE CONSTRAINT unique_Algorithm_name
+        ON (n:Algorithm)
+        ASSERT n.name IS UNIQUE
+            """,
+            """
+        CREATE CONSTRAINT unique_TestSet_run_name
+        ON (n:TestSet)
+        ASSERT n.run_name IS UNIQUE
+        
+            """,
+            """
+        CREATE CONSTRAINT unique_TrainSet_run_name
+        ON (n:TrainSet)
+        ASSERT n.run_name IS UNIQUE
+        
+            """,
+            """
+        CREATE CONSTRAINT unique_ValSet_run_name
+        ON (n:ValSet)
+        ASSERT n.run_name IS UNIQUE
+        
+            """
 
         ]
 

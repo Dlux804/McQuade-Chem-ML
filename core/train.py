@@ -55,8 +55,9 @@ def train_reg(self,n=5):
         sleep(0.25)  # so progress bar can update
     print('Done after {:.1f} seconds.'.format(t.sum()))
 
-    pva_multi['pred_avg'] = pva.mean(axis=1)
-    pva_multi['pred_std'] = pva.std(axis=1)
+    predicted_columns = pva_multi.columns.difference(['smiles', 'actual'])
+    pva_multi['pred_avg'] = pva_multi[predicted_columns].mean(axis=1)
+    pva_multi['pred_std'] = pva_multi[predicted_columns].std(axis=1)
 
     stats = {
         'r2_raw': r2,

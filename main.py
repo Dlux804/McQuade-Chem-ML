@@ -135,7 +135,7 @@ def single_model():
         print()
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split()
+        model1.data_split(val=0.1)
         model1.reg()
         model1.run()
         model1.analyze()

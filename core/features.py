@@ -177,10 +177,8 @@ def data_split(self, test=0.2, val=0, random=None):
             random_state=self.random_seed)
         # scale the validation features too
         self.val_features = scaler.transform(self.val_features)
-
         self.n_val = self.val_features.shape[0]
         pval = self.n_val / self.n_tot * 100
-
     else:
         pval = 0
 

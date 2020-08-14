@@ -1,3 +1,4 @@
+import math
 import matplotlib.pyplot as plt
 from matplotlib import cm
 
@@ -7,6 +8,8 @@ from sklearn.metrics import mean_squared_error, r2_score, classification_report,
 from rdkit.Chem import PandasTools
 from sklearn.metrics import roc_curve
 from sklearn.metrics import precision_recall_curve
+
+from core.storage.misc import cd
 
 
 def impgraph(self):
@@ -137,9 +140,43 @@ def pva_graph(self, use_scaled=False):
         plt.savefig(self.run_name+'_' + f'PVA_scaled.png')
     else:
         plt.savefig(self.run_name + '_' + f'PVA.png')
+    plt.close()
     # plt.show()
     # self.pva_graph = plt
     # return plt
+
+
+def hist(self):
+
+    def __plot__(name, data):
+        plt.style.use('bmh')
+        plt.hist(data, bins=num_of_bins, histtype='step', rwidth=0.8)
+        plt.plot([], [], ' ', label=f'{name}')
+        plt.title(f'Histogram of {name}')
+        plt.savefig(self.run_name + '_' + f'hist_{name}.png')
+        plt.close()
+
+    # Use Doane's formula for number of bins https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width
+    # Want to make sure data uses the same number of bins, so take largest number of bins
+        # The number of bins for actual and pred_avg should be roughly the same
+    num_of_bins = 0
+    doane_data = self.predictions[['actual', 'pred_avg']]
+    for column in doane_data.columns:
+        data = doane_data[column]
+        n = len(data)
+        std = data.std()
+        g = math.sqrt((6 * (n - 1)) / ((n + 1) * (n + 3)))
+        np_bins = round(1 + math.log2(n) + math.log2(1 + abs(g) / std))
+        if np_bins > num_of_bins:
+            num_of_bins = np_bins
+
+    plot_dict = {'predicted': self.predictions['pred_avg'],
+                 'actual': self.predictions['actual'],
+                 'predicted_scaled': self.scaled_prediction['pred_avg'],
+                 'actual_scaled': self.scaled_prediction['actual']}
+
+    for name, data in plot_dict.items():
+        __plot__(name, data)
 
 
 def plotter(x, y, filename=None, xlabel='', ylabel=''):

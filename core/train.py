@@ -57,8 +57,6 @@ def train_reg(self,n=5):
     print('Done after {:.1f} seconds.'.format(t.sum()))
     # Store predicted columns and calculate predicted_average and predicted_std
     predicted_columns = pva_multi.columns.difference(['smiles', 'actual'])
-    pva_multi['pred_avg'] = pva_multi[predicted_columns].mean(axis=1)
-    pva_multi['pred_std'] = pva_multi[predicted_columns].std(axis=1)
 
     # Holding variables for scaled data
     scaled_r2 = np.empty(n)
@@ -71,7 +69,7 @@ def train_reg(self,n=5):
     data_max = max(pva_multi_scaled.max())  # Find abs min/max of predicted data
     data_min = min(pva_multi_scaled.min())
 
-    # Logic to scale the predicted data
+    # Logic to scale the predicted data, using min/max scaling
     pva_multi_scaled = (pva_multi_scaled - data_min) / (data_max - data_min)
 
     # Calculate r2, rmse, mse or for each pva columns
@@ -84,6 +82,11 @@ def train_reg(self,n=5):
     pva_multi_scaled['smiles'] = smiles
     pva_multi_scaled['pred_avg'] = pva_multi_scaled[predicted_columns].mean(axis=1)
     pva_multi_scaled['pred_std'] = pva_multi_scaled[predicted_columns].std(axis=1)
+
+    pva_multi['pred_avg'] = pva_multi[predicted_columns].mean(axis=1)
+    pva_multi['pred_std'] = pva_multi[predicted_columns].std(axis=1)
+    # pva_multi['pred_avg'] = pva.mean(axis=1)
+    # pva_multi['pred_std'] = pva.std(axis=1)
 
     stats = {
         'r2_raw': r2,

@@ -6,16 +6,14 @@ import pytest
 from tests.model_fixture import __run_all__
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('nn', 'Lipo-short.csv', 'exp', False, True,
-                                                                             True)])
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('nn', 'Lipo-short.csv', 'exp', False, True)])
 def test_sklearn_untuned(__run_all__):
     """"""
     # for algor in algorithm_list:
     model1 = __run_all__
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, delete, directory', [('nn', 'Lipo-short.csv', 'exp', True, True,
-                                                                             True)])
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('nn', 'Lipo-short.csv', 'exp', True, True)])
 def test_sklearn_tuned(__run_all__):
     """"""
     # for algor in algorithm_list:

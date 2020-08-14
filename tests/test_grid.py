@@ -5,7 +5,7 @@ Objective: Test grid.py functionality
 
 from tests.model_fixture import  __data_split_model__
 import pytest
-algorithm_list = ['ada', 'svr', 'rf', 'gdb', 'mlp', 'knn', 'nn']
+algorithm_list = ['ada', 'svm', 'rf', 'gdb', 'mlp', 'knn', 'nn']
 
 
 @pytest.mark.parametrize('algorithm', algorithm_list)

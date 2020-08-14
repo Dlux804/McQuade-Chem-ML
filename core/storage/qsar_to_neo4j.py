@@ -2,6 +2,8 @@ import zipfile
 import shutil
 import os
 
+from cirpy import resolve
+
 import xml.etree.cElementTree as ET
 import pandas as pd
 import numpy as np
@@ -9,11 +11,12 @@ from rdkit.Chem import MolFromMolFile, MolToSmiles, MolFromSmiles
 from sklearn.metrics import mean_squared_error, r2_score
 
 from core.neo4j import ModelOrOutputToNeo4j
+from core.ingest import resolveID
 
 
 class QsarToNeo4j:
 
-    def __init__(self, directory, zipped=False, cleanup_unzipped_dir=True, molecules_per_batch=5000,
+    def __init__(self, directory, zipped=True, cleanup_unzipped_dir=True, molecules_per_batch=5000,
                  port="bolt://localhost:7687", username="neo4j", password="password"):
 
         self.raw_directory = directory
@@ -172,8 +175,24 @@ class QsarToNeo4j:
         else:
             # TODO convert cas/inchi/name to smiles if needed
             print(f'Can not parse smiles for {self.directory}')
-            self.cleanup_dir()
-            raise TypeError("Could not generate or parse smiles in directory. Missing rdmol file and daylight-smiles")
+
+            def __resolve__(x):
+                print(f"Resolving {x}")
+                return resolve(x, "smiles")
+
+            found_smiles = False
+            for column in self.compound_data.columns:
+                try:
+                    self.compound_data['smiles'] = self.compound_data[column].apply(__resolve__)
+                    found_smiles = True
+                    self.compound_data = self.compound_data.loc[self.compound_data['smiles'] != None]
+                    break
+                except TypeError:
+                    pass
+
+            if not found_smiles:
+                self.cleanup_dir()
+                raise TypeError("Could not generate or parse smiles in directory")
 
         self.compound_data = self.compound_data.dropna(subset=['smiles'])
 

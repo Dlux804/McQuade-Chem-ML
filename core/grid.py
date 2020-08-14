@@ -43,11 +43,16 @@ def ada_paramgrid():
     # Define parameter grid for skopt BayesSearchCV
     bayes_grid = {
         # How to convert base_estimator?  # TODO Convert base_estimator to bayes compatible
-        'base_estimator': Categorical([tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=3),
-                                       tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=4),
-                                       tree.DecisionTreeRegressor(max_features='sqrt', splitter='best', max_depth=5),
-                                       tree.DecisionTreeRegressor(max_features='auto', splitter='best', max_depth=3),
-                                       tree.DecisionTreeRegressor(max_features='auto', splitter='best', max_depth=5)]),
+        'base_estimator': Categorical([tree.DecisionTreeRegressor(criterion='friedman_mse',
+                                                                  max_features='sqrt', max_depth=3),
+                                       tree.DecisionTreeRegressor(criterion='friedman_mse',
+                                                                  max_features='sqrt', max_depth=4),
+                                       tree.DecisionTreeRegressor(criterion='friedman_mse',
+                                                                  max_features='sqrt', max_depth=5),
+                                       tree.DecisionTreeRegressor(criterion='friedman_mse',
+                                                                  max_features='auto', max_depth=3),
+                                       tree.DecisionTreeRegressor(criterion='friedman_mse',
+                                                                  max_features='auto', max_depth=5)]),
         'n_estimators': Integer(50, 1000),
         'learning_rate': Real(0.001, 1, 'log-uniform')
     }
@@ -120,7 +125,7 @@ def svr_paramgrid():
         'C': Real(10 ** -3, 10 ** 2, 'log-uniform'),
         'gamma': Real(10 ** -3, 10 ** 0, 'log-uniform'),
         'epsilon': Real(0.1, 0.6),
-        'degree': Integer(1, 5)
+        'degree': Integer(1, 3)
     }
     return bayes_grid
 

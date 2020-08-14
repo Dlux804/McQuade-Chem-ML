@@ -270,3 +270,29 @@ def learning_curve(self):
     train_sizes, train_scores, validation_scores = learning_curve(self.estimator, self.train_features, self.train_target
                                                                   , train_sizes=train_sizes, cv=self.cv_folds,
                                                                   scoring='neg_mean_squared_error')
+    train_scores_mean = np.sqrt(-train_scores.mean(axis=1))
+    validation_scores_mean = np.sqrt(-validation_scores.mean(axis=1))
+
+    plt.rcParams['figure.figsize'] = [12, 9]
+    plt.style.use('bmh')
+    fig, ax = plt.subplots()
+    # ax = plt.axes()
+    plt.ylabel('RMSE', fontsize=14)
+    plt.xlabel('Training set size', fontsize=14)
+    plt.title("Learing curve for %s" % self.run_name)
+    # set axis limits
+    lims = [np.min([ax.get_xlim(), ax.get_ylim()]),
+            np.max([ax.get_xlim(), ax.get_ylim()])
+            ]
+    plt.plot(train_sizes, train_scores_mean, label='Training error')
+    plt.plot(train_sizes, validation_scores_mean, label='Validation error')
+    ax.set_aspect('equal')
+    ax.set_xlim(lims)
+    ax.set_ylim(lims)
+    # plt.axis([-2,5,-2,5]) #[-2,5,-2,5]
+    ax.legend(prop={'size': 16}, facecolor='w', edgecolor='k', shadow=True)
+
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
+    plt.savefig(self.run_name+"_learning_curve.png")
+

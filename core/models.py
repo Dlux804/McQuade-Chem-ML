@@ -29,7 +29,7 @@ class MlModel:  # TODO update documentation here
     from core.regressors import get_regressor, hyperTune
     from core.grid import make_grid
     from core.train import train_reg, train_cls
-    from core.analysis import impgraph, pva_graph, classification_graphs
+    from core.analysis import impgraph, pva_graph, classification_graphs, learning_curve
     from core.classifiers import get_classifier
 
     from core.features import featurize, data_split
@@ -122,7 +122,7 @@ class MlModel:  # TODO update documentation here
         # make predicted vs actual graph
         if self.task_type == 'regression':
             self.pva_graph()
-
+            self.learning_curve()
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.classification_graphs()
 

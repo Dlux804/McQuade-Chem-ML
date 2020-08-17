@@ -87,7 +87,7 @@ class ModelToNeo4j:
             test_data = self.model_data.loc[self.model_data['in_set'] == 'test']
             train_data = self.model_data.loc[self.model_data['in_set'] == 'train']
             val_data = self.model_data.loc[self.model_data['in_set'] == 'val']
-            self.spilt_data = {'TestSet': test_data, 'TrainSet': train_data, 'ValSet': val_data}
+            self.split_data = {'TestSet': test_data, 'TrainSet': train_data, 'ValSet': val_data}
 
             # Generate and merge core nodes (Very fast)
             self.check_for_constraints()
@@ -310,28 +310,28 @@ class ModelToNeo4j:
             ON CREATE SET model.date = $date, model.feat_time = $feat_time, model.test_time = $test_time,
                 model.train_time = $train_time, model.seed = $seed
 
-                MERGE (spilt:RandomSplit {run_name: $model_name})
-                    ON CREATE SET spilt.train_percent = $train_percent, spilt.test_percent = $test_percent, 
-                        spilt.val_percent = $val_percent 
-                    MERGE (model)-[:USES_SPLIT]->(spilt)
+                MERGE (split:RandomSplit {run_name: $model_name})
+                    ON CREATE SET split.train_percent = $train_percent, split.test_percent = $test_percent, 
+                        split.val_percent = $val_percent 
+                    MERGE (model)-[:USES_SPLIT]->(split)
         
                 MERGE (dataset:DataSet {data: $data})
                     ON CREATE SET dataset.size = $dataset_size, dataset.target = $target, dataset.source = $source,
                         dataset.task_type = $task_type
                     MERGE (model)-[:USES_DATASET]->(dataset)
-                    MERGE (spilt)-[:SPLITS_DATASET]->(dataset)
+                    MERGE (split)-[:SPLITS_DATASET]->(dataset)
                     
                 MERGE (testset:TestSet {run_name: $model_name, name: 'TestSet'})
                 MERGE (dataset)-[:SPLITS_INTO_TEST]->(testset)
-                MERGE (spilt)-[:MAKES_SPLIT]->(testset)
+                MERGE (split)-[:MAKES_SPLIT]->(testset)
                 
                 MERGE (trainset:TrainSet {run_name: $model_name, name: 'TrainSet'})
                 MERGE (dataset)-[:SPLITS_INTO_TRAIN]->(trainset)
-                MERGE (spilt)-[:MAKES_SPLIT]->(trainset)
+                MERGE (split)-[:MAKES_SPLIT]->(trainset)
                 
                 MERGE (valset:ValSet {run_name: $model_name, name: 'ValSet'})
                 MERGE (dataset)-[:SPLITS_INTO_VAL]->(valset)
-                MERGE (spilt)-[:MAKES_SPLIT]->(valset)
+                MERGE (split)-[:MAKES_SPLIT]->(valset)
         
             """,
             parameters={'date': js['date'], 'feat_time': js['feat_time'], 'model_name': js['run_name'],
@@ -467,7 +467,7 @@ class ModelToNeo4j:
         :return:
         """
 
-        for datatype, df in self.spilt_data.items():
+        for datatype, df in self.split_data.items():
 
             # Gather data
             if datatype == 'TestSet' and not self.json_data['is_qsarDB']:

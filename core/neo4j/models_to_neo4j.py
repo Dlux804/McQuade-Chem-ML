@@ -273,10 +273,10 @@ class ModelToNeo4j:
 
         for node, prop in node_unique_prop_dict.items():
 
-            constraint_string = """
-                        CREATE CONSTRAINT ON (n:%s)
-                        ASSERT n.%s IS UNIQUE
-                        """ % (node, prop)
+            constraint_string = f"""
+                                CREATE CONSTRAINT ON (n:{node})
+                                ASSERT n.{prop} IS UNIQUE
+                                """
             try:
                 self.graph.evaluate(constraint_string)
             except ClientError:
@@ -412,7 +412,6 @@ class ModelToNeo4j:
                     MERGE (feature_meth)-[:CALCULATES]->(feature)
 
                 """
-
         self.graph.evaluate(query, parameters={'feats': feats})
 
     def molecule_query_loop(self, molecules, query, **params):
@@ -493,16 +492,18 @@ class ModelToNeo4j:
                 if target_name_for_neo4j is None:
                     target_name_for_neo4j = self.json_data['target_name']
                 size = len(molecules)
-                rel_dict = {'TrainSet': 'TRAINS', 'TestSet': 'PREDICTS', 'ValSet': 'VALIDATES'}
+                rel_dict = {'TrainSet': 'TRAINS',
+                            'TestSet': 'PREDICTS',
+                            'ValSet': 'VALIDATES'}
                 mol_dataset_dict = {'TrainSet': 'CONTAINS_TRAINED_MOLECULE',
                                     'TestSet': 'CONTAINS_PREDICTED_MOLECULE',
                                     'ValSet': 'CONTAINS_VALIDATED_MOLECULE'}
 
-                query = """
-                        MATCH (model:MLModel {name: $run_name})
-                        MATCH (set:%s {run_name: $run_name, name: $set_type})
+                query = f"""
+                        MATCH (model:MLModel {'{name: $run_name}'})
+                        MATCH (set:{datatype} {'{run_name: $run_name, name: $set_type}'})
                         
-                        MERGE (model)-[set_rel:`%s`]->(set)
+                        MERGE (model)-[set_rel:`{rel_dict[datatype]}`]->(set)
                             ON CREATE SET set_rel.size = $size, set_rel.r2_avg = $r2_avg, set_rel.r2_std = $r2_std, 
                                 set_rel.mse_avg = $mse_avg, set_rel.mse_std = $mse_std, set_rel.rmse_avg = $rmse_avg, 
                                 set_rel.rmse_std = $rmse_std,
@@ -513,11 +514,11 @@ class ModelToNeo4j:
 
                         WITH set
                         UNWIND $molecules as molecule
-                            MERGE (mol:Molecule {smiles: molecule.smiles})
-                                SET mol.`%s` = molecule.target
-                            MERGE (set)-[:%s]->(mol)
+                            MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
+                                SET mol.`{target_name_for_neo4j}` = molecule.target
+                            MERGE (set)-[:{mol_dataset_dict[datatype]}]->(mol)
 
-                        """ % (datatype, rel_dict[datatype], target_name_for_neo4j, mol_dataset_dict[datatype])
+                        """
                 self.molecule_query_loop(molecules, query, target=self.json_data['target_name'],
                                          run_name=self.json_data['run_name'], set_type=datatype, size=size,
 
@@ -561,15 +562,15 @@ class ModelToNeo4j:
         if target_name_for_neo4j is None:
             target_name_for_neo4j = self.json_data['target_name']
 
-        query = """
+        query = f"""
                                     
-                MATCH (dataset:DataSet {data: $dataset})
+                MATCH (dataset:DataSet {'{data: $dataset}'})
                 UNWIND $molecules as molecule
-                    MERGE (mol:Molecule {smiles: molecule.smiles})
-                        SET mol.`%s` = molecule.target
+                    MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
+                        SET mol.`{target_name_for_neo4j}` = molecule.target
                     MERGE (dataset)-[:CONTAINS_MOLECULE]->(mol)
                     
-                """ % target_name_for_neo4j
+                """
         self.molecule_query_loop(molecules, query, dataset=self.json_data['dataset'])
 
     def merge_molecules_with_frags(self):

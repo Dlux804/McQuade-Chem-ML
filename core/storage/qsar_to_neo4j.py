@@ -169,11 +169,10 @@ class QsarToNeo4j:
                     return np.nan
             self.compound_data['daylight-smiles'] = self.compound_data['daylight-smiles'].apply(__daylight_to_rdkit__)
             self.compound_data = self.compound_data.loc[self.compound_data['daylight-smiles'] != np.nan]
+            self.compound_data = self.compound_data.loc[self.compound_data['daylight-smiles'] != None]
             self.compound_data = self.compound_data.rename(columns={'daylight-smiles': 'smiles'})
 
         else:
-            # TODO convert cas/inchi/name to smiles if needed
-            print(f'Can not parse smiles for {self.directory}')
 
             def __resolve__(x):
                 print(f"Resolving {x}")

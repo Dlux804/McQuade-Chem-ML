@@ -122,7 +122,7 @@ def single_model():
         # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=5, random=10)
         model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                         tune=True, cv=2, opt_iter=5)
+                         tune=False, cv=2, opt_iter=5)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -149,7 +149,7 @@ def example_run_with_mysql_and_neo4j(dataset, target):
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
         model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0],
-                         tune=True, cv=2, opt_iter=2)
+                         tune=False, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
         print('Featurization:', model3.feat_meth)

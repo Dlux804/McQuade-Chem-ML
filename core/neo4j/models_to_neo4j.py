@@ -70,13 +70,18 @@ class ModelToNeo4j:
 
             # Here for reference if you want to view attributes stored in json file
 
-            # for label, value in self.json_data.items():
-            #     print(label, value)
+            for label, value in self.json_data.items():
+                print(label, value)
 
             if not self.json_data['tuned']:
                 self.tune_algorithm_name = None
             else:
                 self.tune_algorithm_name = self.json_data['tune_algorithm_name']
+
+            if 'params' in self.json_data.keys():
+                self.params = self.json_data['params']
+            else:
+                self.params = {}
 
             # Gather test/train/val data into organized bins
             test_data = self.model_data.loc[self.model_data['in_set'] == 'test']
@@ -87,6 +92,7 @@ class ModelToNeo4j:
             # Generate and merge core nodes (Very fast)
             self.check_for_constraints()
             self.create_main_nodes()
+            self.merge_model_with_algorithm()
             self.merge_model_with_tuning()
             self.merge_featlist_and_featmeths_with_model()
             self.merge_feats_with_rdkit2d()
@@ -258,13 +264,13 @@ class ModelToNeo4j:
 
         node_unique_prop_dict = {'MLModel': 'name',
                                  'Algorithm': 'name',
-                                 'RandomSpilt': 'run_name',
+                                 'RandomSplit': 'run_name',
                                  'DataSet': 'data',
                                  'TestSet': 'run_name',
                                  'TrainSet': 'run_name',
                                  'ValSet': 'run_name',
                                  'Tuning': 'name',
-                                 'FeatureList': 'feat_IDs',
+                                 'FeatureList': 'features',
                                  'FeatureMethod': 'name',
                                  'Feature': 'name',
                                  'Fragment': 'name',
@@ -304,7 +310,7 @@ class ModelToNeo4j:
             ON CREATE SET model.date = $date, model.feat_time = $feat_time, model.test_time = $test_time,
                 model.train_time = $train_time, model.seed = $seed
 
-                MERGE (spilt:RandomSpilt {run_name: $model_name})
+                MERGE (spilt:RandomSplit {run_name: $model_name})
                     ON CREATE SET spilt.train_percent = $train_percent, spilt.test_percent = $test_percent, 
                         spilt.val_percent = $val_percent 
                     MERGE (model)-[:USES_SPLIT]->(spilt)
@@ -316,19 +322,16 @@ class ModelToNeo4j:
                     MERGE (spilt)-[:SPLITS_DATASET]->(dataset)
                     
                 MERGE (testset:TestSet {run_name: $model_name, name: 'TestSet'})
-                MERGE (dataset)-[:SPILTS_INTO_TEST]->(testset)
+                MERGE (dataset)-[:SPLITS_INTO_TEST]->(testset)
                 MERGE (spilt)-[:MAKES_SPLIT]->(testset)
                 
                 MERGE (trainset:TrainSet {run_name: $model_name, name: 'TrainSet'})
-                MERGE (dataset)-[:SPILTS_INTO_TRAIN]->(trainset)
+                MERGE (dataset)-[:SPLITS_INTO_TRAIN]->(trainset)
                 MERGE (spilt)-[:MAKES_SPLIT]->(trainset)
                 
                 MERGE (valset:ValSet {run_name: $model_name, name: 'ValSet'})
-                MERGE (dataset)-[:SPILTS_INTO_VAL]->(valset)
+                MERGE (dataset)-[:SPLITS_INTO_VAL]->(valset)
                 MERGE (spilt)-[:MAKES_SPLIT]->(valset)
-                    
-                MERGE (algo:Algorithm {name: $algo_name, source: 'sklearn'})
-                    MERGE (model)-[:USES_ALGORITHM]->(algo)
         
             """,
             parameters={'date': js['date'], 'feat_time': js['feat_time'], 'model_name': js['run_name'],
@@ -341,12 +344,28 @@ class ModelToNeo4j:
                         'data': js['dataset'], 'dataset_size': js['n_tot'], 'target': js['target_name'],
                         'source': js['source'], 'task_type': js['task_type'],
 
-                        'algo_name': js['algorithm'],
-
-                        'feat_IDs': js['feat_meth'],
+                        'features': js['feat_meth'],
                         'feature_methods': js['feat_method_name'],
                         }
         )
+
+    def merge_model_with_algorithm(self):
+
+        for label, value in self.params.items():
+            if isinstance(value, str):
+                value = f"'{value}'"
+            self.graph.evaluate(f"""
+            
+                                MATCH (model:MLModel {'{name: $model_name}'})
+                        
+                                MERGE (algo:Algorithm {'{name: $algo_name, source: "sklearn"}'})
+                                    MERGE (model)-[algo_rel:USES_ALGORITHM]->(algo)
+                                        SET algo_rel.{label} = {value}
+                        
+                                """,
+                                parameters={'model_name': self.json_data['run_name'],
+                                            'algo_name': self.json_data['algorithm']}
+                                )
 
     def merge_model_with_tuning(self):
 
@@ -380,17 +399,17 @@ class ModelToNeo4j:
                 """
             
                 MATCH (model:MLModel {name: $model_name})
-                MERGE (featlist:FeatureList {feat_IDs: $feat_IDs})
-                    MERGE (model)-[:USES_FACTORIZATION]->(featlist)
+                MERGE (featlist:FeatureList {features: $features})
+                    MERGE (model)-[:USES_FEATURE_LIST]->(featlist)
                     WITH featlist, model
                     UNWIND $feature_methods as feature_method
                         MERGE (featmeth:FeatureMethod {name: feature_method})
-                        MERGE (featmeth)-[:CONTRIBUTES_TO]->(featlist)
-                        MERGE (model)-[:USES_FACTORIZATION]->(featmeth)
+                        MERGE (featmeth)-[:USES_FEATURE_METHOD]->(featlist)
+                        MERGE (model)-[:USES_FEATURE_METHOD]->(featmeth)
             
                 """,
                 parameters={'model_name': js['run_name'],
-                            'feat_IDs': js['feat_meth'],
+                            'features': js['feat_meth'],
                             'feature_methods': js['feat_method_name']
                             }
             )

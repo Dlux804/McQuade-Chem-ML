@@ -404,7 +404,7 @@ class ModelToNeo4j:
                     WITH featlist, model
                     UNWIND $feature_methods as feature_method
                         MERGE (featmeth:FeatureMethod {name: feature_method})
-                        MERGE (featmeth)-[:USES_FEATURE_METHOD]->(featlist)
+                        MERGE (featmeth)-[:USED_BY_FEATURE_LIST]->(featlist)
                         MERGE (model)-[:USES_FEATURE_METHOD]->(featmeth)
             
                 """,

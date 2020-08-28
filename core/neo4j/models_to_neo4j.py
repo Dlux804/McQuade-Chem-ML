@@ -69,9 +69,9 @@ class ModelToNeo4j:
                 raise ValueError("Could not parse json data")
 
             # Here for reference if you want to view attributes stored in json file
-
-            for label, value in self.json_data.items():
-                print(label, value)
+            #
+            # for label, value in self.json_data.items():
+            #     print(label, value)
 
             if not self.json_data['tuned']:
                 self.tune_algorithm_name = None

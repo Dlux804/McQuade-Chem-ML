@@ -86,7 +86,7 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=True, cv=3, opt_iter=25)
+                                        tune=False, cv=3, opt_iter=25)
                         print('Done.\n')
 
                     with cd('output'):
@@ -102,11 +102,11 @@ def main():
                         model.data_split(val=0.1)
                         model.reg()
                         model.run()  # Runs the models/featurizations for classification
-                        model.analyze()
-                        if model.algorithm != 'nn':
-                            model.pickle_model()
-                        model.store()
-                        model.org_files(zip_only=True)
+                        # model.analyze()
+                        # if model.algorithm != 'nn':
+                        #     model.pickle_model()
+                        # model.store()
+                        # model.org_files(zip_only=True)
 
                     # Have files output to output
 
@@ -218,11 +218,11 @@ def output_dir_to_neo4j():
 
 
 if __name__ == "__main__":
-    # main()
+    main()
     # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
     # Qsar_import_examples()
-    output_dir_to_neo4j()
+    # output_dir_to_neo4j()
     # QsarToNeo4j('2012ECM185.zip')

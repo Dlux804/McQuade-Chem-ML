@@ -157,8 +157,7 @@ def hist(self):
         plt.close()
 
     # Use Doane's formula for number of bins https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width
-    # Want to make sure data uses the same number of bins, so take largest number of bins
-        # The number of bins for actual and pred_avg should be roughly the same
+    # Want to make sure all hist data uses the same number of bins, so take largest number of bins
     num_of_bins = 0
     doane_data = self.predictions[['actual', 'pred_avg']]
     for column in doane_data.columns:

@@ -102,11 +102,11 @@ def main():
                         model.data_split(val=0.1)
                         model.reg()
                         model.run()  # Runs the models/featurizations for classification
-                        # model.analyze()
-                        # if model.algorithm != 'nn':
-                        #     model.pickle_model()
-                        # model.store()
-                        # model.org_files(zip_only=True)
+                        model.analyze()
+                        if model.algorithm != 'nn':
+                            model.pickle_model()
+                        model.store()
+                        model.org_files(zip_only=True)
 
                     # Have files output to output
 

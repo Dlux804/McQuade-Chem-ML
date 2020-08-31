@@ -19,7 +19,7 @@ warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 class ModelToNeo4j:
 
-    def __init__(self, model=None, zipped_out_dir=None, qsar_obj=None, molecules_per_batch=5000,
+    def __init__(self, model=None, zipped_out_dir=None, qsar_obj=None, molecules_per_batch=1000,
                  port="bolt://localhost:7687", username="neo4j", password="password"):
 
         """
@@ -34,7 +34,8 @@ class ModelToNeo4j:
         :param model: A model object, mostly called from withen model object, model.to_neo4j(**params)
         :param zipped_out_dir:  A created output directory from pipeline.
         :param qsar_obj: A QsarDB qdb database object generated from qsar_to_neo4j.py
-        :param molecules_per_batch: How many molecules to insert in batches (highly recommended not to exceed 10,000)
+        :param molecules_per_batch: How many molecules to insert in batches (recommended not to exceed 1,000, highly
+                                    recommended not to exceed 4,000, 5,000 and over will break code)
         :param port: Port to connect to for neo4j
         :param username: Username for Neo4j
         :param password: Password
@@ -189,30 +190,35 @@ class ModelToNeo4j:
 
         json_data = None
         model_data = None
-        safety_string = '$$temp$$output$$dont$$copy$$this$$name$$:)$$'
+        current_dir = os.getcwd()
 
-        # TODO not extract entire zipped directory
-        with zipfile.ZipFile(str(self.zipped_out_dir), 'r') as zip_ref:
-            zip_ref.extractall(safety_string)
+        with zipfile.ZipFile(str(self.zipped_out_dir), 'r') as zipped_dir:
 
-        for file in os.listdir(safety_string):
-            split_file = file.split('.')
-            file_name = split_file[0]
+            # Read each file name in zipped_dir
+            for file in zipped_dir.namelist():
 
-            file_type = file_name.split('_')
-            file_type = file_type[len(file_type) - 1]
+                # Get file name, drop extension
+                split_file = file.split('.')
+                file_name = split_file[0]
 
-            if file_type == 'data':
-                model_data = pd.read_csv(f'{safety_string}/{file}')
-            if file_type == 'attributes':
-                with open(f'{safety_string}/{file}', 'r') as f:
-                    json_data = f.read()
-                json_data = json.loads(json_data)
+                # Get what file type a file is
+                file_type = file_name.split('_')
+                file_type = file_type[len(file_type) - 1]
 
-        shutil.rmtree(safety_string, ignore_errors=True)
+                if file_type == 'data':
+                    zipped_dir.extract(file)  # Only file that gets extracted
+                    file = current_dir + '/' + file
+                    model_data = pd.read_csv(file)
+                    os.remove(file)  # Remove extracted file
+
+                if file_type == 'attributes':
+                    json_data = zipped_dir.read(file)
+                    json_data = json.loads(json_data)
+
         json_data['is_qsarDB'] = False
         json_data['source'] = 'MolecularNetAI'
         model = [{'model_data': model_data, 'json_data': json_data}]
+
         return model
 
     def initialize_qsar_obj(self):

@@ -60,8 +60,8 @@ def main():
     }
 
     for alg in learner:  # loop over all learning algorithms
-        feats = [[0], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [2], [3], [4],
-                 [5], [6]]  # Use this line to select specific featurizations
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+                 [4], [5]]  # Use this line to select specific featurizations
         # feats = [[2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
@@ -89,13 +89,17 @@ def main():
                                         tune=True, cv=3, opt_iter=25)
                         print('Done.\n')
 
-                    with cd('no'):
+                    with cd('output'):
                         # Runs classification model
-                        model.featurize()  # Featurize molecules
-                        val = 0.0
-                        if alg == 'nn':
-                            val = 0.1
-                        model.data_split(val=val)
+                        model.connect_mysql(user='user', password='Lookout@10', host='localhost',
+                                            database='featurized_datasets',
+                                            initialize_all_data=False)
+                        model.featurize(retrieve_from_mysql=True)
+                        # model.featurize()  # Featurize molecules
+                        # val = 0.0
+                        # if alg == 'nn':
+                        #     val = 0.1
+                        model.data_split(val=0.1)
                         model.reg()
                         model.run()  # Runs the models/featurizations for classification
                         model.analyze()
@@ -143,12 +147,12 @@ def single_model():
         model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
-def example_run_with_mysql_and_neo4j(dataset, target):
+def example_run_with_mysql_and_neo4j(dataset='water-energy.csv', target='expt'):
     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0],
+        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0, 2],
                          tune=False, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
@@ -157,13 +161,13 @@ def example_run_with_mysql_and_neo4j(dataset, target):
         print()
 
     with cd('output'):  # Have files output to output
-        # model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases',
-        #                      initialize_data=False)
-        model3.featurize(retrieve_from_mysql=False)
+        model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_datasets',
+                             initialize_all_data=False)
+        model3.featurize(retrieve_from_mysql=True)
         model3.data_split(val=0.1)
         model3.reg()
         model3.run()
-        model3.analyze()
+        # model3.analyze()
         # if model3.algorithm != 'nn':  # issues pickling NN models
         #     model3.pickle_model()
 
@@ -205,20 +209,20 @@ def Qsar_import_examples():
 
 
 def output_dir_to_neo4j():
-    head_dir = 'no'
+    head_dir = 'output'
     for directory in os.listdir(head_dir):
         directory = head_dir + '/' + directory
         print(directory)
-        ModelToNeo4j(zipped_out_dir=directory, molecules_per_batch=5000, port="bolt://localhost:7687",
+        ModelToNeo4j(zipped_out_dir=directory, molecules_per_batch=1000, port="bolt://localhost:7687",
                      username="neo4j", password="password")
 
 
 if __name__ == "__main__":
     # main()
-    single_model()
+    # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
     # Qsar_import_examples()
-    # output_dir_to_neo4j()
+    output_dir_to_neo4j()
     # QsarToNeo4j('2012ECM185.zip')

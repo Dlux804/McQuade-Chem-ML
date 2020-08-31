@@ -138,7 +138,7 @@ class MlModel:  # TODO update documentation here
         t2 = default_timer() - t1
         print(f"Time it takes to finish graphing {self.run_name}: {t2}sec")
 
-    def connect_mysql(self, user, password, host, database, initialize_data=False):
+    def connect_mysql(self, user, password, host, database, initialize_all_data=False):
         # Gather MySql Parameters
         self.mysql_params = {'user': user, 'password': password, 'host': host, 'database': database}
 
@@ -152,5 +152,5 @@ class MlModel:  # TODO update documentation here
 
         # Insert featurized data into MySql. This will only run once per dataset/feat combo,
         # even if initialize_data=True
-        if initialize_data:
-            conn.insert_data_mysql()
+        if initialize_all_data:
+            conn.insert_all_data_mysql()

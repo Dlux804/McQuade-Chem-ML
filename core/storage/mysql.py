@@ -42,8 +42,8 @@ class MLMySqlConn:
             raise Exception("ConnectionRefusedError: [Error 111] Connection Refused (is MySql running?)")
 
         # Dict matching feature methods to feature names
-        self.feat_sets = {-1: None, 0: 'rdkit2d', 1: 'rdkit2dnormalized', 2: 'rdkitfpbits', 3: 'morgan3counts',
-                          4: 'morganfeature3counts', 5: 'morganchiral3counts', 6: 'atompaircounts'}
+        self.feat_sets = {-1: None, 0: 'rdkit2d', 1: 'rdkitfpbits', 2: 'morgan3counts',
+                          3: 'morganfeature3counts', 4: 'morganchiral3counts', 5: 'atompaircounts'}
         # Define regression datasets with their keys
         self.rds = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
                     'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50', '18k-logP.csv': 'exp'}
@@ -55,15 +55,18 @@ class MLMySqlConn:
         self.target_name = None
         self.database = database
 
-    def table_exist(self, dataset, feat_name=None):
+    def table_exist(self, dataset, feat_name=None, feat_id=None):
         """
 
         Checks weather or not a table exist in the MySql server
 
+        :param feat_id:
         :param dataset: Basse dataset
         :param feat_name: Feature name(s)
         :return: True or False
         """
+        if feat_id is not None:
+            feat_name = self.feat_sets[feat_id]
 
         if feat_name is None:
             query = f"select * from `{self.database}`.`{dataset}` LIMIT 1;"
@@ -126,7 +129,8 @@ class MLMySqlConn:
         if feat_meth is not None:
             # If single feat_meth, return featurized df
             if not isinstance(feat_meth, list):
-                sql_data_table = f'{dataset}_{self.feat_sets[feat_meth]}'
+                feat_name = self.feat_sets[feat_meth]
+                sql_data_table = f'{dataset}_{feat_name}'
                 return __fetch_table__(self.database, sql_data_table)
             # Convert feat_meths into feat_names
             feat_name = []
@@ -135,7 +139,7 @@ class MLMySqlConn:
 
         # If single feat_name, return featurized df
         if not isinstance(feat_name, list):
-            sql_data_table = f'{dataset}_{feat_meth}'
+            sql_data_table = f'{dataset}_{feat_name}'
             return __fetch_table__(self.database, sql_data_table)
 
         # If single item in feat_name, return featurized df
@@ -160,7 +164,43 @@ class MLMySqlConn:
             data = data.merge(df, on=same_columns)
         return data
 
-    def insert_data_mysql(self):
+    def insert_dataset_feat_mysql(self, dataset, feat_id):
+
+        feat_name = self.feat_sets[feat_id]
+
+        # Digest data and smiles_series
+        with cd(str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'):
+            if dataset in list(self.rds.keys()):
+                self.target_name = self.rds[dataset]
+                self.data, smiles_series = ingest.load_smiles(self, dataset)
+            elif dataset in self.cds:
+                self.data, smiles_series = ingest.load_smiles(self, dataset, drop=False)
+            else:
+                raise Exception(f"Dataset {dataset} not found in rds or cds. Please list in baddies or add")
+
+        # Insert just the raw dataset that can be featurized (drop smiles that return None Mol objects)
+        if feat_name is None:
+
+            # Drop misbehaving rows
+            issue_row_list = []
+            issue_row = 0
+            for smiles in self.data['smiles']:
+                if MolFromSmiles(smiles) is None:
+                    issue_row_list.append(issue_row)
+                issue_row = issue_row + 1
+            self.data.drop(self.data.index[[issue_row_list]], inplace=True)
+
+            # Send data to MySql
+            self.data.to_sql(f'{dataset}', self.conn, if_exists='fail')
+
+        # Otherwise featurize data like normal
+        else:
+            self.feat_meth = [feat_id]
+            self.featurize(not_silent=False)
+            self.data = compress_fingerprint(self.data)
+            self.data.to_sql(f'{dataset}_{feat_name}', self.conn, if_exists='fail')
+
+    def insert_all_data_mysql(self):
         """
         The is to featurize and insert all the featurized data into MySql from datafiles. Goes through the entire
         datafiles folder, featurizing each dataset with each feature method. This will only 'run' once natively, even
@@ -181,40 +221,7 @@ class MLMySqlConn:
                 # Make sure dataset and feat_meth combo is not already in MySql
                 if dataset not in bad_datasets and not self.table_exist(dataset=dataset, feat_name=feat_name):
                     print(feat_name, dataset)
-
-                    # Digest data and smiles_series
-                    with cd(str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'):
-                        if dataset in list(self.rds.keys()):
-                            self.target_name = self.rds[dataset]
-                            self.data, smiles_series = ingest.load_smiles(self, dataset)
-                        elif dataset in self.cds:
-                            self.data, smiles_series = ingest.load_smiles(self, dataset, drop=False)
-                        else:
-                            raise Exception(f"Dataset {dataset} not found in rds or cds. Please list in baddies or add")
-
-                    # Insert just the raw dataset that can be featurized (drop smiles that return None Mol objects)
-                    if feat_name is None:
-
-                        # Drop misbehaving rows
-                        issue_row_list = []
-                        issue_row = 0
-                        for smiles in self.data['smiles']:
-                            if MolFromSmiles(smiles) is None:
-                                issue_row_list.append(issue_row)
-                            issue_row = issue_row + 1
-                        self.data.drop(self.data.index[[issue_row_list]], inplace=True)
-
-                        # Send data to MySql
-                        self.data.to_sql(f'{dataset}', self.conn, if_exists='fail')
-                        print(f'Created {dataset}')
-
-                    # Otherwise featurize data like normal
-                    else:
-                        self.feat_meth = [feat_id]
-                        self.featurize(not_silent=False)
-                        self.data = compress_fingerprint(self.data)
-                        self.data.to_sql(f'{dataset}_{feat_name}', self.conn, if_exists='fail')
-                        print(f'Created {dataset}_{feat_name}')
+                    self.insert_dataset_feat_mysql(dataset, feat_id)
 
 
 def featurize_from_mysql(self):
@@ -233,5 +240,11 @@ def featurize_from_mysql(self):
     start_feat = time()
     mysql_conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
                              host=self.mysql_params['host'], database=self.mysql_params['database'])
+
+    for feat in self.feat_meth:
+        if not mysql_conn.table_exist(dataset=self.dataset, feat_id=feat):
+            print(f"Dataset Feature Method combo [{self.dataset} and {feat}] not found. Creating database")
+            mysql_conn.insert_dataset_feat_mysql(dataset=self.dataset, feat_id=feat)
+
     self.data = mysql_conn.retrieve_data(dataset=self.dataset, feat_meth=self.feat_meth)
     self.feat_time = time() - start_feat

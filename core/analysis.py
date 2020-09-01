@@ -127,8 +127,9 @@ def pva_graph(self):
 
     fig.patch.set_facecolor('blue')  # Will change background color
     fig.patch.set_alpha(0.0)  # Makes background transparent
-
     plt.savefig(self.run_name+'_' + 'PVA.png')
+    plt.clf()
+    plt.close(fig)
     # plt.show()
     # self.pva_graph = plt
     # return plt
@@ -141,7 +142,6 @@ def plot_learning_curves(self):
     axes[0].set_xlabel("Training Size")
     axes[0].set_ylabel("MSE")
     axes[0].set_title("Learning curves of %s" % self.run_name)
-
     train_sizes, train_scores, test_scores, fit_times, _ = \
                                                         learning_curve(estimator=self.estimator, X=self.train_features,
                                                                        y=self.train_target, cv=5,
@@ -200,6 +200,8 @@ def plot_learning_curves(self):
     fig.patch.set_facecolor('blue')  # Will change background color
     fig.patch.set_alpha(0.0)  # Makes background transparent
     fig.savefig(self.run_name + '_learning_curve.png')
+    plt.clf()
+    plt.close(fig)
 
 
 def plotter(x, y, filename=None, xlabel='', ylabel=''):

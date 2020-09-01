@@ -24,7 +24,24 @@ def relationships(self, from_output=False):
     t1 = time.perf_counter()
     self.tuned = str(self.tuned).capitalize()
 
-    df_smiles, test_mol_dict, data_size, cv_results = prep(self)
+    df_smiles, test_mol_dict, data_size = prep(self)
+
+    if ast.literal_eval(self.tuned):  # If tuned:
+        cv_results = dict(self.cv_results)
+        rank_score = cv_results['rank_test_score']
+        rank_score = [int(i) for i in rank_score]
+        cv_results.pop('rank_test_score', None)
+        cv_results['rank_test_score'] = rank_score  # Change data type that was causing a problem
+        cv_results.pop('param_kernel', None)  # Remove masked array
+        cv_results.pop('param_gamma', None)  # Remove masked array
+        params = cv_results['params']
+        new_params = []
+        cv_results.pop('params', None)
+        for values in params:
+            new_params.append(str(dict(values)))
+        # cv_results.pop('params', None)
+        cv_results['params'] = new_params
+
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
     query = Query(graph=g)

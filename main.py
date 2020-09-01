@@ -17,7 +17,7 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    learner = ['knn', 'ada', 'rf', 'svm','gdb']
     # learner = ['rf', 'ada', 'gdb', 'nn']
     # learner = ['gdb']
 
@@ -28,10 +28,10 @@ def main():
 #    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
 
     # All tune option
-    tune_option = [False, True]
+    tune_option = [True]
 
     # Random seed option
-    random_seed_option = [42, None]
+    random_seed_option = [None]
     # All data sets in dict
     # sets = {
     #    'BBBP.csv': targets,
@@ -54,12 +54,15 @@ def main():
 #    }
 
     # regression data sets for reference/testing
+    # sets = {
+    #     'ESOL.csv': 'water-sol',
+    #     'Lipophilicity-ID.csv': 'exp',
+    #     'water-energy.csv': 'expt',
+    #     'logP14k.csv': 'Kow',
+    #     'jak2_pic50.csv': 'pIC50'
+    # }
     sets = {
-        'ESOL.csv': 'water-sol',
-        'Lipophilicity-ID.csv': 'exp',
-        'water-energy.csv': 'expt',
-        'logP14k.csv': 'Kow',
-        'jak2_pic50.csv': 'pIC50'
+        'ESOL.csv': 'water-sol'
     }
     for random_seed in random_seed_option:
         for tune in tune_option:
@@ -67,7 +70,7 @@ def main():
                 # feats = [[2], [3], [4], [5], [6], [0, 2], [0, 3],  # Incomplete runs for tuned rf
                 #          [0, 4], [0, 5], [0, 6]]  # Use this line to select specific featurizations
                 feats = [[0], [1], [2], [3], [4], [5], [0, 1], [0, 2],
-                         [0, 3], [0, 4], [0, 5]]  # Use this line to select specific featurizations
+                         [0, 3], [0, 4], [0, 5], [0, 1, 2]]  # Use this line to select specific featurizations
 
                 # feats = [[2]]
                 for method in feats:  # loop over the featurization methods
@@ -127,7 +130,7 @@ def single_model():
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
         model1 = MlModel(algorithm='svm', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
-                         tune=False, cv=2, opt_iter=2, random=40)
+                         tune=True, cv=2, opt_iter=2, random=40)
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)
@@ -138,13 +141,13 @@ def single_model():
         model1.data_split(val=0.1)
         model1.reg()
         model1.run()
-        model1.analyze()
-        if model1.algorithm != 'nn':  # issues pickling NN models
-            model1.pickle_model()
-        model1.store()
-        model1.org_files(zip_only=True)
+        # model1.analyze()
+        # if model1.algorithm != 'nn':  # issues pickling NN models
+        #     model1.pickle_model()
+        # model1.store()
+        # model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j(dataset, target):

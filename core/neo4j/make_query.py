@@ -148,7 +148,14 @@ class Query:
         ON (n:ValSet)
         ASSERT n.run_name IS UNIQUE
         
+            """,
             """
+        CREATE CONSTRAINT unique_TuningAlg_scorer
+        ON (n:TuningAlg)
+        ASSERT n.scorer IS UNIQUE
+    
+            """
+
 
         ]
 

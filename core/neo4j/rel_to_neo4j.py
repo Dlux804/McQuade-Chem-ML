@@ -24,7 +24,7 @@ def relationships(self, from_output=False):
     t1 = time.perf_counter()
     self.tuned = str(self.tuned).capitalize()
 
-    df_smiles, test_mol_dict, data_size = prep(self)
+    df_smiles, test_mol_dict, data_size, cv_results = prep(self)
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
     query = Query(graph=g)
@@ -72,17 +72,19 @@ def relationships(self, from_output=False):
 
     # Algorithm and MLModel to TuningAlg
     if ast.literal_eval(self.tuned):  # If tuned
-        g.evaluate("""MATCH (tuning_alg:TuningAlg {algorithm:$tuner}), (algor:Algorithm {name: $algorithm}), 
+        g.evaluate("""
+                    MATCH (tuning_alg:TuningAlg {algorithm:$tuner}), (algor:Algorithm {name: $algorithm}), 
                     (model:MLModel {name: $run_name})
                    MERGE (algor)-[:USES_TUNING]->(tuning_alg)
                    MERGE (model)-[r:TUNED_WITH]->(tuning_alg)
                    Set r.num_cv=$cv_folds, r.tuneTime= $tune_time, r.delta = $cp_delta, r.n_best = $cp_n_best,
                                 r.steps=$opt_iter
+                   Set r += $cv_results
                    """,
                    parameters={'tune_time': self.tune_time, 'algorithm': self.algorithm, 'run_name': self.run_name,
                                'cv_folds': self.cv_folds, 'tunTime': self.tune_time, 'cp_delta': self.cp_delta,
                                'cp_n_best': self.cp_n_best, 'opt_iter': self.opt_iter, 'tuned': self.tuned,
-                               'tuner': self.tune_algorithm_name})
+                               'tuner': self.tune_algorithm_name, 'cv_results': cv_results})
 
     # MLModel to DataSet
     g.evaluate("""MATCH (dataset:DataSet {data: $dataset}), (model:MLModel {name: $run_name})

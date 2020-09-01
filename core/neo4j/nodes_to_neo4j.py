@@ -32,7 +32,22 @@ def prep(self):
     test_mol_dict = pd.DataFrame({'smiles': list(pva['smiles']), 'average_prediction': list(pva['pred_avg']),
                                   'uncertainty': list(pva['pred_std']),
                                   'average_error': average_error}).to_dict('records')
-    return df_smiles, test_mol_dict, data_size
+    cv_results = dict(self.cv_results)
+    rank_score = cv_results['rank_test_score']
+    rank_score = [int(i) for i in rank_score]
+    cv_results.pop('rank_test_score', None)
+    cv_results['rank_test_score'] = rank_score  # Change data type that was causing a problem
+    cv_results.pop('param_kernel', None)  # Remove masked array
+    cv_results.pop('param_gamma', None)  # Remove masked array
+    params = cv_results['params']
+    new_params = []
+    cv_results.pop('params', None)
+    for values in params:
+        new_params.append(str(dict(values)))
+    # cv_results.pop('params', None)
+    cv_results['params'] = new_params
+    # print(cv_results)
+    return df_smiles, test_mol_dict, data_size, cv_results
 
 
 def __dataset_record__(self, graph):
@@ -117,7 +132,7 @@ def nodes(self):
     g = Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Define graph for function
 
-    df_smiles, test_mol_dict, data_size = prep(self)
+    df_smiles, test_mol_dict, data_size, cv_results = prep(self)
 
     query = Query(graph=g)
     query.__check_for_constraints__()
@@ -133,8 +148,9 @@ def nodes(self):
 
     # Make Tuner node
     if ast.literal_eval(self.tuned):
-        tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name)
-        g.merge(tuning_algorithm, "TuningAlg", "algorithm")
+        tuning_algorithm = Node("TuningAlg", name="TuningAlg", algorithm=self.tune_algorithm_name, scorer=self.scorer)
+        g.merge(tuning_algorithm, "TuningAlg", "scorer")
+
 
 
     # Make MLModel nodes

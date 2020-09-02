@@ -460,7 +460,6 @@ class ModelToNeo4j:
     def molecule_query_loop(self, molecules, query, **params):
 
         """
-
         Loop for molecule queries. We do not want to merge 14k molecules at once, that is sure way to kill a computer.
         So a set batch number is set, and we do not insert more molecules at once than the batch number allows for.
 

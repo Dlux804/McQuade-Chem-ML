@@ -318,12 +318,12 @@ class ModelToNeo4j:
 
                 MERGE (split:RandomSplit {run_name: $model_name})
                     ON CREATE SET split.train_percent = $train_percent, split.test_percent = $test_percent, 
-                        split.val_percent = $val_percent 
+                        split.val_percent = $val_percent, split.seed = $seed, split.name = "RandomSplit"
                     MERGE (model)-[:USES_SPLIT]->(split)
         
                 MERGE (dataset:DataSet {data: $data})
                     ON CREATE SET dataset.size = $dataset_size, dataset.target = $target, dataset.source = $source,
-                        dataset.task_type = $task_type
+                        dataset.task_type = $task_type, dataset.name = "DataSet"
                     MERGE (model)-[:USES_DATASET]->(dataset)
                     MERGE (split)-[:SPLITS_DATASET]->(dataset)
                     
@@ -406,6 +406,7 @@ class ModelToNeo4j:
             
                 MATCH (model:MLModel {name: $model_name})
                 MERGE (featlist:FeatureList {features: $features})
+                    ON CREATE SET featlist.name = "FeatureList"
                     MERGE (model)-[:USES_FEATURE_LIST]->(featlist)
                     WITH featlist, model
                     UNWIND $feature_methods as feature_method

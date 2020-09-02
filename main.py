@@ -86,11 +86,10 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=False, cv=3, opt_iter=25)
+                                        tune=True, cv=3, opt_iter=25)
                         print('Done.\n')
 
                     with cd('output'):
-                        # Runs classification model
                         model.connect_mysql(user='user', password='Lookout@10', host='localhost',
                                             database='featurized_datasets',
                                             initialize_all_data=False)
@@ -218,8 +217,8 @@ def output_dir_to_neo4j():
 
 
 if __name__ == "__main__":
-    main()
-    # single_model()
+    # main()
+    single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")

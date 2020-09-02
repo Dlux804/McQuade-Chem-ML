@@ -247,12 +247,18 @@ class ModelToNeo4j:
                          'target_name': model.target_name,
                          'n_tot': model.n_total,
                          'dataset': self.qsar_obj.dataset,
+
                          'date': None,
                          'feat_time': None,
                          'tune_time': None,
                          'random_seed': None,
-                         'tuned': False,
                          'feat_meth': None,
+                         'cv': None,
+                         'opt_iter': None,
+                         'n_best': None,
+                         'delta': None,
+
+                         'tuned': False,
                          'feat_method_name': [],
                          'is_qsarDB': True,
                          'source': 'QsarDB'}
@@ -370,7 +376,8 @@ class ModelToNeo4j:
                         
                                 """,
                                 parameters={'model_name': self.json_data['run_name'],
-                                            'algo_name': self.json_data['algorithm']}
+                                            'algo_name': self.json_data['algorithm'],
+                                            }
                                 )
 
     def merge_model_with_tuning(self):
@@ -389,11 +396,21 @@ class ModelToNeo4j:
         
                 MATCH (model:MLModel {name: $model_name}) 
                 MERGE (tuning:Tuning {name: $tune_algorithm_name})
-                MERGE (model)-[:USES_TUNING]->(tuning)
+                MERGE (model)-[tuning_rel:USES_TUNING]->(tuning)
+                    ON CREATE SET tuning_rel.cv = $cv, tuning_rel.opt_iter = $opt_iter, 
+                                  tuning_rel.tune_time = $tune_time, tuning_rel.delta = $delta,
+                                  tuning_rel.n_best = $n_best 
                 
                 """,
                 parameters={'model_name': self.json_data['run_name'],
-                            'tune_algorithm_name': self.tune_algorithm_name}
+                            'tune_algorithm_name': self.tune_algorithm_name,
+
+                            'cv': self.json_data['cv_folds'],
+                            'opt_iter': self.json_data['opt_iter'],
+                            'tune_time': self.json_data['tune_time'],
+                            'n_best': self.json_data['cp_n_best'],
+                            'delta': self.json_data['cp_delta']
+                            }
             )
 
     def merge_featlist_and_featmeths_with_model(self):

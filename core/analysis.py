@@ -154,7 +154,7 @@ def hist(self):
         plt.style.use('bmh')
         # plt.grid(b=None)  # Get rid of grid lines
         plt.rcParams['axes.axisbelow'] = True  # Put grid lines behind bars of data
-        plt.hist(data, bins=num_of_bins, histtype='step', rwidth=0.8, fill=True)
+        plt.hist(data, bins=num_of_bins, fill=True, edgecolor='black', linewidth=1.2)
         plt.plot([], [], ' ', label=f'{plot_name}')
         plt.title(f'Histogram of {plot_name}')
         plt.xlabel(x_axis)
@@ -179,10 +179,10 @@ def hist(self):
     num_of_bins = num_of_bins * 4
 
     x_axis = target_name_grid(self.dataset)
-    plot_dict = {'predicted': self.predictions['pred_avg'],
-                 'actual': self.predictions['actual'],
-                 'predicted_scaled': self.scaled_predictions['pred_avg'],
-                 'actual_scaled': self.scaled_predictions['actual']}
+    plot_dict = {'Predicted': self.predictions['pred_avg'],
+                 'Actual': self.predictions['actual'],
+                 'Predicted_Scaled': self.scaled_predictions['pred_avg'],
+                 'Actual_Scaled': self.scaled_predictions['actual']}
     for name, data in plot_dict.items():
         plot_name = " ".join(name.split('_'))
         __plot__(name, data, plot_name)

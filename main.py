@@ -124,7 +124,7 @@ def single_model():
         # initiate model class with algorithm, dataset and target
         # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=5, random=10)
-        model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
+        model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0, 2],
                          tune=True, cv=2, opt_iter=5)
 
         print('done.')
@@ -218,10 +218,13 @@ def output_dir_to_neo4j():
 
 if __name__ == "__main__":
     # main()
-    single_model()
+    # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
     # Qsar_import_examples()
     # output_dir_to_neo4j()
     # QsarToNeo4j('2012ECM185.zip')
+    ModelToNeo4j(zipped_out_dir='output/Gw021_20200902-200857.zip', molecules_per_batch=1000,
+                 port="bolt://localhost:7687",
+                 username="neo4j", password="password")

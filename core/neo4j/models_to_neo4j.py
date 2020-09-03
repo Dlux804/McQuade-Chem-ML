@@ -5,6 +5,7 @@ import shutil
 import zipfile
 import warnings
 
+import numpy as np
 import pandas as pd
 from pandas.core.common import SettingWithCopyWarning
 from py2neo import Graph, ClientError
@@ -39,6 +40,12 @@ class ModelToNeo4j:
         :param port: Port to connect to for neo4j
         :param username: Username for Neo4j
         :param password: Password
+        """
+
+        """
+            actual = pva['actual']
+            pva_predictions = pva.drop(['pred_avg', 'pred_std', 'smiles', 'actual'], axis=1)
+            average_error = list(pva_predictions.sub(actual, axis=0).mean(axis=1))  # Calculate avg prediction error
         """
 
         self.batch = molecules_per_batch
@@ -170,10 +177,14 @@ class ModelToNeo4j:
             d.pop(k)
 
         json_data = json.loads(json.dumps(d, cls=NumpyEncoder))
-        model_data = all_raw_dfs['data']
+        model_data = self.__combine_model_data_with_predictions__(all_raw_dfs['data'], all_raw_dfs['predictions'],
+                                                                  all_raw_dfs['scaled_predictions'])
+
         json_data['is_qsarDB'] = False
         json_data['source'] = 'MolecularNetAI'
-        model = [{'model_data': model_data, 'json_data': json_data}]
+        model = [{'model_data': model_data,
+                  'json_data': json_data}]
+
         return model
 
     def initialize_output_dir(self):
@@ -188,10 +199,18 @@ class ModelToNeo4j:
         :return:
         """
 
+        def __pull_data__(file_tp):  # Get csv data from zipped_dir, return pandas df
+            zipped_dir.extract(file_tp)  # Only file that gets extracted
+            file_tp = current_dir + '/' + file_tp
+            data = pd.read_csv(file)
+            os.remove(file_tp)  # Remove extracted file
+            return data
+
+        # Place holders
         json_data = None
         model_data = None
-        current_dir = os.getcwd()
 
+        current_dir = os.getcwd()
         with zipfile.ZipFile(str(self.zipped_out_dir), 'r') as zipped_dir:
 
             # Read each file name in zipped_dir
@@ -201,25 +220,53 @@ class ModelToNeo4j:
                 split_file = file.split('.')
                 file_name = split_file[0]
 
-                # Get what file type a file is
+                # Get the name of the end part of file in the directory
                 file_type = file_name.split('_')
-                file_type = file_type[len(file_type) - 1]
+                if file_type[len(file_type) - 2] == 'scaled':
+                    file_type = 'scaled_' + file_type[len(file_type) - 1]
+                else:
+                    file_type = file_type[len(file_type) - 1]
 
                 if file_type == 'data':
-                    zipped_dir.extract(file)  # Only file that gets extracted
-                    file = current_dir + '/' + file
-                    model_data = pd.read_csv(file)
-                    os.remove(file)  # Remove extracted file
+                    model_data = __pull_data__(file)
 
                 if file_type == 'attributes':
                     json_data = zipped_dir.read(file)
                     json_data = json.loads(json_data)
 
+                if file_type == 'predictions':
+                    predictions_csv_data = __pull_data__(file)
+
+                if file_type == 'scaled_predictions':
+                    scaled_predictions_csv_data = __pull_data__(file)
+
+        model_data = self.__combine_model_data_with_predictions__(model_data, predictions_csv_data,
+                                                                  scaled_predictions_csv_data)
+
         json_data['is_qsarDB'] = False
         json_data['source'] = 'MolecularNetAI'
-        model = [{'model_data': model_data, 'json_data': json_data}]
+        model = [{'model_data': model_data,
+                  'json_data': json_data}]
 
         return model
+
+    @staticmethod
+    def __combine_model_data_with_predictions__(model_data, predictions, scaled_predictions):
+
+        # Gather model data, pred_error, and scaled_pred_error
+        pred_error = predictions[['smiles', 'pred_error']]
+        scaled_pred_error = scaled_predictions[['smiles', 'pred_error']]
+        scaled_pred_error = scaled_pred_error.rename(columns={'pred_error': 'scaled_pred_error'})
+
+        # Merge data, pred_error, and scaled_pred_error
+        model_data = model_data.merge(pred_error, on='smiles', how='outer')
+        model_data = model_data.merge(scaled_pred_error, on='smiles', how='outer')
+
+        # Replace Numpy NaNs with None, important for Neo4j
+        model_data['pred_error'] = model_data['pred_error'].where(pd.notnull(model_data['pred_error']), None)
+        model_data['scaled_pred_error'] = model_data['scaled_pred_error'].where(pd.notnull(
+            model_data['scaled_pred_error']), None)
+        return model_data
 
     def initialize_qsar_obj(self):
         """
@@ -233,7 +280,20 @@ class ModelToNeo4j:
 
         models = []
         for model in self.qsar_obj.models:
+
+            # Get raw model_data
             model_data = model.raw_data
+
+            # Create dumpy columns to cast None for each molecule in model_data
+            model_data['pred_error'] = None
+            model_data['scaled_pred_error'] = None
+
+            # Bootleg fix to replace np.nan's with None
+            model_data['pred_error'] = model_data['pred_error'].where(pd.notnull(model_data['pred_error']), None)
+            model_data['scaled_pred_error'] = model_data['scaled_pred_error'].where(pd.notnull(
+                model_data['scaled_pred_error']), None)
+
+            # Gather pseudo json_data
             json_data = {'test_percent': round(model.n['testing'] / model.n_total, 2),
                          'train_percent': round(model.n['training'] / model.n_total, 2),
                          'val_percent': round(model.n['validation'] / model.n_total, 2),
@@ -261,8 +321,11 @@ class ModelToNeo4j:
                          'tuned': False,
                          'feat_method_name': [],
                          'is_qsarDB': True,
-                         'source': 'QsarDB'}
-            models.append({'model_data': model_data, 'json_data': json_data})
+                         'source': 'QsarDB'
+                         }
+
+            models.append({'model_data': model_data,
+                           'json_data': json_data})
         return models
 
     def check_for_constraints(self):
@@ -509,6 +572,7 @@ class ModelToNeo4j:
                 scaled_mse_std = scaled_pred_stats['mse_std_scaled']
                 scaled_rmse_avg = scaled_pred_stats['rmse_avg_scaled']
                 scaled_rmse_std = scaled_pred_stats['rmse_std_scaled']
+
             elif self.json_data['is_qsarDB']:
                 rd = {'TrainSet': 'training', 'TestSet': 'testing', 'ValSet': 'validation'}
                 r2_avg = self.json_data['predictions_stats']['r2_avg'][rd[datatype]]
@@ -518,6 +582,7 @@ class ModelToNeo4j:
                 rmse_std = mse_std = r2_std = None
                 scaled_r2_avg = scaled_mse_avg = scaled_rmse_avg = None
                 scaled_r2_std = scaled_mse_std = scaled_rmse_std = None
+
             else:
                 r2_std = mse_std = rmse_std = None
                 r2_avg = mse_avg = rmse_avg = None
@@ -526,7 +591,7 @@ class ModelToNeo4j:
 
             # If dataset exists
             if len(df) > 0:
-                df = df[['smiles', self.json_data['target_name']]]
+                df = df[['smiles', self.json_data['target_name'], 'pred_error', 'scaled_pred_error']]
                 df = df.rename(columns={self.json_data['target_name']: 'target'})
                 molecules = df.to_dict('records')
 
@@ -534,9 +599,13 @@ class ModelToNeo4j:
                 if target_name_for_neo4j is None:
                     target_name_for_neo4j = self.json_data['target_name']
                 size = len(molecules)
+
+                # Dict relating Set to the relationship name needed for the relationship (Model)->(Set)
                 rel_dict = {'TrainSet': 'TRAINS',
                             'TestSet': 'PREDICTS',
                             'ValSet': 'VALIDATES'}
+
+                # Dict relating molecules to the relationship name needed for relationship (Set)->(Molecule)
                 mol_dataset_dict = {'TrainSet': 'CONTAINS_TRAINED_MOLECULE',
                                     'TestSet': 'CONTAINS_PREDICTED_MOLECULE',
                                     'ValSet': 'CONTAINS_VALIDATED_MOLECULE'}
@@ -558,8 +627,10 @@ class ModelToNeo4j:
                         UNWIND $molecules as molecule
                             MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
                                 SET mol.`{target_name_for_neo4j}` = molecule.target
-                            MERGE (set)-[:{mol_dataset_dict[datatype]}]->(mol)
-
+                            MERGE (set)-[set_mol_rel:{mol_dataset_dict[datatype]}]->(mol)
+                                SET set_mol_rel.pred_error = molecule.pred_error,
+                                    set_mol_rel.scaled_pred_error = molecule.scaled_pred_error
+                                
                         """
                 self.molecule_query_loop(molecules, query, target=self.json_data['target_name'],
                                          run_name=self.json_data['run_name'], set_type=datatype, size=size,
@@ -569,7 +640,7 @@ class ModelToNeo4j:
 
                                          scaled_r2_avg=scaled_r2_avg, scaled_mse_avg=scaled_mse_avg,
                                          scaled_rmse_avg=scaled_rmse_avg, scaled_r2_std=scaled_r2_std,
-                                         scaled_mse_std=scaled_mse_std, scaled_rmse_std=scaled_rmse_std
+                                         scaled_mse_std=scaled_mse_std, scaled_rmse_std=scaled_rmse_std,
                                          )
 
     def check_for_dataset(self):

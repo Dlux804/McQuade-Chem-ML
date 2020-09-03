@@ -55,6 +55,7 @@ def train_reg(self,n=5):
         pva_multi['predicted' + str(i)] = predictions
         sleep(0.25)  # so progress bar can update
     print('Done after {:.1f} seconds.'.format(t.sum()))
+
     # Store predicted columns and calculate predicted_average and predicted_std
     predicted_columns = pva_multi.columns.difference(['smiles', 'actual'])
 
@@ -82,9 +83,11 @@ def train_reg(self,n=5):
     pva_multi_scaled['smiles'] = smiles
     pva_multi_scaled['pred_avg'] = pva_multi_scaled[predicted_columns].mean(axis=1)
     pva_multi_scaled['pred_std'] = pva_multi_scaled[predicted_columns].std(axis=1)
+    pva_multi_scaled['pred_error'] = pva_multi_scaled['actual'] - pva_multi_scaled['pred_avg']
 
     pva_multi['pred_avg'] = pva_multi[predicted_columns].mean(axis=1)
     pva_multi['pred_std'] = pva_multi[predicted_columns].std(axis=1)
+    pva_multi['pred_error'] = pva_multi['actual'] - pva_multi['pred_avg']
     # pva_multi['pred_avg'] = pva.mean(axis=1)
     # pva_multi['pred_std'] = pva.std(axis=1)
 
@@ -118,7 +121,7 @@ def train_reg(self,n=5):
     self.predictions = pva_multi
     self.predictions_stats = stats
 
-    self.scaled_prediction = pva_multi_scaled
+    self.scaled_predictions = pva_multi_scaled
     self.scaled_predictions_stats = scaled_stats
 
     print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])

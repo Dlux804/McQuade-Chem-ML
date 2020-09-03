@@ -71,10 +71,12 @@ def pva_graph(self, use_scaled=False):
     Make Predicted vs. Actual graph with prediction uncertainty.
     Pass dataframe from multipredict function. Return a graph.
     """
+    # Reuse function for scaled data
     if use_scaled:
-        pva = self.scaled_prediction
+        pva = self.scaled_predictions
     else:
         pva = self.predictions
+
     r2 = r2_score(pva['actual'], pva['pred_avg'])
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))
@@ -171,8 +173,8 @@ def hist(self):
 
     plot_dict = {'predicted': self.predictions['pred_avg'],
                  'actual': self.predictions['actual'],
-                 'predicted_scaled': self.scaled_prediction['pred_avg'],
-                 'actual_scaled': self.scaled_prediction['actual']}
+                 'predicted_scaled': self.scaled_predictions['pred_avg'],
+                 'actual_scaled': self.scaled_predictions['actual']}
 
     for name, data in plot_dict.items():
         __plot__(name, data)

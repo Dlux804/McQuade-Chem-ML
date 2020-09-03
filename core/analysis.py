@@ -9,7 +9,7 @@ from rdkit.Chem import PandasTools
 from sklearn.metrics import roc_curve
 from sklearn.metrics import precision_recall_curve
 
-from core.storage.misc import cd
+from core.storage.dictionary import target_name_grid
 
 
 def impgraph(self):
@@ -150,16 +150,17 @@ def pva_graph(self, use_scaled=False):
 
 def hist(self):
 
-    def __plot__(name, data):
+    def __plot__(name, data, plot_name):
         plt.style.use('bmh')
-        plt.hist(data, bins=num_of_bins, histtype='step', rwidth=0.8)
-        plt.plot([], [], ' ', label=f'{name}')
-        plt.title(f'Histogram of {name}')
+        plt.hist(data, bins=num_of_bins, histtype='step', rwidth=0.8, fill=True)
+        plt.plot([], [], ' ', label=f'{plot_name}')
+        plt.title(f'Histogram of {plot_name}')
+        plt.xlabel(x_axis)
         plt.savefig(self.run_name + '_' + f'hist_{name}.png')
         plt.close()
 
     # Use Doane's formula for number of bins https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width
-    # Want to make sure all hist data uses the same number of bins, so take largest number of bins
+    # Want to make sure all hist data uses the same number of bins
     num_of_bins = 0
     doane_data = self.predictions[['actual', 'pred_avg']]
     for column in doane_data.columns:
@@ -171,13 +172,14 @@ def hist(self):
         if np_bins > num_of_bins:
             num_of_bins = np_bins
 
+    x_axis = target_name_grid(self.dataset)
     plot_dict = {'predicted': self.predictions['pred_avg'],
                  'actual': self.predictions['actual'],
                  'predicted_scaled': self.scaled_predictions['pred_avg'],
                  'actual_scaled': self.scaled_predictions['actual']}
-
     for name, data in plot_dict.items():
-        __plot__(name, data)
+        plot_name = " ".join(name.split('_'))
+        __plot__(name, data, plot_name)
 
 
 def plotter(x, y, filename=None, xlabel='', ylabel=''):

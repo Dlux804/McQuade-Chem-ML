@@ -121,7 +121,7 @@ def single_model():
         # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=5, random=10)
         model1 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0, 2],
-                         tune=False, cv=2, opt_iter=2)
+                         tune=True, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -137,7 +137,7 @@ def single_model():
         if model1.algorithm != 'nn':  # issues pickling NN models
             model1.pickle_model()
         model1.store()
-        model1.org_files(zip_only=True)
+        model1.org_files(zip_only=False)
         # model1.QsarDB_export(zip_output=True)
         model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 

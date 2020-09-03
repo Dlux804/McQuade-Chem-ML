@@ -52,7 +52,7 @@ class ModelToNeo4j:
         self.qsar_obj = qsar_obj
         self.graph = Graph(port, username=username, password=password)
         self.parsed_models = None
-        self.molecule_stats = ['pred_MSE', 'pred_RMSE', 'pred_std']  # Define stats to pull out of predictions.csv
+        self.molecule_stats = ['pred_MSE', 'pred_std', 'pred_avg']  # Define stats to pull out of predictions.csv
 
         # Make sure variable do not clash
         self.verify_input_variables()
@@ -543,6 +543,8 @@ class ModelToNeo4j:
 
     def merge_molecules_with_sets(self):
 
+        # TODO spilt this into three different functions, one for TestSet, TrainSet, ValSet. This is hard to follow
+
         """
 
         This will generate the data in the relationships relating models to Train/Test/Val sets. As well as the
@@ -631,12 +633,13 @@ class ModelToNeo4j:
                             MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
                                 SET mol.`{target_name_for_neo4j}` = molecule.target
                             MERGE (set)-[mol_rel:{mol_dataset_dict[datatype]}]->(mol)
-                                SET mol_rel.pred_RMSE = molecule.pred_RMSE,
-                                    mol_rel.pred_MSE = molecule.pred_MSE,
-                                    mol_rel.pred_std = molecule.pred_std,
-                                    mol_rel.scaled_pred_RMSE = molecule.scaled_pred_RMSE,
-                                    mol_rel.scaled_pred_MSE = molecule.scaled_pred_MSE,
-                                    mol_rel.scaled_pred_std = molecule.scaled_pred_std
+                                SET mol_rel.average_error = molecule.pred_MSE,
+                                    mol_rel.uncertainty = molecule.pred_std,
+                                    mol_rel.predicted_average = molecule.pred_avg,
+
+                                    mol_rel.scaled_average_error = molecule.scaled_pred_MSE,
+                                    mol_rel.scaled_uncertainty = molecule.scaled_pred_std,
+                                    mol_rel.scaled_predicted_average = molecule.scaled_pred_avg
                                 
                         """
                 self.molecule_query_loop(molecules, query, target=self.json_data['target_name'],

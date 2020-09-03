@@ -52,7 +52,7 @@ class ModelToNeo4j:
         self.qsar_obj = qsar_obj
         self.graph = Graph(port, username=username, password=password)
         self.parsed_models = None
-        self.molecule_stats = ['pred_MSE', 'pred_std', 'pred_avg']  # Define stats to pull out of predictions.csv
+        self.molecule_stats = ['pred_average_error', 'pred_std', 'pred_avg']  # Define stats to pull out of predictions
 
         # Make sure variable do not clash
         self.verify_input_variables()
@@ -633,11 +633,11 @@ class ModelToNeo4j:
                             MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
                                 SET mol.`{target_name_for_neo4j}` = molecule.target
                             MERGE (set)-[mol_rel:{mol_dataset_dict[datatype]}]->(mol)
-                                SET mol_rel.average_error = molecule.pred_MSE,
+                                SET mol_rel.average_error = molecule.pred_average_error,
                                     mol_rel.uncertainty = molecule.pred_std,
                                     mol_rel.predicted_average = molecule.pred_avg,
 
-                                    mol_rel.scaled_average_error = molecule.scaled_pred_MSE,
+                                    mol_rel.scaled_average_error = molecule.scaled_pred_average_error,
                                     mol_rel.scaled_uncertainty = molecule.scaled_pred_std,
                                     mol_rel.scaled_predicted_average = molecule.scaled_pred_avg
                                 

@@ -1,11 +1,9 @@
 import json
 import os
 import re
-import shutil
 import zipfile
 import warnings
 
-import numpy as np
 import pandas as pd
 from pandas.core.common import SettingWithCopyWarning
 from py2neo import Graph, ClientError

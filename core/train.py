@@ -88,6 +88,7 @@ def train_reg(self,n=5):
         pva_df['pred_std'] = pva_df[predicted_columns].std(axis=1)
         pva_df['pred_average_error'] = abs(pva_df['actual'] - pva_df['pred_avg'])
         return pva_df
+
     pva_multi_scaled = __gather_column_stats__(pva_multi_scaled)
     pva_multi = __gather_column_stats__(pva_multi)
 

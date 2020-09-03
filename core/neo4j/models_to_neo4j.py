@@ -52,6 +52,7 @@ class ModelToNeo4j:
         self.qsar_obj = qsar_obj
         self.graph = Graph(port, username=username, password=password)
         self.parsed_models = None
+        self.molecule_stats = ['pred_MSE', 'pred_RMSE', 'pred_std']  # Define stats to pull out of predictions.csv
 
         # Make sure variable do not clash
         self.verify_input_variables()
@@ -248,22 +249,24 @@ class ModelToNeo4j:
 
         return model
 
-    @staticmethod
-    def __combine_model_data_with_predictions__(model_data, predictions, scaled_predictions):
+    def __combine_model_data_with_predictions__(self, model_data, predictions, scaled_predictions):
 
-        # Gather model data, pred_error, and scaled_pred_error
-        pred_error = predictions[['smiles', 'pred_error']]
-        scaled_pred_error = scaled_predictions[['smiles', 'pred_error']]
-        scaled_pred_error = scaled_pred_error.rename(columns={'pred_error': 'scaled_pred_error'})
+        def __merge_pred_x_with_data__(data, pred_data, pred_column):
+            # Merge data with pred_column, replace numpy NaNs with None, for Neo4j
+            data = data.merge(pred_data, on='smiles', how='outer')
+            data[pred_column] = data[pred_column].where(pd.notnull(data[pred_column]), None)
+            return data
 
-        # Merge data, pred_error, and scaled_pred_error
-        model_data = model_data.merge(pred_error, on='smiles', how='outer')
-        model_data = model_data.merge(scaled_pred_error, on='smiles', how='outer')
+        for molecule_stat in self.molecule_stats:
+            # Gather stat in predictions, merge with model data
+            stat_column = predictions[['smiles', molecule_stat]]
+            model_data = __merge_pred_x_with_data__(model_data, stat_column, molecule_stat)
 
-        # Replace Numpy NaNs with None, important for Neo4j
-        model_data['pred_error'] = model_data['pred_error'].where(pd.notnull(model_data['pred_error']), None)
-        model_data['scaled_pred_error'] = model_data['scaled_pred_error'].where(pd.notnull(
-            model_data['scaled_pred_error']), None)
+            # Gather stat in scaled predictions, merge with model data
+            scaled_stat_column = scaled_predictions[['smiles', molecule_stat]]
+            scaled_stat_column = scaled_stat_column.rename(columns={molecule_stat: f'scaled_{molecule_stat}'})
+            model_data = __merge_pred_x_with_data__(model_data, scaled_stat_column, f'scaled_{molecule_stat}')
+
         return model_data
 
     def initialize_qsar_obj(self):
@@ -283,13 +286,12 @@ class ModelToNeo4j:
             model_data = model.raw_data
 
             # Create dumpy columns to cast None for each molecule in model_data
-            model_data['pred_error'] = None
-            model_data['scaled_pred_error'] = None
-
-            # Bootleg fix to replace np.nan's with None
-            model_data['pred_error'] = model_data['pred_error'].where(pd.notnull(model_data['pred_error']), None)
-            model_data['scaled_pred_error'] = model_data['scaled_pred_error'].where(pd.notnull(
-                model_data['scaled_pred_error']), None)
+            model_data['pred_MSE'] = None
+            model_data['scaled_pred_MSE'] = None
+            model_data['pred_RMSE'] = None
+            model_data['scaled_pred_RMSE'] = None
+            model_data['pred_std'] = None
+            model_data['scaled_pred_std'] = None
 
             # Gather pseudo json_data
             json_data = {'test_percent': round(model.n['testing'] / model.n_total, 2),
@@ -589,7 +591,10 @@ class ModelToNeo4j:
 
             # If dataset exists
             if len(df) > 0:
-                df = df[['smiles', self.json_data['target_name'], 'pred_error', 'scaled_pred_error']]
+                molecule_stats = ['scaled_' + x for x in self.molecule_stats]
+                molecule_stats.extend(self.molecule_stats)
+
+                df = df[['smiles', self.json_data['target_name'], *molecule_stats]]
                 df = df.rename(columns={self.json_data['target_name']: 'target'})
                 molecules = df.to_dict('records')
 
@@ -625,9 +630,13 @@ class ModelToNeo4j:
                         UNWIND $molecules as molecule
                             MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
                                 SET mol.`{target_name_for_neo4j}` = molecule.target
-                            MERGE (set)-[set_mol_rel:{mol_dataset_dict[datatype]}]->(mol)
-                                SET set_mol_rel.pred_error = molecule.pred_error,
-                                    set_mol_rel.scaled_pred_error = molecule.scaled_pred_error
+                            MERGE (set)-[mol_rel:{mol_dataset_dict[datatype]}]->(mol)
+                                SET mol_rel.pred_RMSE = molecule.pred_RMSE,
+                                    mol_rel.pred_MSE = molecule.pred_MSE,
+                                    mol_rel.pred_std = molecule.pred_std,
+                                    mol_rel.scaled_pred_RMSE = molecule.scaled_pred_RMSE,
+                                    mol_rel.scaled_pred_MSE = molecule.scaled_pred_MSE,
+                                    mol_rel.scaled_pred_std = molecule.scaled_pred_std
                                 
                         """
                 self.molecule_query_loop(molecules, query, target=self.json_data['target_name'],

@@ -79,17 +79,18 @@ def train_reg(self,n=5):
         scaled_mse[i] = mean_squared_error(pva_multi_scaled['actual'], pva_multi_scaled[predicted_column])
         scaled_rmse[i] = np.sqrt(scaled_mse[i])
 
-    # Tack on info to marry pva_multi and pva_multi_scaled
+    # Tack on smiles
     pva_multi_scaled['smiles'] = smiles
-    pva_multi_scaled['pred_avg'] = pva_multi_scaled[predicted_columns].mean(axis=1)
-    pva_multi_scaled['pred_std'] = pva_multi_scaled[predicted_columns].std(axis=1)
-    pva_multi_scaled['pred_error'] = pva_multi_scaled['actual'] - pva_multi_scaled['pred_avg']
 
-    pva_multi['pred_avg'] = pva_multi[predicted_columns].mean(axis=1)
-    pva_multi['pred_std'] = pva_multi[predicted_columns].std(axis=1)
-    pva_multi['pred_error'] = pva_multi['actual'] - pva_multi['pred_avg']
-    # pva_multi['pred_avg'] = pva.mean(axis=1)
-    # pva_multi['pred_std'] = pva.std(axis=1)
+    # Will gather MSE, RMSE, and STD for each molecule in the predictions and scaled_predictions csv files
+    def __gather_column_stats__(pva_df):
+        pva_df['pred_avg'] = pva_df[predicted_columns].mean(axis=1)
+        pva_df['pred_std'] = pva_df[predicted_columns].std(axis=1)
+        pva_df['pred_MSE'] = (pva_df['actual'] - pva_df['pred_avg']) ** 2
+        pva_df['pred_RMSE'] = (pva_df['pred_MSE']) ** 1 / 2
+        return pva_df
+    pva_multi_scaled = __gather_column_stats__(pva_multi_scaled)
+    pva_multi = __gather_column_stats__(pva_multi)
 
     stats = {
         'r2_raw': r2,

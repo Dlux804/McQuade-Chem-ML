@@ -152,10 +152,13 @@ def hist(self):
 
     def __plot__(name, data, plot_name):
         plt.style.use('bmh')
+        # plt.grid(b=None)  # Get rid of grid lines
+        plt.rcParams['axes.axisbelow'] = True  # Put grid lines behind bars of data
         plt.hist(data, bins=num_of_bins, histtype='step', rwidth=0.8, fill=True)
         plt.plot([], [], ' ', label=f'{plot_name}')
         plt.title(f'Histogram of {plot_name}')
         plt.xlabel(x_axis)
+        plt.ylabel('Frequency')
         plt.savefig(self.run_name + '_' + f'hist_{name}.png')
         plt.close()
 
@@ -171,6 +174,9 @@ def hist(self):
         np_bins = round(1 + math.log2(n) + math.log2(1 + abs(g) / std))
         if np_bins > num_of_bins:
             num_of_bins = np_bins
+
+    # Increase bin for finer results
+    num_of_bins = num_of_bins * 4
 
     x_axis = target_name_grid(self.dataset)
     plot_dict = {'predicted': self.predictions['pred_avg'],

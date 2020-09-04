@@ -252,6 +252,55 @@ def org_files(self, zip_only=False):
             shutil.rmtree(rmdir, ignore_errors=True)
 
 
+def __fix_ada_dictionary__(bayesDict):
+    """
+    If convert AdaBoost's "base_estimator" parameter into string
+    :param bayesDict:
+    :return:
+    """
+    for k, v in bayesDict.items():
+        if k == 'params':  # Param grid does not behave properly,
+            listDict = bayesDict[k]
+            new_params = []
+            for dictionary in listDict:
+                new_dictionary = {}
+                for label, item in dictionary.items():
+                    new_dictionary[label] = __clean_up_param_grid_item__(item)  # Cleanup each item in param_gird dict
+                new_params.append(new_dictionary)
+            bayesDict.pop(k, None)
+            bayesDict[k] = new_params
+        elif k == 'param_base_estimator':
+            estimator_list = bayesDict[k]
+            new_list = [str(i) for i in estimator_list]
+            bayesDict.pop(k, None)
+            bayesDict[k] = new_list
+    return bayesDict
+
+
+def __cv_results__(bayesDict):
+    """
+    Goal: Manipulate cv_results into something that Neo4j can ingest
+    :param bayesDict: dictionary from BayesSearchCV
+    :return:
+    """
+
+    cv_results = dict(bayesDict)  # Turned OrderedDict into normal dictionary
+    rank_score = cv_results['rank_test_score']
+    rank_score = [int(i) for i in rank_score]
+    cv_results.pop('rank_test_score', None)
+    cv_results['rank_test_score'] = rank_score  # Change data type that was causing a problem
+    cv_results.pop('param_kernel', None)  # Remove masked array
+    cv_results.pop('param_gamma', None)  # Remove masked array
+    params = cv_results['params']
+    new_params = []
+    cv_results.pop('params', None)
+    for values in params:
+        new_params.append(dict(values))
+    # cv_results.pop('params', None)
+    cv_results['params'] = new_params
+    return cv_results
+
+
 def compress_fingerprint(df):
     # Search for fingerprint columns
     fingerprint_columns = []

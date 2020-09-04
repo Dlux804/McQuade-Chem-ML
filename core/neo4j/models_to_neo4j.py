@@ -435,7 +435,7 @@ class ModelToNeo4j:
                         
                                 MERGE (algo:Algorithm {'{name: $algo_name, source: "sklearn"}'})
                                     MERGE (model)-[algo_rel:USES_ALGORITHM]->(algo)
-                                        SET algo_rel.{label} = {value}
+                                        SET algo_rel.{label} = "{value}"
                         
                                 """,
                                 parameters={'model_name': self.json_data['run_name'],

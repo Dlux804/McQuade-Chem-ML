@@ -20,13 +20,13 @@ def main():
 
     # list of all learning algorithms
     #    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
-    learner = ['knn']
+    # learner = ['knn']
 
     # list of available classification learning algorithms for reference/testing
     # learner = ['svm', 'knn', 'rf']
 
     # list of available regression learning algorithms for reference/testing
-    #    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
+    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
 
     # All data sets in dict
     # targets = None
@@ -51,18 +51,20 @@ def main():
     #    }
 
     # regression data sets for reference/testing
-    sets = {
-        'ESOL.csv': 'water-sol',
-        'Lipophilicity-ID.csv': 'exp',
-        'water-energy.csv': 'expt',
-        'logP14k.csv': 'Kow',
-        'jak2_pic50.csv': 'pIC50'
-    }
+    # sets = {
+    #     'ESOL.csv': 'water-sol',
+    #     'Lipophilicity-ID.csv': 'exp',
+    #     'water-energy.csv': 'expt',
+    #     'logP14k.csv': 'Kow',
+    #     'jak2_pic50.csv': 'pIC50'
+    # }
+
+    sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
-                 [4], [5]]  # Use this line to select specific featurizations
-        # feats = [[2]]
+        # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+        #          [4], [5]]  # Use this line to select specific featurizations
+        feats = [[0, 2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
@@ -86,7 +88,7 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=True, cv=3, opt_iter=25)
+                                        tune=True, cv=2, opt_iter=2)
                         print('Done.\n')
 
                     with cd('output'):
@@ -121,7 +123,7 @@ def single_model():
         # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=5, random=10)
         model1 = MlModel(algorithm='ada', dataset='water-energy.csv', target='expt', feat_meth=[0, 2],
-                         tune=False, cv=2, opt_iter=2)
+                         tune=True, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -139,7 +141,7 @@ def single_model():
         model1.store()
         model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j(dataset='water-energy.csv', target='expt'):
@@ -214,9 +216,9 @@ def output_dir_to_neo4j():
 
 if __name__ == "__main__":
     # main()
-    single_model()
+    # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()
-    # output_dir_to_neo4j()
+    output_dir_to_neo4j()
     # QsarToNeo4j('2012ECM185.zip')

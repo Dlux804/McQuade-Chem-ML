@@ -12,7 +12,7 @@ from time import time
 from tensorflow import keras
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tqdm import tqdm
-
+from core.storage.misc import __cv_results__, __fix_ada_dictionary__
 # monkey patch to fix skopt and sklearn.  Requires downgrade to sklearn 0.23
 from numpy.ma import MaskedArray
 import sklearn.utils.fixes
@@ -205,6 +205,10 @@ def hyperTune(self, epochs=50, n_jobs=6):
     # collect best parameters from tuning
     self.params = bayes.best_params_
     tune_score = bayes.best_score_
+
+    self.cv_results = __cv_results__(bayes.cv_results_)
+    if self.algorithm == 'ada':
+        self.cv_results = __fix_ada_dictionary__(self.cv_results)
 
     # update the regressor with best parameters
     self.get_regressor(call=False)

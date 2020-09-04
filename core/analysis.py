@@ -1,3 +1,4 @@
+import math
 import matplotlib.pyplot as plt
 from matplotlib import cm
 
@@ -7,6 +8,8 @@ from sklearn.metrics import mean_squared_error, r2_score, classification_report,
 from rdkit.Chem import PandasTools
 from sklearn.metrics import roc_curve
 from sklearn.metrics import precision_recall_curve
+
+from core.storage.dictionary import target_name_grid
 
 
 def impgraph(self):
@@ -63,12 +66,17 @@ def impgraph(self):
     self.varimp = varimp
 
 
-def pva_graph(self):
+def pva_graph(self, use_scaled=False):
     """
     Make Predicted vs. Actual graph with prediction uncertainty.
     Pass dataframe from multipredict function. Return a graph.
     """
-    pva = self.predictions
+    # Reuse function for scaled data
+    if use_scaled:
+        pva = self.scaled_predictions
+    else:
+        pva = self.predictions
+
     r2 = r2_score(pva['actual'], pva['pred_avg'])
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))
@@ -112,7 +120,10 @@ def pva_graph(self):
     # ax = plt.axes()
     plt.xlabel('True', fontsize=14)
     plt.ylabel('Predicted', fontsize=14)
-    plt.title(self.run_name + ' Predicted vs. Actual')
+    if use_scaled:
+        plt.title(self.run_name + f' Predicted vs. Actual (scaled)')
+    else:
+        plt.title(self.run_name + f' Predicted vs. Actual')
 
     plt.plot(lims, lims, 'k-', label='y=x')
     plt.plot([], [], ' ', label='R^2 = %.3f' % r2)
@@ -127,10 +138,54 @@ def pva_graph(self):
     fig.patch.set_facecolor('blue')  # Will change background color
     fig.patch.set_alpha(0.0)  # Makes background transparent
 
-    plt.savefig(self.run_name+'_' + 'PVA.png')
+    if use_scaled:
+        plt.savefig(self.run_name+'_' + f'PVA_scaled.png')
+    else:
+        plt.savefig(self.run_name + '_' + f'PVA.png')
+    plt.close()
     # plt.show()
     # self.pva_graph = plt
     # return plt
+
+
+def hist(self):
+
+    def __plot__(name, data, plot_name):
+        plt.style.use('bmh')
+        # plt.grid(b=None)  # Get rid of grid lines
+        plt.rcParams['axes.axisbelow'] = True  # Put grid lines behind bars of data
+        plt.hist(data, bins=num_of_bins, fill=True, edgecolor='black', linewidth=1.2)
+        plt.plot([], [], ' ', label=f'{plot_name}')
+        plt.title(f'Histogram of {plot_name}')
+        plt.xlabel(x_axis)
+        plt.ylabel('Frequency')
+        plt.savefig(self.run_name + '_' + f'hist_{name}.png')
+        plt.close()
+
+    # Use Doane's formula for number of bins https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width
+    # Want to make sure all hist data uses the same number of bins
+    num_of_bins = 0
+    doane_data = self.predictions[['actual', 'pred_avg']]
+    for column in doane_data.columns:
+        data = doane_data[column]
+        n = len(data)
+        std = data.std()
+        g = math.sqrt((6 * (n - 1)) / ((n + 1) * (n + 3)))
+        np_bins = round(1 + math.log2(n) + math.log2(1 + abs(g) / std))
+        if np_bins > num_of_bins:
+            num_of_bins = np_bins
+
+    # Increase bin for finer results
+    num_of_bins = num_of_bins * 4
+
+    x_axis = target_name_grid(self.dataset)
+    plot_dict = {'Predicted': self.predictions['pred_avg'],
+                 'Actual': self.predictions['actual'],
+                 'Predicted_Scaled': self.scaled_predictions['pred_avg'],
+                 'Actual_Scaled': self.scaled_predictions['actual']}
+    for name, data in plot_dict.items():
+        plot_name = " ".join(name.split('_'))
+        __plot__(name, data, plot_name)
 
 
 def plotter(x, y, filename=None, xlabel='', ylabel=''):

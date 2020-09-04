@@ -4,10 +4,21 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from rdkit import Chem
-from core.neo4j.fragments import canonical_smiles
 from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+
+
+def canonical_smiles(smiles_list):
+    """
+    Objective: Create list of canonical SMILES from SMILES
+    Intent: While the SMILES in dataset from moleculenet.ai are all canonical, it is always good to be safe. I don't
+            know if I should add in a way to detect irregular SMILES and remove the rows that contains them in the
+            dataframe. However, that process should be carried out at the start of the pipeline instead of at the end.
+    :param smiles_list:
+    :return:
+    """
+    return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
 
 
 def featurize(self, not_silent=True, retrieve_from_mysql=False):

@@ -16,7 +16,6 @@ from tqdm import tqdm
 # monkey patch to fix skopt and sklearn.  Requires downgrade to sklearn 0.23
 from numpy.ma import MaskedArray
 import sklearn.utils.fixes
-#
 sklearn.utils.fixes.MaskedArray = MaskedArray
 
 import skopt

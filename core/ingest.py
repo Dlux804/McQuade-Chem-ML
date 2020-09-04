@@ -19,13 +19,13 @@ def load_smiles(self, file, drop=True):
             pass
     # rename the column with SMILES to 'smiles'
     csv = csv.rename(columns={smiles_col.name: "smiles"})
-    if drop: # drop all extra columns
+    if drop:  # drop all extra columns
         csv = csv[['smiles', self.target_name]]
 
     return csv, smiles_col
 
 
-def resolveID(file,column):  # TODO Consider incorporation of this function in load_csv()
+def resolveID(file, column):  # TODO Consider incorporation of this function in load_csv()
     """ Resolves chemical ID using cripy package from NCI.
     Accepts csv file path and name (as string) and string of column header to be resolved.
     Returns dataframe with added column containing smiles."""

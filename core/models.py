@@ -10,8 +10,8 @@ from sqlalchemy.exc import OperationalError
 
 from core.ingest import load_smiles
 from core.name import name
-from core.neo4j import nodes, relationships
 from core.storage import MLMySqlConn
+from core.neo4j import ModelToNeo4j
 
 
 rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']
@@ -29,7 +29,7 @@ class MlModel:  # TODO update documentation here
     from core.regressors import get_regressor, hyperTune
     from core.grid import make_grid
     from core.train import train_reg, train_cls
-    from core.analysis import impgraph, pva_graph, classification_graphs
+    from core.analysis import impgraph, pva_graph, classification_graphs, hist
     from core.classifiers import get_classifier
 
     from core.features import featurize, data_split
@@ -122,22 +122,23 @@ class MlModel:  # TODO update documentation here
         # make predicted vs actual graph
         if self.task_type == 'regression':
             self.pva_graph()
+            self.pva_graph(use_scaled=True)  # Plot scaled pva data
+            self.hist()
 
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.classification_graphs()
 
-    def to_neo4j(self, port, username, password):
+    def to_neo4j(self, port="bolt://localhost:7687", username="neo4j", password="password"):
         # Create Neo4j graphs from pipeline
         t1 = default_timer()
         self.neo4j_params = {'port': port, 'username': username, 'password': password}  # Pass Neo4j Parameters
         Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Test connection to Neo4j
-        nodes(self)  # Create nodes
-        relationships(self)  # Create relationships
+        ModelToNeo4j(model=self, port=port, molecules_per_batch=5000, username=username, password=password)
         t2 = default_timer() - t1
         print(f"Time it takes to finish graphing {self.run_name}: {t2}sec")
 
-    def connect_mysql(self, user, password, host, database, initialize_data=False):
+    def connect_mysql(self, user, password, host, database, initialize_all_data=False):
         # Gather MySql Parameters
         self.mysql_params = {'user': user, 'password': password, 'host': host, 'database': database}
 
@@ -151,5 +152,5 @@ class MlModel:  # TODO update documentation here
 
         # Insert featurized data into MySql. This will only run once per dataset/feat combo,
         # even if initialize_data=True
-        if initialize_data:
-            conn.insert_data_mysql()
+        if initialize_all_data:
+            conn.insert_all_data_mysql()

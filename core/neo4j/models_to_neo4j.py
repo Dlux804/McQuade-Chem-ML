@@ -429,13 +429,24 @@ class ModelToNeo4j:
             if isinstance(value, str):
                 value = f"'{value}'"
             self.graph.evaluate(f"""
-            
+
                                 MATCH (model:MLModel {'{name: $model_name}'})
-                        
+
                                 MERGE (algo:Algorithm {'{name: $algo_name, source: "sklearn"}'})
-                                    MERGE (model)-[algo_rel:USES_ALGORITHM]->(algo)
-                                        SET algo_rel.{label} = "{value}"
-                        
+                                MERGE (model)-[algo_rel:USES_ALGORITHM]->(algo)
+                                    SET algo_rel.{label} = "{value}"
+
+                                """,
+                                parameters={'model_name': self.json_data['run_name'],
+                                            'algo_name': self.json_data['algorithm'],
+                                            }
+                                )
+        if len(self.params) == 0:
+            self.graph.evaluate("""
+                                MATCH (model:MLModel {name: $model_name})
+
+                                MERGE (algo:Algorithm {name: $algo_name, source: "sklearn"})
+                                MERGE (model)-[algo_rel:USES_ALGORITHM]->(algo)
                                 """,
                                 parameters={'model_name': self.json_data['run_name'],
                                             'algo_name': self.json_data['algorithm'],

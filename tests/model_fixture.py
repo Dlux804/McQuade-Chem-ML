@@ -92,7 +92,7 @@ def __run_all__(algorithm, data, exp, tuned, directory):
     model1.data_split(val=0.1)
     model1.reg()
     model1.run()
-    model1.analyze()
+    # model1.analyze()
     return model1
 
 

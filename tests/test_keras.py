@@ -18,3 +18,4 @@ def test_sklearn_tuned(__run_all__without_analyze):
     """"""
     # for algor in algorithm_list:
     model1 = __run_all__without_analyze
+

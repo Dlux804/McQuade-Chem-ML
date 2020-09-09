@@ -62,9 +62,9 @@ def main():
     sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
-        # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
-        #          [4], [5]]  # Use this line to select specific featurizations
-        feats = [[0, 2]]
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+                 [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
+        # feats = [[0, 2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
@@ -88,7 +88,7 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=True, cv=2, opt_iter=2)
+                                        tune=False, cv=2, opt_iter=2)
                         print('Done.\n')
 
                     with cd('output'):
@@ -104,7 +104,7 @@ def main():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-
+                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 

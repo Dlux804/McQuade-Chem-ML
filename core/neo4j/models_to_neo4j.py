@@ -12,7 +12,6 @@ from rdkit.Chem import FragmentCatalog, MolFromSmiles
 
 from core.storage.misc import __clean_up_param_grid_item__, NumpyEncoder
 from core.storage.dictionary import target_name_grid
-
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 
@@ -430,13 +429,24 @@ class ModelToNeo4j:
             if isinstance(value, str):
                 value = f"'{value}'"
             self.graph.evaluate(f"""
-            
+
                                 MATCH (model:MLModel {'{name: $model_name}'})
-                        
+
                                 MERGE (algo:Algorithm {'{name: $algo_name, source: "sklearn"}'})
-                                    MERGE (model)-[algo_rel:USES_ALGORITHM]->(algo)
-                                        SET algo_rel.{label} = "{value}"
-                        
+                                MERGE (model)-[algo_rel:USES_ALGORITHM]->(algo)
+                                    SET algo_rel.{label} = "{value}"
+
+                                """,
+                                parameters={'model_name': self.json_data['run_name'],
+                                            'algo_name': self.json_data['algorithm'],
+                                            }
+                                )
+        if len(self.params) == 0:
+            self.graph.evaluate("""
+                                MATCH (model:MLModel {name: $model_name})
+
+                                MERGE (algo:Algorithm {name: $algo_name, source: "sklearn"})
+                                MERGE (model)-[algo_rel:USES_ALGORITHM]->(algo)
                                 """,
                                 parameters={'model_name': self.json_data['run_name'],
                                             'algo_name': self.json_data['algorithm'],
@@ -462,7 +472,8 @@ class ModelToNeo4j:
                 MERGE (model)-[tuning_rel:USES_TUNING]->(tuning)
                     ON CREATE SET tuning_rel.cv = $cv, tuning_rel.opt_iter = $opt_iter, 
                                   tuning_rel.tune_time = $tune_time, tuning_rel.delta = $delta,
-                                  tuning_rel.n_best = $n_best 
+                                  tuning_rel.n_best = $n_best
+                    ON CREATE SET tuning_rel += $cv_results
                 
                 """,
                 parameters={'model_name': self.json_data['run_name'],
@@ -472,7 +483,9 @@ class ModelToNeo4j:
                             'opt_iter': self.json_data['opt_iter'],
                             'tune_time': self.json_data['tune_time'],
                             'n_best': self.json_data['cp_n_best'],
-                            'delta': self.json_data['cp_delta']
+                            'delta': self.json_data['cp_delta'],
+                            'cv_results': (self.json_data['cv_results'])
+
                             }
             )
 

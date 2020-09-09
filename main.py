@@ -62,9 +62,9 @@ def main():
     sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
-        # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
-        #          [4], [5]]  # Use this line to select specific featurizations
-        feats = [[0, 2]]
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+                 [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
+        # feats = [[0, 2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
@@ -104,7 +104,7 @@ def main():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-
+                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 
@@ -122,7 +122,7 @@ def single_model():
         # initiate model class with algorithm, dataset and target
         # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=5, random=10)
-        model1 = MlModel(algorithm='ada', dataset='water-energy.csv', target='expt', feat_meth=[0, 2],
+        model1 = MlModel(algorithm='nn', dataset='water-energy.csv', target='expt', feat_meth=[0],
                          tune=True, cv=2, opt_iter=2)
 
         print('done.')
@@ -216,9 +216,9 @@ def output_dir_to_neo4j():
 
 if __name__ == "__main__":
     # main()
-    # single_model()
+    single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()
-    output_dir_to_neo4j()
+    # output_dir_to_neo4j()
     # QsarToNeo4j('2012ECM185.zip')

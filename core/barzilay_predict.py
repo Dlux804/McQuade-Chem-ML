@@ -9,6 +9,7 @@ from chemprop.train import cross_validate, make_predictions
 from chemprop.utils import create_logger
 
 
+# TODO Adapt file to current chemprop
 class barzilayPredict:
     def cleanup_input(self):
         # cleanup input training data frame

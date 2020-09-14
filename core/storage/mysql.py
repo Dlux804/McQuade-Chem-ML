@@ -243,7 +243,7 @@ def featurize_from_mysql(self):
 
     for feat in self.feat_meth:
         if not mysql_conn.table_exist(dataset=self.dataset, feat_id=feat):
-            print(f"Dataset Feature Method combo [{self.dataset} and {feat}] not found. Creating database")
+            print(f"Dataset Feature Method combo [{self.dataset} and {feat}] not found. Creating table")
             mysql_conn.insert_dataset_feat_mysql(dataset=self.dataset, feat_id=feat)
 
     self.data = mysql_conn.retrieve_data(dataset=self.dataset, feat_meth=self.feat_meth)

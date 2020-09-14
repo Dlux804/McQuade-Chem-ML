@@ -31,7 +31,7 @@ class MlModel:  # TODO update documentation here
     from core.train import train_reg, train_cls
     from core.analysis import impgraph, pva_graph, classification_graphs, hist, plot_learning_curves
     from core.classifiers import get_classifier
-
+    from core.storage.util import original_param
     from core.features import featurize, data_split
     from core.storage import pickle_model, store, org_files, featurize_from_mysql, QsarDB_export
 
@@ -104,7 +104,8 @@ class MlModel:  # TODO update documentation here
         if self.tuned:  # Do hyperparameter tuning
             self.make_grid()
             self.hyperTune(n_jobs=8)
-
+        else:  # Return original parameter if not tuned
+            self.original_param()
         # Done tuning, time to fit and predict
         if self.task_type == 'regression':
             self.train_reg()

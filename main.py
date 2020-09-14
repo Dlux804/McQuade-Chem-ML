@@ -122,8 +122,8 @@ def single_model():
         # initiate model class with algorithm, dataset and target
         # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=5, random=10)
-        model1 = MlModel(algorithm='nn', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                         tune=True, cv=2, opt_iter=2)
+        model1 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
+                         tune=False, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)

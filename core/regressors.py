@@ -27,7 +27,7 @@ from skopt import callbacks
 # TODO: Add other tuning algorithms and create a variable that stores the algorithm's name
 
 
-def build_nn( n_hidden = 2, n_neuron = 50, learning_rate = 1e-3, in_shape=200, drop=0.1):
+def build_nn(n_hidden=2, n_neuron=50, learning_rate=1e-3, in_shape=200, drop=0.1):
     """
     Create neural network architecture and compile.  Accepts number of hiiden layers, number of neurons,
     learning rate, and input shape. Returns compiled model.

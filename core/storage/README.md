@@ -1,4 +1,4 @@
-# General Notes
+# Installing MySql
 The installation notes are designed for a machine running Ubuntu 20.04, but these
 instructions are likely to work on any linux box.
 

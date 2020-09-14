@@ -447,9 +447,11 @@ class ModelToNeo4j:
 
                                 MERGE (algo:Algorithm {name: $algo_name, source: "sklearn"})
                                 MERGE (model)-[algo_rel:USES_ALGORITHM]->(algo)
+                                    SET algo_rel += $original_param
                                 """,
                                 parameters={'model_name': self.json_data['run_name'],
                                             'algo_name': self.json_data['algorithm'],
+                                            'original_param': self.json_data['original_param']
                                             }
                                 )
 

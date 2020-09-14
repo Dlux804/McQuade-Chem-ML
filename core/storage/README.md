@@ -27,7 +27,7 @@ If that does not work, try:
     mysql -username root -password
 
 # Then create a user
-    mysql> CREATE USER 'username'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+    mysql> CREATE USER '<username>'@'localhost' IDENTIFIED WITH mysql_native_password BY '<password>';
 
 I used username = user and password = Lookout@10 
 
@@ -35,15 +35,15 @@ I used username = user and password = Lookout@10
 	
 # Then create a new database
 
-    mysql> CREATE DATABASE if not exists database_name;
+    mysql> CREATE DATABASE if not exists <database_name>;
 
 I used featurized_datasets as my database name.
 
 # Then give user permissions to modify tables and databases
 
-    GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' WITH GRANT OPTION;
+    GRANT ALL PRIVILEGES ON *.* TO '<username>'@'localhost' WITH GRANT OPTION;
     
-Note, that this will give the user root access, this can modified later if desired.
+Note, that this will give the user root access, this can be modified later if desired.
 
 Then flush the cache, this is just good practice.
 
@@ -66,11 +66,11 @@ Afterwards, you should use the credentials you used to setup your USER and DATAB
 [Note: you may get an error about timezones. Do not worry about this if you only plan to have this a local host. 
 If we ever plan to share this database, then we can worry about that later]
 
-But after this, you should have datagrip and mysql configure and ready to use with python
+But after this, you should have datagrip and mysql configured and ready to use with python
 
 Then go to main.py and run example_run_with_mysql_and_neo4j. 
 Be sure to pass in your creditials. I would recommend running it twice to see 
 that we do not need to featurize more than once
 
 Also, you can go to datagrip to see tables being added in. 
-Just refresh the database to see that data being insertted in. 
+Just refresh the database to see the data being insertted in. 

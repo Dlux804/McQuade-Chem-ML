@@ -29,7 +29,7 @@ class MlModel:  # TODO update documentation here
     from core.regressors import get_regressor, hyperTune
     from core.grid import make_grid
     from core.train import train_reg, train_cls
-    from core.analysis import impgraph, pva_graph, classification_graphs, hist
+    from core.analysis import impgraph, pva_graph, classification_graphs, hist, plot_learning_curves
     from core.classifiers import get_classifier
 
     from core.features import featurize, data_split
@@ -124,6 +124,7 @@ class MlModel:  # TODO update documentation here
             self.pva_graph()
             self.pva_graph(use_scaled=True)  # Plot scaled pva data
             self.hist()
+            self.plot_learning_curves()
 
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.classification_graphs()

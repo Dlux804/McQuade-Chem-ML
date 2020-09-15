@@ -65,7 +65,7 @@ def main():
     #     'jak2_pic50.csv': 'pIC50'
     # }
 
-    sets = {'water-energy.csv': 'expt'}
+    # sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
         feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
@@ -221,8 +221,8 @@ def output_dir_to_neo4j():
 
 
 if __name__ == "__main__":
-    # main()
-    single_model()
+    main()
+    # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()

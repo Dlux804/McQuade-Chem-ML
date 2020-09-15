@@ -23,10 +23,11 @@ def main():
     # learner = ['knn']
 
     # list of available classification learning algorithms for reference/testing
-    # learner = ['svm', 'knn', 'rf']
+    # learner = ['nn', 'gdb', 'rf']
+    learner = ['nn', 'rf', 'knn', 'svm', 'ada']
 
     # list of available regression learning algorithms for reference/testing
-    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
+    # learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
 
     # All data sets in dict
     # targets = None
@@ -51,20 +52,21 @@ def main():
     #    }
 
     # regression data sets for reference/testing
-    # sets = {
-    #     'ESOL.csv': 'water-sol',
-    #     'Lipophilicity-ID.csv': 'exp',
-    #     'water-energy.csv': 'expt',
-    #     'logP14k.csv': 'Kow',
-    #     'jak2_pic50.csv': 'pIC50'
-    # }
+    sets = {
+        'ESOL.csv': 'water-sol',
+        'Lipophilicity-ID.csv': 'exp',
+        'water-energy.csv': 'expt',
+        'logP14k.csv': 'Kow',
+        'jak2_pic50.csv': 'pIC50'
+    }
 
-    sets = {'water-energy.csv': 'expt'}
+    # sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
-                 [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
-        # feats = [[0, 2]]
+        # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+        #          [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
+        feats = [[4], [5], [3], [1]]
+        feats = [[0], [2], [0,2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
@@ -88,11 +90,14 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=True, cv=2, opt_iter=2)
+                                        tune=False, cv=10, opt_iter=50)
                         print('Done.\n')
 
                     with cd('output'):
-                        model.featurize()  # Featurize molecules
+                        model.connect_mysql(user='user', password='dolphin', host='localhost',
+                                             database='featurized_datasets',
+                                             initialize_all_data=False)
+                        model.featurize(retrieve_from_mysql=True)
                         val = 0.0
                         if alg == 'nn':
                             val = 0.1
@@ -149,7 +154,7 @@ def example_run_with_mysql_and_neo4j(dataset='water-energy.csv', target='expt'):
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0, 2],
+        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0],
                          tune=False, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
@@ -158,10 +163,10 @@ def example_run_with_mysql_and_neo4j(dataset='water-energy.csv', target='expt'):
         print()
 
     with cd('output'):  # Have files output to output
-        model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_datasets',
+        model3.connect_mysql(user='user', password='dolphin', host='localhost', database='featurized_datasets',
                              initialize_all_data=False)
         model3.featurize(retrieve_from_mysql=True)
-        model3.data_split(val=0.1)
+        model3.data_split(val=0.0)
         model3.reg()
         model3.run()
         # model3.analyze()
@@ -216,9 +221,9 @@ def output_dir_to_neo4j():
 
 if __name__ == "__main__":
     # main()
-    single_model()
+    # single_model()
     # example_load()
-    # example_run_with_mysql_and_neo4j()
+    example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()
     # output_dir_to_neo4j()
     # QsarToNeo4j('2012ECM185.zip')

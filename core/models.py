@@ -145,6 +145,7 @@ class MlModel:  # TODO update documentation here
 
         # Test connection
         try:
+            print('Establishing connection to SQL')
             conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
                                host=self.mysql_params['host'], database=self.mysql_params['database'])
         except OperationalError:

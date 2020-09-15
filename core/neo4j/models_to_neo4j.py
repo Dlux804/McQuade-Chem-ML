@@ -382,7 +382,7 @@ class ModelToNeo4j:
         
             MERGE (model:MLModel {name: $model_name})
             ON CREATE SET model.date = $date, model.feat_time = $feat_time, model.test_time = $test_time,
-                model.train_time = $train_time, model.seed = $seed
+                model.train_time = $train_time, model.seed = $seed, model.tuned = $tuned
 
                 MERGE (split:RandomSplit {run_name: $model_name})
                     ON CREATE SET split.train_percent = $train_percent, split.test_percent = $test_percent, 
@@ -395,24 +395,25 @@ class ModelToNeo4j:
                     MERGE (model)-[:USES_DATASET]->(dataset)
                     MERGE (split)-[:SPLITS_DATASET]->(dataset)
                     
-                MERGE (testset:TestSet {run_name: $model_name, name: 'TestSet'})
+                MERGE (testset:TestSet {run_name: $model_name, name: 'TestSet', size: $n_test})
                 MERGE (dataset)-[:SPLITS_INTO_TEST]->(testset)
                 MERGE (split)-[:MAKES_SPLIT]->(testset)
                 
-                MERGE (trainset:TrainSet {run_name: $model_name, name: 'TrainSet'})
+                MERGE (trainset:TrainSet {run_name: $model_name, name: 'TrainSet', size: $n_train})
                 MERGE (dataset)-[:SPLITS_INTO_TRAIN]->(trainset)
                 MERGE (split)-[:MAKES_SPLIT]->(trainset)
                 
-                MERGE (valset:ValSet {run_name: $model_name, name: 'ValSet'})
+                MERGE (valset:ValSet {run_name: $model_name, name: 'ValSet', size: $n_val})
                 MERGE (dataset)-[:SPLITS_INTO_VAL]->(valset)
                 MERGE (split)-[:MAKES_SPLIT]->(valset)
         
             """,
             parameters={'date': js['date'], 'feat_time': js['feat_time'], 'model_name': js['run_name'],
-                        'test_time': js['predictions_stats']['time_avg'],
+                        'tuned':js['tuned'], 'test_time': js['predictions_stats']['time_avg'],
                         'train_time': js['tune_time'], 'seed': js['random_seed'],
-                        'test_percent': js['test_percent'], 'train_percent': js['train_percent'],
-                        'val_percent': js['val_percent'],
+                        'test_percent': js['test_percent'],'n_test':js["n_test"],
+                        'train_percent': js['train_percent'], 'n_train': js['n_train'],
+                        'val_percent': js['val_percent'], 'n_val': js['n_val'],
                         'tune_algorithm_name': self.tune_algorithm_name,
 
                         'data': js['dataset'], 'dataset_size': js['n_tot'], 'target': js['target_name'],

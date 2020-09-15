@@ -71,14 +71,13 @@ def __data_split_model__(algorithm, data, exp, tuned, directory):
 
 
 @pytest.fixture(scope="function")
-def __run_all__(algorithm, data, exp, tuned, delete, directory):
+def __run_all__(algorithm, data, exp, tuned, directory):
     """
     Objective: Run all
     :param algorithm:
     :param data:
     :param exp:
     :param tuned:
-    :param delete:
     :param directory:
     :return:
     """
@@ -94,10 +93,31 @@ def __run_all__(algorithm, data, exp, tuned, delete, directory):
     model1.reg()
     model1.run()
     model1.analyze()
-    if delete:
-        delete_files(model1.run_name)
+    return model1
+
+
+@pytest.fixture(scope="function")
+def __run_all__without_analyze(algorithm, data, exp, tuned, directory):
+    """
+    Objective: Run all
+    :param algorithm:
+    :param data:
+    :param exp:
+    :param tuned:
+    :param directory:
+    :return:
+    """
+    if directory:
+        with misc.cd('dataFiles/testdata'):
+            model1 = models.MlModel(algorithm=algorithm, dataset=data, target=exp, tune=tuned, feat_meth=[0], cv=2,
+                                    opt_iter=2)
     else:
-        pass
+        model1 = models.MlModel(algorithm=algorithm, dataset=data, target=exp, tune=tuned, feat_meth=[0], cv=2,
+                                opt_iter=2)
+    model1.featurize()
+    model1.data_split(val=0.1)
+    model1.reg()
+    model1.run()
     return model1
 
 

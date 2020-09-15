@@ -17,4 +17,8 @@ def target_name_grid(dataset):
             'jak2_pic50.csv': 'pIC50',
             'Lipo-short.csv': 'logP'
         }
-    return grid[dataset]
+
+    if dataset in grid:
+        return grid[dataset]
+
+    return None

@@ -4,10 +4,21 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from rdkit import Chem
-from core.neo4j.fragments import canonical_smiles
 from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+
+
+def canonical_smiles(smiles_list):
+    """
+    Objective: Create list of canonical SMILES from SMILES
+    Intent: While the SMILES in dataset from moleculenet.ai are all canonical, it is always good to be safe. I don't
+            know if I should add in a way to detect irregular SMILES and remove the rows that contains them in the
+            dataframe. However, that process should be carried out at the start of the pipeline instead of at the end.
+    :param smiles_list:
+    :return:
+    """
+    return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
 
 
 def featurize(self, not_silent=True, retrieve_from_mysql=False):
@@ -24,8 +35,8 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
         df['smiles'] = canonical_smiles(list(df['smiles']))  # Turn SMILES into CANONICAL SMILES
 
     # available featurization options
-    feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
-                 'morganchiral3counts', 'atompaircounts']
+    feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts', 'morganchiral3counts',
+                 'atompaircounts']
 
     if feat_meth is None:  # ask for features
         print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
@@ -172,17 +183,15 @@ def data_split(self, test=0.2, val=0, random=None):
             random_state=self.random_seed)
         # Define smiles that go with the different sets
         # Use temp dummy variables for splitting molecules up the same way
-        temp_train_molecules, self.val_molecules, temp_train_target, temp_val_target = train_test_split(
+        self.train_molecules, self.val_molecules, temp_train_target, temp_val_target = train_test_split(
             self.train_molecules,
             temp_train_target,
             test_size=b,
             random_state=self.random_seed)
         # scale the validation features too
         self.val_features = scaler.transform(self.val_features)
-
         self.n_val = self.val_features.shape[0]
         pval = self.n_val / self.n_tot * 100
-
     else:
         pval = 0
 

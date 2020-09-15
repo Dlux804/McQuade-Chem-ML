@@ -6,10 +6,13 @@ import pandas as pd
 from timeit import default_timer
 
 from core import MlModel, get_classification_targets, Get_Task_Type_1
-from core.storage import cd, pickle_model, unpickle_model
+from core.storage import cd, pickle_model, unpickle_model, QsarToNeo4j
+
+from core.neo4j import ModelToNeo4j
 
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
+
 
 def main():
     os.chdir(ROOT_DIR)  # Start in root directory
@@ -48,20 +51,26 @@ def main():
     # classification data sets for reference/testing
     # sets = {
     #     'BBBP.csv': targets,
-        # 'sider.csv': targets,
-        # 'clintox.csv': targets,
-        # 'bace.csv': targets,
-#    }
+    # 'sider.csv': targets,
+    # 'clintox.csv': targets,
+    # 'bace.csv': targets,
+    #    }
 
     # regression data sets for reference/testing
     # sets = {
-    #     'ESOL.csv': 'water-sol'
+    #     'ESOL.csv': 'water-sol',
+    #     'Lipophilicity-ID.csv': 'exp',
+    #     'water-energy.csv': 'expt',
+    #     'logP14k.csv': 'Kow',
+    #     'jak2_pic50.csv': 'pIC50'
     # }
 
+    sets = {'water-energy.csv': 'expt'}
+
     for alg in learner:  # loop over all learning algorithms
-        feats = [[0], [1], [2], [3], [4], [5], [6], [0, 2], [0, 3],
-                 [0, 4], [0, 5], [0, 6]]  # Use this line to select specific featurizations
-        # feats = [[2]]
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+                 [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
+        # feats = [[0, 2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
@@ -85,11 +94,10 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=tune, cv=5, opt_iter=100)
+                                        tune=tune, cv=2, opt_iter=2)
                         print('Done.\n')
 
                     with cd('output'):
-                        # Runs classification model
                         model.featurize()  # Featurize molecules
                         val = 0.0
                         if alg == 'nn':
@@ -118,10 +126,11 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = MlModel(algorithm='svm', dataset='ESOL.csv', target='water-sol', feat_meth=[2],
-                         tune=True, cv=5, opt_iter=100)
-        # model1 = MlModel(algorithm='svm', dataset='Lipo-short.csv', target='exp', feat_meth=[2],
-        #                  tune=True, cv=2, opt_iter=2)
+        # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
+        #                  tune=False, cv=2, opt_iter=5, random=10)
+        model1 = MlModel(algorithm='nn', dataset='water-energy.csv', target='expt', feat_meth=[0],
+                         tune=True, cv=2, opt_iter=2)
+
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)
@@ -129,7 +138,7 @@ def single_model():
         print()
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split()
+        model1.data_split(val=0.1)
         model1.reg()
         model1.run()
         model1.analyze()
@@ -141,13 +150,13 @@ def single_model():
         model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
-def example_run_with_mysql_and_neo4j(dataset, target):
+def example_run_with_mysql_and_neo4j(dataset='water-energy.csv', target='expt'):
     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0],
-                                tune=True, cv=2, opt_iter=2)
+        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0, 2],
+                         tune=False, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
         print('Featurization:', model3.feat_meth)
@@ -155,13 +164,13 @@ def example_run_with_mysql_and_neo4j(dataset, target):
         print()
 
     with cd('output'):  # Have files output to output
-        # model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_databases',
-        #                      initialize_data=False)
-        model3.featurize(retrieve_from_mysql=False)
+        model3.connect_mysql(user='user', password='Lookout@10', host='localhost', database='featurized_datasets',
+                             initialize_all_data=False)
+        model3.featurize(retrieve_from_mysql=True)
         model3.data_split(val=0.1)
         model3.reg()
         model3.run()
-        model3.analyze()
+        # model3.analyze()
         # if model3.algorithm != 'nn':  # issues pickling NN models
         #     model3.pickle_model()
 
@@ -194,29 +203,28 @@ def example_load():
     rmme = np.sqrt(mean_squared_error(pva['actual'], pva['predicted']))
 
 
-def time_needed():
+def Qsar_import_examples():
+    for directory in os.listdir('Qsar_examples'):
+        directory = 'Qsar_examples/' + directory
+        print(directory)
+        QsarToNeo4j(directory, zipped=True)
+        print(f'Passed!! {directory}')
 
-    datasets = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
-                'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50'}
-    datasets = {'water-energy.csv': 'expt'}
-    time_df = pd.DataFrame(columns={'Loop', 'Dataset', 'Time Needed'})
 
-    for i in range(2):
-        time_dict = {'Loop': None, 'Dataset': None, 'Time Needed': None}
-        for dataset, target in datasets.items():
-            time_dict['Loop'] = str(i)
-            time_dict['Dataset'] = dataset
-            time_needed_for_run = example_run_with_mysql_and_neo4j(dataset, target)
-            time_dict['Time Needed'] = time_needed_for_run
-            time_df = time_df.append(time_dict, ignore_index=True)
-            time_df.to_csv('Time.csv')
+def output_dir_to_neo4j():
+    head_dir = 'output'
+    for directory in os.listdir(head_dir):
+        directory = head_dir + '/' + directory
+        print(directory)
+        ModelToNeo4j(zipped_out_dir=directory, molecules_per_batch=1000, port="bolt://localhost:7687",
+                     username="neo4j", password="password")
 
 
 if __name__ == "__main__":
-    main()
-    # single_model()
-
+    # main()
+    single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
-    # time_needed()
-    # output_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+    # Qsar_import_examples()
+    # output_dir_to_neo4j()
+    # QsarToNeo4j('2012ECM185.zip')

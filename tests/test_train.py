@@ -9,7 +9,7 @@ from main import ROOT_DIR
 import os
 # change working directory to
 os.chdir(ROOT_DIR)
-algorithm_list = ['ada', 'svr', 'rf', 'gdb', 'mlp', 'nn']
+algorithm_list = ['ada', 'svm', 'rf', 'gdb', 'mlp', 'nn']
 
 
 @pytest.mark.parametrize('algorithm', algorithm_list)

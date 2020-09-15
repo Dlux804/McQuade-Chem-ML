@@ -1,19 +1,22 @@
 import numpy as np
+from numpy.ma import MaskedArray
+from sklearn import tree
+import sklearn.utils.fixes
+from skopt.space import Real, Integer, Categorical, Space
+
+# Hidden imports?
 # from sklearn.model_selection import RandomizedSearchCV
 # from sklearn.ensemble import GradientBoostingRegressor
 # from sklearn.model_selection import train_test_split
 # from sklearn.svm import SVR
 # from sklearn.ensemble import RandomForestRegressor
 # from sklearn.metrics import mean_squared_error, r2_score
-from sklearn import tree
 # from sklearn.ensemble import AdaBoostRegressor
 # from sklearn.neural_network import MLPRegressor
 # from sklearn.neighbors import KNeighborsRegressor
-from numpy.ma import MaskedArray
-import sklearn.utils.fixes
-#
+
+
 sklearn.utils.fixes.MaskedArray = MaskedArray
-from skopt.space import Real, Integer, Categorical, Space
 
 # the hyper parameter grid needs to be a bit differetn for skopt
 # See https://scikit-optimize.github.io/notebooks/hyperparameter-optimization.html for some help

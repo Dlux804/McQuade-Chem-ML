@@ -1,3 +1,4 @@
+import math
 import matplotlib.pyplot as plt
 from matplotlib import cm
 
@@ -8,6 +9,8 @@ from rdkit.Chem import PandasTools
 from sklearn.metrics import roc_curve
 from sklearn.metrics import precision_recall_curve
 
+from core.storage.dictionary import target_name_grid
+from sklearn.model_selection import learning_curve
 
 def impgraph(self):
     """
@@ -63,12 +66,17 @@ def impgraph(self):
     self.varimp = varimp
 
 
-def pva_graph(self):
+def pva_graph(self, use_scaled=False):
     """
     Make Predicted vs. Actual graph with prediction uncertainty.
     Pass dataframe from multipredict function. Return a graph.
     """
-    pva = self.predictions
+    # Reuse function for scaled data
+    if use_scaled:
+        pva = self.scaled_predictions
+    else:
+        pva = self.predictions
+
     r2 = r2_score(pva['actual'], pva['pred_avg'])
     mse = mean_squared_error(pva['actual'], pva['pred_avg'])
     rmse = np.sqrt(mean_squared_error(pva['actual'], pva['pred_avg']))
@@ -112,7 +120,10 @@ def pva_graph(self):
     # ax = plt.axes()
     plt.xlabel('True', fontsize=14)
     plt.ylabel('Predicted', fontsize=14)
-    plt.title(self.run_name + ' Predicted vs. Actual')
+    if use_scaled:
+        plt.title(self.run_name + f' Predicted vs. Actual (scaled)')
+    else:
+        plt.title(self.run_name + f' Predicted vs. Actual')
 
     plt.plot(lims, lims, 'k-', label='y=x')
     plt.plot([], [], ' ', label='R^2 = %.3f' % r2)
@@ -127,10 +138,123 @@ def pva_graph(self):
     fig.patch.set_facecolor('blue')  # Will change background color
     fig.patch.set_alpha(0.0)  # Makes background transparent
 
-    plt.savefig(self.run_name+'_' + 'PVA.png')
+    if use_scaled:
+        plt.savefig(self.run_name+'_' + f'PVA_scaled.png')
+    else:
+        plt.savefig(self.run_name + '_' + f'PVA.png')
+    plt.close()
     # plt.show()
     # self.pva_graph = plt
     # return plt
+
+
+def hist(self):
+
+    def __plot__(name, data, plot_name):
+        plt.style.use('bmh')
+        # plt.grid(b=None)  # Get rid of grid lines
+        plt.rcParams['axes.axisbelow'] = True  # Put grid lines behind bars of data
+        plt.hist(data, bins=num_of_bins, fill=True, edgecolor='black', linewidth=1.2)
+        plt.plot([], [], ' ', label=f'{plot_name}')
+        plt.title(f'Histogram of {plot_name}')
+        plt.xlabel(x_axis)
+        plt.ylabel('Frequency')
+        plt.savefig(self.run_name + '_' + f'hist_{name}.png')
+        plt.close()
+
+    # Use Doane's formula for number of bins https://en.wikipedia.org/wiki/Histogram#Number_of_bins_and_width
+    # Want to make sure all hist data uses the same number of bins
+    num_of_bins = 0
+    doane_data = self.predictions[['actual', 'pred_avg']]
+    for column in doane_data.columns:
+        data = doane_data[column]
+        n = len(data)
+        std = data.std()
+        g = math.sqrt((6 * (n - 1)) / ((n + 1) * (n + 3)))
+        np_bins = round(1 + math.log2(n) + math.log2(1 + abs(g) / std))
+        if np_bins > num_of_bins:
+            num_of_bins = np_bins
+
+    # Increase bin for finer results
+    num_of_bins = num_of_bins * 4
+
+    x_axis = target_name_grid(self.dataset)
+    plot_dict = {'Predicted': self.predictions['pred_avg'],
+                 'Actual': self.predictions['actual'],
+                 'Predicted_Scaled': self.scaled_predictions['pred_avg'],
+                 'Actual_Scaled': self.scaled_predictions['actual']}
+    for name, data in plot_dict.items():
+        plot_name = " ".join(name.split('_'))
+        __plot__(name, data, plot_name)
+
+
+def plot_learning_curves(self):
+    # Set the style
+    plt.style.use('bmh')
+    fig, axes = plt.subplots(1, 3, figsize=(20, 5))
+    axes[0].set_xlabel("Training Size")
+    axes[0].set_ylabel("MSE")
+    axes[0].set_title("Learning curves of %s" % self.run_name)
+    train_sizes, train_scores, test_scores, fit_times, _ = \
+                                                        learning_curve(estimator=self.estimator, X=self.train_features,
+                                                                       y=self.train_target, cv=5,
+                                                                       scoring='neg_mean_squared_error',
+                                                                       train_sizes=np.linspace(.1, 1.0, 5),
+                                                                       return_times=True)
+    train_scores_mean = -np.mean(train_scores, axis=1)
+    train_scores_std = -np.std(train_scores, axis=1)
+    test_scores_mean = -np.mean(test_scores, axis=1)
+    test_scores_std = -np.std(test_scores, axis=1)
+    fit_times_mean = np.mean(fit_times, axis=1)
+    fit_times_std = np.std(fit_times, axis=1)
+
+    # Plot learning curve
+    axes[0].grid(b=True)
+    axes[0].fill_between(train_sizes, train_scores_mean - train_scores_std,
+                         train_scores_mean + train_scores_std, alpha=0.1,
+                         color="r")
+    axes[0].fill_between(train_sizes, test_scores_mean - test_scores_std,
+                         test_scores_mean + test_scores_std, alpha=0.1,
+                         color="g")
+    axes[0].plot(train_sizes, train_scores_mean, 'o-', color="r",
+                 label="Training score")
+    axes[0].plot(train_sizes, test_scores_mean, 'o-', color="g",
+                 label="Cross-validation score")
+
+    xlim = [np.min([axes[0].get_xlim()]),
+            np.max([axes[0].get_xlim()])
+            ]
+    ylim = [np.min([axes[0].get_ylim()]),
+            np.max([axes[0].get_ylim()])
+            ]
+    axes[0].set_ylim(ylim)
+    axes[0].set_xlim(xlim)
+    axes[0].legend(loc="best", prop={'size': 13}, facecolor='w', edgecolor='k', shadow=True)
+
+    # Plot n_samples vs fit_times
+
+    axes[1].grid(b=True)
+    axes[1].plot(train_sizes, fit_times_mean, 'o-')
+    axes[1].fill_between(train_sizes, fit_times_mean - fit_times_std,
+                         fit_times_mean + fit_times_std, alpha=0.1)
+    axes[1].set_xlabel("Training Size")
+    axes[1].set_ylabel("fit_times (sec)")
+    axes[1].set_title("Scalability of %s" % self.run_name)
+
+    # Plot fit_time vs score
+    axes[2].grid(b=True)
+    axes[2].plot(fit_times_mean, test_scores_mean, 'o-')
+    axes[2].fill_between(fit_times_mean, test_scores_mean - test_scores_std,
+                         test_scores_mean + test_scores_std, alpha=0.1)
+    axes[2].set_xlabel("fit_times (sec)")
+    axes[2].set_ylabel("MSE")
+    axes[2].set_title("Performance of %s" % self.run_name)
+
+    fig.patch.set_facecolor('blue')  # Will change background color
+    fig.patch.set_alpha(0.0)  # Makes background transparent
+    fig.savefig(self.run_name + '_learning_curve.png')
+    plt.clf()
+    plt.close(fig)
 
 
 def plotter(x, y, filename=None, xlabel='', ylabel=''):

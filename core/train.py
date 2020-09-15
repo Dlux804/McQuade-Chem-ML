@@ -29,6 +29,7 @@ def train_reg(self,n=5):
     pva_multi = pd.DataFrame([])
     pva_multi['smiles'] = self.test_molecules  # Save smiles to predictions
     pva_multi['actual'] = self.test_target
+
     for i in tqdm(range(0, n), desc="Model Replication\n"):  # run model n times
         start_time = time()
 
@@ -55,8 +56,41 @@ def train_reg(self,n=5):
         sleep(0.25)  # so progress bar can update
     print('Done after {:.1f} seconds.'.format(t.sum()))
 
-    pva_multi['pred_avg'] = pva.mean(axis=1)
-    pva_multi['pred_std'] = pva.std(axis=1)
+    # Store predicted columns and calculate predicted_average and predicted_std
+    predicted_columns = pva_multi.columns.difference(['smiles', 'actual'])
+
+    # Holding variables for scaled data
+    scaled_r2 = np.empty(n)
+    scaled_mse = np.empty(n)
+    scaled_rmse = np.empty(n)
+
+    # Drop smiles (and save them) then calculate max/min values of entire predicted dataframe
+    smiles = pva_multi['smiles']
+    pva_multi_scaled = pva_multi.drop('smiles', axis=1)
+    data_max = max(pva_multi_scaled.max())  # Find abs min/max of predicted data
+    data_min = min(pva_multi_scaled.min())
+
+    # Logic to scale the predicted data, using min/max scaling
+    pva_multi_scaled = (pva_multi_scaled - data_min) / (data_max - data_min)
+
+    # Calculate r2, rmse, mse or for each pva columns
+    for i, predicted_column in enumerate(predicted_columns):
+        scaled_r2[i] = r2_score(pva_multi_scaled['actual'], pva_multi_scaled[predicted_column])
+        scaled_mse[i] = mean_squared_error(pva_multi_scaled['actual'], pva_multi_scaled[predicted_column])
+        scaled_rmse[i] = np.sqrt(scaled_mse[i])
+
+    # Tack on smiles
+    pva_multi_scaled['smiles'] = smiles
+
+    # Will gather MSE, RMSE, and STD for each molecule in the predictions and scaled_predictions csv files
+    def __gather_column_stats__(pva_df):
+        pva_df['pred_avg'] = pva_df[predicted_columns].mean(axis=1)
+        pva_df['pred_std'] = pva_df[predicted_columns].std(axis=1)
+        pva_df['pred_average_error'] = abs(pva_df['actual'] - pva_df['pred_avg'])
+        return pva_df
+
+    pva_multi_scaled = __gather_column_stats__(pva_multi_scaled)
+    pva_multi = __gather_column_stats__(pva_multi)
 
     stats = {
         'r2_raw': r2,
@@ -72,8 +106,24 @@ def train_reg(self,n=5):
         'time_avg': t.mean(),
         'time_std': t.std()
     }
+
+    scaled_stats = {
+        'r2_raw_scaled': scaled_r2,
+        'r2_avg_scaled': scaled_r2.mean(),
+        'r2_std_scaled': scaled_r2.std(),
+        'mse_raw_scaled': scaled_mse,
+        'mse_avg_scaled': scaled_mse.mean(),
+        'mse_std_scaled': scaled_mse.std(),
+        'rmse_raw_scaled': scaled_rmse,
+        'rmse_avg_scaled': scaled_rmse.mean(),
+        'rmse_std_scaled': scaled_rmse.std(),
+    }
+
     self.predictions = pva_multi
     self.predictions_stats = stats
+
+    self.scaled_predictions = pva_multi_scaled
+    self.scaled_predictions_stats = scaled_stats
 
     print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])
     print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])

@@ -377,7 +377,7 @@ class ModelToNeo4j:
 
         js = self.json_data
         if self.tune_algorithm_name is None:
-            tune_time = js['tune_time'] = 0
+            js['tune_time'] = 0
         self.graph.evaluate(
             """
 
@@ -408,7 +408,7 @@ class ModelToNeo4j:
             """,
             parameters={'date': js['date'], 'feat_time': js['feat_time'], 'model_name': js['run_name'],
                         'tuned': js['tuned'], 'train_time': sum(js['predictions_stats']['time_raw']),
-                        'tune_time': tune_time, 'seed': js['random_seed'],
+                        'tune_time': js['tune_time'], 'seed': js['random_seed'],
                         'test_percent': js['test_percent'], 'n_test':js["n_test"],
                         'train_percent': js['train_percent'], 'n_train': js['n_train'],
                         'val_percent': js['val_percent'], 'tune_algorithm_name': self.tune_algorithm_name,
@@ -418,7 +418,7 @@ class ModelToNeo4j:
 
                         'features': js['feat_meth'],
                         'feature_methods': js['feat_method_name'],
-                        'total_learning_time': sum(js['predictions_stats']['time_raw']) + tune_time + js['feat_time']
+                        'total_learning_time': sum(js['predictions_stats']['time_raw']) + js['tune_time'] + js['feat_time']
                         }
         )
         if js['val_percent'] != 0.0:

@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-def canonical_smiles(smiles_list):
+def canonical_smiles(df):
     """
     Objective: Create list of canonical SMILES from SMILES
     Intent: While the SMILES in dataset from moleculenet.ai are all canonical, it is always good to be safe. I don't
@@ -18,7 +18,19 @@ def canonical_smiles(smiles_list):
     :param smiles_list:
     :return:
     """
-    return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
+
+    smiles = df['smiles']
+    con_smiles = []
+    for smile in smiles:
+        mol = Chem.MolFromSmiles(smile)
+        if mol is not None:
+            con_smiles.append(Chem.MolToSmiles(mol))
+        else:
+            con_smiles.append('bad_smiles')
+    df['smiles'] = con_smiles
+    df = df.loc[df['smiles'] != 'bad_smiles']
+
+    return df
 
 
 def featurize(self, not_silent=True, retrieve_from_mysql=False):
@@ -31,7 +43,7 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     feat_meth = self.feat_meth
     df = self.data
-    df['smiles'] = canonical_smiles(list(df['smiles']))  # Turn SMILES into CANONICAL SMILES
+    df = canonical_smiles(df)  # Turn SMILES into CANONICAL SMILES
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts', 'morganchiral3counts',
                  'atompaircounts']

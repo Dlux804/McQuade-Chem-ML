@@ -122,8 +122,8 @@ def single_model():
         # initiate model class with algorithm, dataset and target
         # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=5, random=10)
-        model1 = MlModel(algorithm='nn', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                         tune=True, cv=2, opt_iter=2)
+        model1 = MlModel(algorithm='knn', dataset='clintox.csv', target=['FDA_APPROVED', 'CT_TOX'], feat_meth=[0],
+                         tune=False, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -141,7 +141,7 @@ def single_model():
         model1.store()
         model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j(dataset='logP14k.csv', target='Kow'):
@@ -216,9 +216,9 @@ def output_dir_to_neo4j():
 
 if __name__ == "__main__":
     # main()
-    single_model()
+    # single_model()
     # example_load()
-    example_run_with_mysql_and_neo4j()
+    # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()
-    # output_dir_to_neo4j()
+    output_dir_to_neo4j()
     # QsarToNeo4j('2012ECM185.zip')

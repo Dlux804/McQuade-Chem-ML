@@ -164,6 +164,11 @@ def store(self):
         if isinstance(v, np.ndarray):  # Do not store numpy arrays in attributes.json
             objs.append(k)
 
+        if k == 'predictions' and isinstance(v, dict):
+            for label, predictions_csv in v.items():
+                predictions_csv.to_csv(self.run_name + f"_{label}_{k}.csv")
+            objs.append(k)
+
         if k == 'param_grid' or k == 'params':  # Param grid does not behave properly,
             new_param_grid_dict = {}
             for label, item in d[k].items():

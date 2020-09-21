@@ -33,7 +33,8 @@ def get_param(algorithm):
         "ada": ['base_estimator', 'learning_rate', 'n_estimators'],
         "svm": ['kernel', 'C', 'gamma', 'epsilon', 'degree'],
         "mlp": ['activation', 'solver', 'alpha', 'learning_rate'],
-        "keras": ['n_hidden', 'n_neuron', 'learning_rate', 'drop']
+        "nn": ['n_hidden', 'n_neuron', 'learning_rate', 'drop'],
+        "cnn": ['n_hidden', 'n_neuron', 'learning_rate', 'drop']
     }
     return param_dict[algorithm]
 

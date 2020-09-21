@@ -62,9 +62,9 @@ def main():
     sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
-                 [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
-        # feats = [[0, 2]]
+        # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+        #          [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
+        feats = [[0, 2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
@@ -88,7 +88,7 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=True, cv=2, opt_iter=2)
+                                        tune=False, cv=2, opt_iter=2)
                         print('Done.\n')
 
                     with cd('output'):
@@ -132,11 +132,14 @@ def single_model():
         print()
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split(val=0.1)
+        if model1.algorithm in ['cnn', 'nn']:
+            model1.data_split(val=0.1)
+        else:
+            model1.data_split()
         model1.reg()
         model1.run()
         model1.analyze()
-        if model1.algorithm != 'nn':  # issues pickling NN models
+        if model1.algorithm not in ['cnn', 'nn']:  # issues pickling NN models
             model1.pickle_model()
         model1.store()
         model1.org_files(zip_only=True)

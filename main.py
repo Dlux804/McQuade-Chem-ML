@@ -120,7 +120,7 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = MlModel(algorithm='rf', dataset='sider.csv', target=get_classification_targets(data='sider.csv'), feat_meth=[0],
+        model1 = MlModel(algorithm='rf', dataset='BBBP.csv', target=get_classification_targets(data='BBBP.csv'), feat_meth=[0],
                          tune=False, cv=2, opt_iter=5, random=10)
         # model1 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=2)

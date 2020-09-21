@@ -22,7 +22,7 @@ def test_store(__model_object__):
     delete_files(model1.run_name)
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', False, True)])
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', True, True)])
 def test_pickle(__run_all__):
     """"""
     model1 = __run_all__

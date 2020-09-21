@@ -220,7 +220,7 @@ def hyperTune(self, epochs=50, n_jobs=6):
     # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
     # TODO try different scaling with delta
     # self.cp_delta = 0.05
-    self.cp_delta = (0.08 - min(self.train_target.min()))/(max(self.train_target.max()) - min(self.train_target.min()))  # Min max scaling
+    self.cp_delta = float((0.08 - min(self.train_target.min()))/(max(self.train_target.max()) - min(self.train_target.min())))  # Min max scaling
     print("cp_delta is : ", self.cp_delta)
     # self.cp_delta = delta_std * (self.train_target.max() - self.train_target.min()) + self.train_target.min()
     self.cp_n_best = 5

@@ -13,7 +13,7 @@ def original_param(self):
     """
     param_dict = self.estimator.get_params()  # sklearn algorithms have a get_params() method that return their params
     new_param_dict = {}
-    if self.algorithm == 'nn':  # If nn
+    if self.algorithm in ['nn', 'cnn']:  # If nn
         # Remove build_fn value. It returns a class object which is not what we want
         param_dict.pop('build_fn', None)
         # Update variable with NN default parameter stored in dictionary.py and defined in regressors.py

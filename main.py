@@ -120,10 +120,10 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
-        #                  tune=False, cv=2, opt_iter=5, random=10)
-        model1 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                         tune=False, cv=2, opt_iter=2)
+        model1 = MlModel(algorithm='rf', dataset='sider.csv', target=get_classification_targets(data='sider.csv'), feat_meth=[0],
+                         tune=False, cv=2, opt_iter=5, random=10)
+        # model1 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
+        #                  tune=False, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -144,7 +144,7 @@ def single_model():
         model1.store()
         model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j(dataset='water-energy.csv', target='expt'):

@@ -26,7 +26,7 @@ class MlModel:  # TODO update documentation here
     """
     Class to set up and run machine learning algorithm.
     """
-    from core.regressors import get_regressor, hyperTune
+    from core.regressors import get_regressor, hyperTune, build_cnn
     from core.grid import make_grid
     from core.train import train_reg, train_cls
     from core.analysis import impgraph, pva_graph, classification_graphs, hist, plot_learning_curves

@@ -254,7 +254,8 @@ def keras_paramgrid():
         'n_hidden': Integer(1, 10),
         'n_neuron': Integer(50, 300),
         'learning_rate': Real(0.0001, 0.1, 'log-uniform'),
-        'drop': Real(0.1, 0.8)
+        'drop': Real(0.1, 0.5)
+
         }
     return bayes_grid
 
@@ -268,7 +269,8 @@ def make_grid(self):
         'gdb': gdb_paramgrid,
         'mlp': mlp_paramgrid,
         'knn': knn_paramgrid,
-        'nn': keras_paramgrid
+        'nn': keras_paramgrid,
+        'cnn': keras_paramgrid
     }
     self.param_grid = grids[self.algorithm]()
     # return grids[method]()

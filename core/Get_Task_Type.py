@@ -8,7 +8,7 @@ or the combination should be skipped.
 This function also allows for the task type to be returned, so that it can be printed in main.py.
 """
 def Get_Task_Type_1(data, alg):
-    if data in ['sider.csv', 'clintox.csv'] and alg in ['svm', 'linearSVC', 'ada', 'gdb']:  # SVC, ada, and gdb are not compatible with multi-label classification.
+    if data in ['sider.csv', 'clintox.csv'] and alg in ['svm', 'ada', 'gdb']:  # SVC, ada, and gdb are not compatible with multi-label classification.
         checker = 0
 
         # These classification data sets are not compatible with these regression models
@@ -16,10 +16,10 @@ def Get_Task_Type_1(data, alg):
         checker = 0
 
         # These regression data sets are not compatible with these classification models.
-    elif data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv'] and alg in ['linearSVC']:
+    elif data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv'] and alg in []:
         checker = 0
 
-    else: # Checker = 1 when there are no compatibility
+    else: # Checker = 1 when there are no compatibility issues
         checker = 1
 
     # The following if statements determine the task type based on the data set being used.
@@ -34,10 +34,6 @@ def Get_Task_Type_1(data, alg):
         task_type = 'Regression'
 
 
-    # The following is here as hyper-parameter tuning for support vector classifier does not currently work properly.
-    if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv'] and alg in ['svm', 'linearSVC', 'ada']:
-        tune = False
-    else:
-        tune = True
 
-    return checker, task_type, tune
+
+    return checker, task_type

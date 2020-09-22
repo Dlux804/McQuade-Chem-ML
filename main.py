@@ -19,12 +19,12 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-   # learner = ['linearSVC', 'svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+   # learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
     # learner = ['rf', 'ada', 'gdb', 'nn']
     learner = ['gdb']
 
     # list of available classification learning algorithms for reference/testing
-   # learner = ['linearSVC', 'svm', 'knn', 'rf', 'ada', 'gdb']
+   # learner = ['svm', 'knn', 'rf', 'ada', 'gdb']
 
     # list of available regression learning algorithms for reference/testing
 #    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
@@ -79,7 +79,7 @@ def main():
                     target = get_classification_targets(data)
 
                 # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
-                checker, task_type, tune = Get_Task_Type_1(data, alg)
+                checker, task_type = Get_Task_Type_1(data, alg)
                 if checker == 0:
                     pass
                 else:
@@ -94,7 +94,7 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=tune, cv=2, opt_iter=2)
+                                        tune=True, cv=2, opt_iter=2)
                         print('Done.\n')
 
                     with cd('output'):

@@ -11,7 +11,6 @@ def get_classifier(self, call=False):
         'svm': SVC,
         'knn': KNeighborsClassifier,
         'rf': RandomForestClassifier,
-        'linearSVC': LinearSVC,
         'ada': AdaBoostClassifier,
         'gdb': GradientBoostingClassifier
     }

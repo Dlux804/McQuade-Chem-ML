@@ -12,6 +12,7 @@ from time import time
 from tensorflow import keras
 from tensorflow.keras.layers import Dense, Conv1D, Flatten, Conv2D
 from tensorflow.keras.metrics import RootMeanSquaredError
+
 from tqdm import tqdm
 from core.storage.misc import __cv_results__, __fix_ada_dictionary__
 # monkey patch to fix skopt and sklearn.  Requires downgrade to sklearn 0.23
@@ -83,11 +84,12 @@ def build_cnn(n_hidden=2, n_neuron=50, learning_rate=1e-3, in_shape=200, drop=0.
     model.add(Conv1D(32, 2, activation='relu', input_shape=(in_shape, 1)))
 
     # model.add(keras.layers.MaxPooling1D(pool_size=3))
-    # model.add(Conv1D(64, 2, activation='relu'))
-    model.add(Flatten())
+    model.add(Conv1D(64, 2, activation='relu', input_shape=(in_shape, 1)))
+    model.add(Flatten(input_shape=(in_shape, 1)))
     model.add(Dense(64, activation="relu"))
     model.add(Dense(1))
-    model.compile(loss="mse", optimizer="adam", metrics=[RootMeanSquaredError(name='rmse')])
+    optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
+    model.compile(loss="mse", optimizer=optimizer, metrics=[RootMeanSquaredError(name='rmse')])
     return model
 
 
@@ -110,14 +112,7 @@ def wrapKeras(self, build_func):
     # has not been tuned and no params have been supplied, so use default.
     else:
             self.estimator = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape)
-    #
-    # if self.algorithm == 'cnn':
-    #     if hasattr(self, 'params'):
-    #         self.estimator = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, **self.params)
-    #
-    #     # has not been tuned and no params have been supplied, so use default.
-    #     else:
-    #         self.estimator = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func)
+
 
 def get_regressor(self, call=False):
     """
@@ -160,7 +155,7 @@ def get_regressor(self, call=False):
 
         # params to pass to Keras fit method that don't match sklearn params
         self.fit_params = {'epochs': 100,
-                           'batch_size': 50,
+                           'batch_size': 32,
                            'callbacks': [chkpt_cb, stop_cb],
                            'validation_data': (self.val_features, self.val_target)
                            }
@@ -220,7 +215,7 @@ def hyperTune(self, epochs=50, n_jobs=6):
     # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
     # TODO try different scaling with delta
     # self.cp_delta = 0.05
-    self.cp_delta = float((0.08 - self.train_target.min())/(self.train_target.max() - self.train_target.min()))  # Min max scaling
+    self.cp_delta = float((0.05 - self.train_target.min())/(self.train_target.max() - self.train_target.min()))  # Min max scaling
     print("cp_delta is : ", self.cp_delta)
     # self.cp_delta = delta_std * (self.train_target.max() - self.train_target.min()) + self.train_target.min()
     self.cp_n_best = 5

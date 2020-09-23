@@ -41,7 +41,8 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     feat_meth = self.feat_meth
     df = self.data
-    df = canonical_smiles(df=df)  # Turn SMILES into CANONICAL SMILES
+
+    df = canonical_smiles(df)  # Turn SMILES into CANONICAL SMILES
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts', 'morganchiral3counts',
                  'atompaircounts']
@@ -181,13 +182,15 @@ def data_split(self, test=0.2, val=0, random=None):
 
     scaler = StandardScaler()
     self.scaler = scaler
-    # self.train_features = scaler.fit_transform(self.train_features)
-    # self.test_features = scaler.transform(self.test_features)
 
+    if self.algorithm != "cnn":
+        self.train_features = scaler.fit_transform(self.train_features)
+        self.test_features = scaler.transform(self.test_features)
+    else:
     # Can scale data 1d, 2d and 3d data
-    self.train_features = scaler.fit_transform(self.train_features.reshape(-1,
+        self.train_features = scaler.fit_transform(self.train_features.reshape(-1,
                                                self.train_features.shape[-1])).reshape(self.train_features.shape)
-    self.test_features = scaler.transform(self.test_features.reshape(-1,
+        self.test_features = scaler.transform(self.test_features.reshape(-1,
                                                self.test_features.shape[-1])).reshape(self.test_features.shape)
 
     if val > 0:  # if validation data is requested.
@@ -206,9 +209,12 @@ def data_split(self, test=0.2, val=0, random=None):
             test_size=b,
             random_state=self.random_seed)
         # scale the validation features too
-        # self.val_features = scaler.transform(self.val_features)
-        self.val_features = scaler.transform(self.val_features.reshape(-1,
+        if self.algorithm != "cnn":
+            self.val_features = scaler.transform(self.val_features)
+        else:
+            self.val_features = scaler.transform(self.val_features.reshape(-1,
                                              self.val_features.shape[-1])).reshape(self.val_features.shape)
+
         self.n_val = self.val_features.shape[0]
         pval = self.n_val / self.n_tot * 100
     else:

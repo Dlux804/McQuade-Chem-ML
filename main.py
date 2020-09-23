@@ -19,28 +19,28 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-    #    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    learner = ['knn', 'rf', 'ada', 'gdb', 'nn']
     # learner = ['knn']
 
     # list of available classification learning algorithms for reference/testing
     # learner = ['svm', 'knn', 'rf']
 
     # list of available regression learning algorithms for reference/testing
-    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
+    # learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
 
     # All data sets in dict
-    # targets = None
-    # sets = {
-    #    'BBBP.csv': targets,
-    #    'sider.csv': targets,
-    #    'clintox.csv': targets,
-    #    'bace.csv': targets,
-    #      'ESOL.csv': 'water-sol',
-    #      'Lipophilicity-ID.csv': 'exp',
-    #      'water-energy.csv': 'expt',
-    #      'logP14k.csv': 'Kow',
-    #      'jak2_pic50.csv': 'pIC50'
-    # }
+    targets = None
+    sets = {
+        'BBBP.csv': targets,
+        'sider.csv': targets,
+        'clintox.csv': targets,
+        'bace.csv': targets,
+        'ESOL.csv': 'water-sol',
+        'Lipophilicity-ID.csv': 'exp',
+        'water-energy.csv': 'expt',
+        'logP14k.csv': 'Kow',
+        'jak2_pic50.csv': 'pIC50'
+    }
 
     # classification data sets for reference/testing
     # sets = {
@@ -98,12 +98,12 @@ def main():
                         model.data_split(val=val)
                         model.reg()
                         model.run()  # Runs the models/featurizations for classification
-                        model.analyze()
+                        # model.analyze()
                         if model.algorithm != 'nn':
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+                        # model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 
@@ -123,6 +123,8 @@ def single_model():
         #                  tune=False, cv=2, opt_iter=5, random=10)
         model1 = MlModel(algorithm='cnn', dataset='water-energy.csv', target='expt', feat_meth=[0],
                          tune=True, cv=2, opt_iter=50)
+        # model1 = MlModel(algorithm='rf', dataset='clintox.csv', target=['FDA_APPROVED', 'CT_TOX'], feat_meth=[0],
+        #                  tune=False, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -140,18 +142,19 @@ def single_model():
         model1.analyze()
         if model1.algorithm not in ['cnn', 'nn']:  # issues pickling NN models
             model1.pickle_model()
+
         model1.store()
         model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
-def example_run_with_mysql_and_neo4j(dataset='water-energy.csv', target='expt'):
+def example_run_with_mysql_and_neo4j(dataset='logP14k.csv', target='Kow'):
     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0, 2],
+        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0, 2, 3],
                          tune=False, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
@@ -174,7 +177,7 @@ def example_run_with_mysql_and_neo4j(dataset='water-energy.csv', target='expt'):
         # model3.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
         start_timer = default_timer()
-        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        # model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
         return default_timer() - start_timer
 
 

@@ -658,12 +658,10 @@ class ModelToNeo4j:
         # TODO spilt this into three different functions, one for TestSet, TrainSet, ValSet. This is hard to follow
 
         """
-
         This will generate the data in the relationships relating models to Train/Test/Val sets. As well as the
         molecules inside of those sets. How the rmse, mse, r2 is calculate for each dataset differs slighty, so
         that has to be accounted for. Plus many models may not have a test/val set, so that has to be considered
         as well.
-
         :return:
         """
 
@@ -735,20 +733,13 @@ class ModelToNeo4j:
 
                         MERGE (model)-[set_rel:`{rel_dict[datatype]}`]->(set)
                             ON CREATE SET set_rel.size = $size, set_rel.r2_avg = $r2_avg, set_rel.r2_std = $r2_std, 
-<<<<<<< HEAD
-                                set_rel.mse_avg = $mse_avg, set_rel.mse_std = $mse_std, set_rel.rmse_avg = $rmse_avg, 
-                                set_rel.rmse_std = $rmse_std,
-
-=======
                                 set_rel.mse_avg = $mse_avg, set_rel.mse_std = $mse_std, 
                                 set_rel.rmse_avg = $rmse_avg, set_rel.rmse_std = $rmse_std,
-                                
->>>>>>> 6d359b1d9597b818cdebbb3bf629a76fc03a56e0
+
                                 set_rel.scaled_r2_avg = $scaled_r2_avg, set_rel.scaled_mse_avg = $scaled_mse_avg,
                                 set_rel.scaled_rmse_avg = $scaled_rmse_avg, set_rel.scaled_r2_std = $scaled_r2_std,
                                 set_rel.scaled_mse_std = $scaled_mse_std, set_rel.scaled_rmse_std = $scaled_rmse_std
-
-                    WITH set
+                        WITH set
                         UNWIND $molecules as molecule
                             MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
                                 SET mol.`{target_name_for_neo4j}` = molecule.target
@@ -759,14 +750,8 @@ class ModelToNeo4j:
                                     mol_rel.scaled_average_error = molecule.scaled_pred_average_error,
                                     mol_rel.scaled_uncertainty = molecule.scaled_pred_std,
                                     mol_rel.scaled_predicted_average = molecule.scaled_pred_avg,
-<<<<<<< HEAD
                                     mol_rel.actual_value = molecule.target
 
-=======
-
-                                    mol_rel.actual_value = molecule.target
-                                
->>>>>>> 6d359b1d9597b818cdebbb3bf629a76fc03a56e0
                         """
                 self.molecule_query_loop(molecules, query, target=target_name,
                                          run_name=self.json_data['run_name'], set_type=datatype, size=size,

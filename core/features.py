@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-def canonical_smiles(smiles_list):
+def canonical_smiles(df):
     """
     Objective: Create list of canonical SMILES from SMILES
     Intent: While the SMILES in dataset from moleculenet.ai are all canonical, it is always good to be safe. I don't
@@ -18,7 +18,19 @@ def canonical_smiles(smiles_list):
     :param smiles_list:
     :return:
     """
-    return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
+
+    smiles = df['smiles']
+    con_smiles = []
+    for smile in smiles:
+        mol = Chem.MolFromSmiles(smile)
+        if mol is not None:
+            con_smiles.append(Chem.MolToSmiles(mol))
+        else:
+            con_smiles.append('bad_smiles')
+    df['smiles'] = con_smiles
+    df = df.loc[df['smiles'] != 'bad_smiles']
+
+    return df
 
 
 def featurize(self, not_silent=True, retrieve_from_mysql=False):
@@ -31,27 +43,7 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     feat_meth = self.feat_meth
     df = self.data
-
-
-    # The following section removes rows that had failed featurizations. This makes the workflow run properly for
-    # both the clintox and the BBBP data sets.
-    smi = df['smiles']
-
-    issue_row_list = []
-    issue_row = 0
-    for smiles in smi:
-        x = Chem.MolFromSmiles(smiles)
-        if x == None:
-            issue_row_list.append(issue_row)
-        issue_row = issue_row + 1
-
-    rows = df.index[[issue_row_list]]
-    df.drop(rows, inplace=True)
-    smi.drop(rows, inplace=True)
-
-
-    df['smiles'] = canonical_smiles(list(df['smiles']))  # Turn SMILES into CANONICAL SMILES
-
+    df = canonical_smiles(df)  # Turn SMILES into CANONICAL SMILES
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts', 'morganchiral3counts',
                  'atompaircounts']
@@ -88,7 +80,22 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     # get the names of the features for column labels
     for name, numpy_type in generator.GetColumns():
         columns.append(name)
+    smi = df['smiles']
 
+    # The following section removes rows that had failed featurizations. This makes the workflow run properly for
+    # both the clintox and the BBBP data sets.
+
+    issue_row_list = []
+    issue_row = 0
+    for smiles in smi:
+        x = Chem.MolFromSmiles(smiles)
+        if x == None:
+            issue_row_list.append(issue_row)
+        issue_row = issue_row + 1
+
+    rows = df.index[[issue_row_list]]
+    df.drop(rows, inplace=True)
+    smi.drop(rows, inplace=True)
 
     smi2 = tqdm(smi, desc="Featurization")  # for progress bar
     data = list(map(generator.process, smi2))

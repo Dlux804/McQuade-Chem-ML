@@ -124,8 +124,9 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'regression':
             self.pva_graph()
             self.pva_graph(use_scaled=True)  # Plot scaled pva data
-            self.hist()
             self.plot_learning_curves()
+            if self.algorithm != "cnn":  # CNN is running into OverflowError: cannot convert float infinity to integer
+                self.hist()
 
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.classification_graphs()

@@ -62,8 +62,8 @@ def main():
     # sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
-        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
-                 [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
+        # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+        #          [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
         feats = [[0]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
@@ -120,10 +120,12 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        # model1 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
+        # model1 = MlModel(algorithm='rf', dataset='BBBP.csv', target=get_classification_targets(data='BBBP.csv'), feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=5, random=10)
-        model1 = MlModel(algorithm='rf', dataset='clintox.csv', target=['FDA_APPROVED', 'CT_TOX'], feat_meth=[0],
-                         tune=False, cv=2, opt_iter=2)
+        model1 = MlModel(algorithm='cnn', dataset='water-energy.csv', target='expt', feat_meth=[0],
+                         tune=True, cv=2, opt_iter=50)
+        # model1 = MlModel(algorithm='rf', dataset='clintox.csv', target=['FDA_APPROVED', 'CT_TOX'], feat_meth=[0],
+        #                  tune=False, cv=2, opt_iter=2)
 
         print('done.')
         print('Model Type:', model1.algorithm)
@@ -132,12 +134,15 @@ def single_model():
         print()
     with cd('output'):  # Have files output to output
         model1.featurize()
-        model1.data_split(val=0.1)
+        if model1.algorithm in ['cnn', 'nn']:
+            model1.data_split(val=0.1)
+        else:
+            model1.data_split()
         model1.reg()
         model1.run()
-        # model1.analyze()
-        # if model1.algorithm != 'nn':  # issues pickling NN models
-        #     model1.pickle_model()
+        model1.analyze()
+        if model1.algorithm not in ['cnn', 'nn']:  # issues pickling NN models
+            model1.pickle_model()
         model1.store()
         model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)

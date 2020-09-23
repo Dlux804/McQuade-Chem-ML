@@ -26,12 +26,12 @@ class MlModel:  # TODO update documentation here
     """
     Class to set up and run machine learning algorithm.
     """
-    from core.regressors import get_regressor, hyperTune
+    from core.regressors import get_regressor, hyperTune, build_cnn
     from core.grid import make_grid
     from core.train import train_reg, train_cls
     from core.analysis import impgraph, pva_graph, classification_graphs, hist, plot_learning_curves
     from core.classifiers import get_classifier
-
+    from core.storage.util import original_param
     from core.features import featurize, data_split
     from core.storage import pickle_model, store, org_files, featurize_from_mysql, QsarDB_export
 
@@ -104,7 +104,8 @@ class MlModel:  # TODO update documentation here
         if self.tuned:  # Do hyperparameter tuning
             self.make_grid()
             self.hyperTune(n_jobs=8)
-
+        else:  # Return original parameter if not tuned
+            self.original_param()
         # Done tuning, time to fit and predict
         if self.task_type == 'regression':
             self.train_reg()
@@ -123,8 +124,9 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'regression':
             self.pva_graph()
             self.pva_graph(use_scaled=True)  # Plot scaled pva data
-            self.hist()
             self.plot_learning_curves()
+            if self.algorithm != "cnn":  # CNN is running into OverflowError: cannot convert float infinity to integer
+                self.hist()
 
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.classification_graphs()

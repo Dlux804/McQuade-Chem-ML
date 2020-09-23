@@ -18,6 +18,7 @@ def canonical_smiles(df):
     :param smiles_list:
     :return:
     """
+
     smiles = df['smiles']
     con_smiles = []
     for smile in smiles:
@@ -28,6 +29,7 @@ def canonical_smiles(df):
             con_smiles.append('bad_smiles')
     df['smiles'] = con_smiles
     df = df.loc[df['smiles'] != 'bad_smiles']
+
     return df
 
 
@@ -41,7 +43,9 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     feat_meth = self.feat_meth
     df = self.data
-    df = canonical_smiles(df=df)  # Turn SMILES into CANONICAL SMILES
+
+    df = canonical_smiles(df)  # Turn SMILES into CANONICAL SMILES
+
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts', 'morganchiral3counts',
                  'atompaircounts']

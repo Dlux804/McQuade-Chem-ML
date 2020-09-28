@@ -119,10 +119,10 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        # model1 = MlModel(algorithm='rf', dataset='BBBP.csv', target=get_classification_targets(data='BBBP.csv'), feat_meth=[0],
-        #                  tune=False, cv=2, opt_iter=5, random=10)
-        model1 = MlModel(algorithm='cnn', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                         tune=True, cv=2, opt_iter=50)
+        model1 = MlModel(algorithm='rf', dataset='BBBP.csv', target=get_classification_targets(data='BBBP.csv'),
+                         feat_meth=[0], tune=False, cv=2, opt_iter=5, random=10)
+        # model1 = MlModel(algorithm='cnn', dataset='water-energy.csv', target='expt', feat_meth=[0],
+        #                  tune=True, cv=2, opt_iter=50)
         # model1 = MlModel(algorithm='rf', dataset='clintox.csv', target=['FDA_APPROVED', 'CT_TOX'], feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=2)
 
@@ -220,8 +220,8 @@ def output_dir_to_neo4j():
 
 
 if __name__ == "__main__":
-    main()
-    # single_model()
+    # main()
+    single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()

@@ -7,7 +7,7 @@ import pandas as pd
 from core.storage.misc import unpickle_model
 import pytest
 from main import ROOT_DIR
-from tests.model_fixture import __run_all__, __model_object__, delete_files, __assert_results__
+from tests.model_fixture import __run_all__, __model_object__, delete_files, __assert_results__, __run_all__without_analyze
 # change working directory to
 os.chdir(ROOT_DIR)
 
@@ -22,10 +22,10 @@ def test_store(__model_object__):
     delete_files(model1.run_name)
 
 
-@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', False, True)])
-def test_pickle(__run_all__):
+@pytest.mark.parametrize('algorithm, data, exp, tuned, directory', [('rf', 'Lipo-short.csv', 'exp', True, True)])
+def test_pickle(__run_all__without_analyze):
     """"""
-    model1 = __run_all__
+    model1 = __run_all__without_analyze
     model1.pickle_model()
     from sklearn.metrics import mean_squared_error, r2_score
     model2 = unpickle_model(''.join([model1.run_name, '.pkl']))

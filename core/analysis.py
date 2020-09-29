@@ -175,7 +175,7 @@ def hist(self):
         if np_bins > num_of_bins:
             num_of_bins = np_bins
 
-    # Increase bin for finer results
+    # Increase bins by a common factor for finer results
     num_of_bins = num_of_bins * 4
 
     x_axis = target_name_grid(self.dataset)

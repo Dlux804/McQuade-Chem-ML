@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-def canonical_smiles(smiles_list):
+def canonical_smiles(df):
     """
     Objective: Create list of canonical SMILES from SMILES
     Intent: While the SMILES in dataset from moleculenet.ai are all canonical, it is always good to be safe. I don't
@@ -18,7 +18,19 @@ def canonical_smiles(smiles_list):
     :param smiles_list:
     :return:
     """
-    return list(map(Chem.MolToSmiles, list(map(Chem.MolFromSmiles, smiles_list))))  # SMILES to Canonical
+
+    smiles = df['smiles']
+    con_smiles = []
+    for smile in smiles:
+        mol = Chem.MolFromSmiles(smile)
+        if mol is not None:
+            con_smiles.append(Chem.MolToSmiles(mol))
+        else:
+            con_smiles.append('bad_smiles')
+    df['smiles'] = con_smiles
+    df = df.loc[df['smiles'] != 'bad_smiles']
+
+    return df
 
 
 def featurize(self, not_silent=True, retrieve_from_mysql=False):
@@ -31,7 +43,9 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     feat_meth = self.feat_meth
     df = self.data
-    df['smiles'] = canonical_smiles(list(df['smiles']))  # Turn SMILES into CANONICAL SMILES
+
+    df = canonical_smiles(df)  # Turn SMILES into CANONICAL SMILES
+
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts', 'morganchiral3counts',
                  'atompaircounts']
@@ -144,6 +158,8 @@ def data_split(self, test=0.2, val=0, random=None):
     self.feature_array = featuresarr
     self.n_tot = self.feature_array.shape[0]
     self.in_shape = self.feature_array.shape[1]
+    if self.algorithm == 'cnn':
+        self.feature_array = self.feature_array.reshape(self.feature_array.shape[0], self.feature_array.shape[1], 1)
 
     # print("self.feature_array: ", self.feature_array)
     # print('self target array', self.target_array)
@@ -166,10 +182,17 @@ def data_split(self, test=0.2, val=0, random=None):
     # scale the data.  This should not hurt but can help many models
     # TODO add this an optional feature
     # TODO add other scalers from sklearn
+
     scaler = StandardScaler()
     self.scaler = scaler
-    self.train_features = scaler.fit_transform(self.train_features)
-    self.test_features = scaler.transform(self.test_features)
+    # self.train_features = scaler.fit_transform(self.train_features)
+    # self.test_features = scaler.transform(self.test_features)
+
+    # Can scale data 1d, 2d and 3d data
+    self.train_features = scaler.fit_transform(self.train_features.reshape(-1,
+                                               self.train_features.shape[-1])).reshape(self.train_features.shape)
+    self.test_features = scaler.transform(self.test_features.reshape(-1,
+                                               self.test_features.shape[-1])).reshape(self.test_features.shape)
 
     if val > 0:  # if validation data is requested.
         # calculate percent of training to convert to val
@@ -187,7 +210,9 @@ def data_split(self, test=0.2, val=0, random=None):
             test_size=b,
             random_state=self.random_seed)
         # scale the validation features too
-        self.val_features = scaler.transform(self.val_features)
+        # self.val_features = scaler.transform(self.val_features)
+        self.val_features = scaler.transform(self.val_features.reshape(-1,
+                                             self.val_features.shape[-1])).reshape(self.val_features.shape)
         self.n_val = self.val_features.shape[0]
         pval = self.n_val / self.n_tot * 100
     else:
@@ -222,16 +247,16 @@ def data_split(self, test=0.2, val=0, random=None):
     # Uncomment this section to have data shape distribution printed.
 
     # print('Total Feature Shape:', features.shape)
-    # print('Total Target Shape', target.shape)
+    # print('Total Target Shape', self.target_array.shape)
     # print()
-    # print('Training Features Shape:', train_features.shape)
-    # print('Training Target Shape:', train_target.shape)
+    # print('Training Features Shape:', self.train_features.shape)
+    # print('Training Target Shape:', self.train_target.shape)
     # print()
-    # print('Test Features Shape:', test_features.shape)
-    # print('Test Target Shape:', test_target.shape)
+    # print('Test Features Shape:', self.test_features.shape)
+    # print('Test Target Shape:', self.test_target.shape)
     # print()
     #
-    # print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
-    #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))
+    # print('Train:Test -->', np.round(self.train_features.shape[0] / features.shape[0] * 100, -1), ':',
+    #       np.round(self.test_features.shape[0] / features.shape[0] * 100, -1))
 
     # return train_features, test_features, train_target, test_target, feature_list

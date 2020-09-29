@@ -133,17 +133,31 @@ def train_reg(self,n=5):
 def train_cls(self, n=5):
     # set the model specific classifier function from sklearn
 
-    print("Starting model training with {} replicates.\n".format(n), end=' ', flush=True)
-    acc = np.empty(n)
-    conf = np.zeros((n,2,2))
-    #clsrep = np.empty(n)
-    auc = np.empty(n)
-    t = np.empty(n)
-    f1_score1 = np.empty(n)
+    target_names = self.target_name
+    if not isinstance(target_names, list):
+        target_names = [self.target_name]
+    if 'smiles' in target_names:
+        target_names.remove('smiles')
 
-    cls_multi = pd.DataFrame([])
-    cls_multi['smiles'] = self.test_molecules  # Save smiles to predictions
-#    cls_multi['actual'] = self.test_target
+    print("Starting model training with {} replicates.\n".format(n), end=' ', flush=True)
+    acc = {}
+    conf = {}
+    clsrep = {}
+    auc = {}
+    f1_score1 = {}
+    cls_multi = {}
+
+    for i, target_name in enumerate(target_names):
+        acc[target_name] = np.empty(n)
+        conf[target_name] = np.zeros((n, 2, 2))
+        clsrep[target_name] = np.empty(n)
+        auc[target_name] = np.empty(n)
+        f1_score1[target_name] = np.empty(n)
+        cls_multi[target_name] = pd.DataFrame([])
+        cls_multi[target_name]['smiles'] = self.test_molecules  # Save smiles to predictions
+        cls_multi[target_name]['actual'] = pd.DataFrame(self.test_target).iloc[:, i]
+    t = np.empty(n)
+
     for i in tqdm(range(0, n), desc="Model Replication"):  # run model n times
         print()
         start_time = time()
@@ -153,84 +167,82 @@ def train_cls(self, n=5):
         predictions = self.estimator.predict(self.test_features)
         done_time = time()
         fit_time = done_time - start_time
-        if self.task_type == 'multi_label_classification': # Contains multi-label evaluation methods, since sider data set and clintox data set are done with multi-target classification.
-            conf = multilabel_confusion_matrix(self.test_target, predictions)
-            print("Confusion matrix for each individual label (see key above, labeled as 'target(s):'): ")
-            print(conf)
-            print()
+        t[i] = fit_time
 
-            f1_score1[i] = f1_score(self.test_target, predictions, average="macro")
+        predictions_df = pd.DataFrame(predictions, columns={*target_names})
 
-            print()
-            auc[i] = roc_auc_score(self.test_target, predictions)
-            sleep(0.25)
-        else:  # Contains single-label evaluation methods
-            # Dataframe for replicate_model
-            cls = pd.DataFrame([], columns=['actual', 'predicted'])
-            cls['actual'] = self.test_target
-            cls['predicted'] = predictions
+        for target_name in predictions_df:
 
-            acc[i] = accuracy_score(cls['actual'], cls['predicted'])
+            cls = pd.DataFrame()
+            cls['actual'] = cls_multi[target_name]['actual']
+            cls['predicted'] = predictions_df[target_name]
 
+            acc[target_name][i] = accuracy_score(cls['actual'], cls['predicted'])
 
-            f1_score1[i] = f1_score(cls['actual'], cls['predicted'], average="macro")
+            f1_score1[target_name][i] = f1_score(cls['actual'], cls['predicted'], average="macro")
 
+            conf[target_name][i] = confusion_matrix(cls['actual'], cls['predicted'])
+            # print()
+            # print('Confusion matrix for this run: ')
+            # print(conf[i])
 
-            conf[i] = confusion_matrix(cls['actual'], cls['predicted'])
-            print()
-            print('Confusion matrix for this run: ')
-            print(conf[i])
+            # clsrep = classification_report(cls['actual'], cls['predicted'], output_dict=True)
+            clsrep[target_name] = classification_report(cls['actual'], cls['predicted'])
+            # print('Classification report for this run: ')
+            # print(report)
+            # self.clsrepdf = pd.DataFrame(clsrep).transpose()
 
-
-            clsrep = classification_report(cls['actual'], cls['predicted'], output_dict=True)
-            report = classification_report(cls['actual'], cls['predicted'])
-            print('Classification report for this run: ')
-            print(report)
-            self.clsrepdf = pd.DataFrame(clsrep).transpose()
-
-
-            auc[i] = roc_auc_score(cls['actual'], cls['predicted'])
-            t[i] = fit_time
+            auc[target_name][i] = roc_auc_score(cls['actual'], cls['predicted'])
 
             # store as enumerated column for multipredict
-            cls_multi['predicted' + str(i)] = predictions
+            cls_multi[target_name]['predicted' + str(i)] = cls['predicted']
             sleep(0.25)  # so progress bar can update
+
+    for target_name in target_names:
+        acc_mean = acc[target_name].mean()
+        acc_std = acc[target_name].std()
+        conf_mean = conf[target_name].mean()
+        conf_std = conf[target_name].std()
+        auc_mean = auc[target_name].mean()
+        auc_std = auc[target_name].std()
+        f1_score_mean = f1_score1[target_name].mean()
+        f1_score_std = f1_score1[target_name].std()
+
+        predicted_columns = cls_multi[target_name].columns.difference(['smiles', 'actual'])
+        cls_multi[target_name]['pred_avg'] = cls_multi[target_name][predicted_columns].mean(axis=1)
+        cls_multi[target_name]['pred_std'] = cls_multi[target_name][predicted_columns].std(axis=1)
+        cls_multi[target_name]['pred_average_error'] = abs(cls_multi[target_name]['actual'] -
+                                                           cls_multi[target_name]['pred_avg'])
 
     print('Done after {:.1f} seconds.'.format(t.sum()))
 
     stats = {
         'acc_raw': acc,
-        'acc_avg': acc.mean(),
-        'acc_std': acc.std(),
+        'acc_avg': acc_mean,
+        'acc_std': acc_std,
         'conf_raw': conf,
-        'conf_avg': conf.mean(),
-        'conf_std': conf.std(),
-       # 'clsrep_raw': clsrep,
-        # 'clsrep_avg': clsrep.mean(),
-        # 'clsrep_std': clsrep.std(),
+        'conf_avg': conf_mean,
+        'conf_std': conf_std,
+        'clsrep_raw': clsrep,
         'auc_raw': auc,
-        'auc_avg': auc.mean(),
-        'auc_std': auc.std(),
+        'auc_avg': auc_mean,
+        'auc_std': auc_std,
         'time_raw': t,
         'time_avg': t.mean(),
         'time_std': t.std(),
         'f1_score_raw': f1_score1,
-        'f1_score_avg': f1_score1.mean(),
-        'f1_score_std': f1_score1.std()
+        'f1_score_avg': f1_score_mean,
+        'f1_score_std': f1_score_std
     }
-    self.predictions = predictions
+
+    self.predictions = cls_multi
     self.predictions_stats = stats
     self.auc_avg = stats['auc_avg']
     self.acc_avg = stats['acc_avg']
     self.f1_score_avg = stats['f1_score_avg']
 
-    if self.task_type == 'multi_label_classification':
-        print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
-        print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
-        print()
-    else:
-        print('Average accuracy score = %.3f' % stats['acc_avg'], '+- %.3f' % stats['acc_std'])
-        print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
-        print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
-        print()
+    print('Average accuracy score = %.3f' % stats['acc_avg'], '+- %.3f' % stats['acc_std'])
+    print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
+    print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
+    print()
 

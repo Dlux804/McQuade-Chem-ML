@@ -3,6 +3,7 @@ import os
 import re
 import zipfile
 import warnings
+import ast
 
 import pandas as pd
 from pandas.core.common import SettingWithCopyWarning
@@ -12,6 +13,7 @@ from rdkit.Chem import FragmentCatalog, MolFromSmiles
 
 from core.storage.misc import __clean_up_param_grid_item__, NumpyEncoder
 from core.storage.dictionary import target_name_grid
+
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
 
 
@@ -75,7 +77,7 @@ class ModelToNeo4j:
                 raise ValueError("Could not parse json data")
 
             # Here for reference if you want to view attributes stored in json file
-            #
+
             # for label, value in self.json_data.items():
             #     print(label, value)
 
@@ -88,6 +90,10 @@ class ModelToNeo4j:
                 self.params = self.json_data['params']
             else:
                 self.params = {}
+
+            if isinstance(self.json_data['target_name'], list):
+                if 'smiles' in self.json_data['target_name']:
+                    self.json_data['target_name'].remove('smiles')
 
             # Gather test/train/val data into organized bins
             test_data = self.model_data.loc[self.model_data['in_set'] == 'test']
@@ -102,7 +108,10 @@ class ModelToNeo4j:
             self.merge_model_with_tuning()
             self.merge_featlist_and_featmeths_with_model()
             self.merge_feats_with_rdkit2d()
-            self.merge_molecules_with_sets()
+            if self.json_data['task_type'] == 'regression':
+                self.reg_merge_molecules_with_sets()
+            else:
+                self.cls_merge_molecule_with_sets()
 
             # If dataset does not exist in neo4j graph, merge molecules and fragments (sorta slow, 5 secs to 7 mins)
             if not self.check_for_dataset():
@@ -238,8 +247,11 @@ class ModelToNeo4j:
                 if file_type == 'scaled_predictions':
                     scaled_predictions_csv_data = __pull_data__(file)
 
-        model_data = self.__combine_model_data_with_predictions__(model_data, predictions_csv_data,
-                                                                  scaled_predictions_csv_data)
+        if json_data['task_type'] == 'regression':
+            model_data = self.__combine_model_data_with_predictions__(model_data, predictions_csv_data,
+                                                                      scaled_predictions_csv_data)
+        else:
+            model_data = self.__combine_model_data_with_predictions__(model_data, predictions_csv_data)
 
         json_data['is_qsarDB'] = False
         json_data['source'] = 'MolecularNetAI'
@@ -248,7 +260,7 @@ class ModelToNeo4j:
 
         return model
 
-    def __combine_model_data_with_predictions__(self, model_data, predictions, scaled_predictions):
+    def __combine_model_data_with_predictions__(self, model_data, predictions, scaled_predictions=None):
 
         def __merge_pred_x_with_data__(data, pred_data, pred_column):
             # Merge data with pred_column, replace numpy NaNs with None, for Neo4j
@@ -261,10 +273,11 @@ class ModelToNeo4j:
             stat_column = predictions[['smiles', molecule_stat]]
             model_data = __merge_pred_x_with_data__(model_data, stat_column, molecule_stat)
 
-            # Gather stat in scaled predictions, merge with model data
-            scaled_stat_column = scaled_predictions[['smiles', molecule_stat]]
-            scaled_stat_column = scaled_stat_column.rename(columns={molecule_stat: f'scaled_{molecule_stat}'})
-            model_data = __merge_pred_x_with_data__(model_data, scaled_stat_column, f'scaled_{molecule_stat}')
+            if scaled_predictions is not None:
+                # Gather stat in scaled predictions, merge with model data
+                scaled_stat_column = scaled_predictions[['smiles', molecule_stat]]
+                scaled_stat_column = scaled_stat_column.rename(columns={molecule_stat: f'scaled_{molecule_stat}'})
+                model_data = __merge_pred_x_with_data__(model_data, scaled_stat_column, f'scaled_{molecule_stat}')
 
         return model_data
 
@@ -280,7 +293,6 @@ class ModelToNeo4j:
 
         models = []
         for model in self.qsar_obj.models:
-
             # Get raw model_data
             model_data = model.raw_data
 
@@ -376,25 +388,27 @@ class ModelToNeo4j:
         """
 
         js = self.json_data
-
+        if self.tune_algorithm_name is None:
+            js['tune_time'] = 0
         self.graph.evaluate(
             """
-        
+
             MERGE (model:MLModel {name: $model_name})
-            ON CREATE SET model.date = $date, model.feat_time = $feat_time, model.test_time = $test_time,
-                model.train_time = $train_time, model.seed = $seed, model.tuned = $tuned
+            ON CREATE SET model.date = $date, model.feat_time = $feat_time, model.train_time = $train_time, 
+                          model.tune_time = $tune_time, model.total_learning_time = $total_learning_time,
+                          model.seed = $seed, model.tuned = $tuned
 
                 MERGE (split:RandomSplit {run_name: $model_name})
                     ON CREATE SET split.train_percent = $train_percent, split.test_percent = $test_percent, 
                         split.val_percent = $val_percent, split.seed = $seed, split.name = "RandomSplit"
                     MERGE (model)-[:USES_SPLIT]->(split)
-        
+
                 MERGE (dataset:DataSet {data: $data})
                     ON CREATE SET dataset.size = $dataset_size, dataset.target = $target, dataset.source = $source,
                         dataset.task_type = $task_type, dataset.name = "DataSet"
                     MERGE (model)-[:USES_DATASET]->(dataset)
                     MERGE (split)-[:SPLITS_DATASET]->(dataset)
-                    
+
                 MERGE (testset:TestSet {run_name: $model_name, name: 'TestSet', size: $n_test})
                 MERGE (dataset)-[:SPLITS_INTO_TEST]->(testset)
                 MERGE (split)-[:MAKES_SPLIT]->(testset)
@@ -402,27 +416,35 @@ class ModelToNeo4j:
                 MERGE (trainset:TrainSet {run_name: $model_name, name: 'TrainSet', size: $n_train})
                 MERGE (dataset)-[:SPLITS_INTO_TRAIN]->(trainset)
                 MERGE (split)-[:MAKES_SPLIT]->(trainset)
-                
-                MERGE (valset:ValSet {run_name: $model_name, name: 'ValSet', size: $n_val})
-                MERGE (dataset)-[:SPLITS_INTO_VAL]->(valset)
-                MERGE (split)-[:MAKES_SPLIT]->(valset)
-        
+
             """,
             parameters={'date': js['date'], 'feat_time': js['feat_time'], 'model_name': js['run_name'],
-                        'tuned':js['tuned'], 'test_time': js['predictions_stats']['time_avg'],
-                        'train_time': js['tune_time'], 'seed': js['random_seed'],
-                        'test_percent': js['test_percent'],'n_test':js["n_test"],
+                        'tuned': js['tuned'], 'train_time': sum(js['predictions_stats']['time_raw']),
+                        'tune_time': js['tune_time'], 'seed': js['random_seed'],
+                        'test_percent': js['test_percent'], 'n_test':js["n_test"],
                         'train_percent': js['train_percent'], 'n_train': js['n_train'],
-                        'val_percent': js['val_percent'], 'n_val': js['n_val'],
-                        'tune_algorithm_name': self.tune_algorithm_name,
+                        'val_percent': js['val_percent'], 'tune_algorithm_name': self.tune_algorithm_name,
 
                         'data': js['dataset'], 'dataset_size': js['n_tot'], 'target': js['target_name'],
                         'source': js['source'], 'task_type': js['task_type'],
 
                         'features': js['feat_meth'],
                         'feature_methods': js['feat_method_name'],
+                        'total_learning_time': sum(js['predictions_stats']['time_raw']) + js['tune_time'] + js['feat_time']
                         }
         )
+        if js['val_percent'] != 0.0:
+            self.graph.evaluate(
+                """
+                    MATCH (dataset:DataSet {data: $data})
+                    MATCH (split:RandomSplit {run_name: $model_name})
+                    MERGE (valset:ValSet {run_name: $model_name, name: 'ValSet', size: $n_val}) 
+                    
+                    MERGE (dataset)-[:SPLITS_INTO_VAL]->(valset)
+                    MERGE (split)-[:MAKES_SPLIT]->(valset)
+            
+                """, parameters={'model_name': js['run_name'], 'n_val': js['n_val'], 'data': js['dataset']}
+            )
 
     def merge_model_with_algorithm(self):
 
@@ -448,9 +470,11 @@ class ModelToNeo4j:
 
                                 MERGE (algo:Algorithm {name: $algo_name, source: "sklearn"})
                                 MERGE (model)-[algo_rel:USES_ALGORITHM]->(algo)
+                                    SET algo_rel += $original_param
                                 """,
                                 parameters={'model_name': self.json_data['run_name'],
                                             'algo_name': self.json_data['algorithm'],
+                                            'original_param': self.json_data['original_param']
                                             }
                                 )
 
@@ -467,7 +491,7 @@ class ModelToNeo4j:
         if self.tune_algorithm_name is not None:
             self.graph.evaluate(
                 """
-        
+
                 MATCH (model:MLModel {name: $model_name}) 
                 MERGE (tuning:Tuning {name: $tune_algorithm_name})
                 MERGE (model)-[tuning_rel:USES_TUNING]->(tuning)
@@ -475,7 +499,7 @@ class ModelToNeo4j:
                                   tuning_rel.tune_time = $tune_time, tuning_rel.delta = $delta,
                                   tuning_rel.n_best = $n_best
                     ON CREATE SET tuning_rel += $cv_results
-                
+
                 """,
                 parameters={'model_name': self.json_data['run_name'],
                             'tune_algorithm_name': self.tune_algorithm_name,
@@ -497,21 +521,22 @@ class ModelToNeo4j:
         if not self.json_data['is_qsarDB']:
             self.graph.evaluate(
                 """
-            
+
                 MATCH (model:MLModel {name: $model_name})
                 MERGE (featlist:FeatureList {features: $features})
-                    ON CREATE SET featlist.name = "FeatureList"
+                    ON CREATE SET featlist.name = "FeatureList", featlist.length = $feat_length
                     MERGE (model)-[:USES_FEATURE_LIST]->(featlist)
                     WITH featlist, model
                     UNWIND $feature_methods as feature_method
                         MERGE (featmeth:FeatureMethod {name: feature_method})
                         MERGE (featmeth)-[:USED_BY_FEATURE_LIST]->(featlist)
                         MERGE (model)-[:USES_FEATURE_METHOD]->(featmeth)
-            
+
                 """,
                 parameters={'model_name': js['run_name'],
                             'features': js['feat_meth'],
-                            'feature_methods': js['feat_method_name']
+                            'feature_methods': js['feat_method_name'],
+                            'feat_length': len(self.json_data['feature_list'])
                             }
             )
 
@@ -555,17 +580,88 @@ class ModelToNeo4j:
         if range_molecules:
             self.graph.evaluate(query, parameters={'molecules': range_molecules, **params})
 
-    def merge_molecules_with_sets(self):
+    def cls_merge_molecule_with_sets(self):
+        for datatype, df in self.split_data.items():
+            if len(df) > 0:
+                molecule_stats = self.molecule_stats
+                target_names = self.json_data['target_name']
+                if not isinstance(target_names, list):
+                    target_names = [target_names]
+
+                if datatype == 'TestSet':
+                    pred_stats = self.json_data['predictions_stats']
+                    acc_avg = pred_stats['acc_avg']
+                    acc_std = pred_stats['acc_avg']
+                    conf_avg = pred_stats['conf_avg']
+                    conf_std = pred_stats['conf_std']
+                    auc_avg = pred_stats['auc_avg']
+                    auc_std = pred_stats['auc_std']
+                    f1_score_avg = pred_stats['f1_score_avg']
+                    f1_score_std = pred_stats['f1_score_std']
+                else:
+                    acc_avg = None
+                    acc_std = None
+                    conf_avg = None
+                    conf_std = None
+                    auc_avg = None
+                    auc_std = None
+                    f1_score_avg = None
+                    f1_score_std = None
+
+                for target_name in target_names:
+                    sub_df = df[['smiles', target_name, *molecule_stats]]
+                    sub_df = sub_df.rename(columns={target_name: 'target'})
+                    molecules = sub_df.to_dict('records')
+                    size = len(molecules)
+
+                    # Dict relating Set to the relationship name needed for the relationship (Model)->(Set)
+                    rel_dict = {'TrainSet': 'TRAINS',
+                                'TestSet': 'PREDICTS',
+                                'ValSet': 'VALIDATES'}
+
+                    # Dict relating molecules to the relationship name needed for relationship (Set)->(Molecule)
+                    mol_dataset_dict = {'TrainSet': 'CONTAINS_TRAINED_MOLECULE',
+                                        'TestSet': 'CONTAINS_PREDICTED_MOLECULE',
+                                        'ValSet': 'CONTAINS_VALIDATED_MOLECULE'}
+
+                    query = f"""
+                            MATCH (model:MLModel {'{name: $run_name}'})
+                            MATCH (set:{datatype} {'{run_name: $run_name, name: $set_type}'})
+                            MERGE (model)-[set_rel:`{rel_dict[datatype]}`]->(set)
+                                SET set_rel.acc_avg = $acc_avg, set_rel.acc_std = $acc_std,
+                                set_rel.conf_avg = $conf_avg, set_rel.conf_std = $conf_std,
+                                set_rel.auc_avg = $auc_avg, set_rel.auc_std = $auc_std, 
+                                set_rel.f1_score_avg = $f1_score_avg, set_rel.f1_score_std = $f1_score_std
+
+                            WITH set
+                            UNWIND $molecules as molecule
+                                MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
+                                    SET mol.`{target_name}` = molecule.target
+                                MERGE (set)-[mol_rel:{mol_dataset_dict[datatype]}]->(mol)
+                                    SET mol_rel.average_error = molecule.pred_average_error,
+                                        mol_rel.uncertainty = molecule.pred_std,
+                                        mol_rel.predicted_average = molecule.pred_avg,
+                                        mol_rel.actual_value = molecule.target
+
+                            """
+
+                    self.molecule_query_loop(molecules, query, target=target_name,
+                                             run_name=self.json_data['run_name'], set_type=datatype, size=size,
+
+                                             acc_avg=acc_avg, acc_std=acc_std, conf_avg=conf_avg, conf_std=conf_std,
+                                             auc_avg=auc_avg, auc_std=auc_std, f1_score_avg=f1_score_avg,
+                                             f1_score_std=f1_score_std
+                                             )
+
+    def reg_merge_molecules_with_sets(self):
 
         # TODO spilt this into three different functions, one for TestSet, TrainSet, ValSet. This is hard to follow
 
         """
-
         This will generate the data in the relationships relating models to Train/Test/Val sets. As well as the
         molecules inside of those sets. How the rmse, mse, r2 is calculate for each dataset differs slighty, so
         that has to be accounted for. Plus many models may not have a test/val set, so that has to be considered
         as well.
-
         :return:
         """
 
@@ -610,9 +706,11 @@ class ModelToNeo4j:
                 molecule_stats = ['scaled_' + x for x in self.molecule_stats]
                 molecule_stats.extend(self.molecule_stats)
 
-                df = df[['smiles', self.json_data['target_name'], *molecule_stats]]
-                df = df.rename(columns={self.json_data['target_name']: 'target'})
-                molecules = df.to_dict('records')
+                target_name = self.json_data['target_name']
+
+                sub_df = df[['smiles', target_name, *molecule_stats]]
+                sub_df = sub_df.rename(columns={target_name: 'target'})
+                molecules = sub_df.to_dict('records')
 
                 target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
                 if target_name_for_neo4j is None:
@@ -632,16 +730,15 @@ class ModelToNeo4j:
                 query = f"""
                         MATCH (model:MLModel {'{name: $run_name}'})
                         MATCH (set:{datatype} {'{run_name: $run_name, name: $set_type}'})
-                        
+
                         MERGE (model)-[set_rel:`{rel_dict[datatype]}`]->(set)
                             ON CREATE SET set_rel.size = $size, set_rel.r2_avg = $r2_avg, set_rel.r2_std = $r2_std, 
-                                set_rel.mse_avg = $mse_avg, set_rel.mse_std = $mse_std, set_rel.rmse_avg = $rmse_avg, 
-                                set_rel.rmse_std = $rmse_std,
-                                
+                                set_rel.mse_avg = $mse_avg, set_rel.mse_std = $mse_std, 
+                                set_rel.rmse_avg = $rmse_avg, set_rel.rmse_std = $rmse_std,
+
                                 set_rel.scaled_r2_avg = $scaled_r2_avg, set_rel.scaled_mse_avg = $scaled_mse_avg,
                                 set_rel.scaled_rmse_avg = $scaled_rmse_avg, set_rel.scaled_r2_std = $scaled_r2_std,
                                 set_rel.scaled_mse_std = $scaled_mse_std, set_rel.scaled_rmse_std = $scaled_rmse_std
-
                         WITH set
                         UNWIND $molecules as molecule
                             MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
@@ -650,13 +747,13 @@ class ModelToNeo4j:
                                 SET mol_rel.average_error = molecule.pred_average_error,
                                     mol_rel.uncertainty = molecule.pred_std,
                                     mol_rel.predicted_average = molecule.pred_avg,
-
                                     mol_rel.scaled_average_error = molecule.scaled_pred_average_error,
                                     mol_rel.scaled_uncertainty = molecule.scaled_pred_std,
-                                    mol_rel.scaled_predicted_average = molecule.scaled_pred_avg
-                                
+                                    mol_rel.scaled_predicted_average = molecule.scaled_pred_avg,
+                                    mol_rel.actual_value = molecule.target
+
                         """
-                self.molecule_query_loop(molecules, query, target=self.json_data['target_name'],
+                self.molecule_query_loop(molecules, query, target=target_name,
                                          run_name=self.json_data['run_name'], set_type=datatype, size=size,
 
                                          r2_avg=r2_avg, r2_std=r2_std, mse_avg=mse_avg, mse_std=mse_std,
@@ -691,24 +788,32 @@ class ModelToNeo4j:
 
     def merge_molecules_with_dataset(self):
 
-        df = self.model_data[['smiles', self.json_data['target_name']]]
-        df = df.rename(columns={self.json_data['target_name']: 'target'})
-        molecules = df.to_dict('records')
+        target_names = self.json_data['target_name']
+        if not isinstance(target_names, list):
+            target_names = [target_names]
 
-        target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
-        if target_name_for_neo4j is None:
-            target_name_for_neo4j = self.json_data['target_name']
+        for target_name in target_names:
 
-        query = f"""
-                                    
-                MATCH (dataset:DataSet {'{data: $dataset}'})
-                UNWIND $molecules as molecule
-                    MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
-                        SET mol.`{target_name_for_neo4j}` = molecule.target
-                    MERGE (dataset)-[:CONTAINS_MOLECULE]->(mol)
-                    
-                """
-        self.molecule_query_loop(molecules, query, dataset=self.json_data['dataset'])
+            df = self.model_data[['smiles', target_name]]
+            df = df.rename(columns={target_name: 'target'})
+            molecules = df.to_dict('records')
+
+            df.to_csv('dev.csv')
+
+            target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
+            if target_name_for_neo4j is None:
+                target_name_for_neo4j = target_name
+
+            query = f"""
+
+                    MATCH (dataset:DataSet {'{data: $dataset}'})
+                    UNWIND $molecules as molecule
+                        MERGE (mol:Molecule {'{smiles: molecule.smiles}'})
+                            SET mol.`{target_name_for_neo4j}` = molecule.target
+                        MERGE (dataset)-[:CONTAINS_MOLECULE]->(mol)
+
+                    """
+            self.molecule_query_loop(molecules, query, dataset=self.json_data['dataset'])
 
     def merge_molecules_with_frags(self):
 
@@ -740,7 +845,7 @@ class ModelToNeo4j:
         molecules = df.to_dict('records')
 
         query = """
-                
+
                 UNWIND $molecules as molecule
                     MERGE (mol:Molecule {smiles: molecule.smiles})
                         FOREACH (fragment in molecule.fragments |
@@ -780,7 +885,7 @@ class ModelToNeo4j:
         molecules = df.to_dict('records')
 
         query = """
-                
+
                 UNWIND $molecules as molecule
                     MERGE (mol:Molecule {smiles: molecule.smiles})
                     FOREACH (feature in molecule.feats |

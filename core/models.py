@@ -43,6 +43,8 @@ class MlModel:  # TODO update documentation here
 
         self.algorithm = algorithm
         self.dataset = dataset
+        if self.algorithm in ['svm', 'ada'] and self.dataset in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
+            tune = False
 
         # Sets self.task_type based on which dataset is being used.
         if self.dataset in cds:

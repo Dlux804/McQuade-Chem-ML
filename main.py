@@ -19,15 +19,22 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-    learner = ['knn', 'rf', 'ada', 'gdb', 'nn']
-    # learner = ['knn']
+   # learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    # learner = ['rf', 'ada', 'gdb', 'nn']
+    learner = ['gdb']
 
     # list of available classification learning algorithms for reference/testing
-    # learner = ['svm', 'knn', 'rf']
+   # learner = ['svm', 'knn', 'rf', 'ada', 'gdb']
 
     # list of available regression learning algorithms for reference/testing
-    # learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
+#    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
 
+    # All tune option
+    tune_option = [False, True]
+
+    # Random seed option
+    random_seed_option = [42, None]
+    targets = None
     # All data sets in dict
     targets = None
     sets = {
@@ -99,12 +106,12 @@ def main():
                         model.data_split(val=val)
                         model.reg()
                         model.run()  # Runs the models/featurizations for classification
-                        # model.analyze()
+                        model.analyze()
                         if model.algorithm != 'nn':
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-                        # model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 
@@ -220,10 +227,10 @@ def output_dir_to_neo4j():
 
 
 if __name__ == "__main__":
-    # main()
+    main()
     # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()
-    output_dir_to_neo4j()
+    # output_dir_to_neo4j()
     # QsarToNeo4j('2012ECM185.zip')

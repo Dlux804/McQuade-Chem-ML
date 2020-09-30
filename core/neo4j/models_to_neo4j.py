@@ -184,8 +184,11 @@ class ModelToNeo4j:
             d.pop(k)
 
         json_data = json.loads(json.dumps(d, cls=NumpyEncoder))
-        model_data = self.__combine_model_data_with_predictions__(all_raw_dfs['data'], all_raw_dfs['predictions'],
-                                                                  all_raw_dfs['scaled_predictions'])
+        if json_data['task_type'] == 'regression':
+            model_data = self.__combine_model_data_with_predictions__(all_raw_dfs['data'], all_raw_dfs['predictions'],
+                                                                      all_raw_dfs['scaled_predictions'])
+        else:
+            model_data = self.__combine_model_data_with_predictions__(all_raw_dfs['data'], all_raw_dfs['predictions'])
 
         json_data['is_qsarDB'] = False
         json_data['source'] = 'MolecularNetAI'

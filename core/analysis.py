@@ -347,7 +347,7 @@ def classification_graphs(self):
 
     if self.task_type == 'single_label_classification':
         # Creates and saves a graphical evaluation for single-label classification
-        fpr, tpr, thresholds = roc_curve(self.test_target, self.predictions)
+        fpr, tpr, thresholds = roc_curve(self.test_target, self.predictions_analysis)
         plot_roc_curve(fpr, tpr, self.auc_avg, self.acc_avg, self.f1_score_avg)
         filename = "roc_curve.png"
         plt.legend(loc='best')
@@ -355,7 +355,7 @@ def classification_graphs(self):
         plt.close()
 
 
-        precisions, recalls, thresholds = precision_recall_curve(self.test_target, self.predictions)
+        precisions, recalls, thresholds = precision_recall_curve(self.test_target, self.predictions_analysis)
         plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
         filename3 = "precision_recall_vs_threshold.png"
         plt.legend(loc='best')

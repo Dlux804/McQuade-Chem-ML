@@ -92,6 +92,9 @@ def main():
                         print('Done.\n')
 
                     with cd('output'):
+                        model.connect_mysql(user='user', password='dolphin', host='localhost',
+                                             database='featurized_datasets',
+                                             initialize_all_data=False)
                         model.featurize()  # Featurize molecules
                         val = 0.0
                         if alg == 'nn':
@@ -104,7 +107,7 @@ def main():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-                        # model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 
@@ -220,10 +223,10 @@ def output_dir_to_neo4j():
 
 
 if __name__ == "__main__":
-    # main()
+    main()
     # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()
-    output_dir_to_neo4j()
+    # output_dir_to_neo4j()
     # QsarToNeo4j('2012ECM185.zip')

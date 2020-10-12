@@ -19,7 +19,7 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-    learner = ['knn', 'rf', 'ada', 'gdb', 'nn']
+    learner = ['nn', 'gdb']
     # learner = ['knn']
 
     # list of available classification learning algorithms for reference/testing
@@ -31,40 +31,23 @@ def main():
     # All data sets in dict
     targets = None
     sets = {
-        'BBBP.csv': targets,
-        'sider.csv': targets,
-        'clintox.csv': targets,
-        'bace.csv': targets,
-        'ESOL.csv': 'water-sol',
-        'Lipophilicity-ID.csv': 'exp',
-        'water-energy.csv': 'expt',
-        'logP14k.csv': 'Kow',
-        'jak2_pic50.csv': 'pIC50'
+        # 'BBBP.csv': targets,
+        # 'sider.csv': targets,
+        # 'clintox.csv': targets,
+        # 'bace.csv': targets,
+        # 'ESOL.csv': 'water-sol',
+        'Lipophilicity-ID.csv': 'exp'
+        # 'water-energy.csv': 'expt',
+        # 'logP14k.csv': 'Kow',
+        # 'jak2_pic50.csv': 'pIC50'
     }
-
-    # classification data sets for reference/testing
-    # sets = {
-    #     'BBBP.csv': targets,
-    # 'sider.csv': targets,
-    # 'clintox.csv': targets,
-    # 'bace.csv': targets,
-    #    }
-
-    # regression data sets for reference/testing
-    # sets = {
-    #     'ESOL.csv': 'water-sol',
-    #     'Lipophilicity-ID.csv': 'exp',
-    #     'water-energy.csv': 'expt',
-    #     'logP14k.csv': 'Kow',
-    #     'jak2_pic50.csv': 'pIC50'
-    # }
 
     # sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
         # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
         #          [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
-        feats = [[0]]
+        feats = [[0], [0,2], [0,3], [2]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
@@ -88,7 +71,7 @@ def main():
                         # initiate model class with algorithm, dataset and target
 
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                        tune=False, cv=2, opt_iter=2)
+                                        tune=True, cv=5, opt_iter=25)
                         print('Done.\n')
 
                     with cd('output'):

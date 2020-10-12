@@ -1,181 +1,160 @@
 '''
-This code was written by Adam Luxon and team as part of the McQuade research group.
+This code was written by Adam Luxon and team as part of the McQuade and Ferri research groups.
 '''
-from core import ingest, features, grid, regressors, analysis, misc
-# from main import ROOT_DIR
-import csv
-import os
-import pandas as pd
-import subprocess
+from timeit import default_timer
+
+from numpy.random import randint
+from rdkit import RDLogger
+from py2neo import Graph
+from sqlalchemy.exc import OperationalError
+
+from core.ingest import load_smiles
+from core.name import name
+from core.storage import MLMySqlConn
+from core.neo4j import ModelToNeo4j
 
 
-class MlModel:
+rds = ['Lipophilicity-ID.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']
+RDLogger.DisableLog('rdApp.*')
+
+cds = ['BBBP.csv', 'HIV.csv', 'bace.csv']
+
+multi_label_classification_datasets = ['sider.csv', 'clintox.csv']  # List of multi-label classification data sets
+
+
+class MlModel:  # TODO update documentation here
     """
     Class to set up and run machine learning algorithm.
     """
-    def __init__(self, algorithm, dataset, target, drop=True):
-        """Requires: learning algorithm, dataset and target property's column name."""
+    from core.regressors import get_regressor, hyperTune, build_cnn
+    from core.grid import make_grid
+    from core.train import train_reg, train_cls
+    from core.analysis import impgraph, pva_graph, classification_graphs, hist, plot_learning_curves
+    from core.classifiers import get_classifier
+    from core.storage.util import original_param
+    from core.features import featurize, data_split
+    from core.storage import pickle_model, store, org_files, featurize_from_mysql, QsarDB_export
+
+    def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
+        """
+        Requires: learning algorithm, dataset, target property's column name, hyperparamter tune, number of
+        optimization cycles for hyper tuning, and number of Cross Validation folds for tuning.
+        """
+
         self.algorithm = algorithm
         self.dataset = dataset
-        self.target = target
-        self.data, self.smiles = ingest.load_smiles(dataset, target, drop)
 
-    def featurization(self, feats=None):
-        """ Featurize molecules in dataset and stores results as attribute in class instance.
-            Keyword arguments:
-            feats -- Features you want.  Default = None (requires user input)
-        """
-        self.data, self.feat_meth, self.feat_time = features.featurize(self.data, self.algorithm, feats)
+        # Sets self.task_type based on which dataset is being used.
+        if self.dataset in cds:
+            self.task_type = 'single_label_classification'
+        elif self.dataset in rds:
+            self.task_type = 'regression'
+        elif self.dataset in multi_label_classification_datasets:
+            self.task_type = 'multi_label_classification'
+        else:
+            raise Exception(
+                '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
 
+        self.target_name = target
+        self.feat_meth = feat_meth
 
+        if random is None:
+            self.random_seed = randint(low=1, high=50)
+        else:
+            self.random_seed = random
 
-    def run(self, tune=False):
-        """ Runs machine learning model. Stores results as class attributes."""
-
-        # store tune as attribute for cataloguing
+        self.opt_iter = opt_iter
+        self.cv_folds = cv
         self.tuned = tune
 
-        # Split data up. Set random seed here for graph comparison purposes.
-        train_features, test_features, train_target, test_target, self.feature_list = features.targets_features(self.data, self.target, random=42)
+        # ingest data.  collect full data frame (self.data)
+        # collect pandas series of the SMILES (self.smiles_col)
 
-        # set the model specific regressor function from sklearn
-        self.regressor = regressors.regressor(self.algorithm)
+        if self.dataset in multi_label_classification_datasets:
+            # Makes drop = False for multi-target classification
+            self.data, self.smiles_series = load_smiles(self, dataset, drop=False)
+        else:
+            self.data, self.smiles_series = load_smiles(self, dataset)
 
-        if tune:  # Do hyperparameter tuning
+        # define run name used to save all outputs of model
+        self.run_name = name(self)
 
-            # ask for tuning variables (not recommended for high throughput)
-            # folds = int(input('Please state the number of folds for hyperparameter searching: '))
-            # iters = int(input('Please state the number of iterations for hyperparameter searching: '))
-            # jobs = int(input('Input the number of processing cores to use. (-1) to use all.'))
+        if not tune:  # if no tuning, no optimization iterations or CV folds.
+            self.opt_iter = None
+            self.cv_folds = None
+            self.tune_time = None
 
-            # FIXME Unfortunate hard code deep in the program.
-            folds = 2
-            iters = 3
-            jobs = -1  # for bayes, max jobs = folds.
+        self.mysql_params = None
+        self.neo4j_params = None
 
-            # Make parameter grid
-            param_grid = grid.make_grid(self.algorithm)
+    def reg(self):  # broke this out because input shape is needed for NN regressor to be defined.
+        """
+        Function to fetch regressor.  Should be called after featurization has occured and input shape defined.
+        :return:
+        """
+        if self.task_type == 'regression':
+            self.get_regressor(call=False)  # returns instantiated model estimator
 
-            # Run Hyper Tuning
-            params,  self.tuneTime = regressors.hyperTune(self.regressor(), train_features,
-                                                                train_target, param_grid, folds, iters, jobs=folds)
+        if self.task_type in ['single_label_classification', 'multi_label_classification']:
+            self.get_classifier()
 
-            # redefine regressor model with best parameters.
-            self.regressor = self.regressor(**params)  # **dict will unpack a dictionary for use as keywrdargs
+    def run(self):
+        """ Runs machine learning model. Stores results as class attributes."""
 
-        else:  # Don't tune.
-            self.regressor = self.regressor()  # make it callable to match Tune = True case
-            self.tuneTime = None
-
+        if self.tuned:  # Do hyperparameter tuning
+            self.make_grid()
+            self.hyperTune(n_jobs=8)
+        else:  # Return original parameter if not tuned
+            self.original_param()
         # Done tuning, time to fit and predict
+        if self.task_type == 'regression':
+            self.train_reg()
 
-        #Variable importance for rf and gdb
-        if self.algorithm in ['rf', 'gdb'] and self.feature_list == [0]:
-            self.impgraph, self.varimp = analysis.impgraph(self.algorithm, self.regressor, train_features, train_target, self.feature_list)
-        else:
-            pass
-        # multipredict
-        # self.pvaM, fits_time = analysis.multipredict(self.regressor, train_features, test_features, train_target, test_target)
-        self.stats, self.pvaM, fits_time = analysis.replicate_multi(self.regressor, train_features, test_features, train_target, test_target)
+        if self.task_type in ['single_label_classification', 'multi_label_classification']:
+            self.train_cls()
 
-        self.graphM = analysis.pvaM_graphs(self.pvaM)
+    def analyze(self):
+        # Variable importance for tree based estimators
+                # if self.feat_meth == [0]:
+        #     self.permutation_importance()
+        if self.algorithm in ['rf', 'gdb', 'ada'] and self.feat_meth == [0]:
+            self.impgraph()
 
-        # run the model 5 times and collect the metric stats as dictionary
-        # self.stats = analysis.replicate_model(self, 5)
+        # make predicted vs actual graph
+        if self.task_type == 'regression':
+            self.pva_graph()
+            self.pva_graph(use_scaled=True)  # Plot scaled pva data
+            self.plot_learning_curves()
+            if self.algorithm != "cnn":  # CNN is running into OverflowError: cannot convert float infinity to integer
+                self.hist()
 
-    def store(self):
-        """  Organize and store model inputs and outputs.  """
+        if self.task_type in ['single_label_classification', 'multi_label_classification']:
+            self.classification_graphs()
 
-        # Check if model was tuned, store a string
-        if self.tuned:
-            tuned = 'tuned'
-        else:
-            tuned = 'notune'
+    def to_neo4j(self, port="bolt://localhost:7687", username="neo4j", password="password"):
+        # Create Neo4j graphs from pipeline
+        t1 = default_timer()
+        self.neo4j_params = {'port': port, 'username': username, 'password': password}  # Pass Neo4j Parameters
+        Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
+              password=self.neo4j_params["password"])  # Test connection to Neo4j
+        ModelToNeo4j(model=self, port=port, molecules_per_batch=5000, username=username, password=password)
+        t2 = default_timer() - t1
+        print(f"Time it takes to finish graphing {self.run_name}: {t2}sec")
 
-        # unpack featurization method list
-        feats = ''
-        for meth in self.feat_meth:
-            feats = feats + '-' + str(meth)
+    def connect_mysql(self, user, password, host, database, initialize_all_data=False):
+        # Gather MySql Parameters
+        self.mysql_params = {'user': user, 'password': password, 'host': host, 'database': database}
 
-        # create model file name
-        name = self.dataset[:-4] + '-' + self.algorithm + feats + '-' + tuned
-        csvfile = name + '.csv'
+        # Test connection
+        try:
+            print('Establishing connection to SQL')
+            conn = MLMySqlConn(user=self.mysql_params['user'], password=self.mysql_params['password'],
+                               host=self.mysql_params['host'], database=self.mysql_params['database'])
+        except OperationalError:
+            return Exception("Bad parameters passed to connect to MySql database or MySql server"
+                             "not properly configured")
 
-        # create dictionary of attributes
-        att = dict(vars(self))  # makes copy so does not affect original attributes
-        del att['data']  # do not want DF in dict
-        del att['smiles']  # do not want series in dict
-        del att['graphM']  # do not want graph object
-        del att['stats']  # will unpack and add on
-        # del att['impgraph']
-        att.update(self.stats)
-        att.update(self.varimp)
-        # Write contents of attributes dictionary to a CSV
-        with open(csvfile, 'w') as f:  # Just use 'w' mode in Python 3.x
-            w = csv.DictWriter(f, att.keys())
-            w.writeheader()
-            w.writerow(att)
-            f.close()
-
-        # save data frames
-        self.data.to_csv(name+'data.csv')
-        self.pvaM.to_csv(name+'predictions.csv')
-
-        # save graphs
-        self.graphM.savefig(name+'PvAM')
-        if self.algorithm in ['rf', 'gdb'] and self.feature_list == [0]:
-            self.impgraph.savefig(name+'impgraph')
-            self.impgraph.close()
-        else:
-            pass
-        self.graphM.close()  # close to conserve memory when running many models.
-        # self.graph.savefig(name+'PvA')
-
-        # make folders for each run
-        os.mkdir(name)
-
-        # put output files into new folder
-        filesp = 'mv ./' + name + '* ' + name +'/'
-        subprocess.Popen(filesp, shell=True, stdout=subprocess.PIPE)  # run bash command
-
-        # Move folder to output/
-        # when testing using code below, need ../output/ because it will run from core.
-        # when running from main.py at root, no ../ needed.
-        movesp = 'mv ./' + name + '/ output/'
-
-        subprocess.Popen(movesp, shell=True, stdout=subprocess.PIPE)  # run bash command
-
-
-
-# This section is for troubleshooting and should be commented out when finished testing
-
-# change active directory
-# with misc.cd('../dataFiles/'):
-#     print('Now in:', os.getcwd())
-#     print('Initializing model...', end=' ', flush=True)
-#     # initiate model class with algorithm, dataset and target
-#     model1 = MlModel('rf', 'ESOL.csv', 'water-sol')
-#     print('done.')
-
-# # featurize data with rdkit2d
-# model1.featurization([0])
-# print(model1.feat_meth)
-#
-#
-# # Run the model with hyperparameter optimization
-# model1.run(tune=True)
-
-# print('Tune Time:', model1.tuneTime)
-
-#
-#
-#
-# # Save results
-# model1.store()
-#
-#
-# # Must show() graph AFTER it has been saved.
-# # if show() is called before save, the save will be blank
-# # display PvA graph
-# model1.graphM.show()
-
+        # Insert featurized data into MySql. This will only run once per dataset/feat combo,
+        # even if initialize_data=True
+        if initialize_all_data:
+            conn.insert_all_data_mysql()

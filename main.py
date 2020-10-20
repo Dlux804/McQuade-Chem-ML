@@ -47,7 +47,7 @@ def main():
     for alg in learner:  # loop over all learning algorithms
         # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
         #          [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
-        feats = [[0], [0,2], [0,3], [2]]
+        feats = [[0], [0,5], [0,4], [4]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 

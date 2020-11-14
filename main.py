@@ -19,12 +19,12 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-   # learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
     # learner = ['rf', 'ada', 'gdb', 'nn']
-    learner = ['gdb']
+    # learner = ['gdb']
 
     # list of available classification learning algorithms for reference/testing
-   # learner = ['svm', 'knn', 'rf', 'ada', 'gdb']
+    # learner = ['svm', 'knn', 'rf', 'ada', 'gdb']
 
     # list of available regression learning algorithms for reference/testing
 #    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
@@ -43,7 +43,7 @@ def main():
         'clintox.csv': targets,
         'bace.csv': targets,
         'ESOL.csv': 'water-sol',
-        'Lipophilicity-ID.csv': 'exp',
+        'lipo_raw.csv': 'exp',
         'water-energy.csv': 'expt',
         'logP14k.csv': 'Kow',
         'jak2_pic50.csv': 'pIC50'
@@ -60,7 +60,7 @@ def main():
     # regression data sets for reference/testing
     # sets = {
     #     'ESOL.csv': 'water-sol',
-    #     'Lipophilicity-ID.csv': 'exp',
+    #     'lipo_raw.csv': 'exp',
     #     'water-energy.csv': 'expt',
     #     'logP14k.csv': 'Kow',
     #     'jak2_pic50.csv': 'pIC50'
@@ -69,9 +69,9 @@ def main():
     # sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
-        # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
-        #          [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
-        feats = [[0]]
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+                  [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
+        # feats = [[0]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
@@ -111,7 +111,7 @@ def main():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+                        # model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 

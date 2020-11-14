@@ -11,7 +11,7 @@ def target_name_grid(dataset):
     """
     grid = {
             'ESOL.csv': 'water_sol',
-            'Lipophilicity-ID.csv': 'logP',
+            'lipo_raw.csv': 'logP',
             'water-energy.csv': 'hydration_energy',
             'logP14k.csv': 'logP_kow',
             'jak2_pic50.csv': 'pIC50',

@@ -45,7 +45,7 @@ class MLMySqlConn:
         self.feat_sets = {-1: None, 0: 'rdkit2d', 1: 'rdkitfpbits', 2: 'morgan3counts',
                           3: 'morganfeature3counts', 4: 'morganchiral3counts', 5: 'atompaircounts'}
         # Define regression datasets with their keys
-        self.rds = {'Lipophilicity-ID.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
+        self.rds = {'lipo_raw.csv': 'exp', 'ESOL.csv': 'water-sol', 'water-energy.csv': 'expt',
                     'logP14k.csv': 'Kow', 'jak2_pic50.csv': 'pIC50', '18k-logP.csv': 'exp'}
         # Define classification datasets
         self.cds = ['sider.csv', 'clintox.csv', 'BBBP.csv', 'HIV.csv', 'bace.csv', 'cmc_noadd.csv']

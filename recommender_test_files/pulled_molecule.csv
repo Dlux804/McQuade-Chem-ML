@@ -1,2 +1,2 @@
-CMPD_CHEMBLID,exp,smiles
-CHEMBL1472189,2.9,COc1ccc(CC(=O)Nc2nc3ccccc3[nH]2)cc1
+,Unnamed: 0,CMPD_CHEMBLID,exp,smiles
+0,0,CHEMBL1472189,2.9,COc1ccc(CC(=O)Nc2nc3ccccc3[nH]2)cc1

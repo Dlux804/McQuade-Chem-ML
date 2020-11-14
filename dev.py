@@ -8,6 +8,7 @@ from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
 from core import MlModel
 from core.storage import cd, pickle_model, unpickle_model
+from core.features import canonical_smiles
 
 
 params = {'port': "bolt://localhost:7687", 'username': "neo4j", 'password': "password"}
@@ -27,6 +28,17 @@ def test_data():
         print('Valid starting data')
     else:
         raise TypeError('Invalid starting data')
+
+
+def cleanup_smiles():
+
+    datasets = ['lipo_subset.csv', 'pulled_molecule.csv']
+
+    for dataset in datasets:
+        file = f'recommender_test_files/{dataset}'
+        df = pd.read_csv(file)
+        df = canonical_smiles(df)
+        df.to_csv(file)
 
 
 def delete_current_neo4j_data():
@@ -125,6 +137,8 @@ def insert_single_molecule_with_frags(smiles):
 def find_similar_molecules(smiles):
     graph = Graph(params['port'], username=params['username'], password=params['password'])
 
+    print('\nFinding top 5 similar molecules...')
+
     results = graph.run("""
     
         MATCH (n:Molecule {smiles: $smiles})
@@ -186,12 +200,25 @@ def predict_molecule(model, smiles):
     return predicted_value
 
 
+def fetch_actual_value(smiles, target, dataset):
+
+    df = pd.read_csv(dataset)
+    matches = df.loc[df['smiles'] == smiles]
+    if len(matches) == 1:
+        value = matches.to_dict('records')[0][target]
+    else:
+        df = pd.read_csv('pulled_molecule.csv')
+        matches = df.loc[df['smiles'] == smiles]
+        value = matches.to_dict('records')[0][target]
+    return value
+
+
 def return_sorted_models_for_mol(smiles):
 
     all_results = []
-    with cd('recommender_test_files/models'):
-        for file in os.listdir():
-            model = unpickle_model(file)
+    with cd('recommender_test_files'):
+        for file in os.listdir('models'):
+            model = unpickle_model(f'models/{file}')
             results = {'smiles': smiles}
             mp = model.predictions
             matches = mp.loc[mp['smiles'] == smiles]
@@ -201,8 +228,12 @@ def return_sorted_models_for_mol(smiles):
                 results['pred_average_error'] = row['pred_average_error']
                 results['in_test_set'] = True
             else:
+                predicted_value = predict_molecule(model, smiles)
+                actual_value = fetch_actual_value(smiles, target=model.target_name, dataset=model.dataset)
+                pred_average_error = abs(actual_value - predicted_value)
+
                 results['model'] = model.run_name
-                results['pred_average_error'] = predict_molecule(model, smiles)
+                results['pred_average_error'] = pred_average_error
                 results['in_test_set'] = False
             all_results.append(results)
         all_results = pd.DataFrame(all_results)
@@ -217,13 +248,13 @@ def sort_dfs():
             df = df.sort_values(by=['pred_average_error'])
             df.to_csv(file)
 
+# test_data()
+# cleanup_smiles()
+# generate_models()
+# delete_current_neo4j_data()
+# models_to_neo4j()
 
-test_data()
-generate_models()
-delete_current_neo4j_data()
-models_to_neo4j()
-
-pulled_smiles = 'Cc1cccc(C[C@H](NC(=O)c2cc(nn2C)C(C)(C)C)C(=O)NCC#N)c1'
+pulled_smiles = 'COc1ccc(CC(=O)Nc2nc3ccccc3[nH]2)cc1'
 results = return_sorted_models_for_mol(pulled_smiles)
 results.to_csv(f'recommender_test_files/results/pulled_smiles.csv', index=False)
 

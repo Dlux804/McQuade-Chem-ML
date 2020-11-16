@@ -114,7 +114,7 @@ def wrapKeras(self, build_func):
             self.estimator = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape)
 
 
-def get_regressor(self, call=False):
+def get_regressor(self, call=False, given_param=None):
     """
     Returns model specific regressor function.
     Optional argument to create callable or instantiated instance.
@@ -140,6 +140,8 @@ def get_regressor(self, call=False):
         else:
             if hasattr(self, 'params'):  # has been tuned
                 self.estimator = skl_regs[self.algorithm](**self.params)
+            elif given_param is not None:
+                self.estimator = skl_regs[self.algorithm](**given_param)
             elif self.algorithm in ['gdb', 'rf']:
                 self.estimator = skl_regs[self.algorithm](ccp_alpha=0.1)
             else:  # use default params
@@ -220,7 +222,8 @@ def hyperTune(self, epochs=50, n_jobs=6):
     # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
     # TODO try different scaling with delta
     # self.cp_delta = 0.05
-    self.cp_delta = float((0.05 - self.train_target.min())/(self.train_target.max() - self.train_target.min()))  # Min max scaling
+    self.cp_delta = float((0.001 - self.train_target.min())/(self.train_target.max() - self.train_target.min()))  # Min max scaling
+    # self.cp_delta = 0.05
     print("cp_delta is : ", self.cp_delta)
     # self.cp_delta = delta_std * (self.train_target.max() - self.train_target.min()) + self.train_target.min()
     self.cp_n_best = 5

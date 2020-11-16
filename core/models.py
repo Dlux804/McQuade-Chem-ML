@@ -32,7 +32,8 @@ class MlModel:  # TODO update documentation here
     from core.analysis import impgraph, pva_graph, classification_graphs, hist, plot_learning_curves
     from core.classifiers import get_classifier
     from core.storage.util import original_param
-    from core.features import featurize, data_split
+    from core.features import featurize
+    from core.split import data_split
     from core.storage import pickle_model, store, org_files, featurize_from_mysql, QsarDB_export
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
@@ -126,9 +127,9 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'regression':
             self.pva_graph()
             self.pva_graph(use_scaled=True)  # Plot scaled pva data
-            self.plot_learning_curves()
-            if self.algorithm != "cnn":  # CNN is running into OverflowError: cannot convert float infinity to integer
-                self.hist()
+            # self.plot_learning_curves()
+            # if self.algorithm != "cnn":  # CNN is running into OverflowError: cannot convert float infinity to integer
+            #     self.hist()
 
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.classification_graphs()

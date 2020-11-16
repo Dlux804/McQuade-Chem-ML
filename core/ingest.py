@@ -29,7 +29,7 @@ def canonical_smiles(df):
     return df
 
 
-def load_smiles(self, file, target, drop=True):
+def load_smiles(self, file, drop=True):
     """
     Find SMILES in CSV.  Return DataFrame and Series of SMILES.
 
@@ -57,7 +57,7 @@ def load_smiles(self, file, target, drop=True):
 
     csv = canonical_smiles(csv)
     if drop:  # drop all extra columns
-        csv = csv[['smiles', target]]
+        csv = csv[['smiles', self.target_name]]
 
     return csv, smiles_col
 

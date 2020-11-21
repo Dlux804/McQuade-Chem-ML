@@ -265,19 +265,19 @@ def sort_dfs():
             df.to_csv(file, index=False)
 
 
-# test_data()
-# cleanup_smiles()
-# insert_dataset_molecules()
-# delete_current_neo4j_data()
+test_data()
+cleanup_smiles()
+insert_dataset_molecules()
+delete_current_neo4j_data()
 
 pulled_smiles = 'COc1ccc(CC(=O)Nc2nc3ccccc3[nH]2)cc1'
 insert_single_molecule_with_frags(pulled_smiles)
 similar_smiles_dict, similar_smiles = find_similar_molecules(pulled_smiles)
-#
-# generate_models(sim_smiles=similar_smiles)
-# delete_current_neo4j_data()
-# models_to_neo4j()
-#
+
+generate_models(sim_smiles=similar_smiles)
+delete_current_neo4j_data()
+models_to_neo4j()
+
 for i, similar_smile in enumerate(similar_smiles_dict):
     smiles = similar_smile['smiles']
     results = return_sorted_models_for_mol(smiles)

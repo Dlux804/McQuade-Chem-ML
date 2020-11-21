@@ -8,8 +8,7 @@ from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
 from core import MlModel
 from core.storage import cd, pickle_model, unpickle_model
-from core.features import canonical_smiles
-
+from core.split import canonical_smiles
 
 params = {'port': "bolt://localhost:7687", 'username': "neo4j", 'password': "password"}
 
@@ -31,7 +30,6 @@ def test_data():
 
 
 def cleanup_smiles():
-
     datasets = ['lipo_subset.csv', 'pulled_molecule.csv']
 
     for dataset in datasets:
@@ -47,7 +45,6 @@ def delete_current_neo4j_data():
     nodes_to_removes = ['MLModel', 'TestSet', 'TrainSet', 'ValSet']
 
     for node_type in nodes_to_removes:
-
         graph.evaluate(f"""
         
             MATCH (n:{node_type})
@@ -97,7 +94,6 @@ def generate_models():
 
 
 def models_to_neo4j():
-
     print('\nInserting models into Neo4j...')
     print('If this is the first model being inserted, it may take some time')
 
@@ -121,6 +117,7 @@ def insert_single_molecule_with_frags(smiles):
         for frag in range(fcount):
             frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
         return frag_list
+
     fragments = calculate_fragments(smiles)
 
     graph.evaluate("""
@@ -201,7 +198,6 @@ def predict_molecule(model, smiles):
 
 
 def fetch_actual_value(smiles, target, dataset):
-
     df = pd.read_csv(dataset)
     matches = df.loc[df['smiles'] == smiles]
     if len(matches) == 1:
@@ -214,7 +210,6 @@ def fetch_actual_value(smiles, target, dataset):
 
 
 def return_sorted_models_for_mol(smiles):
-
     all_results = []
     with cd('recommender_test_files'):
         for file in os.listdir('models'):
@@ -240,31 +235,54 @@ def return_sorted_models_for_mol(smiles):
         return all_results
 
 
-def sort_dfs():
+def insert_dataset_molecules(dataset):
+    with cd('recommender_test_files'):
 
+        print('\ninsert_dataset_molecules: Bootleg strats to get molecules into Neo4j...')
+        print('\nHighly recommended to delete Neo4j data after running this function')
+        print('\nThis may take some time if this the first time the function is being run')
+
+        model = MlModel(algorithm='rf', dataset=dataset, target='exp', feat_meth=[0],
+                        tune=False, cv=0, opt_iter=0)
+        model.featurize()
+        if model.algorithm == 'nn':
+            model.data_split(val=0.1)
+        else:
+            model.data_split()
+        model.reg()
+        model.run()
+        model.to_neo4j(**params)
+
+
+def sort_dfs():
     with cd('recommender_test_files/results'):
         for file in os.listdir():
             df = pd.read_csv(file)
             df = df.sort_values(by=['pred_average_error'])
             df.to_csv(file)
 
-# test_data()
-# cleanup_smiles()
-# generate_models()
-# delete_current_neo4j_data()
-# models_to_neo4j()
+
+test_data()
+cleanup_smiles()
+insert_dataset_molecules()
+delete_current_neo4j_data()
 
 pulled_smiles = 'COc1ccc(CC(=O)Nc2nc3ccccc3[nH]2)cc1'
+insert_single_molecule_with_frags(pulled_smiles)
 results = return_sorted_models_for_mol(pulled_smiles)
 results.to_csv(f'recommender_test_files/results/pulled_smiles.csv', index=False)
-
-insert_single_molecule_with_frags(pulled_smiles)
 similar_smiles = find_similar_molecules(pulled_smiles)
-for i, similar_smile in enumerate(similar_smiles):
-    smiles = similar_smile['smiles']
-    results = return_sorted_models_for_mol(smiles)
-    results['weight'] = similar_smile['sim_score']
-    file_name = f'molecule_{str(i)}.csv'
-    results.to_csv(f'recommender_test_files/results/{file_name}', index=False)
 
-sort_dfs()
+print(similar_smiles)
+
+# generate_models()
+# models_to_neo4j()
+
+# for i, similar_smile in enumerate(similar_smiles):
+#     smiles = similar_smile['smiles']
+#     results = return_sorted_models_for_mol(smiles)
+#     results['weight'] = similar_smile['sim_score']
+#     file_name = f'molecule_{str(i)}.csv'
+#     results.to_csv(f'recommender_test_files/results/{file_name}', index=False)
+#
+# sort_dfs()

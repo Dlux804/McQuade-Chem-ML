@@ -8,6 +8,30 @@ from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 from rdkit import Chem
 
 
+def canonical_smiles(df):
+    """
+    Objective: Create list of canonical SMILES from SMILES
+    Intent: While the SMILES in dataset from moleculenet.ai are all canonical, it is always good to be safe. I don't
+            know if I should add in a way to detect irregular SMILES and remove the rows that contains them in the
+            dataframe. However, that process should be carried out at the start of the pipeline instead of at the end.
+    :param smiles_list:
+    :return:
+    """
+
+    smiles = df['smiles']
+    con_smiles = []
+    for smile in smiles:
+        mol = Chem.MolFromSmiles(smile)
+        if mol is not None:
+            con_smiles.append(Chem.MolToSmiles(mol))
+        else:
+            con_smiles.append('bad_smiles')
+    df['smiles'] = con_smiles
+    df = df.loc[df['smiles'] != 'bad_smiles']
+
+    return df
+
+
 def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     Caclulate molecular features.

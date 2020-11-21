@@ -798,8 +798,6 @@ class ModelToNeo4j:
             df = df.rename(columns={target_name: 'target'})
             molecules = df.to_dict('records')
 
-            df.to_csv('dev.csv')
-
             target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
             if target_name_for_neo4j is None:
                 target_name_for_neo4j = target_name

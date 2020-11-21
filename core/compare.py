@@ -39,7 +39,7 @@ def merger():
     path = r'C:/Users/luxon/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207'  # Adam's tablet. will vary by OS, computer
     # path = r'C:/Users/Adam/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207' # Adam's desktop
     allFiles = glob.glob(path + "/*/*.csv")
-    with open('hte-models-Master-Results.csv', 'wb+') as outfile:
+    with open('hte-models-Master-results.csv', 'wb+') as outfile:
         for i, fname in enumerate(allFiles):
             with open(fname, 'rb') as infile:
                 if i != 0:
@@ -48,7 +48,7 @@ def merger():
                 shutil.copyfileobj(infile, outfile)
                 # print(fname + " has been imported.")
 
-    mdf = pd.read_csv('hte-models-Master-Results.csv')#, dtype={'exp': object})
+    mdf = pd.read_csv('hte-models-Master-results.csv')#, dtype={'exp': object})
     # print(master)
 
     # grab unique datasets into a set
@@ -431,7 +431,7 @@ data = {
     "ESOL.csv": "smiles",
     # "cmc_smiles_26.csv": "smiles",
     # "flashpoint.csv": "smiles",
-    # "Lipophilicity-ID.csv": "smiles",
+    # "lipo_raw.csv": "smiles",
     # "jak2_pic50.csv": "SMILES",
     "water-energy.csv" : "smiles"
     # "pyridine_smi_3.csv" : "smiles"

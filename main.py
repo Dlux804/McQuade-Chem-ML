@@ -19,12 +19,12 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-   # learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
     # learner = ['rf', 'ada', 'gdb', 'nn']
-    learner = ['gdb']
+    # learner = ['gdb']
 
     # list of available classification learning algorithms for reference/testing
-   # learner = ['svm', 'knn', 'rf', 'ada', 'gdb']
+    # learner = ['svm', 'knn', 'rf', 'ada', 'gdb']
 
     # list of available regression learning algorithms for reference/testing
 #    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
@@ -43,7 +43,7 @@ def main():
         'clintox.csv': targets,
         'bace.csv': targets,
         'ESOL.csv': 'water-sol',
-        'Lipophilicity-ID.csv': 'exp',
+        'lipo_raw.csv': 'exp',
         'water-energy.csv': 'expt',
         'logP14k.csv': 'Kow',
         'jak2_pic50.csv': 'pIC50'
@@ -58,19 +58,20 @@ def main():
     #    }
 
     # regression data sets for reference/testing
-    sets = {
-
-        'Lipophilicity-ID.csv': 'exp',
-        'logP14k.csv': 'Kow',
-        'jak2_pic50.csv': 'pIC50'
-    }
+    # sets = {
+    #     'ESOL.csv': 'water-sol',
+    #     'lipo_raw.csv': 'exp',
+    #     'water-energy.csv': 'expt',
+    #     'logP14k.csv': 'Kow',
+    #     'jak2_pic50.csv': 'pIC50'
+    # }
 
     # sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
-        # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
-        #          [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
-        feats = [[0]]
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+                  [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
+        # feats = [[0]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
@@ -110,7 +111,7 @@ def main():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+                        # model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 
@@ -126,10 +127,10 @@ def single_model():
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model1 = MlModel(algorithm='rf', dataset='BBBP.csv', target=get_classification_targets(data='BBBP.csv'),
-                         feat_meth=[0], tune=False, cv=2, opt_iter=5, random=10)
-        # model1 = MlModel(algorithm='cnn', dataset='water-energy.csv', target='expt', feat_meth=[0],
-        #                  tune=True, cv=2, opt_iter=50)
+        # model1 = MlModel(algorithm='rf', dataset='BBBP.csv', target=get_classification_targets(data='BBBP.csv'), feat_meth=[0],
+        #                  tune=False, cv=2, opt_iter=5, random=10)
+        model1 = MlModel(algorithm='cnn', dataset='water-energy.csv', target='expt', feat_meth=[0],
+                         tune=True, cv=2, opt_iter=50)
         # model1 = MlModel(algorithm='rf', dataset='clintox.csv', target=['FDA_APPROVED', 'CT_TOX'], feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=2)
 
@@ -149,7 +150,6 @@ def single_model():
         model1.analyze()
         if model1.algorithm not in ['cnn', 'nn']:  # issues pickling NN models
             model1.pickle_model()
-
         model1.store()
         model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
@@ -227,9 +227,8 @@ def output_dir_to_neo4j():
 
 
 if __name__ == "__main__":
-    # main()
-    single_model()
-
+    main()
+    # single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()

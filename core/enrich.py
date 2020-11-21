@@ -11,7 +11,7 @@
 # import os
 #
 # sets = {
-#         'Lipophilicity-ID.csv': 'exp',
+#         'lipo_raw.csv': 'exp',
 #         'ESOL.csv': 'water-sol',
 #         'water-energy.csv': 'expt',
 #         'logP14k.csv': 'Kow',

@@ -68,10 +68,8 @@ def generate_models(sim_smiles):
     cv = 5
     opt_iter = 100
 
-    # learners = ['svm', 'rf', 'ada', 'gdb']
-    # features = [[0], [0, 1], [0, 2]]
-    learners = ['rf']
-    features = [[0]]
+    learners = ['svm', 'rf', 'ada', 'gdb']
+    features = [[0], [0, 1], [0, 2]]
 
     print(f'List of learners: {str(learners)}')
     print(f'List of features: {str(features)}')
@@ -94,7 +92,6 @@ def generate_models(sim_smiles):
 
 def models_to_neo4j():
     print('\nInserting models into Neo4j...')
-    print('If this is the first model being inserted, it may take some time')
 
     with cd('recommender_test_files/models'):
         for file in os.listdir():
@@ -276,18 +273,19 @@ def sort_dfs():
 pulled_smiles = 'COc1ccc(CC(=O)Nc2nc3ccccc3[nH]2)cc1'
 insert_single_molecule_with_frags(pulled_smiles)
 similar_smiles_dict, similar_smiles = find_similar_molecules(pulled_smiles)
-
-results = return_sorted_models_for_mol(pulled_smiles)
-results.to_csv(f'recommender_test_files/results/pulled_smiles.csv', index=False)
-
-generate_models(sim_smiles=similar_smiles)
-models_to_neo4j()
-
+#
+# generate_models(sim_smiles=similar_smiles)
+# delete_current_neo4j_data()
+# models_to_neo4j()
+#
 for i, similar_smile in enumerate(similar_smiles_dict):
     smiles = similar_smile['smiles']
     results = return_sorted_models_for_mol(smiles)
     results['weight'] = similar_smile['sim_score']
     file_name = f'molecule_{str(i)}.csv'
-    results.to_csv(f'recommender_test_files/results/{file_name}', index=False)
+    results.to_csv(f'recommender_test_files/results/{file_name}')
+
+results = return_sorted_models_for_mol(pulled_smiles)
+results.to_csv(f'recommender_test_files/results/pulled_smiles.csv')
 
 sort_dfs()

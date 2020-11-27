@@ -139,7 +139,7 @@ def insert_dataset_molecules(data):
     )
 
 
-def find_similar_molecules(smiles):
+def find_similar_molecules(smiles, return_dict=True, limit_to_5=True):
     graph = Graph(params['port'], username=params['username'], password=params['password'])
 
     print('\nFinding top 5 similar molecules...')
@@ -174,12 +174,14 @@ def find_similar_molecules(smiles):
         sim_results.append(row)
     sim_results = pd.DataFrame(sim_results)
     sim_results = sim_results.sort_values(by=['sim_score'], ascending=False)
-    sim_results = sim_results.head(5)
+    if limit_to_5:
+        sim_results = sim_results.head(5)
     sim_results = sim_results[['smiles_2', 'sim_score']]
     sim_results = sim_results.rename(columns={'smiles_2': 'smiles'})
 
     sim_smiles = sim_results['smiles'].to_list()
-    sim_results = sim_results.to_dict('records')
+    if return_dict:
+        sim_results = sim_results.to_dict('records')
     return sim_results, sim_smiles
 
 

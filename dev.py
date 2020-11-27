@@ -49,11 +49,11 @@ def list_similarity(a, b):
 
     # Calculate the max error (different for even and odd length list)
     if (len(a) % 2) == 0:
-        n = len(a) / 2
-        max_error = 2 * (n ** 2)
+        n = len(a)
+        max_error = (n ** 2)/2
     else:
-        n = (len(a) - 1) / 2
-        max_error = 2 * (n ** 2 + n)
+        n = len(a)
+        max_error = ((n**2)-1)/2
 
     # Verify calculated max error returned an int
     if int(max_error) == max_error:
@@ -98,8 +98,7 @@ random_int = random.randint(0, len(data))
 control_smiles = dict(data.iloc[random_int])['smiles']
 data = data.drop(random_int)
 
-neo4j_results = find_similar_molecules(smiles=control_smiles)
-neo4j_smiles = neo4j_results['smiles'].to_list()
+neo4j_results, neo4j_smiles = find_similar_molecules(smiles=control_smiles, return_dict=False, limit_to_5=False)
 
 control_fingerprint = Chem.RDKFingerprint(Chem.MolFromSmiles(control_smiles))
 rdkit_results = []

@@ -14,8 +14,7 @@ from core.storage import MLMySqlConn
 from core.neo4j import ModelToNeo4j
 
 
-rds = ['lipo_raw.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv',
-       'lipo_subset.csv']
+rds = ['lipo_raw.csv', 'ESOL.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv', 'Lipo-short.csv']
 RDLogger.DisableLog('rdApp.*')
 
 cds = ['BBBP.csv', 'HIV.csv', 'bace.csv']

@@ -1,9 +1,13 @@
 import os
+import random
+import shutil
+import time
 
+from tqdm import tqdm
 import pandas as pd
 from rdkit import Chem, RDConfig
 from rdkit.Chem import FragmentCatalog, MolFromSmiles
-from py2neo import Graph
+from py2neo import Graph, ClientError
 from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
 from core import MlModel
@@ -13,30 +17,11 @@ from core.features import canonical_smiles
 params = {'port': "bolt://localhost:7687", 'username': "neo4j", 'password': "password"}
 
 
-def test_data():
-    print('Verifying starting data...')
-    raw_df = pd.read_csv('recommender_test_files/lipo_raw.csv')
-    sub_df = pd.read_csv('recommender_test_files/lipo_subset.csv')
-    pull_mol = pd.read_csv('recommender_test_files/pulled_molecule.csv')
-    smiles = pull_mol.to_dict('records')[0]['smiles']
-
-    matches_in_raw = len(raw_df.loc[raw_df['smiles'] == smiles])
-    matches_in_subset = len(sub_df.loc[sub_df['smiles'] == smiles])
-
-    if matches_in_raw == 1 and matches_in_subset == 0:
-        print('Valid starting data')
-    else:
-        raise TypeError('Invalid starting data')
-
-
-def cleanup_smiles():
-    datasets = ['lipo_subset.csv', 'pulled_molecule.csv']
-
-    for dataset in datasets:
-        file = f'recommender_test_files/{dataset}'
-        df = pd.read_csv(file)
-        df = canonical_smiles(df)
-        df.to_csv(file, index=False)
+def cleanup_smiles(dataset):
+    file = f'recommender_test_files/{dataset}'
+    df = pd.read_csv(file)
+    df = canonical_smiles(df)
+    df.to_csv(file, index=False)
 
 
 def delete_current_neo4j_data():
@@ -54,14 +39,18 @@ def delete_current_neo4j_data():
         """)
 
 
-def generate_models(sim_smiles):
+def delete_results():
+    for directory in os.listdir('recommender_test_files/results'):
+        shutil.rmtree(f'recommender_test_files/results/{directory}')
+
+
+def generate_models(dataset, sim_smiles, pulled_smiles):
+
     print('\nRemoving previous models...')
-    with cd('recommender_test_files/models'):
-        for file in os.listdir():
-            os.remove(file)
+    for file in os.listdir('recommender_test_files/models'):
+        os.remove(f'recommender_test_files/models/{file}')
 
     print('\nGenerating models...')
-    dataset = 'lipo_subset.csv'
     target = 'exp'
 
     tune = False
@@ -70,10 +59,15 @@ def generate_models(sim_smiles):
 
     learners = ['svm', 'rf', 'ada', 'gdb']
     features = [[0], [0, 1], [0, 2]]
+    # learners = ['rf']
+    # features = [[0]]
 
     print(f'List of learners: {str(learners)}')
     print(f'List of features: {str(features)}')
     print(f'Number of models to run: {len(learners) * len(features)}')
+
+    test_smiles = sim_smiles
+    test_smiles.extend([pulled_smiles])
 
     with cd('recommender_test_files'):
         for learner in learners:
@@ -83,7 +77,7 @@ def generate_models(sim_smiles):
                 model = MlModel(algorithm=learner, dataset=dataset, target=target, feat_meth=feature,
                                 tune=tune, cv=cv, opt_iter=opt_iter)
                 model.featurize()
-                model.data_split(givenSmiles=sim_smiles)
+                model.data_split(givenSmiles=test_smiles)
                 model.reg()
                 model.run()
                 with cd('models'):
@@ -99,32 +93,50 @@ def models_to_neo4j():
             model.to_neo4j(**params)
 
 
-def insert_single_molecule_with_frags(smiles):
+def calculate_fragments(smiles):
+    fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
+    fparams = FragmentCatalog.FragCatParams(0, 4, fName)  # I need more research and tuning on this one
+    fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
+    fcgen = FragmentCatalog.FragCatGenerator()
+    mol = MolFromSmiles(smiles)
+    fcount = fcgen.AddFragsFromMol(mol, fcat)
+    frag_list = []
+    for frag in range(fcount):
+        frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
+    return frag_list
+
+
+def insert_dataset_molecules(data):
+    print('\ninsert_dataset_molecules...')
+    print('This will take some time and only needs to be run once after creating a new DB')
+    print('Highly recommended to delete Neo4j data after running this function')
+
     graph = Graph(params['port'], username=params['username'], password=params['password'])
 
-    def calculate_fragments(smiles):
-        fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
-        fparams = FragmentCatalog.FragCatParams(0, 4, fName)  # I need more research and tuning on this one
-        fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
-        fcgen = FragmentCatalog.FragCatGenerator()
-        mol = MolFromSmiles(smiles)
-        fcount = fcgen.AddFragsFromMol(mol, fcat)
-        frag_list = []
-        for frag in range(fcount):
-            frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
-        return frag_list
+    try:
+        graph.evaluate("CREATE CONSTRAINT ON (n:Molecule) ASSERT n.smiles IS UNIQUE")
+        graph.evaluate("CREATE CONSTRAINT ON (n:Fragment) ASSERT n.name IS UNIQUE")
+    except ClientError:
+        pass
 
-    fragments = calculate_fragments(smiles)
+    print('Calculating Fragments...')
+    rows = []
+    for row in tqdm(data.to_dict('records')):
+        smiles = row['smiles']
+        fragments = calculate_fragments(smiles)
+        rows.append({'smiles': smiles, 'fragments': fragments})
 
-    graph.evaluate("""
-    
-        MERGE (mol:Molecule {smiles: $smiles})
-        WITH mol
-        UNWIND $fragments as fragment
-            MERGE (frag:Fragment {name: fragment})
-            MERGE (mol)-[:HAS_FRAGMENT]->(frag)
-    
-    """, parameters={'smiles': smiles, 'fragments': fragments})
+    print('Inserting molecules with fragments...')
+    graph.evaluate(
+        """
+        UNWIND $rows as row
+            MERGE (mol:Molecule {smiles: row['smiles']})
+            WITH mol, row
+            UNWIND row['fragments'] as fragment
+                MERGE (frag:Fragment {name: fragment})
+                MERGE (mol)-[:HAS_FRAGMENT]->(frag)
+        """, parameters={'rows': rows}
+    )
 
 
 def find_similar_molecules(smiles):
@@ -199,13 +211,8 @@ def predict_molecule(model, smiles):
 
 def fetch_actual_value(smiles, target, dataset):
     df = pd.read_csv(dataset)
-    matches = df.loc[df['smiles'] == smiles]
-    if len(matches) == 1:
-        value = matches.to_dict('records')[0][target]
-    else:
-        df = pd.read_csv('pulled_molecule.csv')
-        matches = df.loc[df['smiles'] == smiles]
-        value = matches.to_dict('records')[0][target]
+    match = df.loc[df['smiles'] == smiles]
+    value = match.to_dict('records')[0][target]
     return value
 
 
@@ -235,57 +242,60 @@ def return_sorted_models_for_mol(smiles):
         return all_results
 
 
-def insert_dataset_molecules():
-    with cd('recommender_test_files'):
-
-        print('\ninsert_dataset_molecules: Bootleg strats to get molecules into Neo4j...')
-        print('Highly recommended to delete Neo4j data after running this function')
-        print('This will take some time. This function only needs to be run once after booting a new DB.')
-
-        dataset = 'lipo_subset.csv'
-        target = 'exp'
-
-        model = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0],
-                        tune=False, cv=0, opt_iter=0)
-        model.featurize()
-        if model.algorithm == 'nn':
-            model.data_split(val=0.1)
-        else:
-            model.data_split()
-        model.reg()
-        model.run()
-        model.to_neo4j(**params)
-
-
 def sort_dfs():
     with cd('recommender_test_files/results'):
-        for file in os.listdir():
-            df = pd.read_csv(file)
-            df = df.sort_values(by=['pred_average_error'])
-            df.to_csv(file, index=False)
+        for directory in os.listdir():
+            with cd(directory):
+                for file in os.listdir():
+                    df = pd.read_csv(file)
+                    df = df.sort_values(by=['pred_average_error'])
+                    df.to_csv(file, index=False)
 
 
-test_data()
-cleanup_smiles()
-insert_dataset_molecules()
-delete_current_neo4j_data()
+def loop_sim_smiles(dataset, run, similar_smiles, similar_smiles_dict, pulled_smiles):
+    generate_models(dataset=dataset, sim_smiles=similar_smiles, pulled_smiles=pulled_smiles)
+    delete_current_neo4j_data()
+    # models_to_neo4j()
 
-pulled_smiles = 'COc1ccc(CC(=O)Nc2nc3ccccc3[nH]2)cc1'
-insert_single_molecule_with_frags(pulled_smiles)
-similar_smiles_dict, similar_smiles = find_similar_molecules(pulled_smiles)
+    for j, similar_smile in enumerate(similar_smiles_dict):
+        smiles = similar_smile['smiles']
+        results = return_sorted_models_for_mol(smiles)
+        results['weight'] = similar_smile['sim_score']
+        file_name = f'molecule_{str(j)}.csv'
+        results.to_csv(f'recommender_test_files/results/run_{str(run)}/neo4j_{file_name}')
 
-generate_models(sim_smiles=similar_smiles)
-delete_current_neo4j_data()
-models_to_neo4j()
+    results = return_sorted_models_for_mol(pulled_smiles)
+    results.to_csv(f'recommender_test_files/results/run_{str(run)}/neo4j_pulled_smiles.csv')
+    sort_dfs()
 
-for i, similar_smile in enumerate(similar_smiles_dict):
-    smiles = similar_smile['smiles']
-    results = return_sorted_models_for_mol(smiles)
-    results['weight'] = similar_smile['sim_score']
-    file_name = f'molecule_{str(i)}.csv'
-    results.to_csv(f'recommender_test_files/results/{file_name}')
 
-results = return_sorted_models_for_mol(pulled_smiles)
-results.to_csv(f'recommender_test_files/results/pulled_smiles.csv')
+def main():
+    dataset = 'lipo_raw.csv'
+    data = pd.read_csv(f'recommender_test_files/{dataset}')
 
-sort_dfs()
+    # cleanup_smiles(dataset)
+    # insert_dataset_molecules(data)
+    delete_current_neo4j_data()
+    delete_results()
+
+    random.seed(5)
+    starting_smiles_index = random.randint(0, len(data))
+
+    for run in range(10):
+
+        print(f"\nWorking on run {run}...")
+        time.sleep(3)
+        os.mkdir(f'recommender_test_files/results/run_{str(run)}')
+
+        pulled_smiles = data.to_dict('records')[starting_smiles_index + run]['smiles']
+        similar_smiles_dict, similar_smiles = find_similar_molecules(pulled_smiles)
+
+        test = similar_smiles
+        test.extend([pulled_smiles])
+
+        loop_sim_smiles(dataset=dataset, run=run, similar_smiles=similar_smiles, similar_smiles_dict=similar_smiles_dict,
+                        pulled_smiles=pulled_smiles)
+
+
+if __name__ == '__main__':
+    main()

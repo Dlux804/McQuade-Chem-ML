@@ -55,8 +55,9 @@ class MlModel:  # TODO update documentation here
         elif self.dataset in multi_label_classification_datasets:
             self.task_type = 'multi_label_classification'
         else:
-            raise Exception(
-                '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
+            # raise Exception(
+            #     '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
+            self.task_type = 'regression'
 
         self.target_name = target
         self.feat_meth = feat_meth

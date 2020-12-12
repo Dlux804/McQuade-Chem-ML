@@ -144,13 +144,14 @@ def data_split(self, test=0.2, givenSmiles=None, dropSmiles=None, val=0, scaler=
             self.train_target,
             test_size=temp_test_size,
             random_state=self.random_seed)
+
         # Define smiles that go with the different sets
         # Use temp dummy variables for splitting molecules up the same way
-        self.train_molecules, self.val_molecules, temp_train_target, temp_val_target = train_test_split(
-            self.train_molecules,
-            self.train_target,
-            test_size=temp_test_size,
-            random_state=self.random_seed)
+        # self.train_molecules, self.val_molecules, temp_train_target, temp_val_target = train_test_split(
+        #     self.train_molecules,
+        #     self.train_target,
+        #     test_size=temp_test_size,
+        #     random_state=self.random_seed)
         self.n_val = self.val_features.shape[0]
         pval = self.n_val / self.n_tot * 100
 

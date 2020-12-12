@@ -3,12 +3,12 @@ import random
 import shutil
 import time
 
+
+from difflib import SequenceMatcher
 from tqdm import tqdm
 import pandas as pd
-from rdkit import Chem, RDConfig
-from rdkit.Chem import FragmentCatalog, MolFromSmiles
+from rdkit import Chem
 from py2neo import Graph, ClientError
-from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
 
 from core import MlModel
 from core.storage import cd, pickle_model, unpickle_model
@@ -17,8 +17,7 @@ from core.features import canonical_smiles
 params = {'port': "bolt://localhost:7687", 'username': "neo4j", 'password': "password"}
 
 
-def cleanup_smiles(dataset):
-    file = f'recommender_test_files/{dataset}'
+def cleanup_smiles(file):
     df = pd.read_csv(file)
     df = canonical_smiles(df)
     df.to_csv(file, index=False)
@@ -40,15 +39,15 @@ def delete_current_neo4j_data():
 
 
 def delete_results():
-    for directory in os.listdir('recommender_test_files/results'):
-        shutil.rmtree(f'recommender_test_files/results/{directory}')
+    for directory in os.listdir('results'):
+        shutil.rmtree(f'recommender_dev/recommender_test_files/results/{directory}')
 
 
 def generate_models(dataset, sim_smiles, pulled_smiles):
 
     print('\nRemoving previous models...')
     for file in os.listdir('recommender_test_files/models'):
-        os.remove(f'recommender_test_files/models/{file}')
+        os.remove(f'recommender_dev/recommender_test_files/models/{file}')
 
     print('\nGenerating models...')
     target = 'exp'
@@ -91,124 +90,6 @@ def models_to_neo4j():
         for file in os.listdir():
             model = unpickle_model(file)
             model.to_neo4j(**params)
-
-
-def calculate_fragments(smiles):
-    fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
-    fparams = FragmentCatalog.FragCatParams(0, 4, fName)  # I need more research and tuning on this one
-    fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
-    fcgen = FragmentCatalog.FragCatGenerator()
-    mol = MolFromSmiles(smiles)
-    fcount = fcgen.AddFragsFromMol(mol, fcat)
-    frag_list = []
-    for frag in range(fcount):
-        frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
-    return frag_list
-
-
-def insert_dataset_molecules(data):
-    print('\ninsert_dataset_molecules...')
-    print('This will take some time and only needs to be run once after creating a new DB')
-    print('Highly recommended to delete Neo4j data after running this function')
-
-    graph = Graph(params['port'], username=params['username'], password=params['password'])
-
-    try:
-        graph.evaluate("CREATE CONSTRAINT ON (n:Molecule) ASSERT n.smiles IS UNIQUE")
-        graph.evaluate("CREATE CONSTRAINT ON (n:Fragment) ASSERT n.name IS UNIQUE")
-    except ClientError:
-        pass
-
-    print('Calculating Fragments...')
-    rows = []
-    for row in tqdm(data.to_dict('records')):
-        smiles = row['smiles']
-        fragments = calculate_fragments(smiles)
-        rows.append({'smiles': smiles, 'fragments': fragments})
-
-    print('Inserting molecules with fragments...')
-    graph.evaluate(
-        """
-        UNWIND $rows as row
-            MERGE (mol:Molecule {smiles: row['smiles']})
-            WITH mol, row
-            UNWIND row['fragments'] as fragment
-                MERGE (frag:Fragment {name: fragment})
-                MERGE (mol)-[:HAS_FRAGMENT]->(frag)
-        """, parameters={'rows': rows}
-    )
-
-
-def find_similar_molecules(smiles, return_dict=True, limit_to_5=True):
-    graph = Graph(params['port'], username=params['username'], password=params['password'])
-
-    print('\nFinding top 5 similar molecules...')
-
-    results = graph.run("""
-    
-        MATCH (n:Molecule {smiles: $smiles})
-
-        MATCH (m:Molecule)
-        WHERE m.smiles <> n.smiles
-        
-        MATCH (n)-[:HAS_FRAGMENT]->(frag:Fragment)
-        WITH collect(frag.name) as fragments_1, n, m
-        
-        MATCH (m)-[:HAS_FRAGMENT]->(frag:Fragment)
-        WITH collect(frag.name) as fragments_2, fragments_1, n, m
-        
-        MATCH (n)-[:HAS_FRAGMENT]->(frag:Fragment)<-[:HAS_FRAGMENT]-(m)
-        WITH collect(frag.name) as fragments_both, fragments_1, fragments_2, n.smiles as smiles_1, m.smiles as smiles_2
-        
-        RETURN smiles_1, smiles_2, fragments_1, fragments_2, fragments_both
-    
-    """, parameters={'smiles': smiles}).data()
-
-    sim_results = []
-    sim_smiles = []
-    for row in results:
-        sim_smiles.append(row['smiles_2'])
-        both = len(row['fragments_both'])
-        total = len(row['fragments_1']) + len(row['fragments_2'])
-        row['sim_score'] = 2 * both / total
-        sim_results.append(row)
-    sim_results = pd.DataFrame(sim_results)
-    sim_results = sim_results.sort_values(by=['sim_score'], ascending=False)
-    if limit_to_5:
-        sim_results = sim_results.head(5)
-    sim_results = sim_results[['smiles_2', 'sim_score']]
-    sim_results = sim_results.rename(columns={'smiles_2': 'smiles'})
-
-    sim_smiles = sim_results['smiles'].to_list()
-    if return_dict:
-        sim_results = sim_results.to_dict('records')
-    return sim_results, sim_smiles
-
-
-def predict_molecule(model, smiles):
-    feature = model.feat_meth
-
-    mol = Chem.MolFromSmiles(smiles)
-    smiles = Chem.MolToSmiles(mol)
-    df = pd.DataFrame([{'smiles': smiles}])
-
-    feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts', 'morganchiral3counts',
-                 'atompaircounts']
-    selected_feat = [feat_sets[i] for i in feature]
-    generator = MakeGenerator(selected_feat)
-
-    columns = []
-    for name, numpy_type in generator.GetColumns():
-        columns.append(name)
-
-    feature_data = list(map(generator.process, df['smiles']))
-    feature_data = pd.DataFrame(feature_data, columns=columns)
-    feature_data = feature_data.dropna()
-    feature_data = feature_data.drop(list(feature_data.filter(regex='_calculated')), axis=1)
-    feature_data = feature_data.drop(list(feature_data.filter(regex='[lL]og[pP]')), axis=1)
-
-    predicted_value = model.estimator.predict(feature_data)[0]
-    return predicted_value
 
 
 def fetch_actual_value(smiles, target, dataset):
@@ -273,7 +154,7 @@ def loop_sim_smiles(dataset, run, similar_smiles, similar_smiles_dict, pulled_sm
 
 def main():
     dataset = 'lipo_raw.csv'
-    data = pd.read_csv(f'recommender_test_files/{dataset}')
+    data = pd.read_csv(f'recommender_dev/recommender_test_files/{dataset}')
 
     # cleanup_smiles(dataset)
     # insert_dataset_molecules(data)
@@ -287,7 +168,7 @@ def main():
 
         print(f"\nWorking on run {run}...")
         time.sleep(3)
-        os.mkdir(f'recommender_test_files/results/run_{str(run)}')
+        os.mkdir(f'recommender_dev/recommender_test_files/results/run_{str(run)}')
 
         pulled_smiles = data.to_dict('records')[starting_smiles_index + run]['smiles']
         similar_smiles_dict, similar_smiles = find_similar_molecules(pulled_smiles)
@@ -300,4 +181,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+
+    sm = SequenceMatcher(None, '1234', '1324').ratio()
+    # main()

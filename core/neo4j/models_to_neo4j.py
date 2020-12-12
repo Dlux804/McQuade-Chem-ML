@@ -11,7 +11,7 @@ from py2neo import Graph, ClientError
 from rdkit import RDConfig
 from rdkit.Chem import FragmentCatalog, MolFromSmiles
 
-from core.storage.misc import __clean_up_param_grid_item__, NumpyEncoder
+from core.storage.misc import __clean_up_param_grid_item__, NumpyEncoder, calculate_fragments
 from core.storage.dictionary import target_name_grid
 
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
@@ -814,29 +814,6 @@ class ModelToNeo4j:
             self.molecule_query_loop(molecules, query, dataset=self.json_data['dataset'])
 
     def merge_molecules_with_frags(self):
-
-        def calculate_fragments(smiles):
-            """
-            Objective: Create fragments and import them into Neo4j based on our ontology
-            Intent: This script is based on Adam's "mol_frag.ipynb" file in his deepml branch, which is based on rdkit's
-                    https://www.rdkit.org/docs/GettingStartedInPython.html. I still need some council on this one since we can
-                    tune how much fragment this script can generate for one SMILES. Also, everything (line 69 to 77)
-                    needs to be under a for loop or else it will break (as in not generating the correct amount of fragments,
-                    usually much less than the actual amount). I'm not sure why
-            :param smiles:
-            :return:
-            """
-            fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
-            fparams = FragmentCatalog.FragCatParams(0, 4, fName)  # I need more research and tuning on this one
-            fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
-            fcgen = FragmentCatalog.FragCatGenerator()
-            mol = MolFromSmiles(smiles)
-            fcount = fcgen.AddFragsFromMol(mol, fcat)
-            # print("This SMILES, %s, has %d fragments" % (smiles, fcount))
-            frag_list = []
-            for frag in range(fcount):
-                frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
-            return frag_list
 
         df = self.model_data[['smiles']]
         df['fragments'] = df['smiles'].apply(calculate_fragments)

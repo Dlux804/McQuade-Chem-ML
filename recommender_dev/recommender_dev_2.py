@@ -63,9 +63,9 @@ class Recommender:
         if opt_iter is None:
             opt_iter = 100
         if learners is None:
-            learners = ['svm', 'rf', 'ada', 'gdb']
+            learners = ['rf', 'gdb']
         if features is None:
-            features = [[0], [0, 1], [0, 2]]
+            features = [[0], [2], [0, 2]]
 
         print(f'List of learners: {str(learners)}')
         print(f'List of features: {str(features)}')

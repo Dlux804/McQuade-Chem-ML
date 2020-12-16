@@ -9,6 +9,11 @@ from core import MlModel
 from recommender_dev.molecules import insert_dataset_molecules, MoleculeSimilarity
 
 
+def check_for_results_folder(results_directory):
+    if not os.path.exists(results_directory):
+        os.chdir(results_directory)
+
+
 class Recommender:
 
     def __init__(self, smiles):
@@ -82,7 +87,7 @@ class Recommender:
                 model = MlModel(algorithm=learner, dataset=dataset, target=target, feat_meth=feature,
                                 tune=tune, cv=cv, opt_iter=opt_iter)
                 model.featurize()
-                model.data_split(val=0.1, add_molecules_to_testset=test_smiles)
+                model.data_split(val=0.1, add_molecule_to_testset=test_smiles)
                 model.reg()
                 model.run()
                 runs.append({'model_name': model.run_name, 'pred': model.predictions})
@@ -124,13 +129,15 @@ class Recommender:
 if __name__ == "__main__":
 
     input("Press anything to run")
-
-    raw_data = pd.read_csv("recommender_test_files/lipo_raw.csv")
+    results_folders = "results"
+    check_for_results_folder(results_directory=results_folders)
+    file = "recommender_test_files/lipo_raw.csv"
+    raw_data = pd.read_csv(file)
     for i in range(10):
         control_smiles = random.choice(raw_data['smiles'].tolist())
         rec = Recommender(smiles=control_smiles)
         rec.connect_to_neo4j()
-        rec.delete_current_results(f"results/run_{str(i)}")
+        rec.delete_current_results(f"{results_folders}/run_{str(i)}")
         rec.gather_similar_molecules()
-        rec.run_models(dataset="recommender_test_files/lipo_raw.csv", target='exp')
-        rec.export_results(results_directory=f"results/run_{str(i)}")
+        rec.run_models(dataset=file, target='exp')
+        rec.export_results(results_directory=f"{results_folders}/run_{str(i)}")

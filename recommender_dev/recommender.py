@@ -1,187 +1,136 @@
 import os
 import random
 import shutil
-import time
 
-
-from difflib import SequenceMatcher
-from tqdm import tqdm
 import pandas as pd
-from rdkit import Chem
-from py2neo import Graph, ClientError
+from py2neo import Graph
 
 from core import MlModel
-from core.storage import cd, pickle_model, unpickle_model
-from core.features import canonical_smiles
-
-params = {'port': "bolt://localhost:7687", 'username': "neo4j", 'password': "password"}
+from recommender_dev.molecules import insert_dataset_molecules, MoleculeSimilarity
 
 
-def cleanup_smiles(file):
-    df = pd.read_csv(file)
-    df = canonical_smiles(df)
-    df.to_csv(file, index=False)
+class Recommender:
 
+    def __init__(self, smiles):
+        self.control_smiles = smiles
+        self.graph = None
+        self.rdkit_sim = None
+        self.jaccard_sim = None
+        self.hyer_sim = None
+        self.compare_sim_results = None
+        self.rdkit_results = []
+        self.jaccard_results = []
+        self.hyer_results = []
+        self.control_results = []
 
-def delete_current_neo4j_data():
-    graph = Graph(params['port'], username=params['username'], password=params['password'])
+    def connect_to_neo4j(self, port="bolt://localhost:7687", username="neo4j", password="password"):
+        self.graph = Graph(port, username=username, password=password)
 
-    nodes_to_removes = ['MLModel', 'TestSet', 'TrainSet', 'ValSet']
+    def insert_molecules_into_neo4j(self, dataset):
+        if self.graph is None:
+            raise AttributeError(f"Cannot insert molecules into unspecified graph, run self.connect_to_neo4j()")
+        df = pd.read_csv(dataset)
+        insert_dataset_molecules(self.graph, df)
 
-    for node_type in nodes_to_removes:
-        graph.evaluate(f"""
-        
-            MATCH (n:{node_type})
-            OPTIONAL MATCH (n)-[r]-()
-            DELETE n, r
-        
-        """)
+    def gather_similar_molecules(self, limit=5):
+        sim = MoleculeSimilarity(self.graph)
+        self.rdkit_sim = sim.rdkit_sim(self.control_smiles, limit=limit)
+        self.jaccard_sim = sim.jaccard_sim(self.control_smiles, limit=limit)
+        self.hyer_sim = sim.hyer_sim(self.control_smiles, limit=limit)
+        self.compare_sim_results = sim.compare_sim_algorithms(self.control_smiles)
 
+    @staticmethod
+    def delete_current_results(results_directory):
+        for sub_directory in os.listdir(results_directory):
+            path = f'{results_directory}/{sub_directory}'
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+            else:
+                os.remove(path)
 
-def delete_results():
-    for directory in os.listdir('results'):
-        shutil.rmtree(f'recommender_dev/recommender_test_files/results/{directory}')
+    def run_models(self, dataset, target, tune=None, cv=None, opt_iter=None,
+                   learners=None, features=None):
 
+        if self.rdkit_sim is None:
+            raise AttributeError(f"Similar molecules not found, run self.gather_similar_molecules()")
 
-def generate_models(dataset, sim_smiles, pulled_smiles):
+        print('\nGenerating models...')
 
-    print('\nRemoving previous models...')
-    for file in os.listdir('recommender_test_files/models'):
-        os.remove(f'recommender_dev/recommender_test_files/models/{file}')
+        if tune is None:
+            tune = False
+        if cv is None:
+            cv = 5
+        if opt_iter is None:
+            opt_iter = 100
+        if learners is None:
+            learners = ['rf', 'gdb']
+        if features is None:
+            features = [[0], [2], [3], [4], [0, 2], [0, 3]]
 
-    print('\nGenerating models...')
-    target = 'exp'
+        print(f'List of learners: {str(learners)}')
+        print(f'List of features: {str(features)}')
+        print(f'Number of models to run: {len(learners) * len(features)}')
 
-    tune = False
-    cv = 5
-    opt_iter = 100
+        test_smiles = [self.control_smiles]
+        test_smiles.extend(self.rdkit_sim['smiles'].tolist())
+        test_smiles.extend(self.jaccard_sim['smiles'].tolist())
+        test_smiles.extend(self.hyer_sim['smiles'].tolist())
 
-    learners = ['svm', 'rf', 'ada', 'gdb']
-    features = [[0], [0, 1], [0, 2]]
-    # learners = ['rf']
-    # features = [[0]]
-
-    print(f'List of learners: {str(learners)}')
-    print(f'List of features: {str(features)}')
-    print(f'Number of models to run: {len(learners) * len(features)}')
-
-    test_smiles = sim_smiles
-    test_smiles.extend([pulled_smiles])
-
-    with cd('recommender_test_files'):
+        runs = []
         for learner in learners:
             for feature in features:
-                print(f'\nRunning model with parameters: algorithm={learner}, feat={feature}, dataset={dataset}, '
-                      f'tune={tune}, cv={cv}, opt_iter={opt_iter}')
                 model = MlModel(algorithm=learner, dataset=dataset, target=target, feat_meth=feature,
                                 tune=tune, cv=cv, opt_iter=opt_iter)
                 model.featurize()
-                model.data_split(givenSmiles=test_smiles)
+                model.data_split(val=0.1, add_molecule_to_testset=test_smiles)
                 model.reg()
                 model.run()
-                with cd('models'):
-                    pickle_model(model)
+                runs.append({'model_name': model.run_name, 'pred': model.predictions})
+
+        for run in runs:
+            run_name = run['model_name']
+            pred_results = run['pred']
+
+            for smiles in self.rdkit_sim['smiles'].tolist():
+                pred_error = \
+                    pred_results.loc[pred_results['smiles'] == smiles].to_dict('records')[0]['pred_average_error']
+                self.rdkit_results.append({'smiles': smiles, 'run_name': run_name, 'pred_error': pred_error})
+
+            for smiles in self.jaccard_sim['smiles'].tolist():
+                pred_error = \
+                    pred_results.loc[pred_results['smiles'] == smiles].to_dict('records')[0]['pred_average_error']
+                self.jaccard_results.append({'smiles': smiles, 'run_name': run_name, 'pred_error': pred_error})
+
+            for smiles in self.hyer_sim['smiles'].tolist():
+                pred_error = \
+                    pred_results.loc[pred_results['smiles'] == smiles].to_dict('records')[0]['pred_average_error']
+                self.hyer_results.append({'smiles': smiles, 'run_name': run_name, 'pred_error': pred_error})
+
+            pred_error = pred_results.loc[pred_results['smiles'] ==
+                                          self.control_smiles].to_dict('records')[0]['pred_average_error']
+            self.control_results.append({'smiles': self.control_smiles, 'run_name': run_name, 'pred_error': pred_error})
+
+    def export_results(self, results_directory):
+        if len(os.listdir(results_directory)) != 0:
+            raise FileExistsError("\nTarget directory to output results is not empty,"
+                                  " trying running self.delete_current_results()")
+        pd.DataFrame(self.control_results).to_csv(f'{results_directory}/control_smiles.csv')
+        pd.DataFrame(self.rdkit_results).to_csv(f'{results_directory}/rdkit_smiles.csv')
+        pd.DataFrame(self.jaccard_results).to_csv(f'{results_directory}/jaccard_smiles.csv')
+        pd.DataFrame(self.hyer_results).to_csv(f'{results_directory}/hyer_smiles.csv')
+        self.compare_sim_results.to_csv(f'{results_directory}/compare.csv')
 
 
-def models_to_neo4j():
-    print('\nInserting models into Neo4j...')
+if __name__ == "__main__":
 
-    with cd('recommender_test_files/models'):
-        for file in os.listdir():
-            model = unpickle_model(file)
-            model.to_neo4j(**params)
+    input("Press anything to run")
 
-
-def fetch_actual_value(smiles, target, dataset):
-    df = pd.read_csv(dataset)
-    match = df.loc[df['smiles'] == smiles]
-    value = match.to_dict('records')[0][target]
-    return value
-
-
-def return_sorted_models_for_mol(smiles):
-    all_results = []
-    with cd('recommender_test_files'):
-        for file in os.listdir('models'):
-            model = unpickle_model(f'models/{file}')
-            results = {'smiles': smiles}
-            mp = model.predictions
-            matches = mp.loc[mp['smiles'] == smiles]
-            if len(matches) == 1:
-                row = matches.to_dict('records')[0]
-                results['model'] = model.run_name
-                results['pred_average_error'] = row['pred_average_error']
-                results['in_test_set'] = True
-            else:
-                predicted_value = predict_molecule(model, smiles)
-                actual_value = fetch_actual_value(smiles, target=model.target_name, dataset=model.dataset)
-                pred_average_error = abs(actual_value - predicted_value)
-
-                results['model'] = model.run_name
-                results['pred_average_error'] = pred_average_error
-                results['in_test_set'] = False
-            all_results.append(results)
-        all_results = pd.DataFrame(all_results)
-        return all_results
-
-
-def sort_dfs():
-    with cd('recommender_test_files/results'):
-        for directory in os.listdir():
-            with cd(directory):
-                for file in os.listdir():
-                    df = pd.read_csv(file)
-                    df = df.sort_values(by=['pred_average_error'])
-                    df.to_csv(file, index=False)
-
-
-def loop_sim_smiles(dataset, run, similar_smiles, similar_smiles_dict, pulled_smiles):
-    generate_models(dataset=dataset, sim_smiles=similar_smiles, pulled_smiles=pulled_smiles)
-    delete_current_neo4j_data()
-    # models_to_neo4j()
-
-    for j, similar_smile in enumerate(similar_smiles_dict):
-        smiles = similar_smile['smiles']
-        results = return_sorted_models_for_mol(smiles)
-        results['weight'] = similar_smile['sim_score']
-        file_name = f'molecule_{str(j)}.csv'
-        results.to_csv(f'recommender_test_files/results/run_{str(run)}/neo4j_{file_name}')
-
-    results = return_sorted_models_for_mol(pulled_smiles)
-    results.to_csv(f'recommender_test_files/results/run_{str(run)}/neo4j_pulled_smiles.csv')
-    sort_dfs()
-
-
-def main():
-    dataset = 'lipo_raw.csv'
-    data = pd.read_csv(f'recommender_dev/recommender_test_files/{dataset}')
-
-    # cleanup_smiles(dataset)
-    # insert_dataset_molecules(data)
-    delete_current_neo4j_data()
-    delete_results()
-
-    random.seed(5)
-    starting_smiles_index = random.randint(0, len(data))
-
-    for run in range(10):
-
-        print(f"\nWorking on run {run}...")
-        time.sleep(3)
-        os.mkdir(f'recommender_dev/recommender_test_files/results/run_{str(run)}')
-
-        pulled_smiles = data.to_dict('records')[starting_smiles_index + run]['smiles']
-        similar_smiles_dict, similar_smiles = find_similar_molecules(pulled_smiles)
-
-        test = similar_smiles
-        test.extend([pulled_smiles])
-
-        loop_sim_smiles(dataset=dataset, run=run, similar_smiles=similar_smiles, similar_smiles_dict=similar_smiles_dict,
-                        pulled_smiles=pulled_smiles)
-
-
-if __name__ == '__main__':
-
-    sm = SequenceMatcher(None, ['1', '2', '3', '4'], ['1', '2', '3', '4']).ratio()
-    print(sm)
-    # main()
+    raw_data = pd.read_csv("recommender_test_files/lipo_raw.csv")
+    for i in range(10):
+        control_smiles = random.choice(raw_data['smiles'].tolist())
+        rec = Recommender(smiles=control_smiles)
+        rec.connect_to_neo4j()
+        rec.delete_current_results(f"results/run_{str(i)}")
+        rec.gather_similar_molecules()
+        rec.run_models(dataset="recommender_test_files/lipo_raw.csv", target='exp')
+        rec.export_results(results_directory=f"results/run_{str(i)}")

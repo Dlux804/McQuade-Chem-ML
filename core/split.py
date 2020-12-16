@@ -14,7 +14,7 @@ def __dropCol__(df, target_name, keepSmiles=False):
         return df.drop([target_name, 'smiles'], axis=1)
 
 
-def data_split(self, test=0.2, add_molecule_to_testset=None, dropSmiles=None, val=0, scaler=None, random=None):
+def data_split(self, test=0.2, add_molecules_to_testset=None, dropSmiles=None, val=0, scaler=None, random=None):
     """
     Take in a data frame, the target column name (exp).
     Returns a numpy array with the target variable,
@@ -107,14 +107,14 @@ def data_split(self, test=0.2, add_molecule_to_testset=None, dropSmiles=None, va
         # add_data_molecules = np.array()
         # add_features_array = np.array()
         # add_target_array = np.array()
-        if add_molecule_to_testset is not None:
-            add_molecule_to_testset = [Chem.MolToSmiles(Chem.MolFromSmiles(i)) for i in add_molecule_to_testset]
-            add_data = self.data[self.data['smiles'].isin(add_molecule_to_testset)]
+        if add_molecules_to_testset is not None:
+            add_molecules_to_testset = [Chem.MolToSmiles(Chem.MolFromSmiles(i)) for i in add_molecules_to_testset]
+            add_data = self.data[self.data['smiles'].isin(add_molecules_to_testset)]
             add_data_molecules = np.array(add_data['smiles'])
             add_features_array = np.array(__dropCol__(add_data, self.target_name))
             add_target_array = np.array(add_data[self.target_name])
 
-            features_df = self.data[~self.data['smiles'].isin(add_molecule_to_testset)]
+            features_df = self.data[~self.data['smiles'].isin(add_molecules_to_testset)]
             feature_array = np.array(__dropCol__(features_df, self.target_name))
             target_array = np.array(features_df[self.target_name])
             molecules_array = np.array(features_df['smiles'])
@@ -130,7 +130,7 @@ def data_split(self, test=0.2, add_molecule_to_testset=None, dropSmiles=None, va
             target_array,
             test_size=self.test_percent,
             random_state=self.random_seed)
-        if add_molecule_to_testset is not None:
+        if add_molecules_to_testset is not None:
             self.test_features = np.concatenate([self.test_features, add_features_array])
             self.test_molecules = np.concatenate([self.test_molecules, add_data_molecules])
             self.test_target = np.concatenate([self.test_target, add_target_array])

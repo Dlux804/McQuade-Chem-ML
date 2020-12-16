@@ -82,7 +82,7 @@ class Recommender:
                 model = MlModel(algorithm=learner, dataset=dataset, target=target, feat_meth=feature,
                                 tune=tune, cv=cv, opt_iter=opt_iter)
                 model.featurize()
-                model.data_split(val=0.1, add_molecule_to_testset=test_smiles)
+                model.data_split(val=0.1, add_molecules_to_testset=test_smiles)
                 model.reg()
                 model.run()
                 runs.append({'model_name': model.run_name, 'pred': model.predictions})

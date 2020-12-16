@@ -182,5 +182,6 @@ def main():
 
 if __name__ == '__main__':
 
-    sm = SequenceMatcher(None, '1234', '1324').ratio()
+    sm = SequenceMatcher(None, ['1', '2', '3', '4'], ['1', '2', '3', '4']).ratio()
+    print(sm)
     # main()

@@ -103,7 +103,11 @@ class MlModel:  # TODO update documentation here
             self.get_classifier()
 
     def run(self, tuner="bayes"):
-        """ Runs machine learning model. Stores results as class attributes."""
+        """
+        Runs machine learning model. Stores results as class attributes.
+        :param tuner: the default parameter is "bayes" which is BayesianSearchCV. The other parameters are "random" for
+            RandomSearchCV and grid for GridSearchCV.
+        """
 
         if self.tuned:  # Do hyperparameter tuning
             self.make_grid(tuner=tuner)

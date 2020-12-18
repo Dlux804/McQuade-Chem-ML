@@ -102,12 +102,12 @@ class MlModel:  # TODO update documentation here
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.get_classifier()
 
-    def run(self):
+    def run(self, tuner="bayes"):
         """ Runs machine learning model. Stores results as class attributes."""
 
         if self.tuned:  # Do hyperparameter tuning
-            self.make_grid()
-            self.hyperTune(n_jobs=8)
+            self.make_grid(tuner=tuner)
+            self.hyperTune(n_jobs=8, tuner=tuner)
         else:  # Return original parameter if not tuned
             self.original_param()
         # Done tuning, time to fit and predict

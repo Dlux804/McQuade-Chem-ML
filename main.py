@@ -122,7 +122,7 @@ def single_model():
 
     :return: None
     """
-
+    test_smiles = ["Cc1cnc2c(N[C@H](C)CO)nc(SCc3cccc(F)c3F)nc2n1", "C[C@H](CO)Nc1nc(SCc2cccc(F)c2F)nc2nccnc12"]
     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
@@ -130,7 +130,7 @@ def single_model():
         # model1 = MlModel(algorithm='rf', dataset='BBBP.csv', target=get_classification_targets(data='BBBP.csv'), feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=5, random=10)
         model1 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                         tune=False, cv=2, opt_iter=50)
+                         tune=True, cv=5, opt_iter=50)
         # model1 = MlModel(algorithm='rf', dataset='clintox.csv', target=['FDA_APPROVED', 'CT_TOX'], feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=2)
 
@@ -144,16 +144,16 @@ def single_model():
         if model1.algorithm in ['cnn', 'nn']:
             model1.data_split(val=0.1)
         else:
-            model1.data_split(val=0.1)
+            model1.data_split(add_molecule_to_testset=test_smiles)
         model1.reg()
-        model1.run()
+        model1.run(tuner="random")
         # model1.analyze()
         # if model1.algorithm not in ['cnn', 'nn']:  # issues pickling NN models
         #     model1.pickle_model()
-        # model1.store()
-        # model1.org_files(zip_only=True)
+        model1.store()
+        model1.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j(dataset='logP14k.csv', target='Kow'):
@@ -227,8 +227,8 @@ def output_dir_to_neo4j():
 
 
 if __name__ == "__main__":
-    main()
-    # single_model()
+    # main()
+    single_model()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()

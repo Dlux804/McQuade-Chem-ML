@@ -133,7 +133,6 @@ def single_model():
                          tune=True, cv=5, opt_iter=50)
         # model1 = MlModel(algorithm='rf', dataset='clintox.csv', target=['FDA_APPROVED', 'CT_TOX'], feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=2)
-
         print('done.')
         print('Model Type:', model1.algorithm)
         print('Featurization:', model1.feat_meth)

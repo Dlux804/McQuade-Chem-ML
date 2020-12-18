@@ -187,7 +187,9 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
     number of cross validation folds to use, number of optimization iterations,
 
    Keyword arguments
-   jobs: number of parallel processes to run.  (Default = -1 --> use all available cores)
+   n_jobs: number of parallel processes to run.  (Default = -1 --> use all available cores)
+   tuner: the default parameter is "bayes" which is BayesianSearchCV. The other parameters are "random" for
+            RandomSearchCV and grid for GridSearchCV.
    NOTE: jobs has been depreciated since max processes in parallel for Bayes is the number of CV folds
 
    'neg_mean_squared_error',  # scoring function to use (RMSE)

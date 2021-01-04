@@ -68,7 +68,7 @@ class Recommender:
 
         query_results = self.graph.run("""
             MATCH (mol:Molecule)
-            RETURN mol.smiles
+            RETURN mol.smiles LIMIT 1
         """).data()
 
         if len(query_results) == 0:
@@ -176,10 +176,12 @@ if __name__ == "__main__":
     file = "recommender_test_files/lipo_raw.csv"
     raw_data = pd.read_csv(file)
     for i in range(1):
+        results_directory = f"{results_folders}/run_{str(i)}"
+        os.mkdir(results_directory)
         control_smiles = random.choice(raw_data['smiles'].tolist())
         rec = Recommender(smiles=control_smiles)
         rec.connect_to_neo4j()
         rec.insert_molecules_into_neo4j(dataset=file)
         rec.gather_similar_molecules()
         rec.run_models(dataset=file, target='exp', learners=['rf'], features=[[0]])
-        rec.export_results(results_directory=f"{results_folders}/run_{str(i)}")
+        rec.export_results(results_directory=results_directory)

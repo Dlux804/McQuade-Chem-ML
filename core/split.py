@@ -183,6 +183,7 @@ def data_split(self, test=0.2, add_molecule_to_testset=None, dropSmiles=None, va
         'Dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
             self.n_tot, ptrain, pval, ptest))
 
+    self.in_shape = self.feature_array.shape[1]
     # Logic to seperate data in test/train/val
     def __fetch_set__(smiles):
         if smiles in self.test_molecules:

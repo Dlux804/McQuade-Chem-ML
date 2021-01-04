@@ -107,6 +107,6 @@ def apply_conditional_formating(results_dir):
 
 
 if __name__ == "__main__":
-    # cleanup_results_dir('results')
-    # gem_sequence_ratio('results')
+    cleanup_results_dir('results')
+    gem_sequence_ratio('results')
     apply_conditional_formating('results')

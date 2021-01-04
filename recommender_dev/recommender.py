@@ -14,9 +14,25 @@ def check_for_results_folder(results_directory):
         os.chdir(results_directory)
 
 
+def delete_current_results(results_directory):
+    for sub_directory in os.listdir(results_directory):
+        path = f'{results_directory}/{sub_directory}'
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        else:
+            os.remove(path)
+
+
 class Recommender:
 
     def __init__(self, smiles):
+
+        """
+        Recommender is a development class that attempts to try and recommend a model for the user given a smiles.
+        The goal is to find similar molecules, and recommend models that did well for those molecules.
+
+        """
+
         self.control_smiles = smiles
         self.graph = None
         self.rdkit_sim = None
@@ -29,29 +45,49 @@ class Recommender:
         self.control_results = []
 
     def connect_to_neo4j(self, port="bolt://localhost:7687", username="neo4j", password="password"):
+        """
+
+        :param port: Port to connect to Neo4j (can be http or bolt)
+        :param username: Username for Neo4j database
+        :param password: Password for Neo4j database
+        :return:
+        """
+
         self.graph = Graph(port, username=username, password=password)
 
     def insert_molecules_into_neo4j(self, dataset):
+        """
+        Inserts molecules in passed dataset into Neo4j
+
+        :param dataset: File to insert smiles
+        :return:
+        """
+
         if self.graph is None:
             raise AttributeError(f"Cannot insert molecules into unspecified graph, run self.connect_to_neo4j()")
-        df = pd.read_csv(dataset)
-        insert_dataset_molecules(self.graph, df)
+
+        query_results = self.graph.run("""
+            MATCH (mol:Molecule)
+            RETURN mol.smiles
+        """).data()
+
+        if len(query_results) == 0:
+            df = pd.read_csv(dataset)
+            insert_dataset_molecules(self.graph, df)
 
     def gather_similar_molecules(self, limit=5):
+        """
+        Runs molecule.py functions to gather the similar molecules based on the different similarity functions
+
+        :param limit: How many to return as a head (limit=5 means only return top 5 similar molecules)
+        :return:
+        """
+
         sim = MoleculeSimilarity(self.graph)
         self.rdkit_sim = sim.rdkit_sim(self.control_smiles, limit=limit)
         self.jaccard_sim = sim.jaccard_sim(self.control_smiles, limit=limit)
         self.hyer_sim = sim.hyer_sim(self.control_smiles, limit=limit)
         self.compare_sim_results = sim.compare_sim_algorithms(self.control_smiles)
-
-    @staticmethod
-    def delete_current_results(results_directory):
-        for sub_directory in os.listdir(results_directory):
-            path = f'{results_directory}/{sub_directory}'
-            if os.path.isdir(path):
-                shutil.rmtree(path)
-            else:
-                os.remove(path)
 
     def run_models(self, dataset, target, tune=None, cv=None, opt_iter=None,
                    learners=None, features=None):
@@ -130,14 +166,20 @@ if __name__ == "__main__":
 
     input("Press anything to run")
     results_folders = "results"
+
+    if os.path.exists(results_folders):
+        delete_current_results(results_folders)
+        os.rmdir(results_folders)
+    os.mkdir(results_folders)
+
     check_for_results_folder(results_directory=results_folders)
     file = "recommender_test_files/lipo_raw.csv"
     raw_data = pd.read_csv(file)
-    for i in range(10):
+    for i in range(1):
         control_smiles = random.choice(raw_data['smiles'].tolist())
         rec = Recommender(smiles=control_smiles)
         rec.connect_to_neo4j()
-        rec.delete_current_results(f"{results_folders}/run_{str(i)}")
+        rec.insert_molecules_into_neo4j(dataset=file)
         rec.gather_similar_molecules()
-        rec.run_models(dataset=file, target='exp')
+        rec.run_models(dataset=file, target='exp', learners=['rf'], features=[[0]])
         rec.export_results(results_directory=f"{results_folders}/run_{str(i)}")

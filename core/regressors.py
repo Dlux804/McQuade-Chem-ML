@@ -189,7 +189,7 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
    Keyword arguments
    n_jobs: number of parallel processes to run.  (Default = -1 --> use all available cores)
    tuner: the default parameter is "bayes" which is BayesianSearchCV. The other parameters are "random" for
-            RandomSearchCV and grid for GridSearchCV.
+            RandomSearchCV and "grid" for GridSearchCV.
    NOTE: jobs has been depreciated since max processes in parallel for Bayes is the number of CV folds
 
    'neg_mean_squared_error',  # scoring function to use (RMSE)
@@ -242,6 +242,8 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
             n_jobs=n_jobs,
             cv=self.cv_folds
         )
+    else:
+        raise Exception("""Invalid tuner. Please enter between "bayes", "random" or "grid". """)
     self.tune_algorithm_name = str(type(tune_algorithm).__name__)
     # if self.algorithm != 'nn':  # non keras model
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)

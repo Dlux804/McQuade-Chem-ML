@@ -138,17 +138,16 @@ def single_model():
                               add_molecule_to_testset=["CN(C)C(=O)c1ccc(cc1)OC", "CS(=O)(=O)Cl"])
         else:
             model3.data_split(split="scaffold", test=0.1, val=0.1, scaler="standard")
-
-        with cd('output'):  # Have files output to output
-            model3.reg()
-            model3.run(tuner="random")
-            # model3.analyze()
-            # if model3.algorithm != 'nn':  # issues pickling NN models
-            #     model3.pickle_model()
-            model3.store()
-            model3.org_files(zip_only=True)
-            # model1.QsarDB_export(zip_output=True)
-            model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+    with cd('output'):  # Have files output to output
+        model3.reg()
+        model3.run(tuner="random")
+        # model3.analyze()
+        # if model3.algorithm != 'nn':  # issues pickling NN models
+        #     model3.pickle_model()
+        model3.store()
+        model3.org_files(zip_only=True)
+        # model1.QsarDB_export(zip_output=True)
+        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j(dataset='logP14k.csv', target='Kow'):

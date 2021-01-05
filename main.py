@@ -143,7 +143,7 @@ def single_model():
         if model1.algorithm in ['cnn', 'nn']:
             model1.data_split(val=0.1)
         else:
-            model1.data_split(add_molecule_to_testset=test_smiles)
+            model1.data_split(add_molecules_to_testset=test_smiles)
         model1.reg()
         model1.run(tuner="random")
         # model1.analyze()

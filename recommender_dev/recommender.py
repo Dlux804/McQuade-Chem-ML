@@ -7,6 +7,7 @@ from py2neo import Graph
 
 from core import MlModel
 from recommender_dev.molecules import insert_dataset_molecules, MoleculeSimilarity
+import cleanup_results as cr
 
 
 def check_for_results_folder(results_directory):
@@ -104,7 +105,7 @@ class Recommender:
         if opt_iter is None:
             opt_iter = 100
         if learners is None:
-            learners = ['rf', 'gdb']
+            learners = ['rf', 'nn', 'gdb']
         if features is None:
             features = [[0], [2], [3], [4], [0, 2], [0, 3]]
 
@@ -123,9 +124,9 @@ class Recommender:
                 model = MlModel(algorithm=learner, dataset=dataset, target=target, feat_meth=feature,
                                 tune=tune, cv=cv, opt_iter=opt_iter)
                 model.featurize()
-                model.data_split(val=0.1, add_molecule_to_testset=test_smiles)
+                model.data_split(val=0.1, add_molecules_to_testset=test_smiles)
                 model.reg()
-                model.run()
+                model.run(tuner='random')
                 runs.append({'model_name': model.run_name, 'pred': model.predictions})
 
         for run in runs:
@@ -175,7 +176,7 @@ if __name__ == "__main__":
     check_for_results_folder(results_directory=results_folders)
     file = "recommender_test_files/lipo_raw.csv"
     raw_data = pd.read_csv(file)
-    for i in range(1):
+    for i in range(10):
         results_directory = f"{results_folders}/run_{str(i)}"
         os.mkdir(results_directory)
         control_smiles = random.choice(raw_data['smiles'].tolist())
@@ -183,5 +184,9 @@ if __name__ == "__main__":
         rec.connect_to_neo4j()
         rec.insert_molecules_into_neo4j(dataset=file)
         rec.gather_similar_molecules()
-        rec.run_models(dataset=file, target='exp', learners=['rf'], features=[[0]])
+        rec.run_models(dataset=file, target='exp')
         rec.export_results(results_directory=results_directory)
+
+    cr.cleanup_results_dir('results')
+    cr.gem_sequence_ratio('results')
+    cr.apply_conditional_formating('results')

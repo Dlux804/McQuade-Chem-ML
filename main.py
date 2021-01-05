@@ -221,36 +221,36 @@ def output_dir_to_neo4j():
                      username="neo4j", password="password")
 
 
-def split_test():
-    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
-        print('Now in:', os.getcwd())
-        print('Initializing model...', end=' ', flush=True)
-        # initiate model class with algorithm, dataset and target
-        model3 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                         tune=False, cv=2, opt_iter=2)
-        print('done.')
-        print('Model Type:', model3.algorithm)
-        print('Featurization:', model3.feat_meth)
-        print('Dataset:', model3.dataset)
-        print()
-        model3.featurize()
-        if model3.algorithm not in ["nn", "cnn"]:
-            model3.data_split(split="scaffold", test=0.1, scaler="standard",
-                              add_molecule_to_testset=["CN(C)C(=O)c1ccc(cc1)OC", "CS(=O)(=O)Cl"])
-        else:
-            model3.data_split(split="scaffold", test=0.1, val=0.1, scaler="standard")
-    with cd('output'):  # Have files output to output
-        model3.reg()
-        model3.run(tuner="random")
-        model3.store()
-        model3.org_files(zip_only=True)
-        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+# def split_test():
+#     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+#         print('Now in:', os.getcwd())
+#         print('Initializing model...', end=' ', flush=True)
+#         # initiate model class with algorithm, dataset and target
+#         model3 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
+#                          tune=False, cv=2, opt_iter=2)
+#         print('done.')
+#         print('Model Type:', model3.algorithm)
+#         print('Featurization:', model3.feat_meth)
+#         print('Dataset:', model3.dataset)
+#         print()
+#         model3.featurize()
+#         if model3.algorithm not in ["nn", "cnn"]:
+#             model3.data_split(split="scaffold", test=0.1, scaler="standard",
+#                               add_molecule_to_testset=["CN(C)C(=O)c1ccc(cc1)OC", "CS(=O)(=O)Cl"])
+#         else:
+#             model3.data_split(split="scaffold", test=0.1, val=0.1, scaler="standard")
+#     with cd('output'):  # Have files output to output
+#         model3.reg()
+#         model3.run(tuner="random")
+#         model3.store()
+#         model3.org_files(zip_only=True)
+#         model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 if __name__ == "__main__":
     # main()
-    # single_model()
-    split_test()
+    single_model()
+    # split_test()
     # deepchem_split()
     # example_load()
     # example_run_with_mysql_and_neo4j()

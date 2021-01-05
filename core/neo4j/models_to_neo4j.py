@@ -353,7 +353,7 @@ class ModelToNeo4j:
 
         node_unique_prop_dict = {'MLModel': 'name',
                                  'Algorithm': 'name',
-                                 'RandomSplit': 'run_name',
+                                 'Splitter': 'run_name',
                                  'DataSet': 'data',
                                  'TestSet': 'run_name',
                                  'TrainSet': 'run_name',
@@ -399,11 +399,11 @@ class ModelToNeo4j:
             MERGE (model:MLModel {name: $model_name})
             ON CREATE SET model.date = $date, model.feat_time = $feat_time, model.train_time = $train_time, 
                           model.tune_time = $tune_time, model.total_learning_time = $total_learning_time,
-                          model.seed = $seed, model.tuned = $tuned
+                          model.seed = $seed, model.tuned = $tuned, model.scaler = $scaler 
 
-                MERGE (split:RandomSplit {run_name: $model_name})
+                MERGE (split:Splitter {run_name: $model_name})
                     ON CREATE SET split.train_percent = $train_percent, split.test_percent = $test_percent, 
-                        split.val_percent = $val_percent, split.seed = $seed, split.name = "RandomSplit"
+                        split.val_percent = $val_percent, split.seed = $seed, split.name = $splitter
                     MERGE (model)-[:USES_SPLIT]->(split)
 
                 MERGE (dataset:DataSet {data: $data})
@@ -431,7 +431,7 @@ class ModelToNeo4j:
                         'data': js['dataset'], 'dataset_size': js['n_tot'], 'target': js['target_name'],
                         'source': js['source'], 'task_type': js['task_type'],
 
-                        'features': js['feat_meth'],
+                        'features': js['feat_meth'], 'splitter': js['split_method'], 'scaler': js['scaler_method'],
                         'feature_methods': js['feat_method_name'],
                         'total_learning_time': sum(js['predictions_stats']['time_raw']) + js['tune_time'] + js['feat_time']
                         }
@@ -440,7 +440,7 @@ class ModelToNeo4j:
             self.graph.evaluate(
                 """
                     MATCH (dataset:DataSet {data: $data})
-                    MATCH (split:RandomSplit {run_name: $model_name})
+                    MATCH (split:Splitter {run_name: $model_name})
                     MERGE (valset:ValSet {run_name: $model_name, name: 'ValSet', size: $n_val}) 
                     
                     MERGE (dataset)-[:SPLITS_INTO_VAL]->(valset)

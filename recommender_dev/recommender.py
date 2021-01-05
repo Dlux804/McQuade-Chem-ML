@@ -11,7 +11,7 @@ from recommender_dev.molecules import insert_dataset_molecules, MoleculeSimilari
 
 def check_for_results_folder(results_directory):
     if not os.path.exists(results_directory):
-        os.chdir(results_directory)
+        os.mkdir(results_directory)
 
 
 class Recommender:

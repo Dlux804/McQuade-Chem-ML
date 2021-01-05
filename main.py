@@ -97,21 +97,20 @@ def main():
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
                                         tune=False, cv=2, opt_iter=2)
                         print('Done.\n')
-
+                        model.featurize()
+                        if model.algorithm not in ["nn", "cnn"]:
+                            model.data_split(split="scaffold", test=0.1, scaler="standard")
+                        else:
+                            model.data_split(split="scaffold", test=0.1, val=0.1, scaler="standard")
                     with cd('output'):
-                        model.featurize()  # Featurize molecules
-                        val = 0.0
-                        if alg == 'nn':
-                            val = 0.1
-                        model.data_split(val=val)
                         model.reg()
                         model.run()  # Runs the models/featurizations for classification
                         model.analyze()
-                        if model.algorithm != 'nn':
+                        if model.algorithm not in ['nn', 'cnn']:
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-                        # model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
                     # Have files output to output
 
 
@@ -122,37 +121,34 @@ def single_model():
 
     :return: None
     """
-    test_smiles = ["Cc1cnc2c(N[C@H](C)CO)nc(SCc3cccc(F)c3F)nc2n1", "C[C@H](CO)Nc1nc(SCc2cccc(F)c2F)nc2nccnc12"]
     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        # model1 = MlModel(algorithm='rf', dataset='BBBP.csv', target=get_classification_targets(data='BBBP.csv'), feat_meth=[0],
-        #                  tune=False, cv=2, opt_iter=5, random=10)
-        model1 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                         tune=True, cv=5, opt_iter=50)
-        # model1 = MlModel(algorithm='rf', dataset='clintox.csv', target=['FDA_APPROVED', 'CT_TOX'], feat_meth=[0],
-        #                  tune=False, cv=2, opt_iter=2)
+        model3 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
+                         tune=False, cv=2, opt_iter=2)
         print('done.')
-        print('Model Type:', model1.algorithm)
-        print('Featurization:', model1.feat_meth)
-        print('Dataset:', model1.dataset)
+        print('Model Type:', model3.algorithm)
+        print('Featurization:', model3.feat_meth)
+        print('Dataset:', model3.dataset)
         print()
-    with cd('output'):  # Have files output to output
-        model1.featurize()
-        if model1.algorithm in ['cnn', 'nn']:
-            model1.data_split(val=0.1)
+        model3.featurize()
+        if model3.algorithm not in ["nn", "cnn"]:
+            model3.data_split(split="scaffold", test=0.1, scaler="standard",
+                              add_molecule_to_testset=["CN(C)C(=O)c1ccc(cc1)OC", "CS(=O)(=O)Cl"])
         else:
-            model1.data_split(add_molecule_to_testset=test_smiles)
-        model1.reg()
-        model1.run(tuner="random")
-        # model1.analyze()
-        # if model1.algorithm not in ['cnn', 'nn']:  # issues pickling NN models
-        #     model1.pickle_model()
-        model1.store()
-        model1.org_files(zip_only=True)
-        # model1.QsarDB_export(zip_output=True)
-        model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+            model3.data_split(split="scaffold", test=0.1, val=0.1, scaler="standard")
+
+        with cd('output'):  # Have files output to output
+            model3.reg()
+            model3.run(tuner="random")
+            # model3.analyze()
+            # if model3.algorithm != 'nn':  # issues pickling NN models
+            #     model3.pickle_model()
+            model3.store()
+            model3.org_files(zip_only=True)
+            # model1.QsarDB_export(zip_output=True)
+            model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j(dataset='logP14k.csv', target='Kow'):
@@ -225,9 +221,37 @@ def output_dir_to_neo4j():
                      username="neo4j", password="password")
 
 
+def split_test():
+    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+        print('Now in:', os.getcwd())
+        print('Initializing model...', end=' ', flush=True)
+        # initiate model class with algorithm, dataset and target
+        model3 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
+                         tune=False, cv=2, opt_iter=2)
+        print('done.')
+        print('Model Type:', model3.algorithm)
+        print('Featurization:', model3.feat_meth)
+        print('Dataset:', model3.dataset)
+        print()
+        model3.featurize()
+        if model3.algorithm not in ["nn", "cnn"]:
+            model3.data_split(split="scaffold", test=0.1, scaler="standard",
+                              add_molecule_to_testset=["CN(C)C(=O)c1ccc(cc1)OC", "CS(=O)(=O)Cl"])
+        else:
+            model3.data_split(split="scaffold", test=0.1, val=0.1, scaler="standard")
+    with cd('output'):  # Have files output to output
+        model3.reg()
+        model3.run(tuner="random")
+        model3.store()
+        model3.org_files(zip_only=True)
+        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+
+
 if __name__ == "__main__":
     # main()
-    single_model()
+    # single_model()
+    split_test()
+    # deepchem_split()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()

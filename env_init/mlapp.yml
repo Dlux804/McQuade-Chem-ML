@@ -12,14 +12,15 @@ dependencies:
   - rdkit
   - pip
   - scikit-learn=0.23.0
-  - tensorflow-gpu
+  - tensorflow=1.15
   - jupyter
 #  - py2neo
   - mock
   - tqdm
   - lxml
+  - deepchem
 #  - sqlalchemy
-  - pymysql
+#  - pymysql
   - pip:
       - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
       - "git+https://github.com/swansonk14/chemprop.git"

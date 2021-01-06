@@ -12,7 +12,7 @@ dependencies:
   - rdkit
   - pip
   - scikit-learn=0.23.0
-  - tensorflow-gpu
+#  - tensorflow-gpu
   - jupyter
 #  - py2neo
   - mock

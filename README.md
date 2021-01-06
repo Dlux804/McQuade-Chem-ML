@@ -43,7 +43,7 @@ environment on our repo (mlapp.yml).
  3. Navigate to "Conda Environment" and select "Existing environment". The mlapp\python.exe environment should be located in the Anaconda3\envs folder. Select this interpreter and check "Make available to all projects". Hit OK. You should now be able to run our code.
  
   ![Alt text](graphics/Dependecies-step-3-picture.png)
- 3.5. In order to use DeepChem, revert scikit-learn to version 0.22.0 using the command ```pip install scikit-learn==0.22.0```
+ 
  4. Update the virtual environment as necessary using ```conda install```
  5. Update the mlapp.yml file using ```conda env export > mlapp.yml --no-builds --from-history```. Make sure that you add the 
  mlapp.yml file to git, if it not already being watched.
@@ -58,7 +58,7 @@ environment on our repo (mlapp.yml).
     ```
  6. Commit your changes, which include the mlapp.yml file. ```git commit -m "your commit message here"```
  
- 
+ 7. To use DeepChem, revert scikit-learn to version 0.22.0 by using the command ```pip install scikit-learn==0.22.0```
 # Workflow
 
 ## MLModel Class

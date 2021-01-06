@@ -11,9 +11,10 @@ dependencies:
   - numpy
   - rdkit
   - pip
-  - scikit-learn=0.23.0
-#  - tensorflow-gpu
+  - scikit-learn=0.22.0
+  - tensorflow-gpu=1.15
   - jupyter
+  - deepchem==2.3.0
 #  - py2neo
   - mock
   - tqdm

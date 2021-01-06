@@ -8,6 +8,7 @@ from py2neo import Graph
 from core import MlModel
 from recommender_dev.molecules import insert_dataset_molecules, MoleculeSimilarity
 import cleanup_results as cr
+import processing as pr
 
 
 def check_for_results_folder(results_directory):
@@ -175,6 +176,7 @@ if __name__ == "__main__":
 
     check_for_results_folder(results_directory=results_folders)
     file = "recommender_test_files/lipo_raw.csv"
+    target = 'exp'
     raw_data = pd.read_csv(file)
     for i in range(10):
         results_directory = f"{results_folders}/run_{str(i)}"
@@ -184,9 +186,10 @@ if __name__ == "__main__":
         rec.connect_to_neo4j()
         rec.insert_molecules_into_neo4j(dataset=file)
         rec.gather_similar_molecules()
-        rec.run_models(dataset=file, target='exp')
+        rec.run_models(dataset=file, target=target)
         rec.export_results(results_directory=results_directory)
 
     cr.cleanup_results_dir('results')
     cr.gem_sequence_ratio('results')
     cr.apply_conditional_formating('results')
+    pr.process_control_smiles(file, target, results_folders)

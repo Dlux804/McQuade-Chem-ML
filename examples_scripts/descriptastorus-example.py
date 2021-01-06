@@ -54,7 +54,7 @@ def feature_select(df, selected_feat=None):
     print('Calculating features...', end=' ', flush=True)
     for mol in smi:
         # actually calculate the descriptors.  Function accepts a smiles
-        desc = generator.process(mol)
+        desc = generator.process_control_smiles(mol)
         data.append(desc)
     print('Done.')
 

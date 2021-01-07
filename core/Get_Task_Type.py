@@ -16,7 +16,7 @@ def Get_Task_Type_1(data, alg):
         checker = 0
 
         # These regression data sets are not compatible with these classification models.
-    elif data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv'] and alg in []:
+    elif data in ['ESOL.csv', 'lipo_raw.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv'] and alg in []:
         checker = 0
 
     else: # Checker = 1 when there are no compatibility issues
@@ -30,7 +30,7 @@ def Get_Task_Type_1(data, alg):
     elif data in ['BBBP.csv', 'bace.csv']:
         task_type = 'Single-label Classification'
 
-    elif data in ['ESOL.csv', 'Lipophilicity-ID.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']:
+    elif data in ['ESOL.csv', 'lipo_raw.csv', 'water-energy.csv', 'logP14k.csv', 'jak2_pic50.csv']:
         task_type = 'Regression'
 
 

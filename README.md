@@ -58,7 +58,7 @@ environment on our repo (mlapp.yml).
     ```
  6. Commit your changes, which include the mlapp.yml file. ```git commit -m "your commit message here"```
  
- 
+ 7. To use DeepChem, revert scikit-learn to version 0.22.0 by using the command ```pip install scikit-learn==0.22.0```
 # Workflow
 
 ## MLModel Class

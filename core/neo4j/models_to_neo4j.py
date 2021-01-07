@@ -11,7 +11,7 @@ from py2neo import Graph, ClientError
 from rdkit import RDConfig
 from rdkit.Chem import FragmentCatalog, MolFromSmiles
 
-from core.storage.misc import __clean_up_param_grid_item__, NumpyEncoder
+from core.storage.misc import __clean_up_param_grid_item__, NumpyEncoder, calculate_fragments
 from core.storage.dictionary import target_name_grid
 
 warnings.simplefilter(action="ignore", category=SettingWithCopyWarning)
@@ -353,7 +353,7 @@ class ModelToNeo4j:
 
         node_unique_prop_dict = {'MLModel': 'name',
                                  'Algorithm': 'name',
-                                 'RandomSplit': 'run_name',
+                                 'Splitter': 'run_name',
                                  'DataSet': 'data',
                                  'TestSet': 'run_name',
                                  'TrainSet': 'run_name',
@@ -399,11 +399,11 @@ class ModelToNeo4j:
             MERGE (model:MLModel {name: $model_name})
             ON CREATE SET model.date = $date, model.feat_time = $feat_time, model.train_time = $train_time, 
                           model.tune_time = $tune_time, model.total_learning_time = $total_learning_time,
-                          model.seed = $seed, model.tuned = $tuned
+                          model.seed = $seed, model.tuned = $tuned, model.scaler = $scaler 
 
-                MERGE (split:RandomSplit {run_name: $model_name})
+                MERGE (split:Splitter {run_name: $model_name})
                     ON CREATE SET split.train_percent = $train_percent, split.test_percent = $test_percent, 
-                        split.val_percent = $val_percent, split.seed = $seed, split.name = "RandomSplit"
+                        split.val_percent = $val_percent, split.seed = $seed, split.name = $splitter
                     MERGE (model)-[:USES_SPLIT]->(split)
 
                 MERGE (dataset:DataSet {data: $data})
@@ -431,7 +431,7 @@ class ModelToNeo4j:
                         'data': js['dataset'], 'dataset_size': js['n_tot'], 'target': js['target_name'],
                         'source': js['source'], 'task_type': js['task_type'],
 
-                        'features': js['feat_meth'],
+                        'features': js['feat_meth'], 'splitter': js['split_method'], 'scaler': js['scaler_method'],
                         'feature_methods': js['feat_method_name'],
                         'total_learning_time': sum(js['predictions_stats']['time_raw']) + js['tune_time'] + js['feat_time']
                         }
@@ -440,7 +440,7 @@ class ModelToNeo4j:
             self.graph.evaluate(
                 """
                     MATCH (dataset:DataSet {data: $data})
-                    MATCH (split:RandomSplit {run_name: $model_name})
+                    MATCH (split:Splitter {run_name: $model_name})
                     MERGE (valset:ValSet {run_name: $model_name, name: 'ValSet', size: $n_val}) 
                     
                     MERGE (dataset)-[:SPLITS_INTO_VAL]->(valset)
@@ -733,12 +733,10 @@ class ModelToNeo4j:
                 query = f"""
                         MATCH (model:MLModel {'{name: $run_name}'})
                         MATCH (set:{datatype} {'{run_name: $run_name, name: $set_type}'})
-
                         MERGE (model)-[set_rel:`{rel_dict[datatype]}`]->(set)
                             ON CREATE SET set_rel.size = $size, set_rel.r2_avg = $r2_avg, set_rel.r2_std = $r2_std, 
                                 set_rel.mse_avg = $mse_avg, set_rel.mse_std = $mse_std, 
                                 set_rel.rmse_avg = $rmse_avg, set_rel.rmse_std = $rmse_std,
-
                                 set_rel.scaled_r2_avg = $scaled_r2_avg, set_rel.scaled_mse_avg = $scaled_mse_avg,
                                 set_rel.scaled_rmse_avg = $scaled_rmse_avg, set_rel.scaled_r2_std = $scaled_r2_std,
                                 set_rel.scaled_mse_std = $scaled_mse_std, set_rel.scaled_rmse_std = $scaled_rmse_std
@@ -754,7 +752,6 @@ class ModelToNeo4j:
                                     mol_rel.scaled_uncertainty = molecule.scaled_pred_std,
                                     mol_rel.scaled_predicted_average = molecule.scaled_pred_avg,
                                     mol_rel.actual_value = molecule.target
-
                         """
                 self.molecule_query_loop(molecules, query, target=target_name,
                                          run_name=self.json_data['run_name'], set_type=datatype, size=size,
@@ -801,8 +798,6 @@ class ModelToNeo4j:
             df = df.rename(columns={target_name: 'target'})
             molecules = df.to_dict('records')
 
-            df.to_csv('dev.csv')
-
             target_name_for_neo4j = target_name_grid(self.json_data['dataset'])
             if target_name_for_neo4j is None:
                 target_name_for_neo4j = target_name
@@ -819,29 +814,6 @@ class ModelToNeo4j:
             self.molecule_query_loop(molecules, query, dataset=self.json_data['dataset'])
 
     def merge_molecules_with_frags(self):
-
-        def calculate_fragments(smiles):
-            """
-            Objective: Create fragments and import them into Neo4j based on our ontology
-            Intent: This script is based on Adam's "mol_frag.ipynb" file in his deepml branch, which is based on rdkit's
-                    https://www.rdkit.org/docs/GettingStartedInPython.html. I still need some council on this one since we can
-                    tune how much fragment this script can generate for one SMILES. Also, everything (line 69 to 77)
-                    needs to be under a for loop or else it will break (as in not generating the correct amount of fragments,
-                    usually much less than the actual amount). I'm not sure why
-            :param smiles:
-            :return:
-            """
-            fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
-            fparams = FragmentCatalog.FragCatParams(0, 4, fName)  # I need more research and tuning on this one
-            fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
-            fcgen = FragmentCatalog.FragCatGenerator()
-            mol = MolFromSmiles(smiles)
-            fcount = fcgen.AddFragsFromMol(mol, fcat)
-            # print("This SMILES, %s, has %d fragments" % (smiles, fcount))
-            frag_list = []
-            for frag in range(fcount):
-                frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
-            return frag_list
 
         df = self.model_data[['smiles']]
         df['fragments'] = df['smiles'].apply(calculate_fragments)

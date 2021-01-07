@@ -12,7 +12,7 @@ from time import time
 from tensorflow import keras
 from tensorflow.keras.layers import Dense, Conv1D, Flatten, Conv2D
 from tensorflow.keras.metrics import RootMeanSquaredError
-
+from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from tqdm import tqdm
 from core.storage.misc import __cv_results__, __fix_ada_dictionary__
 # monkey patch to fix skopt and sklearn.  Requires downgrade to sklearn 0.23
@@ -114,7 +114,7 @@ def wrapKeras(self, build_func):
             self.estimator = keras.wrappers.scikit_learn.KerasRegressor(build_fn=build_func, in_shape=self.in_shape)
 
 
-def get_regressor(self, call=False):
+def get_regressor(self, call=False, given_param=None):
     """
     Returns model specific regressor function.
     Optional argument to create callable or instantiated instance.
@@ -140,6 +140,8 @@ def get_regressor(self, call=False):
         else:
             if hasattr(self, 'params'):  # has been tuned
                 self.estimator = skl_regs[self.algorithm](**self.params)
+            elif given_param is not None:
+                self.estimator = skl_regs[self.algorithm](**given_param)
             elif self.algorithm in ['gdb', 'rf']:
                 self.estimator = skl_regs[self.algorithm](ccp_alpha=0.1)
             else:  # use default params
@@ -176,7 +178,7 @@ class tqdm_skopt(object):
 
 
 # def hyperTune(model, train_features, train_target, grid, folds, iters, jobs=-1, epochs = 50):
-def hyperTune(self, epochs=50, n_jobs=6):
+def hyperTune(self, tuner, epochs=50, n_jobs=6):
     """
     Tunes hyper parameters of specified model.
 
@@ -185,7 +187,9 @@ def hyperTune(self, epochs=50, n_jobs=6):
     number of cross validation folds to use, number of optimization iterations,
 
    Keyword arguments
-   jobs: number of parallel processes to run.  (Default = -1 --> use all available cores)
+   n_jobs: number of parallel processes to run.  (Default = -1 --> use all available cores)
+   tuner: the default parameter is "bayes" which is BayesianSearchCV. The other parameters are "random" for
+            RandomSearchCV and "grid" for GridSearchCV.
    NOTE: jobs has been depreciated since max processes in parallel for Bayes is the number of CV folds
 
    'neg_mean_squared_error',  # scoring function to use (RMSE)
@@ -203,24 +207,51 @@ def hyperTune(self, epochs=50, n_jobs=6):
         scoring = 'neg_mean_squared_error'
 
     # set up Bayes Search
-    bayes = BayesSearchCV(
-        estimator=self.estimator,  # what regressor to use
-        search_spaces=self.param_grid,  # hyper parameters to search through
-        fit_params=self.fit_params,
-        n_iter=self.opt_iter,  # number of combos tried
-        random_state=42,  # random seed
-        verbose=3,  # output print level
-        scoring=scoring,  # scoring function to use (RMSE)
-        n_jobs=n_jobs,  # number of parallel jobs (max = folds)
-        cv=self.cv_folds  # number of cross-val folds to use
-    )
-    self.tune_algorithm_name = str(type(bayes).__name__)
+    if tuner == "bayes":
+        tune_algorithm = BayesSearchCV(
+            estimator=self.estimator,  # what regressor to use
+            search_spaces=self.param_grid,  # hyper parameters to search through
+            fit_params=self.fit_params,
+            n_iter=self.opt_iter,  # number of combos tried
+            random_state=42,  # random seed
+            verbose=3,  # output print level
+            scoring=scoring,  # scoring function to use (RMSE)
+            n_jobs=n_jobs,  # number of parallel jobs (max = folds)
+            cv=self.cv_folds  # number of cross-val folds to use
+        )
+    elif tuner == "random":
+        tune_algorithm = RandomizedSearchCV(
+            estimator=self.estimator,
+            param_distributions=self.param_grid,
+            n_iter=self.opt_iter,  # number of combos tried
+            scoring=scoring,
+            random_state=42,
+            verbose=3,
+            n_jobs=n_jobs,
+            cv=self.cv_folds
+
+        )
+    elif tuner == "grid":
+        tune_algorithm = GridSearchCV(
+            estimator=self.estimator,
+            param_distributions=self.param_grid,
+            _iter=self.opt_iter,  # number of combos tried
+            scoring=scoring,
+            random_state=42,
+            verbose=3,
+            n_jobs=n_jobs,
+            cv=self.cv_folds
+        )
+    else:
+        raise Exception("""Invalid tuner. Please enter between "bayes", "random" or "grid". """)
+    self.tune_algorithm_name = str(type(tune_algorithm).__name__)
     # if self.algorithm != 'nn':  # non keras model
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
     # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
     # TODO try different scaling with delta
     # self.cp_delta = 0.05
     self.cp_delta = float((0.05 - self.train_target.min())/(self.train_target.max() - self.train_target.min()))  # Min max scaling
+    # self.cp_delta = 0.05
     print("cp_delta is : ", self.cp_delta)
     # self.cp_delta = delta_std * (self.train_target.max() - self.train_target.min()) + self.train_target.min()
     self.cp_n_best = 5
@@ -237,12 +268,15 @@ def hyperTune(self, epochs=50, n_jobs=6):
 
     # Fit the Bayes search model, use early stopping
     # if self.algorithm in ['nn', 'cnn']:
-    bayes.fit(self.train_features,
+    if tuner == "bayes":
+        tune_algorithm.fit(self.train_features,
                   self.train_target,
                   callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization"),
                         checkpoint_saver, deltay])
+    else:
+        tune_algorithm.fit(self.train_features,self.train_target)
     # else:
-    # bayes.fit(self.train_features,
+    # tune_algorithm.fit(self.train_features,
     #               self.train_target,
     #               callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization"),
     #                     checkpoint_saver, deltay]
@@ -251,10 +285,10 @@ def hyperTune(self, epochs=50, n_jobs=6):
 
 
     # collect best parameters from tuning
-    self.params = bayes.best_params_
-    tune_score = bayes.best_score_
+    self.params = tune_algorithm.best_params_
+    tune_score = tune_algorithm.best_score_
 
-    self.cv_results = __cv_results__(bayes.cv_results_)
+    self.cv_results = __cv_results__(tune_algorithm.cv_results_)
     if self.algorithm == 'ada':
         self.cv_results = __fix_ada_dictionary__(self.cv_results)
 

@@ -32,7 +32,8 @@ class MlModel:  # TODO update documentation here
     from core.analysis import impgraph, pva_graph, classification_graphs, hist, plot_learning_curves
     from core.classifiers import get_classifier
     from core.storage.util import original_param
-    from core.features import featurize, data_split
+    from core.features import featurize
+    from core.split import data_split
     from core.storage import pickle_model, store, org_files, featurize_from_mysql, QsarDB_export
 
     def __init__(self, algorithm, dataset, target, feat_meth, tune=False, opt_iter=10, cv=3, random=None):
@@ -54,8 +55,9 @@ class MlModel:  # TODO update documentation here
         elif self.dataset in multi_label_classification_datasets:
             self.task_type = 'multi_label_classification'
         else:
-            raise Exception(
-                '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
+            # raise Exception(
+            #     '{} is an unknown dataset! Cannot choose classification or regression.'.format(self.dataset))
+            self.task_type = 'regression'
 
         self.target_name = target
         self.feat_meth = feat_meth
@@ -100,12 +102,16 @@ class MlModel:  # TODO update documentation here
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.get_classifier()
 
-    def run(self):
-        """ Runs machine learning model. Stores results as class attributes."""
+    def run(self, tuner="bayes"):
+        """
+        Runs machine learning model. Stores results as class attributes.
+        :param tuner: the default parameter is "bayes" which is BayesianSearchCV. The other parameters are "random" for
+            RandomSearchCV and grid for GridSearchCV.
+        """
 
         if self.tuned:  # Do hyperparameter tuning
-            self.make_grid()
-            self.hyperTune(n_jobs=8)
+            self.make_grid(tuner=tuner)
+            self.hyperTune(n_jobs=8, tuner=tuner)
         else:  # Return original parameter if not tuned
             self.original_param()
         # Done tuning, time to fit and predict
@@ -126,9 +132,9 @@ class MlModel:  # TODO update documentation here
         if self.task_type == 'regression':
             self.pva_graph()
             self.pva_graph(use_scaled=True)  # Plot scaled pva data
-            self.plot_learning_curves()
-            if self.algorithm != "cnn":  # CNN is running into OverflowError: cannot convert float infinity to integer
-                self.hist()
+            # self.plot_learning_curves()
+            # if self.algorithm != "cnn":  # CNN is running into OverflowError: cannot convert float infinity to integer
+            #     self.hist()
 
         if self.task_type in ['single_label_classification', 'multi_label_classification']:
             self.classification_graphs()
@@ -139,7 +145,7 @@ class MlModel:  # TODO update documentation here
         self.neo4j_params = {'port': port, 'username': username, 'password': password}  # Pass Neo4j Parameters
         Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Test connection to Neo4j
-        ModelToNeo4j(model=self, port=port, molecules_per_batch=5000, username=username, password=password)
+        ModelToNeo4j(model=self, port=port, molecules_per_batch=1000, username=username, password=password)
         t2 = default_timer() - t1
         print(f"Time it takes to finish graphing {self.run_name}: {t2}sec")
 

@@ -19,12 +19,12 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     # list of all learning algorithms
-   # learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
+    learner = ['svm', 'knn', 'rf', 'ada', 'gdb', 'nn']
     # learner = ['rf', 'ada', 'gdb', 'nn']
-    learner = ['gdb']
+    # learner = ['gdb']
 
     # list of available classification learning algorithms for reference/testing
-   # learner = ['svm', 'knn', 'rf', 'ada', 'gdb']
+    # learner = ['svm', 'knn', 'rf', 'ada', 'gdb']
 
     # list of available regression learning algorithms for reference/testing
 #    learner = ['ada', 'rf', 'svm', 'gdb', 'nn', 'knn']
@@ -43,7 +43,7 @@ def main():
         'clintox.csv': targets,
         'bace.csv': targets,
         'ESOL.csv': 'water-sol',
-        'Lipophilicity-ID.csv': 'exp',
+        'lipo_raw.csv': 'exp',
         'water-energy.csv': 'expt',
         'logP14k.csv': 'Kow',
         'jak2_pic50.csv': 'pIC50'
@@ -60,7 +60,7 @@ def main():
     # regression data sets for reference/testing
     # sets = {
     #     'ESOL.csv': 'water-sol',
-    #     'Lipophilicity-ID.csv': 'exp',
+    #     'lipo_raw.csv': 'exp',
     #     'water-energy.csv': 'expt',
     #     'logP14k.csv': 'Kow',
     #     'jak2_pic50.csv': 'pIC50'
@@ -69,9 +69,9 @@ def main():
     # sets = {'water-energy.csv': 'expt'}
 
     for alg in learner:  # loop over all learning algorithms
-        # feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
-        #          [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
-        feats = [[0]]
+        feats = [[0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1], [2], [3],
+                  [4], [5], [0, 1, 2]]  # Use this line to select specific featurizations
+        # feats = [[0]]
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
 
@@ -97,17 +97,16 @@ def main():
                         model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
                                         tune=False, cv=2, opt_iter=2)
                         print('Done.\n')
-
+                        model.featurize()
+                        if model.algorithm not in ["nn", "cnn"]:
+                            model.data_split(split="scaffold", test=0.1, scaler="standard")
+                        else:
+                            model.data_split(split="scaffold", test=0.1, val=0.1, scaler="standard")
                     with cd('output'):
-                        model.featurize()  # Featurize molecules
-                        val = 0.0
-                        if alg == 'nn':
-                            val = 0.1
-                        model.data_split(val=val)
                         model.reg()
                         model.run()  # Runs the models/featurizations for classification
                         model.analyze()
-                        if model.algorithm != 'nn':
+                        if model.algorithm not in ['nn', 'cnn']:
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
@@ -122,38 +121,33 @@ def single_model():
 
     :return: None
     """
-
     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        # model1 = MlModel(algorithm='rf', dataset='BBBP.csv', target=get_classification_targets(data='BBBP.csv'), feat_meth=[0],
-        #                  tune=False, cv=2, opt_iter=5, random=10)
-        model1 = MlModel(algorithm='cnn', dataset='water-energy.csv', target='expt', feat_meth=[0],
-                         tune=True, cv=2, opt_iter=50)
-        # model1 = MlModel(algorithm='rf', dataset='clintox.csv', target=['FDA_APPROVED', 'CT_TOX'], feat_meth=[0],
-        #                  tune=False, cv=2, opt_iter=2)
-
+        model3 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
+                         tune=False, cv=2, opt_iter=2)
         print('done.')
-        print('Model Type:', model1.algorithm)
-        print('Featurization:', model1.feat_meth)
-        print('Dataset:', model1.dataset)
+        print('Model Type:', model3.algorithm)
+        print('Featurization:', model3.feat_meth)
+        print('Dataset:', model3.dataset)
         print()
-    with cd('output'):  # Have files output to output
-        model1.featurize()
-        if model1.algorithm in ['cnn', 'nn']:
-            model1.data_split(val=0.1)
+        model3.featurize()
+        if model3.algorithm not in ["nn", "cnn"]:
+            model3.data_split(split="scaffold", test=0.1, scaler="standard",
+                              add_molecule_to_testset=["CN(C)C(=O)c1ccc(cc1)OC", "CS(=O)(=O)Cl"])
         else:
-            model1.data_split()
-        model1.reg()
-        model1.run()
-        model1.analyze()
-        if model1.algorithm not in ['cnn', 'nn']:  # issues pickling NN models
-            model1.pickle_model()
-        model1.store()
-        model1.org_files(zip_only=True)
+            model3.data_split(split="scaffold", test=0.1, val=0.1, scaler="standard")
+    with cd('output'):  # Have files output to output
+        model3.reg()
+        model3.run(tuner="random")
+        # model3.analyze()
+        # if model3.algorithm != 'nn':  # issues pickling NN models
+        #     model3.pickle_model()
+        model3.store()
+        model3.org_files(zip_only=True)
         # model1.QsarDB_export(zip_output=True)
-        # model1.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 def example_run_with_mysql_and_neo4j(dataset='logP14k.csv', target='Kow'):
@@ -161,7 +155,7 @@ def example_run_with_mysql_and_neo4j(dataset='logP14k.csv', target='Kow'):
         print('Now in:', os.getcwd())
         print('Initializing model...', end=' ', flush=True)
         # initiate model class with algorithm, dataset and target
-        model3 = MlModel(algorithm='rf', dataset=dataset, target=target, feat_meth=[0, 2, 3],
+        model3 = MlModel(algorithm='cnn', dataset=dataset, target=target, feat_meth=[0, 2, 3],
                          tune=False, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)
@@ -226,9 +220,37 @@ def output_dir_to_neo4j():
                      username="neo4j", password="password")
 
 
+# def split_test():
+#     with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+#         print('Now in:', os.getcwd())
+#         print('Initializing model...', end=' ', flush=True)
+#         # initiate model class with algorithm, dataset and target
+#         model3 = MlModel(algorithm='rf', dataset='water-energy.csv', target='expt', feat_meth=[0],
+#                          tune=False, cv=2, opt_iter=2)
+#         print('done.')
+#         print('Model Type:', model3.algorithm)
+#         print('Featurization:', model3.feat_meth)
+#         print('Dataset:', model3.dataset)
+#         print()
+#         model3.featurize()
+#         if model3.algorithm not in ["nn", "cnn"]:
+#             model3.data_split(split="scaffold", test=0.1, scaler="standard",
+#                               add_molecule_to_testset=["CN(C)C(=O)c1ccc(cc1)OC", "CS(=O)(=O)Cl"])
+#         else:
+#             model3.data_split(split="scaffold", test=0.1, val=0.1, scaler="standard")
+#     with cd('output'):  # Have files output to output
+#         model3.reg()
+#         model3.run(tuner="random")
+#         model3.store()
+#         model3.org_files(zip_only=True)
+#         model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+
+
 if __name__ == "__main__":
-    main()
-    # single_model()
+    # main()
+    single_model()
+    # split_test()
+    # deepchem_split()
     # example_load()
     # example_run_with_mysql_and_neo4j()
     # Qsar_import_examples()

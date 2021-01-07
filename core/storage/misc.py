@@ -13,6 +13,9 @@ import pandas as pd
 import numpy as np
 import concurrent.futures as cf
 
+from rdkit import RDConfig
+from rdkit.Chem import FragmentCatalog, MolFromSmiles
+
 
 @contextmanager
 def cd(newdir):
@@ -362,3 +365,27 @@ def decompress_fingerprint(df):
     df = df.drop(fingerprint_column, axis=1)
     df = pd.concat([df, fingerprints], axis=1)
     return df
+
+
+def calculate_fragments(smiles):
+    """
+    Objective: Create fragments and import them into Neo4j based on our ontology
+    Intent: This script is based on Adam's "mol_frag.ipynb" file in his deepml branch, which is based on rdkit's
+            https://www.rdkit.org/docs/GettingStartedInPython.html. I still need some council on this one since we can
+            tune how much fragment this script can generate for one SMILES. Also, everything (line 69 to 77)
+            needs to be under a for loop or else it will break (as in not generating the correct amount of fragments,
+            usually much less than the actual amount). I'm not sure why
+    :param smiles:
+    :return:
+    """
+    fName = os.path.join(RDConfig.RDDataDir, 'FunctionalGroups.txt')
+    fparams = FragmentCatalog.FragCatParams(0, 4, fName)  # I need more research and tuning on this one
+    fcat = FragmentCatalog.FragCatalog(fparams)  # The fragments are stored as entries
+    fcgen = FragmentCatalog.FragCatGenerator()
+    mol = MolFromSmiles(smiles)
+    fcount = fcgen.AddFragsFromMol(mol, fcat)
+    # print("This SMILES, %s, has %d fragments" % (smiles, fcount))
+    frag_list = []
+    for frag in range(fcount):
+        frag_list.append(fcat.GetEntryDescription(frag))  # List of molecular fragments
+    return frag_list

@@ -106,7 +106,7 @@ def svr_bayes_grid():
     # Define parameter grid for skopt BayesSearchCV
     bayes_grid = {
         'kernel': Categorical(['rbf', 'poly']),
-        'C': Integer(10 ** -3, 10 ** 2, 'log-uniform'),
+        'C': Integer(10 ** -3, 10 ** 2),
         'gamma': Real(10 ** -3, 10 ** 0, 'log-uniform'),
         'epsilon': Real(0.1, 0.6),
         'degree': Integer(1, 3)

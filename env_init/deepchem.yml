@@ -1,0 +1,33 @@
+name: deepchem
+channels:
+  - defaults
+  - rdkit
+  - conda-forge
+dependencies:
+  - matplotlib
+  - pandas
+  - cirpy
+  - pytest
+  - numpy
+  - rdkit
+  - pip
+  - scikit-learn=0.22.0
+  - tensorflow=1.15
+  - jupyter
+#  - py2neo
+  - mock
+  - tqdm
+  - lxml
+#  - sqlalchemy
+  - pymysql
+  - pip:
+      - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
+      - "git+https://github.com/swansonk14/chemprop.git"
+      - "git+https://github.com/darenr/scikit-optimize.git#egg=scikit-optimize"
+      - "git+https://github.com/Zsailer/pandas_flavor.git"
+      - "git+https://github.com/mcs07/CIRpy.git"
+      - "git+https://github.com/technige/py2neo.git"
+      - "git+https://github.com/sqlalchemy/sqlalchemy.git"
+      # - "git+https://github.com/jpmml/sklearn2pmml.git"
+
+prefix: C:\Users\Adam\miniconda3\envs\mlapp

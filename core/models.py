@@ -145,7 +145,7 @@ class MlModel:  # TODO update documentation here
         self.neo4j_params = {'port': port, 'username': username, 'password': password}  # Pass Neo4j Parameters
         Graph(self.neo4j_params["port"], username=self.neo4j_params["username"],
               password=self.neo4j_params["password"])  # Test connection to Neo4j
-        ModelToNeo4j(model=self, port=port, molecules_per_batch=5000, username=username, password=password)
+        ModelToNeo4j(model=self, port=port, molecules_per_batch=1000, username=username, password=password)
         t2 = default_timer() - t1
         print(f"Time it takes to finish graphing {self.run_name}: {t2}sec")
 

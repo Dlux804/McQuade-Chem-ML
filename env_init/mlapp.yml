@@ -11,7 +11,6 @@ dependencies:
   - numpy
   - rdkit
   - pip
-  - scikit-learn=0.22.0
   - tensorflow-gpu=1.15
   - jupyter
   - deepchem==2.3.0
@@ -30,5 +29,5 @@ dependencies:
       - "git+https://github.com/technige/py2neo.git"
       - "git+https://github.com/sqlalchemy/sqlalchemy.git"
       - "git+https://github.com/jpmml/sklearn2pmml.git"
-
+  - scikit-learn=0.22.0
 prefix: C:\Users\Adam\miniconda3\envs\mlapp

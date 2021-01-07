@@ -108,14 +108,26 @@ def data_split(self, test=0.2, val=0, split="random", add_molecule_to_testset=No
                                                                                         verbose=False)
 
     # All training related data
-    self.train_molecules = np.array([Chem.MolToSmiles(Chem.MolFromSmiles(i)) for i in train_dataset.ids])
+    train_molecules = []
+    for smiles in train_dataset.ids:
+        train_to_mol = Chem.MolFromSmiles(smiles)
+        if train_to_mol is not None:
+            train_molecules.append(Chem.MolToSmiles(train_to_mol))
+    self.train_molecules = train_molecules
+
     train_df = temp_data[temp_data['smiles'].isin(self.train_molecules)]
     self.train_features = np.array(__dropCol__(df=train_df, target_name=self.target_name))
     self.n_train = self.train_features.shape[0]
     self.train_target = np.array(train_df[self.target_name])
 
     # All testing related data
-    self.test_molecules = np.array([Chem.MolToSmiles(Chem.MolFromSmiles(i)) for i in test_dataset.ids])
+    test_molecules = []
+    for smiles in test_dataset.ids:
+        test_to_mol = Chem.MolFromSmiles(smiles)
+        if test_to_mol is not None:
+            test_molecules.append(Chem.MolToSmiles(test_to_mol))
+    self.test_molecules = test_molecules
+
     test_df = temp_data[temp_data['smiles'].isin(self.test_molecules)]
     self.test_features = np.array(__dropCol__(df=test_df, target_name=self.target_name))
     self.test_target = np.array(test_df[self.target_name])
@@ -127,7 +139,13 @@ def data_split(self, test=0.2, val=0, split="random", add_molecule_to_testset=No
 
     # All validating related data
     if val != 0:
-        self.val_molecules = np.array([Chem.MolToSmiles(Chem.MolFromSmiles(i)) for i in valid_dataset.ids])
+        val_molecules = []
+        for smiles in valid_dataset.ids:
+            val_to_mol = Chem.MolFromSmiles(smiles)
+            if val_to_mol is not None:
+                val_molecules.append(Chem.MolToSmiles(val_to_mol))
+        self.val_molecules = val_molecules
+
         val_df = temp_data[temp_data['smiles'].isin(self.val_molecules)]
         self.val_features = np.array(__dropCol__(df=val_df, target_name=self.target_name))
         self.val_target = np.array(val_df[self.target_name])

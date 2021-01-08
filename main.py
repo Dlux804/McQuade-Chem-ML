@@ -35,16 +35,15 @@ def main():
     # 'bace.csv': targets,
     #    }
 
-    #### regression data sets for reference/testing
-    # sets = {
-    #     'ESOL.csv': 'water-sol',
-    #     'lipo_raw.csv': 'exp',
-    #     'water-energy.csv': 'expt',
-    #     'logP14k.csv': 'Kow',
-    #     'jak2_pic50.csv': 'pIC50',
-    #     'Lipophilicity-ID.csv': 'exp'
-    # }
-    sets = {'Lipophilicity-ID.csv': 'exp'}
+    ### regression data sets for reference/testing
+    sets = {
+        'ESOL.csv': 'water-sol',
+        'water-energy.csv': 'expt',
+        'logP14k.csv': 'Kow',
+        'jak2_pic50.csv': 'pIC50',
+        'Lipophilicity-ID.csv': 'exp',
+        'flashpoint.csv': 'flashpoint'
+    }
 
     #### Split percent
     test_percents = [0.1, 0.2, 0.3, 0.4]

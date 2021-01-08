@@ -46,13 +46,15 @@ class Recommender:
 
     @staticmethod
     def delete_current_results(results_directory):
-        for sub_directory in os.listdir(results_directory):
-            path = f'{results_directory}/{sub_directory}'
-            if os.path.isdir(path):
-                shutil.rmtree(path)
-            else:
-                os.remove(path)
-
+        try:
+            for sub_directory in os.listdir(results_directory):
+                path = f'{results_directory}/{sub_directory}'
+                if os.path.isdir(path):
+                    shutil.rmtree(path)
+                else:
+                    os.remove(path)
+        except FileNotFoundError:
+            pass
     def run_models(self, dataset, target, tune=None, cv=None, opt_iter=None,
                    learners=None, features=None):
 

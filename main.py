@@ -19,7 +19,7 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     #### list of all learning algorithms
-    learner = ['svm','rf', 'gdb', 'nn']
+    learner = ['svm', 'rf', 'gdb', 'nn']
 
     #### All tune option
     tune_option = [False, True]
@@ -57,9 +57,7 @@ def main():
     #### Tuning methods
     tuners = ["bayes", 'random', 'grid']
 
-
     for alg in learner:  # loop over all learning algorithms
-
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
                 # This gets the target columns for classification data sets (Using target lists in the dictionary causes errors later in the workflow)
@@ -75,9 +73,7 @@ def main():
                         for splitter in splitters:
                             for scale in scalers:
                                 for tune in tuners:
-                                    with cd(str(
-                                            pathlib.Path(
-                                                __file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+                                    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
                                         print('Model Type:', alg)
                                         print('Featurization:', method)
                                         print('Dataset:', data)
@@ -94,7 +90,7 @@ def main():
                                         if model.algorithm not in ["nn", "cnn"]:
                                             model.data_split(split=splitter, test=test_percent, scaler=scale)
                                         else:
-                                            model.data_split(split="scaffold", test=test_percent, val=0.1, scaler="standard")
+                                            model.data_split(split=splitter, test=test_percent, val=0.1, scaler=scale)
                                     with cd('output'):
                                         model.reg()
                                         model.run(tuner=tune)  # Runs the models/featurizations for classification

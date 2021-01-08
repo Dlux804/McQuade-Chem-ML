@@ -46,7 +46,7 @@ def main():
     }
 
     #### Split percent
-    test_percents = [0.1, 0.2, 0.3, 0.4]
+    test_percents = [0.2, 0.3, 0.4]
 
     #### Data Splitting methods
     splitters = ['random', 'index', 'scaffold']
@@ -69,38 +69,41 @@ def main():
                 if checker == 0:
                     pass
                 else:
-                    for test_percent in test_percents:
-                        for splitter in splitters:
-                            for scale in scalers:
-                                for tune in tuners:
-                                    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
-                                        print('Model Type:', alg)
-                                        print('Featurization:', method)
-                                        print('Dataset:', data)
-                                        print('Target(s):', target)
-                                        print('Task type:', task_type)
-                                        print()
-                                        print('Initializing model...', end=' ', flush=True)
-                                        # initiate model class with algorithm, dataset and target
+                    for isTune in tune_option:
+                        for test_percent in test_percents:
+                            for splitter in splitters:
+                                for scale in scalers:
+                                    for tuner in tuners:
+                                        with cd(str(pathlib.Path(
+                                                __file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+                                            print('Model Type:', alg)
+                                            print('Featurization:', method)
+                                            print('Dataset:', data)
+                                            print('Target(s):', target)
+                                            print('Task type:', task_type)
+                                            print()
+                                            print('Initializing model...', end=' ', flush=True)
+                                            # initiate model class with algorithm, dataset and target
 
-                                        model = MlModel(algorithm=alg, dataset=data, target=target, feat_meth=method,
-                                                        tune=tune, cv=2, opt_iter=2)
-                                        print('Done.\n')
-                                        model.featurize()
-                                        if model.algorithm not in ["nn", "cnn"]:
-                                            model.data_split(split=splitter, test=test_percent, scaler=scale)
-                                        else:
-                                            model.data_split(split=splitter, test=test_percent, val=0.1, scaler=scale)
-                                    with cd('output'):
-                                        model.reg()
-                                        model.run(tuner=tune)  # Runs the models/featurizations for classification
-                                        # model.analyze()
-                                        # if model.algorithm not in ['nn', 'cnn']:
-                                        #     model.pickle_model()
-                                        model.store()
-                                        model.org_files(zip_only=True)
-                                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
-                                                       password="password")
+                                            model = MlModel(algorithm=alg, dataset=data, target=target,
+                                                            feat_meth=method, tune=isTune, cv=2, opt_iter=2)
+                                            print('Done.\n')
+                                            model.featurize()
+                                            if model.algorithm not in ["nn", "cnn"]:
+                                                model.data_split(split=splitter, test=test_percent, scaler=scale)
+                                            else:
+                                                model.data_split(split=splitter, test=test_percent, val=0.1,
+                                                                 scaler=scale)
+                                        with cd('output'):
+                                            model.reg()
+                                            model.run(tuner=tuner)  # Runs the models/featurizations for classification
+                                            model.analyze()
+                                            if model.algorithm not in ['nn', 'cnn']:
+                                                model.pickle_model()
+                                            model.store()
+                                            model.org_files(zip_only=True)
+                                            model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
+                                                           password="password")
                                     # Have files output to output
 
 
@@ -117,7 +120,7 @@ def single_model():
         # initiate model class with algorithm, dataset and target
         # model3 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
         #                  tune=False, cv=2, opt_iter=2)
-        model3 = MlModel(algorithm='gdb', dataset='logP14k.csv', target='Kow', feat_meth=[0],
+        model3 = MlModel(algorithm='gdb', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0],
                          tune=False, cv=2, opt_iter=2)
         print('done.')
         print('Model Type:', model3.algorithm)

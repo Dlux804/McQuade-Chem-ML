@@ -5,7 +5,7 @@ from rdkit import Chem
 import pandas as pd
 import deepchem as dc
 from deepchem.feat import RDKitDescriptors, CircularFingerprint
-
+from collections import OrderedDict
 
 def __dropCol__(df, target_name, keepSmiles=False):
     """"""
@@ -85,7 +85,7 @@ def data_split(self, test=0.2, val=0, split="random", add_molecule_to_testset=No
         temp_data = self.data[~self.data['smiles'].isin(canonMolToAdd)]  # Final feature df
 
     # We need to generate fingerprints to use deepchem's scaffold and butina splitting techniques.
-    featurizer = CircularFingerprint(size=1024)
+    featurizer = CircularFingerprint(size=2048)
 
     # Loading in csv into deepchem
     loader = dc.data.CSVLoader(tasks=[self.target_name], smiles_field="smiles", featurizer=featurizer)
@@ -100,35 +100,44 @@ def data_split(self, test=0.2, val=0, split="random", add_molecule_to_testset=No
         self.split_method = split_name_dict[split]
     except KeyError:
         raise Exception("""Invalid splitting methods. Please enter either "random", "scaffold" or "index".""")
+    if val == 0:
 
-    train_dataset, valid_dataset, test_dataset = \
-                                                    splitter.train_valid_test_split(dataset, frac_train=1-test-val,
-                                                                                        frac_test=test, frac_valid=val,
-                                                                                        seed=self.random_seed,
-                                                                                        verbose=False)
-
+        train_dataset, test_dataset = splitter.train_test_split(dataset, frac_train=round(1-test, 1),
+                                                                seed=self.random_seed)
+    else:
+        train_dataset, valid_dataset, test_dataset = splitter.train_valid_test_split(dataset, frac_train=1-test-val,
+                                                                                     frac_test=test, frac_valid=val,
+                                                                                     seed=self.random_seed)
     # All training related data
     train_molecules = []
-    for smiles in train_dataset.ids:
-        train_to_mol = Chem.MolFromSmiles(smiles)
+    for train_smiles in train_dataset.ids:
+        train_to_mol = Chem.MolFromSmiles(train_smiles)
         if train_to_mol is not None:
             train_molecules.append(Chem.MolToSmiles(train_to_mol))
-    self.train_molecules = train_molecules
+        else:
+            pass
 
-    train_df = temp_data[temp_data['smiles'].isin(self.train_molecules)]
+    train_molecules = list(OrderedDict.fromkeys(train_molecules))
+    train_df = temp_data[temp_data['smiles'].isin(train_molecules)]
+    train_df = train_df.drop_duplicates()  # Drop duplicates in Dataframe
+    self.train_molecules = np.array(train_df['smiles'])
     self.train_features = np.array(__dropCol__(df=train_df, target_name=self.target_name))
     self.n_train = self.train_features.shape[0]
     self.train_target = np.array(train_df[self.target_name])
 
     # All testing related data
     test_molecules = []
-    for smiles in test_dataset.ids:
-        test_to_mol = Chem.MolFromSmiles(smiles)
+    for test_smiles in test_dataset.ids:
+        test_to_mol = Chem.MolFromSmiles(test_smiles)
         if test_to_mol is not None:
             test_molecules.append(Chem.MolToSmiles(test_to_mol))
-    self.test_molecules = test_molecules
+        else:
+            pass
+    test_molecules = list(OrderedDict.fromkeys(test_molecules))  # Drop duplicates in list
 
-    test_df = temp_data[temp_data['smiles'].isin(self.test_molecules)]
+    test_df = temp_data[temp_data['smiles'].isin(test_molecules)]
+    test_df = test_df.drop_duplicates()  # Drop duplicates in Dataframe
+    self.test_molecules = np.array(test_df['smiles'])
     self.test_features = np.array(__dropCol__(df=test_df, target_name=self.target_name))
     self.test_target = np.array(test_df[self.target_name])
     if add_molecule_to_testset is not None:  # If there are specific SMILES to add
@@ -144,9 +153,11 @@ def data_split(self, test=0.2, val=0, split="random", add_molecule_to_testset=No
             val_to_mol = Chem.MolFromSmiles(smiles)
             if val_to_mol is not None:
                 val_molecules.append(Chem.MolToSmiles(val_to_mol))
-        self.val_molecules = val_molecules
 
-        val_df = temp_data[temp_data['smiles'].isin(self.val_molecules)]
+        val_molecules = list(OrderedDict.fromkeys(val_molecules))
+        val_df = temp_data[temp_data['smiles'].isin(val_molecules)]
+        val_df = val_df.drop_duplicates()
+        self.val_molecules = np.array(val_df['smiles'])
         self.val_features = np.array(__dropCol__(df=val_df, target_name=self.target_name))
         self.val_target = np.array(val_df[self.target_name])
         self.n_val = self.val_features.shape[0]
@@ -207,12 +218,12 @@ def data_split(self, test=0.2, val=0, split="random", add_molecule_to_testset=No
     print('Test Features Shape:', self.test_features.shape)
     print('Test Target Shape:', self.test_target.shape)
     print()
-    if val > 0.0:
-        print('Val Features Shape:', self.val_features.shape)
-        print('Val Target Shape:', self.val_target.shape)
-        print("Train:Test:Val -->", np.round(self.train_features.shape[0] / self.feature_array.shape[0] * 100, 1), ':',
-          np.round(self.test_features.shape[0] / self.feature_array.shape[0] * 100, 1), ":",
-          np.round(self.val_features.shape[0] / self.feature_array.shape[0] * 100, 1))
-    else:
-        print('Train:Test -->', np.round(self.train_features.shape[0] / self.feature_array.shape[0] * 100, 1), ':',
-          np.round(self.test_features.shape[0] / self.feature_array.shape[0] * 100, 1))
+    # if val > 0.0:
+    #     print('Val Features Shape:', self.val_features.shape)
+    #     print('Val Target Shape:', self.val_target.shape)
+    #     print("Train:Test:Val -->", np.round(self.train_features.shape[0] / self.feature_array.shape[0] * 100, 1), ':',
+    #       np.round(self.test_features.shape[0] / self.feature_array.shape[0] * 100, 1), ":",
+    #       np.round(self.val_features.shape[0] / self.feature_array.shape[0] * 100, 1))
+    # else:
+    #     print('Train:Test -->', np.round(self.train_features.shape[0] / self.feature_array.shape[0] * 100, 1), ':',
+    #       np.round(self.test_features.shape[0] / self.feature_array.shape[0] * 100, 1))

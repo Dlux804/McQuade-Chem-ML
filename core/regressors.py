@@ -196,6 +196,7 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
     """
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
+    scoring = None
     if self.algorithm in ['nn', 'cnn']:
         n_jobs = 1  # nn cannot run hyper tuning in parallel while using GPU.
     else:
@@ -234,13 +235,11 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
     elif tuner == "grid":
         tune_algorithm = GridSearchCV(
             estimator=self.estimator,
-            param_distributions=self.param_grid,
-            _iter=self.opt_iter,  # number of combos tried
+            param_grid=self.param_grid,
             scoring=scoring,
-            random_state=42,
-            verbose=3,
             n_jobs=n_jobs,
-            cv=self.cv_folds
+            cv=self.cv_folds,
+            verbose=3
         )
     else:
         raise Exception("""Invalid tuner. Please enter between "bayes", "random" or "grid". """)

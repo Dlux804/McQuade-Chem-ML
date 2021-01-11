@@ -196,6 +196,7 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
     """
     print("Starting Hyperparameter tuning\n")
     start_tune = time()
+    scoring = None
     if self.algorithm in ['nn', 'cnn']:
         n_jobs = 1  # nn cannot run hyper tuning in parallel while using GPU.
     else:

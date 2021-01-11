@@ -55,7 +55,7 @@ def main():
     scalers = ['standard', 'minmax', None]
 
     #### Tuning methods
-    tuners = ['random', "grid", 'bayes']
+    tuners = [ "grid", 'random', 'bayes']
 
     for alg in learner:  # loop over all learning algorithms
         for method in feats:  # loop over the featurization methods

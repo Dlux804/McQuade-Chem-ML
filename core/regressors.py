@@ -223,7 +223,7 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
     elif tuner == "random":
         tune_algorithm = RandomizedSearchCV(
             estimator=self.estimator,
-            param_distributions=self.paran_grid,
+            param_distributions=self.param_grid,
             n_iter=self.opt_iter,  # number of combos tried
             scoring=scoring,
             random_state=42,

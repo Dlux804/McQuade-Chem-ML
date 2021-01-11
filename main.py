@@ -19,10 +19,10 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     #### list of all learning algorithms
-    learner = ['svm', 'rf', 'gdb', 'nn']
+    learner = ['rf','nn', 'svm',  'gdb', 'nn']
 
     #### All tune option
-    tune_option = [False, True]
+    tune_option = [True, False]
 
     #### Features
     feats = [[0], [1], [2], [3], [4], [5], [0,1]]  # Use this line to select specific featurizations
@@ -39,14 +39,14 @@ def main():
     sets = {
         'ESOL.csv': 'water-sol',
         'water-energy.csv': 'expt',
-        'logP14k.csv': 'Kow',
+        # 'logP14k.csv': 'Kow',
         'jak2_pic50.csv': 'pIC50',
         'Lipophilicity-ID.csv': 'exp',
         'flashpoint.csv': 'flashpoint'
     }
 
     #### Split percent
-    test_percents = [0.2, 0.3, 0.4]
+    test_percents = [0.2, 0.4, 0.6]
 
     #### Data Splitting methods
     splitters = ['random', 'index', 'scaffold']
@@ -55,7 +55,7 @@ def main():
     scalers = ['standard', 'minmax', None]
 
     #### Tuning methods
-    tuners = ["bayes", 'random', 'grid']
+    tuners = ['random', "grid", 'bayes']
 
     for alg in learner:  # loop over all learning algorithms
         for method in feats:  # loop over the featurization methods
@@ -81,6 +81,8 @@ def main():
                                             print('Dataset:', data)
                                             print('Target(s):', target)
                                             print('Task type:', task_type)
+                                            print('Tuning:', isTune)
+                                            print('Tuner:', tuner)
                                             print()
                                             print('Initializing model...', end=' ', flush=True)
                                             # initiate model class with algorithm, dataset and target

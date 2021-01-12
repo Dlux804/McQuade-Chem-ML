@@ -222,7 +222,8 @@ def data_split(self, test=0.2, val=0, split="random", add_molecule_to_testset=No
     #     print('Val Target Shape:', self.val_target.shape)
     #     print("Train:Test:Val -->", np.round(self.train_features.shape[0] / self.feature_array.shape[0] * 100, 1), ':',
     #       np.round(self.test_features.shape[0] / self.feature_array.shape[0] * 100, 1), ":",
-    #       np.round(self.val_features.shape[0] / self.feature_array.shape[0] * 100, 1))
+    #       np.round(self.val_features.shape[0] / self.feature_:
+    #       array.shape[0] * 100, 1))
     # else:
     #     print('Train:Test -->', np.round(self.train_features.shape[0] / self.feature_array.shape[0] * 100, 1), ':',
     #       np.round(self.test_features.shape[0] / self.feature_array.shape[0] * 100, 1))

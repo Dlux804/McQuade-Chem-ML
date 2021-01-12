@@ -7,8 +7,11 @@ from py2neo import Graph
 
 from core import MlModel
 from recommender_dev.molecules import insert_dataset_molecules, MoleculeSimilarity
-import cleanup_results as cr
-import processing as pr
+from recommender_dev import cleanup_results as cr
+from recommender_dev import processing as pr
+from rdkit import Chem
+# import cleanup_results as cr
+# import processing as pr
 
 
 def check_for_results_folder(results_directory):
@@ -118,9 +121,10 @@ class Recommender:
             opt_iter = 100
         if learners is None:
             learners = ['rf', 'nn', 'gdb']
+            learners = ['nn']
         if features is None:
             features = [[0], [2], [3], [4], [0, 2], [0, 3]]
-
+            features = [[0]]
         print(f'List of learners: {str(learners)}')
         print(f'List of features: {str(features)}')
         print(f'Number of models to run: {len(learners) * len(features)}')
@@ -136,7 +140,7 @@ class Recommender:
                 model = MlModel(algorithm=learner, dataset=dataset, target=target, feat_meth=feature,
                                 tune=tune, cv=cv, opt_iter=opt_iter)
                 model.featurize()
-                model.data_split(val=0.1, add_molecules_to_testset=test_smiles)
+                model.data_split(val=0.1,add_molecule_to_testset=test_smiles)
                 model.reg()
                 model.run(tuner='random')
                 runs.append({'model_name': model.run_name, 'pred': model.predictions})
@@ -177,7 +181,7 @@ class Recommender:
 
 if __name__ == "__main__":
 
-    input("Press anything to run")
+    # input("Press anything to run")
     results_folders = "results"
 
     if os.path.exists(results_folders):
@@ -189,10 +193,14 @@ if __name__ == "__main__":
     file = "recommender_test_files/lipo_raw.csv"
     target = 'exp'
     raw_data = pd.read_csv(file)
-    for i in range(10):
+    for i in range(1):
         results_directory = f"{results_folders}/run_{str(i)}"
         os.mkdir(results_directory)
-        control_smiles = random.choice(raw_data['smiles'].tolist())
+        control_smiles = None
+        while control_smiles is None:
+            control_smiles = Chem.MolFromSmiles(random.choice(raw_data['smiles'].tolist()))
+        control_smiles = Chem.MolToSmiles(control_smiles)
+
         rec = Recommender(smiles=control_smiles)
         rec.connect_to_neo4j()
         rec.insert_molecules_into_neo4j(dataset=file)
@@ -203,4 +211,4 @@ if __name__ == "__main__":
     cr.cleanup_results_dir('results')
     cr.gem_sequence_ratio('results')
     cr.apply_conditional_formating('results')
-    pr.process_control_smiles(file, target, results_folders)
+    # pr.process_control_smiles(file, target, results_folders)

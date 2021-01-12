@@ -13,7 +13,7 @@ import processing as pr
 
 def check_for_results_folder(results_directory):
     if not os.path.exists(results_directory):
-        os.chdir(results_directory)
+        os.mkdir(results_directory)
 
 
 def delete_current_results(results_directory):
@@ -91,6 +91,17 @@ class Recommender:
         self.hyer_sim = sim.hyer_sim(self.control_smiles, limit=limit)
         self.compare_sim_results = sim.compare_sim_algorithms(self.control_smiles)
 
+    @staticmethod
+    def delete_current_results(results_directory):
+        try:
+            for sub_directory in os.listdir(results_directory):
+                path = f'{results_directory}/{sub_directory}'
+                if os.path.isdir(path):
+                    shutil.rmtree(path)
+                else:
+                    os.remove(path)
+        except FileNotFoundError:
+            pass
     def run_models(self, dataset, target, tune=None, cv=None, opt_iter=None,
                    learners=None, features=None):
 

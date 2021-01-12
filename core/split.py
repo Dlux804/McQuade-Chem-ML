@@ -1,12 +1,11 @@
-import random
-from math import floor
-
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import numpy as np
 from rdkit import Chem
 import pandas as pd
-
+import deepchem as dc
+from deepchem.feat import RDKitDescriptors, CircularFingerprint
+from collections import OrderedDict
 
 def __dropCol__(df, target_name, keepSmiles=False):
     """"""
@@ -17,86 +16,180 @@ def __dropCol__(df, target_name, keepSmiles=False):
         return df.drop([target_name, 'smiles'], axis=1)
 
 
-def data_split(self, test=0.2, val=0, add_molecules_to_testset=None):
-    feature_columns = list(self.data.columns)
-    feature_columns.remove('smiles')
-    feature_columns.remove(self.target_name)
-    self.feature_list = feature_columns
-    self.feature_length = len(feature_columns)
+def data_split(self, test=0.2, val=0, split="random", add_molecule_to_testset=None,  scaler=None, random=None):
+    """
+        Take in a data frame, the target column name (exp).
+    Returns a numpy array with the target variable,
+    a numpy array (matrix) of feature variables,
+    and a list of strings of the feature headers.
+    :param self:
+    :param test:
+    :param val:
+    :param split:
+            Keywords: 'random', 'index', 'scaffold'. Default is 'random'
+    :param add_molecule_to_testset:
+    :param scaler:
+            Keywords:  None, 'standard', 'minmax'. Default is None
+    :param random:
+    :return:
+    """
+    self.test_percent = test  # Test percent instance
+    self.val_percent = val  # Val percent instance
+    self.target_array = np.array(self.data[self.target_name])  # Target array instance
+    scaler_method = scaler
+    if scaler == "standard":  # Determine data scaling method
+        scaler_method = StandardScaler()
+    elif scaler == "minmax":
+        scaler_method = MinMaxScaler()
 
-    sorted_data = []
-    for index, row in self.data.iterrows():
-        row = dict(row)
-        row_data = {'smiles': row['smiles'], 'target': row[self.target_name]}
-        features = []
-        for label, value in row.items():
-            if label != 'smiles' and label != self.target_name:
-                features.append(value)
-        row_data['features'] = features
-        sorted_data.append(row_data)
+    self.scaler_method = scaler  # Scaler instance
 
-    random.seed(self.random_seed)
-    random.shuffle(sorted_data)
+    if self.dataset in ['sider.csv', 'clintox.csv']:  # Drop specific columns for specific datasets
+        features_df = __dropCol__(df=self.data, target_name=self.target_name, keepSmiles=True)
+    else:
+        features_df = __dropCol__(df=self.data, target_name=self.target_name)
 
-    sorted_data_df = pd.DataFrame(sorted_data)
-    self.feature_array = np.array([np.array(x) for x in sorted_data_df['features']])
-    if self.algorithm == 'cnn':
-        self.feature_array = self.feature_array.reshape(self.feature_array.shape[0], self.feature_array.shape[1], 1)
-    self.in_shape = self.feature_array.shape[1]
-    self.target_array = np.array(sorted_data_df['target'])
+    # if dropSmiles is not None:
+    #     dropSmiles = [Chem.MolToSmiles(Chem.MolFromSmiles(i)) for i in dropSmiles]
+    #     features_df = features_df[~features_df.isin(dropSmiles)]
 
-    self.n_tot = len(sorted_data)
-    n_val = floor(self.n_tot * val)
-    n_test = floor(self.n_tot * test)
-    n_train = self.n_tot - n_val - n_test
-    self.val_percent = n_val / self.n_tot * 100
-    self.test_percent = n_test / self.n_tot * 100
-    self.train_percent = n_train / self.n_tot * 100
+    self.feature_list = list(features_df.columns)  # save list of strings of features
+    self.feature_length = len(self.feature_list)  # Save feature size
+    self.feature_array = np.array(features_df)  # Save feature array instance
+    self.n_tot = self.feature_array.shape[0]  # Save total amount of features
 
-    val_split_point = n_train
-    test_split_point = n_train + n_val
+    molecules_array = np.array(self.data['smiles'])  # Grab molecules array
 
-    train = sorted_data[:val_split_point]
-    val = sorted_data[val_split_point:test_split_point]
-    test = sorted_data[test_split_point:]
+    self.train_percent = 1 - self.test_percent - self.val_percent  # Train percent
 
-    if add_molecules_to_testset is not None:
+    temp_data = self.data
 
-        def __msmtts__(a, b):  # move specified molecules to test set
-            i = 0
-            while i < len(b):
-                if b[i]['smiles'] in add_molecules_to_testset:
-                    a.append(b[i])
-                    b.pop(i)
-                    i = i - 1  # size of list has decreased by one
-                i = i + 1
+    # if val != 0:
+    canonMolToAdd = []
+    if add_molecule_to_testset is not None:  # For specific molecules to add to testset
+        for i in add_molecule_to_testset:
+            to_mol = Chem.MolFromSmiles(i)
+            if to_mol is not None:
+                canonMolToAdd.append(Chem.MolToSmiles(to_mol))
+        # add_molecule_to_testset = [Chem.MolToSmiles(Chem.MolFromSmiles(i)) for i in add_molecule_to_testset]
 
-        __msmtts__(test, train)
-        __msmtts__(test, val)
+        add_data = self.data[self.data['smiles'].isin(canonMolToAdd)]  # Add in features of specific SMILES
 
-    def __gdfdl__(scaler, a):  # gather data from data list
-        df = pd.DataFrame(a)
-        molecules_array = np.array(df['smiles'].tolist())
-        target_array = np.array(df['target'].tolist())
-        features_array = df['features'].tolist()
-        features_array = np.array([np.array(x) for x in features_array])
-        features_array = scaler.fit_transform(features_array.reshape(-1, features_array.shape[-1])).reshape(
-            features_array.shape)
-        return features_array, target_array, molecules_array
+        add_data_molecules = np.array(add_data['smiles'])  # Specific molecule array to be added
 
-    scaler = StandardScaler()
-    self.scaler = scaler
-    self.train_features, self.train_target, self.train_molecules = __gdfdl__(scaler, train)
-    self.val_features, self.val_target, self.val_molecules = __gdfdl__(scaler, val)
-    self.test_features, self.test_target, self.test_molecules = __gdfdl__(scaler, test)
+        add_features_array = np.array(__dropCol__(add_data, self.target_name))  # Specific feature array to be added
 
+        add_target_array = np.array(add_data[self.target_name])  # Specific target array to be added
+
+        temp_data = self.data[~self.data['smiles'].isin(canonMolToAdd)]  # Final feature df
+
+    # We need to generate fingerprints to use deepchem's scaffold and butina splitting techniques.
+    featurizer = CircularFingerprint(size=2048)
+
+    # Loading in csv into deepchem
+    loader = dc.data.CSVLoader(tasks=[self.target_name], smiles_field="smiles", featurizer=featurizer)
+
+    dataset = loader.featurize(self.dataset)  # Feature
+
+    split_dict = {"random": dc.splits.RandomSplitter(), "scaffold": dc.splits.ScaffoldSplitter(),
+                  "index": dc.splits.IndexSplitter()}  # Dictionary of different data splitting methods
+    split_name_dict = {"random": "RandomSplit", "scaffold": "ScaffoldSplit", "index": "IndexSplit"}
+    try:
+        splitter = split_dict[split]
+        self.split_method = split_name_dict[split]
+    except KeyError:
+        raise Exception("""Invalid splitting methods. Please enter either "random", "scaffold" or "index".""")
+    if val == 0:
+
+        train_dataset, test_dataset = splitter.train_test_split(dataset, frac_train=round(1-test, 1),
+                                                                seed=self.random_seed)
+    else:
+        train_dataset, valid_dataset, test_dataset = splitter.train_valid_test_split(dataset, frac_train=1-test-val,
+                                                                                     frac_test=test, frac_valid=val,
+                                                                                     seed=self.random_seed)
+    # All training related data
+    train_molecules = []
+    for train_smiles in train_dataset.ids:
+        train_to_mol = Chem.MolFromSmiles(train_smiles)
+        if train_to_mol is not None:
+            train_molecules.append(Chem.MolToSmiles(train_to_mol))
+        else:
+            pass
+
+    train_molecules = list(OrderedDict.fromkeys(train_molecules))
+    train_df = temp_data[temp_data['smiles'].isin(train_molecules)]
+    train_df = train_df.drop_duplicates()  # Drop duplicates in Dataframe
+    self.train_molecules = np.array(train_df['smiles'])
+    self.train_features = np.array(__dropCol__(df=train_df, target_name=self.target_name))
+    self.n_train = self.train_features.shape[0]
+    self.train_target = np.array(train_df[self.target_name])
+
+    # All testing related data
+    test_molecules = []
+    for test_smiles in test_dataset.ids:
+        test_to_mol = Chem.MolFromSmiles(test_smiles)
+        if test_to_mol is not None:
+            test_molecules.append(Chem.MolToSmiles(test_to_mol))
+        else:
+            pass
+    test_molecules = list(OrderedDict.fromkeys(test_molecules))  # Drop duplicates in list
+
+    test_df = temp_data[temp_data['smiles'].isin(test_molecules)]
+    test_df = test_df.drop_duplicates()  # Drop duplicates in Dataframe
+    self.test_molecules = np.array(test_df['smiles'])
+    self.test_features = np.array(__dropCol__(df=test_df, target_name=self.target_name))
+    self.test_target = np.array(test_df[self.target_name])
+    if add_molecule_to_testset is not None:  # If there are specific SMILES to add
+        self.test_features = np.concatenate([self.test_features, add_features_array])
+        self.test_molecules = np.concatenate([self.test_molecules, add_data_molecules])
+        self.test_target = np.concatenate([self.test_target, add_target_array])
+    self.n_test = self.test_features.shape[0]
+
+    # All validating related data
+    if val != 0:
+        val_molecules = []
+        for smiles in valid_dataset.ids:
+            val_to_mol = Chem.MolFromSmiles(smiles)
+            if val_to_mol is not None:
+                val_molecules.append(Chem.MolToSmiles(val_to_mol))
+
+        val_molecules = list(OrderedDict.fromkeys(val_molecules))
+        val_df = temp_data[temp_data['smiles'].isin(val_molecules)]
+        val_df = val_df.drop_duplicates()
+        self.val_molecules = np.array(val_df['smiles'])
+        self.val_features = np.array(__dropCol__(df=val_df, target_name=self.target_name))
+        self.val_target = np.array(val_df[self.target_name])
+        self.n_val = self.val_features.shape[0]
+
+    if self.algorithm != "cnn" and scaler is not None:
+        self.train_features = scaler_method.fit_transform(self.train_features)
+        self.test_features = scaler_method.transform(self.test_features)
+        if val > 0:
+            self.val_features = scaler_method.transform(self.val_features)
+    elif self.algorithm == "cnn" and scaler is not None:
+        # Can scale data 1d, 2d and 3d data
+        self.train_features = scaler_method.fit_transform(self.train_features.reshape(-1,
+                                                                                    self.train_features.shape[
+                                                                                        -1])).reshape(
+            self.train_features.shape)
+
+        self.test_features = scaler_method.transform(self.test_features.reshape(-1,
+                                                                              self.test_features.shape[-1])).reshape(
+            self.test_features.shape)
+        if val > 0:
+            self.val_features = scaler_method.transform(self.val_features.reshape(-1,
+                                                                                self.val_features.shape[-1])).reshape(
+                self.val_features.shape)
+    ptrain = self.n_train / self.n_tot * 100
+    #
+    ptest = self.n_test / self.n_tot * 100
+    #
     print()
-    print(
-        'Dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
-            self.n_tot, self.train_percent, self.val_percent, self.test_percent))
+    # print(
+    #     'Dataset of {} points is split into training ({:.1f}%), validation ({:.1f}%), and testing ({:.1f}%).'.format(
+    #         self.n_tot, ptrain, pval, ptest))
 
     self.in_shape = self.feature_array.shape[1]
-
     # Logic to seperate data in test/train/val
     def __fetch_set__(smiles):
         if smiles in self.test_molecules:
@@ -124,6 +217,12 @@ def data_split(self, test=0.2, val=0, add_molecules_to_testset=None):
     print('Test Features Shape:', self.test_features.shape)
     print('Test Target Shape:', self.test_target.shape)
     print()
-
-    print('Train:Test -->', np.round(self.train_features.shape[0] / self.feature_array.shape[0] * 100, 1), ':',
-          np.round(self.test_features.shape[0] / self.feature_array.shape[0] * 100, 1))
+    # if val > 0.0:
+    #     print('Val Features Shape:', self.val_features.shape)
+    #     print('Val Target Shape:', self.val_target.shape)
+    #     print("Train:Test:Val -->", np.round(self.train_features.shape[0] / self.feature_array.shape[0] * 100, 1), ':',
+    #       np.round(self.test_features.shape[0] / self.feature_array.shape[0] * 100, 1), ":",
+    #       np.round(self.val_features.shape[0] / self.feature_array.shape[0] * 100, 1))
+    # else:
+    #     print('Train:Test -->', np.round(self.train_features.shape[0] / self.feature_array.shape[0] * 100, 1), ':',
+    #       np.round(self.test_features.shape[0] / self.feature_array.shape[0] * 100, 1))

@@ -106,7 +106,7 @@ def svr_bayes_grid():
     # Define parameter grid for skopt BayesSearchCV
     bayes_grid = {
         'kernel': Categorical(['rbf', 'poly']),
-        'C': Integer(10 ** -3, 10 ** 2, 'log-uniform'),
+        'C': Integer(10 ** -3, 10 ** 2),
         'gamma': Real(10 ** -3, 10 ** 0, 'log-uniform'),
         'epsilon': Real(0.1, 0.6),
         'degree': Integer(1, 3)
@@ -195,10 +195,10 @@ def mlp_bayes_grid():
 
     # Define parameter grid for skopt BayesSearchCV
     bayes_grid = {
-            'activation': Categorical(activation),
-            'solver': Categorical(solver),
+            'activation': Categorical(['logistic', 'tanh', 'relu']),
+            'solver': Categorical(['lbfgs', 'sgd', 'adam']),
             'alpha': Real(0.001, 1, 'log-uniform'),
-            'learning_rate': Categorical(learning_rate)
+            'learning_rate': Categorical(['constant','adaptive', 'invscaling'])
     }
     return bayes_grid
 

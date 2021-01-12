@@ -128,7 +128,8 @@ def train_reg(self,n=5):
     print('Average R^2 = %.3f' % stats['r2_avg'], '+- %.3f' % stats['r2_std'])
     print('Average RMSE = %.3f' % stats['rmse_avg'], '+- %.3f' % stats['rmse_std'])
     print()
-
+    print('Average scaled R^2 = %.3f' % scaled_stats['r2_avg_scaled'], '+- %.3f' % scaled_stats['r2_std_scaled'])
+    print('Average scaled RMSE = %.3f' % scaled_stats['rmse_avg_scaled'], '+- %.3f' % scaled_stats['rmse_std_scaled'])
 
 def train_cls(self, n=5):
     # set the model specific classifier function from sklearn

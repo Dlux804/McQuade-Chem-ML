@@ -24,6 +24,8 @@ def Get_Task_Type_1(data, alg):
 
     # The following if statements determine the task type based on the data set being used.
     # task_type is used in main.py to print what type of task is being performed, so that there is no ambiguity.
+    task_type = 'Regression'
+
     if data in ['sider.csv', 'clintox.csv']:
         task_type = 'Multi-label Classification'
 

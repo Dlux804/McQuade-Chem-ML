@@ -4,7 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/recommender_dev/results" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.7 (mlapp)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.7 (deepchem)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">

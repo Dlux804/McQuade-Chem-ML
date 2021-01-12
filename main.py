@@ -241,8 +241,8 @@ def output_dir_to_neo4j():
 
 
 if __name__ == "__main__":
-    main()
-    # single_model()
+    # main()
+    single_model()
     # split_test()
     # deepchem_split()
     # example_load()

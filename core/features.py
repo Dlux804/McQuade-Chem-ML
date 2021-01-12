@@ -100,7 +100,7 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     smi.drop(rows, inplace=True)
 
     smi2 = tqdm(smi, desc="Featurization")  # for progress bar
-    data = list(map(generator.process_control_smiles, smi2))
+    data = list(map(generator.process, smi2))
     if not_silent:
         print('Done.')
     stop_feat = time()

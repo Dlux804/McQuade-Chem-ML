@@ -50,8 +50,8 @@ def mol_svg(smi, filename=None, filepath='./', molSize=(450,150)):
 
 
 # specify smiles here.  Could re-write to accept CLI input.
-smi = 'CC(C)O'
+smi = "CCCCCCCCCC(=O)N[C@@H](Cc1c[nH]c2ccccc12)C(=O)N[C@@H](CC(N)=O)C(=O)N[C@@H](CC(=O)O)C(=O)N[C@@H]1C(=O)NCC(=O)N[C@@H](CCCN)C(=O)N[C@@H](CC(=O)O)C(=O)N[C@H](C)C(=O)N[C@@H](CC(=O)O)C(=O)NCC(=O)N[C@H](CO)C(=O)N[C@@H]([C@H](C)CC(=O)O)C(=O)N[C@@H](CC(=O)c2ccccc2N)C(=O)O[C@@H]1C"
 # rewrite smiles to canonical non-kelu
 smi = canon_smi(smi)
 mol_view(smi)
-mol_svg(smi)
+mol_svg(smi, "macro-cycle-monster")

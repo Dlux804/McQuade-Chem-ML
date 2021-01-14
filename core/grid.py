@@ -81,11 +81,11 @@ def rf_bayes_grid():
 
 def rf_normal_grid():
     # define variables to include in parameter grid for scikit-learn CV functions
-    n_estimators = [int(x) for x in np.linspace(start=200, stop=2000, num=20)] #Number of trees
+    n_estimators = [int(x) for x in np.linspace(start=200, stop=2000, num=10)] #Number of trees
     max_features = ['auto', 'sqrt']     # Number of features to consider at every split
     max_depth = [int(x) for x in np.linspace(1, 30, num=11)] # Maximum number of levels in tree
-    min_samples_split = [2, 4, 6, 8, 10]  # Minimum number of samples required to split a node
-    min_samples_leaf = [1, 2, 3, 4, 5, 6]  # Minimum number of samples required at each leaf node
+    min_samples_split = [2, 4, 5, 10]  # Minimum number of samples required to split a node
+    min_samples_leaf = [1, 2, 3, 5]  # Minimum number of samples required at each leaf node
     bootstrap = [True, False]  # Method of selecting samples for training each tree
 
     param_grid = {

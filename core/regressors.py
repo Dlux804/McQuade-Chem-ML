@@ -250,6 +250,7 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
     # TODO try different scaling with delta
     # self.cp_delta = 0.05
     self.cp_delta = float((0.05 - self.train_target.min())/(self.train_target.max() - self.train_target.min()))  # Min max scaling
+    print("CP DELTA: ", self.cp_delta )
     # self.cp_delta = 0.05
     print("cp_delta is : ", self.cp_delta)
     # self.cp_delta = delta_std * (self.train_target.max() - self.train_target.min()) + self.train_target.min()

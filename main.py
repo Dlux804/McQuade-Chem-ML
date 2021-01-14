@@ -37,6 +37,7 @@ def main():
 
     ### regression data sets for reference/testing
     sets = {
+        'flashpoint.csv': 'flashpoint',
         'ESOL.csv': 'water-sol',
         'water-energy.csv': 'expt',
         # 'logP14k.csv': 'Kow',
@@ -55,7 +56,7 @@ def main():
     scalers = ['standard', 'minmax', None]
 
     #### Tuning methods
-    tuners = [ "grid", 'random', 'bayes']
+    tuners = ['bayes', "grid", 'random']
 
     for alg in learner:  # loop over all learning algorithms
         for method in feats:  # loop over the featurization methods

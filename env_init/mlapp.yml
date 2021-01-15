@@ -1,35 +1,33 @@
 name: mlapp
 channels:
-  - anaconda-fusion
   - defaults
   - rdkit
-  - pytorch
   - conda-forge
 dependencies:
-  - pip
-  - numpy
-  - cirpy
-  - pandas
-  - rdkit
-  - scikit-learn
   - matplotlib
+  - pandas
+  - cirpy
   - pytest
-# For Barzilay MPNN
-#  - tqdm
-#  - tensorflow
-#  - tensorboardX
-#  - gunicorn  # not available for Windows OS.
-#  - pytorch
-#  - torchvision
-#  - flask
-#  - hyperopt
-#  - scipy
-#  - mock
+  - numpy
+  - rdkit
+  - pip
+  - tensorflow-gpu=1.15
+  - jupyter
+  - deepchem==2.3.0
+#  - py2neo
+  - mock
+  - tqdm
+  - lxml
+#  - sqlalchemy
+  - pymysql
   - pip:
       - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
-#      - "git+https://github.com/swansonk14/chemprop.git"
+      - "git+https://github.com/swansonk14/chemprop.git"
       - "git+https://github.com/darenr/scikit-optimize.git#egg=scikit-optimize"
-
-
-
-prefix: /opt/anaconda3/envs/mlapp
+      - "git+https://github.com/Zsailer/pandas_flavor.git"
+      - "git+https://github.com/mcs07/CIRpy.git"
+      - "git+https://github.com/technige/py2neo.git"
+      - "git+https://github.com/sqlalchemy/sqlalchemy.git"
+      - "git+https://github.com/jpmml/sklearn2pmml.git"
+  - scikit-learn=0.22.0
+prefix: C:\Users\Adam\miniconda3\envs\mlapp

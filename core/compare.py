@@ -1,21 +1,17 @@
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from mpl_toolkits.mplot3d import Axes3D
-import numpy as np
-from time import time
-import pandas as pd
 import shutil
 import glob
-import misc
-import ingest
-import analysis
-import cirpy
-from rdkit import Chem
-from rdkit.Chem import Draw
-from rdkit.Chem import PandasTools
 import itertools
+import matplotlib.pyplot as plt
 from functools import reduce
-import pprint
+
+import numpy as np
+import pandas as pd
+from rdkit import Chem
+from rdkit.Chem import PandasTools
+
+from core.ingest import resolveID
+from core.storage import cd
+
 
 
 """
@@ -29,7 +25,7 @@ def datasize(dataset):
     Flaw is the assumption that each row is a valid data set
     entry.  It is safe for our basic cases.
     """
-    with misc.cd('../dataFiles/'): # move to dataset directory
+    with cd('../dataFiles/'): # move to dataset directory
         with open(dataset) as f:
             size = sum(1 for line in f) - 1  # remove one for header
             print('The {} dataset has {} entries in it.'.format(dataset, size))
@@ -43,7 +39,7 @@ def merger():
     path = r'C:/Users/luxon/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207'  # Adam's tablet. will vary by OS, computer
     # path = r'C:/Users/Adam/OneDrive/Research/McQuade/Projects/NSF/OKN/phase1/Work/ml-hte-results-20200207' # Adam's desktop
     allFiles = glob.glob(path + "/*/*.csv")
-    with open('hte-models-Master-Results.csv', 'wb+') as outfile:
+    with open('hte-models-Master-results.csv', 'wb+') as outfile:
         for i, fname in enumerate(allFiles):
             with open(fname, 'rb') as infile:
                 if i != 0:
@@ -52,7 +48,7 @@ def merger():
                 shutil.copyfileobj(infile, outfile)
                 # print(fname + " has been imported.")
 
-    mdf = pd.read_csv('hte-models-Master-Results.csv')#, dtype={'exp': object})
+    mdf = pd.read_csv('hte-models-Master-results.csv')#, dtype={'exp': object})
     # print(master)
 
     # grab unique datasets into a set
@@ -337,7 +333,7 @@ def moloverlap(datasets, n, image=False):
     image=False,  Whether to create a grid image of the overlapping molecules.
 
     """
-    with misc.cd('../dataFiles/'):  # move to dataset directory
+    with cd('../dataFiles/'):  # move to dataset directory
 
         # use dictionary comprehension and iterate over argument dictionary
         # create resolve chemID and create dataframe with ingest.resolveID
@@ -353,7 +349,7 @@ def moloverlap(datasets, n, image=False):
             PandasTools.AddMoleculeColumnToFrame(df, col, 'Molecule', includeFingerprints=True)
             if df['Molecule'].isnull().values.any():  # if any ID failed to be converted to molobjects
                 print(dataset, 'failed to create objects. Attempting resolve.')
-                df = ingest.resolveID(dataset, col) # try to find smiles for the ID column
+                df = resolveID(dataset, col) # try to find smiles for the ID column
                 # retry converting to molobject after resolution
                 PandasTools.AddMoleculeColumnToFrame(df, 'smiles', 'Molecule', includeFingerprints=True)
 
@@ -435,13 +431,13 @@ data = {
     "ESOL.csv": "smiles",
     # "cmc_smiles_26.csv": "smiles",
     # "flashpoint.csv": "smiles",
-    # "Lipophilicity-ID.csv": "smiles",
+    # "lipo_raw.csv": "smiles",
     # "jak2_pic50.csv": "SMILES",
     "water-energy.csv" : "smiles"
     # "pyridine_smi_3.csv" : "smiles"
 }
 # uncomment this xdf line to perform dataset overlap analysis
-xdf = moloverlap(data,2)
+#xdf = moloverlap(data,2)
 # analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
 
 

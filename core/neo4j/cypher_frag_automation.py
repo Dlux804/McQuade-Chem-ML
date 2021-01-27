@@ -96,7 +96,6 @@ class CypherAutomate:
         """
         csv_string = "FragAnalysis_" + self.dataset[:-4] + "_" + str(cutoff) + "_" \
                      + str(int(easy_frag_lim)) + "_" + str(int(hard_frag_lim)) + ".csv"
-        print(csv_string)
 
         query_results = self.graph.run(
             """
@@ -151,7 +150,7 @@ if __name__ == '__main__':
     results_folder = 'results'
     check_for_results_folder(results_folder)
 
-    dataset = ['water-energy.csv', 'Lipophilicity-ID.csv']
+    dataset = ['water-energy.csv']
     cutoffs = [0.7, 0.9]
     easy_frag_limits = [0.1, 0.3]  # Percentage of fragment for easy fragment
     hard_frag_limits = [0.1, 0.4]  # Percentage of fragment for hard fragment
@@ -167,7 +166,6 @@ if __name__ == '__main__':
                 for i in easy_frag_limits:
                     for j in hard_frag_limits:
                         with cd(str(pathlib.Path(__file__).parent.absolute()) + "/" + results_folder):
-                            print(int(num_frag*i))
                             auto.fragmentAnalysis(cutoff=cutoff, easy_frag_lim=int(num_frag*i), hard_frag_lim=int(num_frag*j))
 
             auto.cleanUp()  # Second clean up

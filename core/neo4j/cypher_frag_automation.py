@@ -182,8 +182,7 @@ if __name__ == '__main__':
                 for i in easy_frag_limits:
                     for j in hard_frag_limits:
                         with cd(str(pathlib.Path(__file__).parent.absolute()) + "/" + results_folder):
-                            final_easy_frag, final_hard_frag= auto.countFrag(cutoff=0.8, easy_frag_percent=i,
-                                                                              hard_frag_percent=j)  # Count number of fragments for the current dataset
+                            final_easy_frag, final_hard_frag= auto.countFrag(cutoff=0.8, easy_frag_percent=i, hard_frag_percent=j)
                             auto.fragmentAnalysis(cutoff=cutoff, final_easy_frag=final_easy_frag, final_hard_frag=final_hard_frag)
 
             auto.cleanUp()  # Second clean up

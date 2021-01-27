@@ -152,9 +152,9 @@ if __name__ == '__main__':
     check_for_results_folder(results_folder)
 
     dataset = ['water-energy.csv', 'Lipophilicity-ID.csv']
-    cutoffs = [0.7]
-    easy_frag_limits = [0.1]  # Percentage of fragment for easy fragment
-    hard_frag_limits = [0.1]  # Percentage of fragment for hard fragment
+    cutoffs = [0.7, 0.9]
+    easy_frag_limits = [0.1, 0.3]  # Percentage of fragment for easy fragment
+    hard_frag_limits = [0.1, 0.4]  # Percentage of fragment for hard fragment
     with cd(ROOT_DIR + '/dataFiles/'):  # Initialize model
         for data in dataset:
             auto = CypherAutomate(dataset=data)

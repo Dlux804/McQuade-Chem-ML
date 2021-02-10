@@ -22,10 +22,10 @@ def main():
     learner = ['rf','nn', 'svm',  'gdb', 'nn']
 
     #### All tune option
-    tune_option = [True, False]
+    tune_option = [False, True]
 
     #### Features
-    feats = [[0], [1], [2], [3], [4], [5], [0,1]]  # Use this line to select specific featurizations
+    feats = [[0], [1], [2], [3], [4], [5], [0,1], [0,2], [0,3], [0,4], [0,5]]  # Use this line to select specific featurizations
 
     #### classification data sets for reference/testing
     # sets = {
@@ -37,17 +37,17 @@ def main():
 
     ### regression data sets for reference/testing
     sets = {
-        'flashpoint.csv': 'flashpoint',
-        'ESOL.csv': 'water-sol',
-        'water-energy.csv': 'expt',
-        # 'logP14k.csv': 'Kow',
+        # 'flashpoint.csv': 'flashpoint',
+
+        'logP14k.csv': 'Kow',
         'jak2_pic50.csv': 'pIC50',
         'Lipophilicity-ID.csv': 'exp',
-        'flashpoint.csv': 'flashpoint'
+        'ESOL.csv': 'water-sol',
+    neoD    'water-energy.csv': 'expt'
     }
 
     #### Split percent
-    test_percents = [0.2, 0.4, 0.6]
+    test_percents = [0.2, 0.3]
 
     #### Data Splitting methods
     splitters = ['random', 'index', 'scaffold']
@@ -56,7 +56,7 @@ def main():
     scalers = ['standard', 'minmax', None]
 
     #### Tuning methods
-    tuners = ['bayes', "grid", 'random']
+    tuners = ['bayes',  'random']  # "grid",
 
     for alg in learner:  # loop over all learning algorithms
         for method in feats:  # loop over the featurization methods
@@ -89,9 +89,12 @@ def main():
                                             # initiate model class with algorithm, dataset and target
 
                                             model = MlModel(algorithm=alg, dataset=data, target=target,
-                                                            feat_meth=method, tune=isTune, cv=2, opt_iter=2)
+                                                            feat_meth=method, tune=isTune, cv=5, opt_iter=25)
                                             print('Done.\n')
-                                            model.featurize()
+                                            model.connect_mysql(user='user', password='dolphin', host='localhost',
+                                                                 database='featurized_datasets',
+                                                                 initialize_all_data=False)
+                                            model.featurize(retrieve_from_mysql=True)
                                             if model.algorithm not in ["nn", "cnn"]:
                                                 model.data_split(split=splitter, test=test_percent, scaler=scale)
                                             else:

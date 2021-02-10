@@ -211,7 +211,7 @@ class MLMySqlConn:
         :return:
         """
 
-        bad_datasets = ['cmc.csv']  # This dataset seems to be giving me a hard time
+        bad_datasets = ['cmc.csv', 'flashpoint.csv']  # This dataset seems to be giving me a hard time
 
         # Pull datasets
         datasets_dir = str(Path(__file__).parent.parent.parent.absolute()) + '/dataFiles/'

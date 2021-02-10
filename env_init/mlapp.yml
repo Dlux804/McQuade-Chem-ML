@@ -3,6 +3,7 @@ channels:
   - defaults
   - rdkit
   - conda-forge
+  - anaconda-fusion
 dependencies:
   - matplotlib
   - pandas

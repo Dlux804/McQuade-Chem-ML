@@ -145,7 +145,7 @@ class CypherAutomate:
             return final_easy_frag, easy_frag_percent, final_hard_frag, hard_frag_percent
 
         final_easy_frag, easy_frag_percent, final_hard_frag, hard_frag_percent = countFrag(cutoff, easy_perc, hard_perc)
-
+        print(final_easy_frag, final_hard_frag)
         # csv_string = "FragAnalysis_" + self.dataset[:-4] + "_" + str(cutoff) + "_" \
         #              + str(final_easy_frag) + "_" + str(final_hard_frag) + ".csv"
 
@@ -206,10 +206,11 @@ if __name__ == '__main__':
     check_for_results_folder(results_folder)
 
     dataset = ['Lipophilicity-ID.csv']
-    cutoffs = np.arange(0.725, 1, 0.025)
-    cutoffs = [0.975]
-    easy_frag_limits = np.arange(0.05, 0.5, 0.025)  # Percentage of fragment for easy fragment
-    hard_frag_limits = np.arange(0.05, 0.175, 0.025)  # Percentage of fragment for hard fragment
+    cutoffs = np.arange(0.75, 1, 0.01)
+    # cutoffs = [0.90]
+    easy_frag_limits = np.arange(0.001, 0.01, 0.001)  # Percentage of fragment for easy fragment
+    easy_frag_limits = [0.003]
+    hard_frag_limits = np.arange(0.1, 0.30, 0.005)  # Percentage of fragment for hard fragment
 
     with cd(ROOT_DIR + '/dataFiles/'):  # Initialize model
 

@@ -1,4 +1,4 @@
-A place to store the necesarry pip installs that need to be added to mlapp.yml
+A place to store the necesarry pip installs that need to be added to mlapp2.yml
 Updating mlapp.yml via conda will remove these pip dependences from the .yml file.
 This file is to provide a copy and paste resource for replacing pips after updating .yml.
 

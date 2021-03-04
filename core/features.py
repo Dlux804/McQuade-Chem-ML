@@ -41,12 +41,10 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
     feat_meth = self.feat_meth
-    if self.dataset == "flashpoint.csv":
-        self.data['flashpoint'] = [float(i) for i in list(self.data['flashpoint'])]
+    # if self.dataset == "flashpoint.csv":
+    #     self.data['flashpoint'] = [float(i) for i in list(self.data['flashpoint'])]
     df = self.data
-    # df = canonical_smiles(df)  # Turn SMILES into CANONICAL SMILES
 
-    # print(df[df.isna().any(axis=1)])
     # available featurization options
     feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts', 'morganchiral3counts',
                  'atompaircounts']
@@ -84,8 +82,7 @@ def featurize(self, not_silent=True, retrieve_from_mysql=False):
     for name, numpy_type in generator.GetColumns():
         columns.append(name)
     smi = df['smiles']
-    # The following section removes rows that had failed featurizations. This makes the workflow run properly for
-    # both the clintox and the BBBP data sets.
+
 
     issue_row_list = []
     issue_row = 0

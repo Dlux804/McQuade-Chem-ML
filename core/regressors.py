@@ -24,9 +24,7 @@ import skopt
 from skopt import BayesSearchCV
 from skopt import callbacks
 
-# end monkey patch
 
-# TODO: Add other tuning algorithms and create a variable that stores the algorithm's name
 
 
 def build_nn(n_hidden=2, n_neuron=50, learning_rate=1e-3, in_shape=200, drop=0.1):
@@ -47,15 +45,12 @@ def build_nn(n_hidden=2, n_neuron=50, learning_rate=1e-3, in_shape=200, drop=0.1
     model = keras.models.Sequential()
     # use dropout layer as input.
     model.add(keras.layers.Dropout(drop, input_shape=(in_shape,)))  # in_shape should be iterable (tuple)
-    # model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
     for layer in range(n_hidden):  # create hidden layers
         model.add(keras.layers.Dense(n_neuron, activation="relu"))
         model.add(keras.layers.Dropout(drop))  # add dropout to model after the a dense layer
 
     model.add(keras.layers.Dense(1))  # output layer
-    # TODO Add optimizer selection as keyword arg for tuning
-    # optimizer = keras.optimizers.SGD(lr=learning_rate)  # this is a point to vary.  Dict could help call other ones.
-    # optimizer = keras.optimizers.RMSprop(learning_rate=learning_rate)
+
     optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
     model.compile(loss="mse", optimizer=optimizer, metrics=[RootMeanSquaredError(name='rmse')])
 
@@ -77,7 +72,6 @@ def build_cnn(n_hidden=2, n_neuron=50, learning_rate=1e-3, in_shape=200, drop=0.
     # According to most tutorial, the input_shape depends on the shape of your data. In this case, the shape of our data
     # is (number_of_features, 1) since
     model.add(keras.layers.Dropout(drop, input_shape=(in_shape, 1)))  # in_shape should be iterable (tuple)
-    # model.add(keras.layers.InputLayer(input_shape=in_shape))  # input layer.  How to handle shape?
     for layer in range(n_hidden):  # create hidden layers
         model.add(keras.layers.Dense(n_neuron, activation="relu"))
         model.add(keras.layers.Dropout(drop))  # add dropout to model after the a dense layer
@@ -244,16 +238,10 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
     else:
         raise Exception("""Invalid tuner. Please enter between "bayes", "random" or "grid". """)
     self.tune_algorithm_name = str(type(tune_algorithm).__name__)
-    # if self.algorithm != 'nn':  # non keras model
     checkpoint_saver = callbacks.CheckpointSaver(''.join('./%s_checkpoint.pkl' % self.run_name), compress=9)
-    # checkpoint_saver = callbacks.CheckpointSaver(self.run_name + '-check')
-    # TODO try different scaling with delta
-    # self.cp_delta = 0.05
     self.cp_delta = float((0.05 - self.train_target.min())/(self.train_target.max() - self.train_target.min()))  # Min max scaling
     print("CP DELTA: ", self.cp_delta )
-    # self.cp_delta = 0.05
     print("cp_delta is : ", self.cp_delta)
-    # self.cp_delta = delta_std * (self.train_target.max() - self.train_target.min()) + self.train_target.min()
     self.cp_n_best = 5
 
     """ 
@@ -267,7 +255,7 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
     deltay = callbacks.DeltaYStopper(self.cp_delta, self.cp_n_best)
 
     # Fit the Bayes search model, use early stopping
-    # if self.algorithm in ['nn', 'cnn']:
+
     if tuner == "bayes":
         tune_algorithm.fit(self.train_features,
                   self.train_target,
@@ -275,13 +263,6 @@ def hyperTune(self, tuner, epochs=50, n_jobs=6):
                         checkpoint_saver, deltay])
     else:
         tune_algorithm.fit(self.train_features,self.train_target)
-    # else:
-    # tune_algorithm.fit(self.train_features,
-    #               self.train_target,
-    #               callback=[tqdm_skopt(total=self.opt_iter, position=0, desc="Bayesian Parameter Optimization"),
-    #                     checkpoint_saver, deltay]
-    #                 )
-    # else:  # nn no early stopping
 
 
     # collect best parameters from tuning

@@ -123,10 +123,7 @@ def alg_vs_acc(df):
         feats = list(set(list(df_new['feat_meth'])))
         # len(feats) is how many bars there will be per algorithm
         algs = list(set(df_new['algorithm']))
-        # print("Algorithms set: ", algs)
-        # len(algs) is how many groups (xticks) of bars there will be.
-        # data for graph will be an len(feats) by len(algs) array.
-        # data[0] will be a 1D array containing the rmse values for a featurization method across alg types
+        #
 
         errmat = []  # empty list that we will append rmse arrays to for each feat method
         stdmat = []  # matrix for std of rmse
@@ -202,28 +199,17 @@ def alg_vs_acc(df):
                             size=12)
 
         for i, row in enumerate(errmat):
-            # print(row)
-            # print("rmse list", row[0])
-            # print(alg, i)
+
             X = np.arange(len(row[0]))
             pos = [x - (1 - space) / 2. + i * width for x in X]
-            # print(pos)
+
             # from http://emptypipes.org/2013/11/09/matplotlib-multicategory-barchart/
 
-            # rects = plt.bar(X + i * gap, row,
-            #         width=gap, label=feats[i-1], align='center')  #,
-            #         # color=color_list[i % len(color_list)])
             rects = plt.bar(pos, row[0], yerr=row[1],
                             width=width, capsize=10, label=row[2][1])  # ,
-            # print("Rects created: ", rects)
-            # for rect in rects:
-                # err = rect.errorbar.lines[1][1].get_data()[1]
-                # print("Did I get the error?", err)
-            # print("Error bar lines ydata for upper bound:", rects.errorbar.lines[1][1].get_data()[1])
-            # color=color_list[i % len(color_list)])
+
             autolabel(rects)
-            # rects1 = ax.bar(x - width / 2, men_means, width, label='Men')
-            # rects2 = ax.bar(x + width / 2, women_means, width, label='Women')
+
 
         x = np.arange(len(labels))  # the label locations
         ax.set_title('{}: Algorithm vs RMSE'.format(data), fontsize=20)
@@ -249,208 +235,6 @@ def alg_vs_acc(df):
         """
 
 
-    """
-    # bar plot orange and blue
-    labels = set(df['algorithm'])
-    print(len(labels))
-    men_means = [20, 34, 30, 35]
-    women_means = [25, 32, 34, 20]
-
-    x = np.arange(len(labels))  # the label locations
-    width = 0.35  # the width of the bars
-
-    fig, ax = plt.subplots()
-    rects1 = ax.bar(x - width / 2, men_means, width, label='Men')
-    rects2 = ax.bar(x + width / 2, women_means, width, label='Women')
-
-    # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('Scores')
-    ax.set_title('Scores by group and gender')
-    ax.set_xticks(x)
-    ax.set_xticklabels(labels)
-    ax.legend()
-
-    def autolabel(rects):
-        "Attach a text label above each bar in *rects*, displaying its height."
-        for rect in rects:
-            height = rect.get_height()
-            ax.annotate('{}'.format(height),
-                        xy=(rect.get_x() + rect.get_width() / 2, height),
-                        xytext=(0, 3),  # 3 points vertical offset
-                        textcoords="offset points",
-                        ha='center', va='bottom')
-
-    autolabel(rects1)
-    autolabel(rects2)
-
-    fig.tight_layout()
-
-    plt.show()
-    """
-
-# alg_vs_acc(mdf)
-
-
-'Code for stacked 3D bar plot'
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection = "3d")
-#
-# ax.set_xlabel("Algorithm")
-# ax.set_ylabel("Featurization")
-# ax.set_zlabel("RMSE")
-# # ax.set_xlim3d(0,10)
-# # ax.set_ylim3d(0,10)
-#
-# # xpos = [2,5,8,2,5,8,2,5,8]
-# xpos = df['algorithm']
-# # ypos = [1,1,1,5,5,5,9,9,9]
-# ypos = df['feat_meth']
-# # zpos = np.zeros(9)
-# zpos = np.zeros(df.shape[0])
-#
-# dx = np.ones(9)
-# dy = np.ones(9)
-# dz = [np.random.random(9) for i in range(4)]  # the heights of the 4 bar sets
-#
-# _zpos = zpos   # the starting zpos for each bar
-# colors = ['r', 'b', 'g', 'y']
-# for i in range(4):
-#     ax.bar3d(xpos, ypos, _zpos, dx, dy, dz[i], color=colors[i])
-#     _zpos += dz[i]    # add the height of each bar to know where to start the next
-#
-# plt.gca().invert_xaxis()
-# plt.show()
-
-def moloverlap(datasets, n, image=False):
-    """
-    Identifies molecules conserved across datasets.
-    Accepts dictionary of datasets to be compared.  Keys are dataset file, values are chemicalID column.
-    Accepts number of datasets to overlap at a time.
-    Returns dataframe of conserved molecules.
-
-    Keyword Arguments:
-    ______________________
-    image=False,  Whether to create a grid image of the overlapping molecules.
-
-    """
-    with cd('../dataFiles/'):  # move to dataset directory
-
-        # use dictionary comprehension and iterate over argument dictionary
-        # create resolve chemID and create dataframe with ingest.resolveID
-        # d = {dataset: ingest.resolveID(dataset, col) for dataset, col in datasets.items()}
-        # this is slow because of cirpy.  It would be faster if it skipped ones already in smiles...
-
-        d = {}  # empty dict to add created dataframes to
-        for dataset, col in datasets.items():
-            # try to load molobj from smiles
-            df = pd.read_csv(dataset)
-            print('Trying to get molecules from SMILES for', dataset, "...")
-            # add column to DF for molecule object
-            PandasTools.AddMoleculeColumnToFrame(df, col, 'Molecule', includeFingerprints=True)
-            if df['Molecule'].isnull().values.any():  # if any ID failed to be converted to molobjects
-                print(dataset, 'failed to create objects. Attempting resolve.')
-                df = resolveID(dataset, col) # try to find smiles for the ID column
-                # retry converting to molobject after resolution
-                PandasTools.AddMoleculeColumnToFrame(df, 'smiles', 'Molecule', includeFingerprints=True)
-
-            """ Now we should have an RDKit Molecule object for each entry.  To makes sure there are no
-            synonymous representations, i.e non-canonical SMILES, over write 'smiles' column
-            with canonical smiles from RDKit.
-            """
-            # didnt want to take the time to find a more effecient way to do this other than loop
-            for i, row in enumerate(df.itertuples(), 1):  # iterate through dataframe
-                c = row.Index
-                df.loc[c, 'canon_smiles'] = Chem.MolToSmiles(df.loc[c, 'Molecule'])  # write canonical smiles
-
-            d.update({dataset: df})
-
-    for combo in itertools.combinations(d.keys(), n):
-        print("\nCombo:", combo)
-        # create set of canon_smiles of dataframes from each data set using comprehension
-        # ddf = [set(d[x]["canon_smiles"]) for x in combo] # for explanation of this uncomment for loop below
-        df_list = [d[x] for x in combo]
-
-        # for explanation purposes, loop prints components
-        # for x in combo:
-        #     print("x: " ,x)
-        #     print("d[x]:", d[x])
-        #     print("d[x]['canon_smiles']", d[x]["canon_smiles"])
-
-
-        # drop duplicated smiles in each data frame just in case
-        df_list = [df.drop_duplicates(subset='canon_smiles') for df in df_list]
-
-
-        # Set index of df to 'canon_smiles' before concat
-        df_list = [df.set_index('canon_smiles') for df in df_list]
-
-
-        # concat with 'inner' will keep only overlapping index.
-        # df_cross = pd.concat(df_list, axis=1, join='inner')  # combine the dataframes of interest
-
-
-        # df_cross = reduce(lambda left,right: pd.merge(left,right,on='canon_smiles', indicator=True), df_list)  # combine the dataframes of interest
-        df_cross = reduce(lambda left,right: pd.merge(left,right,on='canon_smiles', indicator=True), df_list)  # combine the dataframes of interest
-
-        # df_cross = reduce(lambda left, right: left.join(right, how='inner', on='canon_smiles'), df_list)
-        # need to drop repeated column keys such as "Molecule" and 'canon_smiles', 'smiles'
-        # df_cross = df_cross.loc[:, ~df_cross.columns.duplicated()]
-
-
-        # print("df_cross: ", df_cross)
-        # print("df_list is:", df_list)
-        # cross = list(set.intersection(*map(set, ddf))) # do the comparison via intersection
-        # cross = df_cross['canon_smiles'].to_list()
-
-        cross = list(df_cross.index.values)
-        print("Verifying unique entries via canonical smiles:", len(cross) == len(set(cross)))
-        print('There are {} overlapping molecules in the {} datasets.'.format(len(cross), combo))
-        print(cross,"\n")
-        if image:
-            # create images of molecules that overlap
-            ximage = PandasTools.FrameToGridImage(
-                df_cross, column='Molecule',
-                molsPerRow=6, subImgSize=(400,200),
-                legends=[str(i+1) for i in range(len(cross))]
-            )
-            ximage.save('cross.png') # shold use a better naming scheme to avoid overwrites.
-
-
-    return df_cross
 
 
 
-
-data = {
-    # "pyridine_cas.csv": "CAS",
-    # "pyridine_smi_1.csv": "smiles",
-    # "pyridine_smi_2.csv": "smiles",
-    # "cmc_noadd.csv": "canon_smiles",
-    "logP14k.csv": "smiles",
-    # "18k-logP.csv": "smiles",
-    "ESOL.csv": "smiles",
-    # "cmc_smiles_26.csv": "smiles",
-    # "flashpoint.csv": "smiles",
-    # "lipo_raw.csv": "smiles",
-    # "jak2_pic50.csv": "SMILES",
-    "water-energy.csv" : "smiles"
-    # "pyridine_smi_3.csv" : "smiles"
-}
-# uncomment this xdf line to perform dataset overlap analysis
-#xdf = moloverlap(data,2)
-# analysis.plotter(xdf['Kow'], xdf['water-sol'], filename='LogP vs LogS', xlabel='LogP', ylabel='LogS')
-
-
-
-#
-# with misc.cd('../dataFiles/'): # move to dataset directory
-#     cmc = pd.read_csv('cmc_smiles_26.csv')
-#     cmc = cmc[:9]
-#     print(cmc)
-#     analysis.grid_image(cmc, 'cmc_molecules_short', molobj=False)
-
-for key in data.keys():
-    print(key)
-    datasize(key)
-# string = 'ESOL.csv'
-# datasize(string)

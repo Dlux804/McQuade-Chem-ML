@@ -258,14 +258,5 @@ def train_cls(self, n=5):
         print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
         print()
 
-    # self.predictions = cls_multi
-    # self.predictions_stats = stats
-    # self.auc_avg = stats['auc_avg']
-    # self.acc_avg = stats['acc_avg']
-    # self.f1_score_avg = stats['f1_score_avg']
-    #
-    # print('Average accuracy score = %.3f' % stats['acc_avg'], '+- %.3f' % stats['acc_std'])
-    # print('Average roc_auc score = %.3f' % stats['auc_avg'], '+- %.3f' % stats['auc_std'])
-    # print('Average f1_score = %.3f' % stats['f1_score_avg'], '+- %.3f' % stats['f1_score_std'])
-    # print()
+
 

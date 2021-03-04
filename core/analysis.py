@@ -306,28 +306,6 @@ def grid_image(df, filename, molobj=True, smi='smiles'):  # list of molecules to
 
     # this code makes multiple images of n molecules.  May be prefered for large sets of molecules.
 
-    # mols = df['Molecule']
-    # # for every molecule
-    # for mol in mols:
-    #     # generate 2D structure
-    #     Chem.Compute2DCoords(mol)
-    #
-    # n = 250  # number of structures per image file
-    #
-    # total = len(mols)  # number of molecules being printed
-    #
-    # # break list into printable sections of size n
-    # mols = [mols[i: i + n] for i in range(0, total, n)]
-    # subcount = 1  # counter for how many sections needed
-    #
-    # for i in mols:  # for every sublist of n molecules do...
-    #     # make the images on grid
-    #     img = Draw.MolsToGridImage(i, molsPerRow=6, subImgSize=(1500, 900), legends=[str(x) for x in range(total)])
-    #
-    #     # Save a sub image
-    #     img.save('mole-grid-' + str(subcount) + '.png')
-    #     subcount = subcount + 1
-
     # create images of molecules in dataframe
     mol_image = PandasTools.FrameToGridImage(
         df, column='Molecule',

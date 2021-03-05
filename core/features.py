@@ -1,50 +1,76 @@
-from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
-import pandas as pd
-from sklearn.model_selection import train_test_split
-import numpy as np
-from time import time
+from time import time, sleep
 
-# TODO: Add featurization timer
-def featurize(df, model_name, num_feat=None):
+import pandas as pd
+import numpy as np
+from tqdm import tqdm
+from descriptastorus.descriptors.DescriptorGenerator import MakeGenerator
+
+from rdkit import Chem
+
+
+def canonical_smiles(df):
+    """
+    Objective: Create list of canonical SMILES from SMILES
+    Intent: While the SMILES in dataset from moleculenet.ai are all canonical, it is always good to be safe. I don't
+            know if I should add in a way to detect irregular SMILES and remove the rows that contains them in the
+            dataframe. However, that process should be carried out at the start of the pipeline instead of at the end.
+    :param smiles_list:
+    :return:
+    """
+
+    smiles = df['smiles']
+    con_smiles = []
+    for smile in smiles:
+        mol = Chem.MolFromSmiles(smile)
+        if mol is not None:
+            con_smiles.append(Chem.MolToSmiles(mol))
+        else:
+            con_smiles.append('bad_smiles')
+    df['smiles'] = con_smiles
+    df = df.loc[df['smiles'] != 'bad_smiles']
+
+    return df
+
+
+def featurize(self, not_silent=True, retrieve_from_mysql=False):
     """
     Caclulate molecular features.
     Returns DataFrame, list of selected features (numeric values. i.e [0,4]),
      and time to featurize.
-
     Keyword arguments:
-    num_feat -- Features you want by their numerical value.  Default = None (require user input)
+    feat_meth -- Features you want by their numerical value.  Default = None (require user input)
     """
+    feat_meth = self.feat_meth
+    # if self.dataset == "flashpoint.csv":
+    #     self.data['flashpoint'] = [float(i) for i in list(self.data['flashpoint'])]
+    df = self.data
 
     # available featurization options
-    feat_sets = ['rdkit2d', 'rdkit2dnormalized', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts',
-                 'morganchiral3counts', 'atompaircounts']
+    feat_sets = ['rdkit2d', 'rdkitfpbits', 'morgan3counts', 'morganfeature3counts', 'morganchiral3counts',
+                 'atompaircounts']
 
-    # Remove un-normalized feature option depending on model type
-    if model_name == 'mlp' or model_name == 'knn':
-        feat_sets.remove('rdkit2d')
-        print(feat_sets)
-        if num_feat == None:  # ask for features
-            print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
-            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
-            num_feat = [int(x) for x in input(
-                'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
+    if feat_meth is None:  # ask for features
+        print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
+        [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
+        feat_meth = [int(x) for x in input(
+            'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
+    selected_feat = [feat_sets[i] for i in feat_meth]
 
-        selected_feat = [feat_sets[i] for i in num_feat]
+    self.selected_feat_string = '-'.join(selected_feat) # This variable will be used later in train.py for giving classification roc graph a unique file name.
+
+    self.feat_method_name = selected_feat
+
+    # Get data from MySql if called
+    if retrieve_from_mysql:
+        print("Pulling data from MySql")
+        self.featurize_from_mysql()
+        return
+
+    if not_silent:  # Add option to silence messages
         print("You have selected the following featurizations: ", end="   ", flush=True)
         print(*selected_feat, sep=', ')
-
-    # un-normalized features are OK
-    else:
-        feat_sets.remove('rdkit2dnormalized')
-        if num_feat == None:  # ask for features
-            print('   {:5}    {:>15}'.format("Selection", "Featurization Method"))
-            [print('{:^15} {}'.format(*feat)) for feat in enumerate(feat_sets)];
-            num_feat = [int(x) for x in input(
-                'Choose your features  by number from list above.  You can choose multiple with \'space\' delimiter:  ').split()]
-        selected_feat = [feat_sets[i] for i in num_feat]
-        print("You have selected the following featurizations: ", end="   ", flush=True)
-        print(*selected_feat, sep=', ')
-
+        print('Calculating features...')
+    sleep(0.25)
     # Start timer
     start_feat = time()
 
@@ -56,62 +82,46 @@ def featurize(df, model_name, num_feat=None):
     for name, numpy_type in generator.GetColumns():
         columns.append(name)
     smi = df['smiles']
-    print('Calculating features...', end=' ', flush=True)
-    data = list(map(generator.process, smi))
-    print('Done.')
+
+
+    issue_row_list = []
+    issue_row = 0
+    for smiles in smi:
+        x = Chem.MolFromSmiles(smiles)
+        if x == None:
+            issue_row_list.append(issue_row)
+        issue_row = issue_row + 1
+
+    rows = df.index[[issue_row_list]]
+    df.drop(rows, inplace=True)
+    smi.drop(rows, inplace=True)
+
+    smi2 = tqdm(smi, desc="Featurization")  # for progress bar
+    data = list(map(generator.process, smi2))
+    if not_silent:
+        print('Done.')
     stop_feat = time()
     feat_time = stop_feat - start_feat
 
     # make dataframe of all features
     features = pd.DataFrame(data, columns=columns)
+
+    df = df[~df.index.duplicated(keep='first')]
+    features = features[~features.index.duplicated(keep='first')]
     df = pd.concat([df, features], axis=1)
     df = df.dropna()
 
-    return df, num_feat, feat_time
+    # remove the "RDKit2d_calculated = True" column(s)
+    df = df.drop(list(df.filter(regex='_calculated')), axis=1)
+    df = df.drop(list(df.filter(regex='[lL]og[pP]')), axis=1)
 
+    # store data back into the instance
+    self.data = df
+    self.feat_time = feat_time
+    self.data.iloc[:, 1:] = self.data.iloc[:, 1:].apply(pd.to_numeric)
+    # Replacing infinite with nan
+    self.data.replace([np.inf, -np.inf], np.nan, inplace=True)
 
-def targets_features(df, exp, train=0.8, random = None):
-    """Take in a data frame, the target column name (exp).
-    Returns a numpy array with the target variable,
-    a numpy array (matrix) of feature variables,
-    and a list of strings of the feature headers.
-
-    Keyword Arguments
-    random -- Integer. Set random seed using in data splitting.  Default = None"""
-
-
-    # make array of target values
-    target = np.array(df[exp])  # exp input should be target variable string
-
-    # remove target from features
-    # axis 1 is the columns.
-    features = df.drop([exp, 'smiles'], axis=1)
-
-    # save list of strings of features
-    feature_list = list(features.columns)
-
-    # convert features to numpy
-    featuresarr = np.array(features)
-
-    train_percent = train
-    test_percent = 1 - train_percent
-    train_features, test_features, train_target, test_target = train_test_split(featuresarr, target,
-                                                                                test_size=test_percent,
-                                                                               random_state=random)  # what data to split and how to do it.
-
-    # Uncomment this section to have data shape distribution printed.
-
-    # print('Total Feature Shape:', features.shape)
-    # print('Total Target Shape', target.shape)
-    # print()
-    # print('Training Features Shape:', train_features.shape)
-    # print('Training Target Shape:', train_target.shape)
-    # print()
-    # print('Test Features Shape:', test_features.shape)
-    # print('Test Target Shape:', test_target.shape)
-    # print()
-    #
-    # print('Train:Test -->', np.round(train_features.shape[0] / features.shape[0] * 100, -1), ':',
-    #       np.round(test_features.shape[0] / features.shape[0] * 100, -1))
-
-    return train_features, test_features, train_target, test_target, feature_list
+    # Dropping all the rows with nan values
+    self.data.dropna(inplace=True)
+    self.data.reset_index(drop=True, inplace=True)

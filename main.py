@@ -14,22 +14,24 @@ def main():
     print('ROOT Working Directory:', ROOT_DIR)
 
     #### list of all learning algorithms
-    learner = ['rf','nn', 'svm',  'gdb', 'nn']
+    learner = ['rf', 'nn', 'svm',  'gdb']
 
     #### All tune option
     tune_option = [False, True]
 
     #### Features
-    feats = [[0], [1], [2], [3], [4], [5], [0,1], [0,2], [0,3], [0,4], [0,5]]  # Use this line to select specific featurizations
+    # feats = [[0], [1], [2], [3], [4], [5], [0,1], [0,2], [0,3], [0,4], [0,5]]  # Use this line to select specific featurizations
+    feats = [[0, 1]]
 
-    sets = {
-        'flashpoint.csv': 'flashpoint',
-        'logP14k.csv': 'Kow',
-        'jak2_pic50.csv': 'pIC50',
-        'Lipophilicity-ID.csv': 'exp',
-        'ESOL.csv': 'water-sol',
-        'water-energy.csv': 'expt'
-    }
+    # sets = {
+    #     'flashpoint.csv': 'flashpoint',
+    #     'logP14k.csv': 'Kow',
+    #     'jak2_pic50.csv': 'pIC50',
+    #     'Lipophilicity-ID.csv': 'exp',
+    #     'ESOL.csv': 'water-sol',
+    #     'water-energy.csv': 'expt'
+    # }
+    sets = {'ESOL.csv': 'water-sol'}
 
     #### Split percent
     test_percents = [0.2, 0.3]
@@ -131,11 +133,6 @@ def single_model():
         model3.store()
         model3.org_files(zip_only=True)
         model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
-
-
-
-
-
 
 
 if __name__ == "__main__":

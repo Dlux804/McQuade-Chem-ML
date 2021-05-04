@@ -1,18 +1,18 @@
-name: mlapp2
+name: mlapp3
 channels:
   - rdkit
   - conda-forge
   - rmg
   - defaults
 dependencies:
-  - _libgcc_mutex=0.1=main
-  - _tflow_select=2.1.0=gpu
-  - absl-py=0.12.0=py37h06a4308_0
-  - argon2-cffi=20.1.0=py37h27cfd23_1
-  - astor=0.8.1=py37h06a4308_0
-  - async_generator=1.10=py37h28b3542_0
-  - attrs=20.3.0=pyhd3eb1b0_0
-  - backcall=0.2.0=pyhd3eb1b0_0
+  - _libgcc_mutex=0.1
+  - _tflow_select=2.1.0
+  - absl-py=0.12.0
+  - argon2-cffi=20.1.0
+  - astor=0.8.1
+  - async_generator=1.10
+  - attrs=20.3.0
+  - backcall=0.2.0
   - blas=1.0=mkl
   - bleach=3.3.0=pyhd3eb1b0_0
   - brotlipy=0.7.0=py37h27cfd23_1003

@@ -14,10 +14,10 @@ dependencies:
   - numpy
   - rdkit
   - pip
-  - tensorflow-gpu=1.15
+  - tensorflow-gpu=1.15.0
   - jupyter
-  - deepchem
-  - scikit-learn<=0.23.2
+  - deepchem=2.5.0
+  - scikit-learn=0.23.2
   - scikit-optimize
   - sklearn-pandas
   - py2neo
@@ -29,5 +29,5 @@ dependencies:
   - pandas-flavor
   - sklearn2pmml
   - pip:
-      - "git+git://github.com/bp-kelley/descriptastorus.git@2.4.0#egg=descriptastorus"
+      - "git+git://github.com/bp-kelley/descriptastorus.git@2.2.0#egg=descriptastorus"
       - chemprop==1.3.0

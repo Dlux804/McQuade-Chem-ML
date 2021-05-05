@@ -1,4 +1,4 @@
-name: mlapp3
+name: mlapp
 channels:
   - defaults
   - rdkit

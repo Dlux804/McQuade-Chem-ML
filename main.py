@@ -81,7 +81,7 @@ def main():
                                             model.connect_mysql(user='user', password='dolphin', host='localhost',
                                                                  database='featurized_datasets',
                                                                  initialize_all_data=False)
-                                            model.featurize(retrieve_from_mysql=True)
+                                            model.featurize(retrieve_from_mysql=False)
                                             if model.algorithm not in ["nn", "cnn"]:
                                                 model.data_split(split=splitter, test=test_percent, scaler=scale)
                                             else:
@@ -90,13 +90,13 @@ def main():
                                         with cd('output'):
                                             model.reg()
                                             model.run(tuner=tuner)  # Runs the models/featurizations for classification
-                                            model.analyze()
-                                            if model.algorithm not in ['nn', 'cnn']:
-                                                model.pickle_model()
-                                            model.store()
-                                            model.org_files(zip_only=True)
-                                            model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
-                                                           password="password")
+                                            # model.analyze()
+                                            # if model.algorithm not in ['nn', 'cnn']:
+                                            #     model.pickle_model()
+                                            # model.store()
+                                            # model.org_files(zip_only=True)
+                                            # model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
+                                            #                password="password")
                                     # Have files output to output
 
 
@@ -137,4 +137,3 @@ def single_model():
 
 if __name__ == "__main__":
     main()
-

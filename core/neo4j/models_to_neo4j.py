@@ -51,7 +51,7 @@ class ModelToNeo4j:
         self.model = model
         self.zipped_out_dir = zipped_out_dir
         self.qsar_obj = qsar_obj
-        self.graph = Graph(port, username=username, password=password)
+        self.graph = Graph(port, auth=(username, password))
         self.parsed_models = None
         self.molecule_stats = ['pred_average_error', 'pred_std', 'pred_avg']  # Define stats to pull out of predictions
 

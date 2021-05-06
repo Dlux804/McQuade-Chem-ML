@@ -1,4 +1,4 @@
-name: mlapp_dev
+name: mlapp
 channels:
   - defaults
   - conda-forge

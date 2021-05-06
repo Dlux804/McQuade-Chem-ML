@@ -25,8 +25,13 @@ def cd(newdir):
     """
     prevdir = os.getcwd()
     # print('Previous PATH:', prevdir)
-    os.chdir(os.path.expanduser(newdir))
+
     try:
+        os.chdir(os.path.expanduser(newdir))
+        yield
+    except FileNotFoundError:
+        os.mkdir(newdir)
+        os.chdir(os.path.expanduser(newdir))
         yield
     finally:
         # print('Switching back to previous PATH:', prevdir)

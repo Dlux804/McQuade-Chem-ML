@@ -1,5 +1,6 @@
 from py2neo import Graph, ClientError
 import pandas as pd
+import numpy as np
 import os
 from core.storage import cd
 from py2neo import *
@@ -72,38 +73,38 @@ class CypherAutomate:
                 SET f.difficulty = difficulty
                 RETURN M, F, f""", parameters={'data': self.dataset})
 
-    def countFrag(self, cutoff, easy_frag_percent, hard_frag_percent):
-        """
-        Objective: Get the total number of fragments for all the molecules in a specific dataset
-        :return:
-        """
-        easy_frag_query = self.graph.run(
-            """
-            MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(M:Molecule)
-            WITH  percentileCont(M.difficulty, $cutoff) as cutoff
+    # def countFrag(self, cutoff, easy_frag_percent, hard_frag_percent):
+    #     """
+    #     Objective: Get the total number of fragments for all the molecules in a specific dataset
+    #     :return:
+    #     """
+    #     easy_frag_query = self.graph.run(
+    #         """
+    #         MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(M:Molecule)
+    #         WITH  percentileCont(M.difficulty, $cutoff) as cutoff
+    #
+    #         MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(eM:Molecule)-[ef:HAS_FRAGMENT]->(eF:Fragment)
+    #         WHERE eM.difficulty < cutoff // easy molecules
+    #         WITH $easy_frag_percent*count(ef) as eLim // gath frags and frequency
+    #         RETURN eLim
+    #         """, parameters={'data': self.dataset, 'cutoff': cutoff, 'easy_frag_percent': easy_frag_percent}).data()
+    #
+    #     final_easy_frag = int(pd.DataFrame(easy_frag_query)['eLim'])
+    #
+    #     hard_frag_query = self.graph.run(
+    #         """
+    #         MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(M:Molecule)
+    #         WITH  percentileCont(M.difficulty, $cutoff) as cutoff
+    #         MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(hM:Molecule)-[hf:HAS_FRAGMENT]->(hF:Fragment)
+    #         WHERE hM.difficulty > cutoff // hard molecules
+    #         WITH $hard_frag_percent*count(hf) as hLim
+    #         RETURN hLim
+    #         """, parameters={'data': self.dataset, 'cutoff': cutoff, 'hard_frag_percent': hard_frag_percent}).data()
+    #
+    #     final_hard_frag = int(pd.DataFrame(hard_frag_query)['hLim'])
+    #     return final_easy_frag, easy_frag_percent, final_hard_frag, hard_frag_percent
 
-            MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(eM:Molecule)-[ef:HAS_FRAGMENT]->(eF:Fragment)
-            WHERE eM.difficulty < cutoff // easy molecules
-            WITH $easy_frag_percent*count(ef) as eLim // gath frags and frequency
-            RETURN eLim
-            """, parameters={'data': self.dataset, 'cutoff': cutoff, 'easy_frag_percent': easy_frag_percent}).data()
-
-        final_easy_frag = int(pd.DataFrame(easy_frag_query)['eLim'])
-
-        hard_frag_query = self.graph.run(
-            """
-            MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(M:Molecule)
-            WITH  percentileCont(M.difficulty, $cutoff) as cutoff
-            MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(hM:Molecule)-[hf:HAS_FRAGMENT]->(hF:Fragment)
-            WHERE hM.difficulty > cutoff // hard molecules
-            WITH $hard_frag_percent*count(hf) as hLim
-            RETURN hLim
-            """, parameters={'data': self.dataset, 'cutoff': cutoff, 'hard_frag_percent': hard_frag_percent}).data()
-
-        final_hard_frag = int(pd.DataFrame(hard_frag_query)['hLim'])
-        return final_easy_frag, final_hard_frag
-
-    def fragmentAnalysis(self, cutoff=0.9, final_easy_frag=100, final_hard_frag=100):
+    def fragmentAnalysis(self, cutoff=0.9, final_easy_frag=100, final_hard_frag=100, easy_perc = 0.1, hard_perc=0.1):
         """
         Objective: Data analysis on fragment difficulty
         :param cutoff:
@@ -111,8 +112,45 @@ class CypherAutomate:
         :param final_hard_frag:
         :return: a CSV file
         """
-        csv_string = "FragAnalysis_" + self.dataset[:-4] + "_" + str(cutoff) + "_" \
-                     + str(final_easy_frag) + "_" + str(final_hard_frag) + ".csv"
+
+        def countFrag(cutoff, easy_frag_percent, hard_frag_percent):
+            """
+            Objective: Get the total number of fragments for all the molecules in a specific dataset
+            :return:
+            """
+            easy_frag_query = self.graph.run(
+                """
+                MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(M:Molecule)
+                WITH  percentileCont(M.difficulty, $cutoff) as cutoff
+
+                MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(eM:Molecule)-[ef:HAS_FRAGMENT]->(eF:Fragment)
+                WHERE eM.difficulty < cutoff // easy molecules
+                WITH $easy_frag_percent*count(ef) as eLim // gath frags and frequency
+                RETURN eLim
+                """, parameters={'data': self.dataset, 'cutoff': cutoff, 'easy_frag_percent': easy_frag_percent}).data()
+
+            final_easy_frag = int(pd.DataFrame(easy_frag_query)['eLim'])
+
+            hard_frag_query = self.graph.run(
+                """
+                MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(M:Molecule)
+                WITH  percentileCont(M.difficulty, $cutoff) as cutoff
+                MATCH (D:DataSet{data: $data})-[c:CONTAINS_MOLECULE]->(hM:Molecule)-[hf:HAS_FRAGMENT]->(hF:Fragment)
+                WHERE hM.difficulty > cutoff // hard molecules
+                WITH $hard_frag_percent*count(hf) as hLim
+                RETURN hLim
+                """, parameters={'data': self.dataset, 'cutoff': cutoff, 'hard_frag_percent': hard_frag_percent}).data()
+
+            final_hard_frag = int(pd.DataFrame(hard_frag_query)['hLim'])
+            return final_easy_frag, easy_frag_percent, final_hard_frag, hard_frag_percent
+
+        final_easy_frag, easy_frag_percent, final_hard_frag, hard_frag_percent = countFrag(cutoff, easy_perc, hard_perc)
+        print(final_easy_frag, final_hard_frag)
+        # csv_string = "FragAnalysis_" + self.dataset[:-4] + "_" + str(cutoff) + "_" \
+        #              + str(final_easy_frag) + "_" + str(final_hard_frag) + ".csv"
+
+        csv_string = "FragAnalysis_" + self.dataset[:-4] + "_" + str(np.round(cutoff, 3)) + "_" \
+                     + str(np.round(easy_frag_percent, 3)) + "_" + str(np.round(hard_frag_percent, 3)) + ".csv"
 
         query_results = self.graph.run(
             """
@@ -167,22 +205,30 @@ if __name__ == '__main__':
     results_folder = 'results'
     check_for_results_folder(results_folder)
 
-    dataset = ['water-energy.csv']
-    cutoffs = [0.7, 0.9]
-    easy_frag_limits = [0.1, 0.3]  # Percentage of fragment for easy fragment
-    hard_frag_limits = [0.1, 0.4]  # Percentage of fragment for hard fragment
+    dataset = ['Lipophilicity-ID.csv']
+    cutoffs = np.arange(0.75, 1, 0.01)
+    # cutoffs = [0.90]
+    easy_frag_limits = np.arange(0.001, 0.01, 0.001)  # Percentage of fragment for easy fragment
+    easy_frag_limits = [0.003]
+    hard_frag_limits = np.arange(0.1, 0.30, 0.005)  # Percentage of fragment for hard fragment
+
     with cd(ROOT_DIR + '/dataFiles/'):  # Initialize model
+
         for data in dataset:
+            print("Preparing Graph...")
             auto = CypherAutomate(dataset=data)
             auto.connect_to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")  # Connect to Neo4j
             auto.check_for_dataset()  # Check for current dataset in database
             auto.cleanUp()  # Clean up weights
             auto.prepareGraph()  # Prepare graphs with weights
+            print("Working on Fragment Analysis...")
             for cutoff in cutoffs:
                 for i in easy_frag_limits:
                     for j in hard_frag_limits:
                         with cd(str(pathlib.Path(__file__).parent.absolute()) + "/" + results_folder):
-                            final_easy_frag, final_hard_frag= auto.countFrag(cutoff=0.8, easy_frag_percent=i, hard_frag_percent=j)
-                            auto.fragmentAnalysis(cutoff=cutoff, final_easy_frag=final_easy_frag, final_hard_frag=final_hard_frag)
-
+                            # final_easy_frag, easy_frag_perc, final_hard_frag, hard_frag_perc = auto.countFrag(cutoff=0.8, easy_frag_percent=i, hard_frag_percent=j)
+                            # auto.fragmentAnalysis(cutoff=cutoff, final_easy_frag=final_easy_frag, final_hard_frag=final_hard_frag)
+                            print("Analyzing Cutoff: {}, Easy Limit: {}, Hard Limit:{}".format(cutoff,i, j))
+                            auto.fragmentAnalysis(cutoff=cutoff, easy_perc = i, hard_perc=j)
+            print("Cleaning up graph.")
             auto.cleanUp()  # Second clean up

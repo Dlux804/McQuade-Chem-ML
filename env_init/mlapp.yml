@@ -11,5 +11,3 @@ dependencies:
   - rdkit=2020.09.1.0
   - scikit-learn=0.23.2
   - descriptastorus=2.2.0
-  - pip:
-      - -r file:requirements.txt

@@ -90,11 +90,11 @@ def main():
                                         with cd('output'):
                                             model.reg()
                                             model.run(tuner=tuner)  # Runs the models/featurizations for classification
-                                            # model.analyze()
-                                            # if model.algorithm not in ['nn', 'cnn']:
-                                            #     model.pickle_model()
-                                            # model.store()
-                                            # model.org_files(zip_only=True)
+                                            model.analyze()
+                                            if model.algorithm not in ['nn', 'cnn']:
+                                                model.pickle_model()
+                                            model.store()
+                                            model.org_files(zip_only=True)
                                             # model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
                                             #                password="password")
                                     # Have files output to output
@@ -136,4 +136,6 @@ def single_model():
 
 
 if __name__ == "__main__":
+    if not os.path.exists('output'):
+        os.mkdir('output')
     main()

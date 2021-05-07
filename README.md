@@ -43,7 +43,8 @@ Anaconda download link: https://www.anaconda.com/distribution/
 
  ### Enviroment Set Up
 
-- Create a conda virtual environment in  Anaconda Prompt from the `mlapp.yml` file and the `requirements.txt` in our `env_init` folder.
+- Create a conda virtual environment in  Anaconda Prompt from the `mlapp.yml` file and the `requirements.txt` in our `env_init` folder. This
+should work on both Windows and Ubuntu.
 
     ```conda env create -f mlapp.yml```
     

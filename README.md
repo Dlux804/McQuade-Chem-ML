@@ -65,7 +65,7 @@ The mlapp\python.exe environment should be located in the Anaconda3\envs folder.
 ### Neo4j
 To output models into Neo4j, first you will need to create a local Database
  1. Open Neo4j and add a `Local DBMS`
- 2. Download the APOC plugins
+ 2. Download the APOC and Graph Data Science (GDS) library plugins. If you're using the latest edition of Neo4j, GDS will be pre-installed for you.
  
 ## Run the Pipeline
 1. Start your Neo4j local DBMS and let in run in the background

@@ -133,12 +133,7 @@ def single_model():
         model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
-
-
-
-
-
 if __name__ == "__main__":
-    # main()
-    single_model()
+    main()
+    # single_model()
 

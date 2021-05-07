@@ -14,7 +14,7 @@ Our program supports Scikit-Learn algorithms for random forest (RF), gradient de
  support vector machines (SVM), Adaboost, and k-nearest neightbors (KNN).   We implement dense neural networks
  with Tensorflow and the Keras API.
 
-### Getting Set Up
+## Getting Started
 The following will serve as a guide for getting our models running on your computer. Users should also install
 Neo4j Desktop if they wish to use the graph features. 
 
@@ -30,38 +30,44 @@ Anaconda download link: https://www.anaconda.com/distribution/
 
  ![Alt text](graphics/Getting-set-up-picture.png)
 
-### Dependencies
-We  host a .yml file for the conda environment used in our work (mlapp2.yml).
+### Important Dependencies
+- Python 3.7 or 3.6
+- rdkit=2020.09.1.0
+- py2neo=4.2.0
+- scikit-learn=0.23.2
+- descriptastorus=2.2.0
+- scikit-optimize=0.8.1
+- tensorflow-gpu==1.15.0
 
-1. Create an conda virtual environment in the Anaconda prompt from the mlapp.yml file
- ```conda env create -f env_init\mlapp.yml```
- Note: On windows, you will have you comment out "-gunicorn" in the mlapp.yml file.
+
+
+ ### Enviroment Set Up
+
+- Create a conda virtual environment in  Anaconda Prompt from the `mlapp.yml` file and the `requirements.txt` in our `env_init` folder.
+
+    ```conda env create -f mlapp.yml```
+    
+    ```conda activate mlapp```
+    
+    ```pip install -r requirements.txt```
  
  ![Alt text](graphics/Dependecies-step-1-picture2.png)
  
- ![Alt text](graphics/Dependecies-step-1-picture.png)
  
- 2. In Pycharm, go to the bottom right and hit the interpreter button. Select "Add interpreter".
+ - In Pycharm, go to the bottom right and hit the interpreter button. Select "Add interpreter".
  
  
  ![Alt text](graphics/Dependecies-step-2-picture.png)
  
- 3. Navigate to "Conda Environment" and select "Existing environment". The mlapp\python.exe environment should be located in the Anaconda3\envs folder. Select this interpreter and check "Make available to all projects". Hit OK. You should now be able to run our code.
+- Navigate to "Conda Environment" and select "Existing environment". 
+The mlapp\python.exe environment should be located in the Anaconda3\envs folder. Select this interpreter and check "Make available to all projects". Hit OK. You should now be able to run our code.
+   
+### Neo4j
+To output models into Neo4j, first you will need to create a local Database
+ 1. Open Neo4j and add a `Local DBMS`
+ 2. Download the APOC plugins
  
-  ![Alt text](graphics/Dependecies-step-3-picture.png)
- 
- 4. Update the virtual environment as necessary using ```conda install```
- 5. Update the mlapp.yml file using ```conda env export > mlapp.yml --no-builds --from-history```. Make sure that you add the 
- mlapp.yml file to git, if it not already being watched.
-
-    **Note:** Sometimes packages cannot be installed from conda, such as descriptastorus.
-    If this is the case, you may need to use pip to install from a github link.
-    See the mlapp.yml file for an example (descriptastorus) for an example of how to account for this
-    in the mlapp.yml file.  
-    ```
-    - pip:
-        - "git+git://github.com/bp-kelley/descriptastorus.git#egg=descriptastorus"
-    ```
- 6. Commit your changes, which include the mlapp.yml file. ```git commit -m "your commit message here"```
- 
- 7. To use DeepChem, revert scikit-learn to version 0.22.0 by using the command ```pip install scikit-learn==0.22.0```
+## Run the Pipeline
+1. Start your Neo4j local DBMS and let in run in the background
+2. Run main.py
+3. Enjoy!! 

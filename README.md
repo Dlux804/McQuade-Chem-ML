@@ -43,7 +43,7 @@ Anaconda download link: https://www.anaconda.com/distribution/
 
  ### Enviroment Set Up
 
-- Create a conda virtual environment in  Anaconda Prompt from the `mlapp.yml` file and the `requirements.txt` in our `env_init` folder. This
+- Create a conda virtual environment in Anaconda Prompt for Windows, Terminal for Linux, from the `mlapp.yml` file and the `requirements.txt` in our `env_init` folder. This
 should work on both Windows and Ubuntu.
 
     ```conda env create -f mlapp.yml```
@@ -62,13 +62,44 @@ should work on both Windows and Ubuntu.
  
 - Navigate to "Conda Environment" and select "Existing environment". 
 The mlapp\python.exe environment should be located in the Anaconda3\envs folder. Select this interpreter and check "Make available to all projects". Hit OK. You should now be able to run our code.
+  
+- Note, if you get an error while installing the environment in the Anaconda Prompt, try running Anaconda Prompt as Admin
    
 ### Neo4j
 To output models into Neo4j, first you will need to create a local Database
  1. Open Neo4j and add a `Local DBMS`
  2. Download the APOC and Graph Data Science (GDS) library plugins. If you're using the latest edition of Neo4j, GDS will be pre-installed for you.
+
+### MySql
+MySql is used to store featurized datasets and helps saves time. The instructions to install MySql for both Windows and Linux 
+can be found at https://dev.mysql.com/doc/mysql-getting-started/en/. If installing on Windows, the Server only version is highly recommend. 
+Further instructions for windows can be found at https://phoenixnap.com/kb/install-mysql-on-windows.
+
+A new user and data table should be created. The MySQL server can be access in Windows by opening the command prompt and typing in
+
+```cd Program Files\MySQL\MySQL Server 8.0\bin```
+
+```mysql -u root -p```
+
+For Linux, open the terminal and type in
+
+```mysql -u root -p```
+
+Then type in the password that was used to setup the root user. Then instructions to create a new database and
+user can be found here https://matomo.org/faq/how-to-install/faq_23484/. Then enter you parameters in the line in main.py 
+
+```model.connect_mysql(user='user', password='dolphin', host='localhost', database='featurized_datasets', initialize_all_data=False)```
+
+To the parameters used to setup the database. 
+
+If you do not wish to install MySql or DataGrip, then you can disable featurizing from MySql by setting 
+```model.featurize(retrieve_from_mysql=True)``` to ```model.featurize(retrieve_from_mysql=False)``` in main.py. MySQL is
+not required, and only helps to speed up featurization of data. Also, an IDE such as DataGrip can be used to see the 
+data tables being created by main.py. 
+
  
 ## Run the Pipeline
 1. Start your Neo4j local DBMS and let in run in the background
-2. Run main.py
-3. Enjoy!! 
+2. If using MySQL, start MySQL database
+3. Run main.py
+4. Enjoy!! 

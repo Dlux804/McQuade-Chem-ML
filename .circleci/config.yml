@@ -38,6 +38,7 @@ jobs:
             conda env create -f env_init/mlapp.yml
             source /opt/conda/etc/profile.d/conda.sh
             conda activate mlapp
+            pip install -r env_init/requirements.txt
       - save_cache:
           key: v2-condareqs-{{ .Branch }}-{{ checksum "env_init/mlapp.yml" }}
           paths:

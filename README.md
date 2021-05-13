@@ -69,6 +69,14 @@ To output models into Neo4j, first you will need to create a local Database
  2. Download the APOC and Graph Data Science (GDS) library plugins. If you're using the latest edition of Neo4j, GDS will be pre-installed for you.
  
 ## Run the Pipeline
+
+There are three functions you can run in **main.py**:
+- **all_models()**: Create all models offered in our pipeline
+- **some_models()**: Create a few example models 
+- **single_model()**: Create a single example model
+
+
+#### How to run **main.py**:
 1. Start your Neo4j local DBMS and let in run in the background
-2. Run main.py
+2. Select and run your function of choice in main.py
 3. Enjoy!! 

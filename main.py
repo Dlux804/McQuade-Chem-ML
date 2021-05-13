@@ -3,6 +3,7 @@ import os
 import pathlib
 from core import MlModel, get_classification_targets, Get_Task_Type_1
 from core.storage import cd
+from core.storage import qsar_to_neo4j
 
 
 # Creating a global variable to be imported from all other models
@@ -153,6 +154,13 @@ def some_models():
                                        password="password")
 
 
+def example_qsar_models_to_neo4j():
+    for directory in os.listdir('example_qsar_models'):
+        qsar_to_neo4j.QsarToNeo4j(directory=f'example_qsar_models/{directory}',
+                                  port="bolt://localhost:7687",
+                                  username="neo4j", password="password")
+
+
 def single_model():
     """
     This model is for debugging, similiar to the lines at the bottom of models.py. This is meant
@@ -185,11 +193,14 @@ def single_model():
 
         model3.store()
         model3.org_files(zip_only=True)
-        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        model3.QsarDB_export(zip_output=True)
+        # model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 if __name__ == "__main__":
     # all_models()
     some_models()
     # single_model()
+    # example_qsar_models_to_neo4j()
+
 

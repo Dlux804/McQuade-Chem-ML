@@ -7,11 +7,10 @@ from lxml import etree
 from rdkit.Chem import MolFromSmiles, MolToMolBlock
 from sklearn2pmml import PMMLPipeline, sklearn2pmml
 
-
 from core.storage.misc import compress_fingerprint
 
 
-def QsarDB_export(self, zip_output=False):
+def QsarDB_export(self, zip_output=True):
     """
     :param zip_output: Weather to zip output folder
     :param self: Model Object
@@ -66,7 +65,7 @@ def QsarDB_export(self, zip_output=False):
     def __model_to_pmml__():
 
         pipeline = PMMLPipeline([
-            ("regressor", self.regressor)
+            ("regressor", self.estimator)
         ])
         sklearn2pmml(pipeline, "pmml", with_repr=True)
 

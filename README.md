@@ -67,6 +67,33 @@ The mlapp\python.exe environment should be located in the Anaconda3\envs folder.
 To output models into Neo4j, first you will need to create a local Database
  1. Open Neo4j and add a `Local DBMS`
  2. Download the APOC and Graph Data Science (GDS) library plugins. If you're using the latest edition of Neo4j, GDS will be pre-installed for you.
+
+### MySql
+MySql is used to store featurized datasets and helps saves time. The instructions to install MySql for both Windows and Linux 
+can be found at https://dev.mysql.com/doc/mysql-getting-started/en/. If installing on Windows, the Server only version is highly recommend. 
+Further instructions for windows can be found at https://phoenixnap.com/kb/install-mysql-on-windows.
+
+A new user and data table should be created. The MySQL server can be access in Windows by opening the command prompt and typing in
+
+```cd Program Files\MySQL\MySQL Server 8.0\bin```
+
+```mysql -u root -p```
+
+For Linux, open the terminal and type in
+
+```mysql -u root -p```
+
+Then type in the password that was used to setup the root user. Then instructions to create a new database and
+user can be found here https://matomo.org/faq/how-to-install/faq_23484/. Then enter you parameters in the line in main.py 
+
+```model.connect_mysql(user='user', password='dolphin', host='localhost', database='featurized_datasets', initialize_all_data=False)```
+
+To the parameters you used to setup your database. 
+
+If you wish to use MySql, then set
+```model.featurize(retrieve_from_mysql=False)``` to ```model.featurize(retrieve_from_mysql=True)``` in main.py. As stated before,
+MySQL is not required and only helps to speed up featurization of data. Also, an IDE such as DataGrip is also useful to see the 
+data tables being created by main.py.
  
 ## Run the Pipeline
 

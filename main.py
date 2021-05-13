@@ -103,7 +103,7 @@ def some_models():
     print('ROOT Working Directory:', ROOT_DIR)
 
     #### list of all learning algorithms
-    learner = ['rf','gdb']
+    learner = ['rf', 'gdb']
 
     #### All tune option
     tune_option = [False, True]
@@ -193,7 +193,7 @@ def single_model():
 
         model3.store()
         model3.org_files(zip_only=True)
-        model3.QsarDB_export(zip_output=True)
+        # model3.QsarDB_export(zip_output=True)
         # model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
@@ -201,6 +201,3 @@ if __name__ == "__main__":
     # all_models()
     some_models()
     # single_model()
-    # example_qsar_models_to_neo4j()
-
-

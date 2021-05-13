@@ -9,12 +9,12 @@ from core.storage import cd
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
 
-def main():
+def all_models():
     os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
 
     #### list of all learning algorithms
-    learner = ['rf','nn', 'svm',  'gdb', 'nn']
+    learner = ['rf', 'nn', 'svm', 'gdb']
 
     #### All tune option
     tune_option = [False, True]
@@ -79,7 +79,7 @@ def main():
                                             model.connect_mysql(user='user', password='dolphin', host='localhost',
                                                                  database='featurized_datasets',
                                                                  initialize_all_data=False)
-                                            model.featurize(retrieve_from_mysql=True)
+                                            model.featurize(retrieve_from_mysql=False)
                                             if model.algorithm not in ["nn", "cnn"]:
                                                 model.data_split(split=splitter, test=test_percent, scaler=scale)
                                             else:
@@ -96,6 +96,61 @@ def main():
                                             model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
                                                            password="password")
                                     # Have files output to output
+
+def some_models():
+    os.chdir(ROOT_DIR)  # Start in root directory
+    print('ROOT Working Directory:', ROOT_DIR)
+
+    #### list of all learning algorithms
+    learner = ['rf','gdb']
+
+    #### All tune option
+    tune_option = [False, True]
+
+    #### Features
+    feats = [[0], [1], [0,1], [0,2]]  # Use this line to select specific featurizations
+
+    sets = {
+        'Lipophilicity-ID.csv': 'exp',
+    }
+
+    for alg in learner:  # loop over all learning algorithms
+        for method in feats:  # loop over the featurization methods
+            for data, target in sets.items():  # loop over dataset dictionary
+                for isTune in tune_option:
+                    with cd(str(pathlib.Path(
+                            __file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+                        print('Model Type:', alg)
+                        print('Featurization:', method)
+                        print('Dataset:', data)
+                        print('Target(s):', target)
+                        print('Tuning:', isTune)
+                        print()
+                        print('Initializing model...', end=' ', flush=True)
+                        # initiate model class with algorithm, dataset and target
+
+                        model = MlModel(algorithm=alg, dataset=data, target=target,
+                                        feat_meth=method, tune=isTune, cv=5, opt_iter=25)
+                        print('Done.\n')
+                        model.connect_mysql(user='user', password='dolphin', host='localhost',
+                                            database='featurized_datasets',
+                                            initialize_all_data=False)
+                        model.featurize(retrieve_from_mysql=False)
+                        if model.algorithm not in ["nn", "cnn"]:
+                            model.data_split(split='random', test=0.2, scaler='standard')
+                        else:
+                            model.data_split(split='random', test=0.2, val=0.1,
+                                             scaler='standard')
+                    with cd('output'):
+                        model.reg()
+                        model.run()  # Runs the models/featurizations for classification
+                        model.analyze()
+                        if model.algorithm not in ['nn', 'cnn']:
+                            model.pickle_model()
+                        model.store()
+                        model.org_files(zip_only=True)
+                        # model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
+                        #                password="password")
 
 
 def single_model():
@@ -134,6 +189,7 @@ def single_model():
 
 
 if __name__ == "__main__":
-    main()
+    # all_models()
+    some_models()
     # single_model()
 

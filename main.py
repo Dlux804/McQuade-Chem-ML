@@ -4,7 +4,7 @@ import pathlib
 from core import MlModel, get_classification_targets, Get_Task_Type_1
 from core.storage import cd
 from core.storage import qsar_to_neo4j
-
+from core.neo4j.models_to_neo4j import ModelToNeo4j
 
 # Creating a global variable to be imported from all other models
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
@@ -194,10 +194,18 @@ def single_model():
         model3.store()
         model3.org_files(zip_only=True)
         # model3.QsarDB_export(zip_output=True)
-        # model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+
+
+def load_example_to_neo4j():
+    # with cd(str(pathlib.Path(__file__).parent.absolute()) + '/output/'):  # Initialize model
+    for file in os.scandir(r'example'):
+        if file.path.endswith(".zip"):
+            ModelToNeo4j(zipped_out_dir=file.path, port="bolt://localhost:7687", username="neo4j", password="password")
 
 
 if __name__ == "__main__":
     # all_models()
-    some_models()
+    # some_models()
+    load_example_to_neo4j()
     # single_model()

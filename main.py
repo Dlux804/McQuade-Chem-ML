@@ -150,8 +150,8 @@ def some_models():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
-                                       password="password")
+                        # model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
+                        #                password="password")
 
 
 def example_qsar_models_to_neo4j():

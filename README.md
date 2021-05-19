@@ -8,7 +8,7 @@ The models are used to populate a Neo4j property graph database.
 # Table of Contents
 **[Data Sets](#data-sets)**<br>
 **[Available Models](#available-models)**<br>
-**[Getting Started](#getting-started)**<br>
+**[Requirements](#requirements)**<br>
 **[Important Dependencies](#important-dependencies)**<br>
 **[Conda Environment](#conda-environment)**<br>
 **[Neo4j](#neo4j)**<br>
@@ -25,11 +25,7 @@ Our program supports Scikit-Learn algorithms for random forest (RF), gradient de
  support vector machines (SVM), Adaboost, and k-nearest neightbors (KNN).   We implement dense neural networks
  with Tensorflow and the Keras API.
 
-## Getting Started
-The following will serve as a guide for getting our models running on your computer. Users should also install
-Neo4j Desktop if they wish to use the graph features. 
-
-**NOTE:** YOU MUST HAVE GIT AND ANACONDA INSTALLED IN ORDER TO USE THE FOLLOWING INSTRUCTIONS. However, it is possible to run our models using different programs (GIT is required to clone our repository).
+## Requirements
 
 Neo4j download link: https://neo4j.com/download/
 
@@ -63,7 +59,7 @@ should work on both Windows and Ubuntu.
     
     ```pip install -r requirements.txt```
 
-#### For Pycharm users
+#### For Pycharm users (Optional)
 
  - In Pycharm, go to the bottom right and hit the interpreter button. Select "Add interpreter".
  

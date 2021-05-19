@@ -78,11 +78,15 @@ The mlapp\python.exe environment should be located in the Anaconda3\envs folder.
 ## Neo4j
 To output models into Neo4j, first you will need to create a local Database
  1. Open Neo4j and add a `Local DBMS`
- 2. Download the APOC and Graph Data Science (GDS) library plugins. If you're using the latest edition of Neo4j, GDS will be pre-installed for you.
+ 2. The Name of the DBMS is up to the users to decide. However, you must set your password to `password` for our code to work as it is.
+ 3. If you want to set your password to something else, you need to go to your function of choice in **main.py** and input the `password` parameter your Neo4j password.  
+ 4. Download the APOC and Graph Data Science (GDS) library plugins. If you're using the latest edition of Neo4j, GDS will be pre-installed for you.
 
-## MySql
-MySql is used to store featurized datasets and helps saves time. The instructions to install MySql for both Windows and Linux 
-can be found at https://dev.mysql.com/doc/mysql-getting-started/en/. If installing on Windows, the Server only version is highly recommend. 
+## MySQL
+MySQL saves time by storing featurized datasets. The instructions to install MySQL for both Windows and Linux 
+can be found at https://dev.mysql.com/doc/mysql-getting-started/en/. 
+
+If installing on Windows, the Server only version is highly recommend. 
 Further instructions for windows can be found at https://phoenixnap.com/kb/install-mysql-on-windows.
 
 A new user and data table should be created. The MySQL server can be access in Windows by opening the command prompt and typing in
@@ -102,23 +106,29 @@ user can be found here https://matomo.org/faq/how-to-install/faq_23484/. Then en
 
 To the parameters you used to setup your database. 
 
-If you wish to use MySql, then set
-```model.featurize(retrieve_from_mysql=False)``` to ```model.featurize(retrieve_from_mysql=True)``` in main.py. As stated before,
+If you wish to use MySQL, then set
+```model.featurize(retrieve_from_mysql=False)``` to ```model.featurize(retrieve_from_mysql=True)``` in **main.py**. 
+
+As stated before,
 MySQL is not required and only helps to speed up featurization of data. Also, an IDE such as DataGrip is also useful to see the 
 data tables being created by main.py.
  
 ## Running main.py
 
-There are three functions you can run in **main.py**:
-- **all_models()**: Create all models offered in our pipeline
-- **some_models()**: Create a few example models 
-- **single_model()**: Create a single example model
-- **load_example_to_neo4j()**: Load example models directly to Neo4j
+These are your options in **main.py**:
+- **multi_models()**: Create a large variety of machine learning models and load them to Neo4j
+
+- **some_models()**: Create a few example machine learning models and load them to Neo4j
+
+- **single_model()**: Create a single example machine learning model and load them to Neo4j
+
+- **load_example_to_neo4j()**: Load example machine learning models directly to Neo4j
+
 - **example_qsar_models_to_neo4j()**: Load example qsar models directly to Neo4j
 
 
 ### Steps:
-1. Start your Neo4j local DBMS and let in run in the background
+1. Start your Neo4j local DBMS and let it run to completion
 2. Select your function of choice in main.py
 3. If you're using the command prompt, activate your `mlapp` environment and enter `python main.py`
 4. Enjoy!! 

@@ -12,7 +12,7 @@ The models are used to populate a Neo4j property graph database.
 **[Important Dependencies](#important-dependencies)**<br>
 **[Conda Environment](#conda-environment)**<br>
 **[Neo4j](#neo4j)**<br>
-**[MySql](#MySql)**<br>
+**[MySQL](#mysql)**<br>
 **[Running main.py](#running-mainpy)**<br>
  
 ## Data Sets

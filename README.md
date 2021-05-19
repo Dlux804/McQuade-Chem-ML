@@ -130,7 +130,8 @@ These are your options in **main.py**:
 ### Steps:
 1. Start your Neo4j local DBMS and let it run to completion
 2. Select your function of choice in main.py
-3. If you're using the command prompt, activate your `mlapp` environment and enter `python main.py`
+3. If you're running from the command prompt, first activate your `mlapp` environment  by entering `conda activate mlapp`. 
+After that, enter `python main.py` to run `main.py`
 4. Enjoy!!
 
  <a href="#top">Back to Top</a>

@@ -63,7 +63,6 @@ should work on both Windows and Ubuntu.
     
     ```pip install -r requirements.txt```
 
-Since you've already activated your environment, you should be able to run 
 #### For Pycharm users
 
  - In Pycharm, go to the bottom right and hit the interpreter button. Select "Add interpreter".

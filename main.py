@@ -10,7 +10,7 @@ from core.neo4j.models_to_neo4j import ModelToNeo4j
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root
 
 
-def all_models():
+def multi_model():
     os.chdir(ROOT_DIR)  # Start in root directory
     print('ROOT Working Directory:', ROOT_DIR)
 
@@ -47,56 +47,46 @@ def all_models():
     for alg in learner:  # loop over all learning algorithms
         for method in feats:  # loop over the featurization methods
             for data, target in sets.items():  # loop over dataset dictionary
-                # This gets the target columns for classification data sets (Using target lists in the dictionary causes errors later in the workflow)
-                if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:
-                    target = get_classification_targets(data)
+                for isTune in tune_option:
+                    for test_percent in test_percents:
+                        for splitter in splitters:
+                            for scale in scalers:
+                                for tuner in tuners:
+                                    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
+                                        print('Model Type:', alg)
+                                        print('Featurization:', method)
+                                        print('Dataset:', data)
+                                        print('Target(s):', target)
+                                        print('Tuning:', isTune)
+                                        print('Tuner:', tuner)
+                                        print()
+                                        print('Initializing model...', end=' ', flush=True)
+                                        # initiate model class with algorithm, dataset and target
 
-                # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.
-                checker, task_type = Get_Task_Type_1(data, alg)
-                if checker == 0:
-                    pass
-                else:
-                    for isTune in tune_option:
-                        for test_percent in test_percents:
-                            for splitter in splitters:
-                                for scale in scalers:
-                                    for tuner in tuners:
-                                        with cd(str(pathlib.Path(
-                                                __file__).parent.absolute()) + '/dataFiles/'):  # Initialize model
-                                            print('Model Type:', alg)
-                                            print('Featurization:', method)
-                                            print('Dataset:', data)
-                                            print('Target(s):', target)
-                                            print('Task type:', task_type)
-                                            print('Tuning:', isTune)
-                                            print('Tuner:', tuner)
-                                            print()
-                                            print('Initializing model...', end=' ', flush=True)
-                                            # initiate model class with algorithm, dataset and target
+                                        model = MlModel(algorithm=alg, dataset=data, target=target,
+                                                        feat_meth=method, tune=isTune, cv=5, opt_iter=25)
+                                        print('Done.\n')
+                                        model.connect_mysql(user='user', password='dolphin', host='localhost',
+                                                            database='featurized_datasets',
+                                                            initialize_all_data=False)
+                                        model.featurize(retrieve_from_mysql=False)
+                                        if model.algorithm not in ["nn", "cnn"]:
+                                            model.data_split(split=splitter, test=test_percent, scaler=scale)
+                                        else:
+                                            model.data_split(split=splitter, test=test_percent, val=0.1,
+                                                             scaler=scale)
+                                    with cd('output'):
+                                        model.reg()
+                                        model.run(tuner=tuner)  # Runs the models/featurizations for classification
+                                        model.analyze()
+                                        if model.algorithm not in ['nn', 'cnn']:
+                                            model.pickle_model()
+                                        model.store()
+                                        model.org_files(zip_only=True)
+                                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
+                                                       password="password")
+                                # Have files output to output
 
-                                            model = MlModel(algorithm=alg, dataset=data, target=target,
-                                                            feat_meth=method, tune=isTune, cv=5, opt_iter=25)
-                                            print('Done.\n')
-                                            model.connect_mysql(user='user', password='dolphin', host='localhost',
-                                                                 database='featurized_datasets',
-                                                                 initialize_all_data=False)
-                                            model.featurize(retrieve_from_mysql=False)
-                                            if model.algorithm not in ["nn", "cnn"]:
-                                                model.data_split(split=splitter, test=test_percent, scaler=scale)
-                                            else:
-                                                model.data_split(split=splitter, test=test_percent, val=0.1,
-                                                                 scaler=scale)
-                                        with cd('output'):
-                                            model.reg()
-                                            model.run(tuner=tuner)  # Runs the models/featurizations for classification
-                                            model.analyze()
-                                            if model.algorithm not in ['nn', 'cnn']:
-                                                model.pickle_model()
-                                            model.store()
-                                            model.org_files(zip_only=True)
-                                            model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
-                                                           password="password")
-                                    # Have files output to output
 
 def some_models():
     os.chdir(ROOT_DIR)  # Start in root directory
@@ -150,8 +140,8 @@ def some_models():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-                        # model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
-                        #                password="password")
+                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
+                                       password="password")
 
 
 def example_qsar_models_to_neo4j():

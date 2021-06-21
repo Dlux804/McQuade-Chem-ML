@@ -187,9 +187,14 @@ def single_model():
         model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
 
 
-def load_example_to_neo4j():
+def load_folder_to_neo4j(folder_name):
+    """
+    Description: This code will go into a specific folder, iterate through all the zip files that contain ML models and export to Neo4j
+    Note: Make sure to have Neo4j open, the "username" is neo4j and the "password" is password 
+
+    """
     # with cd(str(pathlib.Path(__file__).parent.absolute()) + '/output/'):  # Initialize model
-    for file in os.scandir(r'example'):
+    for file in os.scandir(folder_name):
         if file.path.endswith(".zip"):
             ModelToNeo4j(zipped_out_dir=file.path, port="bolt://localhost:7687", username="neo4j", password="password")
 
@@ -197,5 +202,5 @@ def load_example_to_neo4j():
 if __name__ == "__main__":
     # all_models()
     # some_models()
-    load_example_to_neo4j()
+    load_folder_to_neo4j('example')
     # single_model()

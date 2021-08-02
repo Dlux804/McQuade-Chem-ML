@@ -1,0 +1,119 @@
+Index: core/storage/qsar_export.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import os\nimport re\nimport shutil\n\nimport xml.etree.cElementTree as ET\nfrom lxml import etree\nfrom rdkit.Chem import MolFromSmiles, MolToMolBlock\nfrom sklearn2pmml import PMMLPipeline, sklearn2pmml\n\n\nfrom core.storage.misc import compress_fingerprint\n\n\ndef QsarDB_export(self, zip_output=False):\n    \"\"\"\n    :param zip_output: Weather to zip output folder\n    :param self: Model Object\n    :return:\n\n    Purpose of this is to export our models in a format that complies with the QsarDB requirements.\n    This script is meant to be run on a model that has been fully featurized and tested.\n    \"\"\"\n\n    print(\"Exporting data into QsarDB format\")\n\n    # Define function for less code to change between directories\n    def __mkd__(new_dir):\n        cur_dir = os.getcwd()\n        try:\n            os.mkdir(new_dir)\n        except OSError:\n            pass\n        os.chdir(new_dir)\n        return cur_dir\n\n    # Take a root, and spit that to a pretty xml file\n    def __root_to_xml__(root, file):\n        tree = ET.ElementTree(root)\n        tree.write(file)\n        parser = etree.XMLParser(resolve_entities=False, strip_cdata=False)\n        document = etree.parse(file, parser)\n        document.write(file, pretty_print=True, encoding='utf-8')\n\n    # Fetch which set each molecule is in\n    def __get_compound_set__(smiles):\n        if smiles in self.test_molecules:\n            return 'TE'\n        if smiles in self.train_molecules:\n            return 'TR'\n        else:\n            return 'V'\n\n    # Crate compound directories with mod-files and smiles files\n    def __compound_to_dir__(compound):\n        compounds_dir = __mkd__(f'{compound[\"Compound Id\"]}')\n        with open('smiles', 'w') as f:\n            f.write(compound[\"smiles\"])\n        with open('molfile', 'w') as f:\n            mol = MolFromSmiles(compound[\"smiles\"])\n            f.write(MolToMolBlock(mol))\n        os.chdir(compounds_dir)\n        comp = ET.SubElement(root, \"Compound\")\n        ET.SubElement(comp, \"Id\").text = compound[\"Compound Id\"]\n        ET.SubElement(comp, \"Cargos\").text = \"smiles molfile\"\n\n    def __model_to_pmml__():\n\n        pipeline = PMMLPipeline([\n            (\"regressor\", self.regressor)\n        ])\n        sklearn2pmml(pipeline, \"pmml\", with_repr=True)\n\n        print('creating pmml')\n        # Read in the file\n        with open('pmml', 'r') as file:\n            filedata = file.read()\n\n        print('finding matches')\n        # Replace x[1-...] with actual column names\n        m = re.findall('x\\-?\\d+', filedata)\n        matches = []\n        print('sorting matches')\n        for match in m:\n            if match in matches:\n                break\n            matches.append(match)\n        feature_cols = list(data_df.columns.difference([\"in_set\", \"smiles\", \"id\", self.target_name]))\n        matched_dict = dict(zip(matches, feature_cols))\n        print('replacing')\n        for match, feat in matched_dict.items():\n            filedata = filedata.replace(match, f'{feat}')\n\n        # Replace y with target name\n        filedata = filedata.replace('y', f'{self.target_name}')\n\n        print('rewrite to file')\n        # Write the file out again\n        with open('pmml', 'w') as file:\n            file.write(filedata)\n\n    # Get current directory, change in qdb directory\n    cur_dir = __mkd__(f'{self.run_name}_qdb')\n    non_descriptors_columns = ['smiles', 'id', 'in_set', self.target_name]\n\n    # Gather all data (without validation data), testing data, and training data\n    data_df = compress_fingerprint(self.data)\n    data_df['Compound Id'] = data_df['smiles'].apply(__get_compound_set__)\n    data_df = data_df.sort_values(by=['Compound Id'])\n    data_df = data_df.reset_index(drop=True)\n    data_df['Compound Id'] = data_df['Compound Id'] + '_' + data_df.index.astype(str)\n\n    # Create archive.xml\n    root = ET.Element(\"Archive\", xmlns=\"http://www.qsardb.org/QDB\")\n    ET.SubElement(root, \"Name\").text = \"No Names available yet\"\n    ET.SubElement(root, \"Description\").text = \"Give our workflow a fancy description\"\n    __root_to_xml__(root, \"archive.xml\")\n\n    # Work on compounds directory\n    main_dir = __mkd__('compounds')\n    root = ET.Element(\"CompoundRegistry\", xmlns=\"http://www.qsardb.org/QDB\")\n    data_df.apply(__compound_to_dir__, axis=1)\n    __root_to_xml__(root, \"compounds.xml\")\n    os.chdir(main_dir)\n\n    # Work on descriptors directory\n    main_dir = __mkd__('descriptors')\n    root = ET.Element(\"DescriptorRegistry\", xmlns=\"http://www.qsardb.org/QDB\")\n    for col in data_df.columns:\n        if col not in non_descriptors_columns:\n            descriptors_dir = __mkd__(col)\n            descriptor_df = data_df[['Compound Id', col]]\n            descriptor_df.to_csv('values', sep='\\t', index=False)\n            os.chdir(descriptors_dir)\n            desc = ET.SubElement(root, \"Descriptor\")\n            ET.SubElement(desc, \"Id\").text = col\n            ET.SubElement(desc, \"Cargos\").text = \"values\"\n            ET.SubElement(desc, \"Name\").text = \"No Names available yet\"\n    __root_to_xml__(root, \"descriptors.xml\")\n    os.chdir(main_dir)\n\n    # Work on properties directory\n    main_dir = __mkd__('properties')\n    prop_dir = __mkd__(f'{self.target_name}')\n    properties_df = data_df[['Compound Id', self.target_name]]\n    properties_df.to_csv('values', sep='\\t', index=False)\n    os.chdir(prop_dir)\n    root = ET.Element(\"PropertyRegistry\", xmlns=\"http://www.qsardb.org/QDB\")\n    prop = ET.SubElement(root, \"Property\")\n    ET.SubElement(prop, \"Id\").text = self.target_name\n    ET.SubElement(prop, \"Name\").text = \"No Names available yet\"\n    ET.SubElement(prop, \"Cargos\").text = \"values\"\n    __root_to_xml__(root, \"properties.xml\")\n    os.chdir(main_dir)\n\n    # Work on predictions\n    main_dir = __mkd__('predictions')\n    pred_dir = __mkd__(f'{self.algorithm}_test')\n    predictions_df = data_df.merge(self.predictions, on='smiles', how='inner')[['Compound Id', 'pred_avg']]\n    predictions_df.to_csv('values', sep='\\t', index=False)\n    os.chdir(pred_dir)\n    root = ET.Element(\"PredictionRegistry\", xmlns=\"http://www.qsardb.org/QDB\")\n    pred = ET.SubElement(root, \"Prediction\")\n    ET.SubElement(pred, \"Id\").text = f\"{self.algorithm}_Test\"\n    ET.SubElement(pred, \"Name\").text = \"Testing Set\"\n    ET.SubElement(pred, \"Cargos\").text = \"values\"\n    ET.SubElement(pred, \"ModelId\").text = self.algorithm\n    ET.SubElement(pred, \"Type\").text = \"testing\"\n    ET.SubElement(pred, \"Application\").text = \"Python 3\"\n    __root_to_xml__(root, \"predictions.xml\")\n    os.chdir(main_dir)\n\n    # Work on models\n    __mkd__('models')\n\n    # Make models.xml\n    root = ET.Element(\"ModelRegistry\", xmlns=\"http://www.qsardb.org/QDB\")\n    model = ET.SubElement(root, \"Model\")\n    ET.SubElement(model, \"Id\").text = self.algorithm\n    ET.SubElement(model, \"Name\").text = \"No Names available yet\"\n    ET.SubElement(model, \"Cargos\").text = \"pmml bibtex\"\n    ET.SubElement(model, \"PropertyId\").text = self.target_name\n    __root_to_xml__(root, \"models.xml\")\n    __mkd__(self.algorithm)\n    __model_to_pmml__()\n\n    # Switch back to original directory\n    os.chdir(cur_dir)\n\n    if zip_output:\n        shutil.make_archive((os.getcwd() + '/' + f'{self.run_name}_qdb'), 'zip',\n                            os.getcwd(), f'{self.run_name}_qdb')\n        shutil.rmtree(f'{self.run_name}_qdb', ignore_errors=True)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/storage/qsar_export.py b/core/storage/qsar_export.py
+--- a/core/storage/qsar_export.py	(revision a8a66af20c81ed57679aff3b2b814278e9318859)
++++ b/core/storage/qsar_export.py	(date 1620934451323)
+@@ -6,7 +6,7 @@
+ from lxml import etree
+ from rdkit.Chem import MolFromSmiles, MolToMolBlock
+ from sklearn2pmml import PMMLPipeline, sklearn2pmml
+-
++from keras2pmml import keras2pmml
+ 
+ from core.storage.misc import compress_fingerprint
+ 
+@@ -65,11 +65,15 @@
+ 
+     def __model_to_pmml__():
+ 
+-        pipeline = PMMLPipeline([
+-            ("regressor", self.regressor)
+-        ])
+-        sklearn2pmml(pipeline, "pmml", with_repr=True)
++        if "nn" != "nn":
++            pipeline = PMMLPipeline([
++                ("regressor", self.estimator)
++            ])
++            sklearn2pmml(pipeline, "pmml", with_repr=True)
+ 
++        else:
++            keras2pmml(estimator=self.estimator, transformer=self.scaler_method, file='pmml')
++
+         print('creating pmml')
+         # Read in the file
+         with open('pmml', 'r') as file:
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># TODO: Make main function that asks user what models they would like to initiate\nimport os\nimport pathlib\nfrom core import MlModel, get_classification_targets, Get_Task_Type_1\nfrom core.storage import cd\n\n\n# Creating a global variable to be imported from all other models\nROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # This is your Project Root\n\n\ndef main():\n    os.chdir(ROOT_DIR)  # Start in root directory\n    print('ROOT Working Directory:', ROOT_DIR)\n\n    #### list of all learning algorithms\n    learner = ['rf','nn', 'svm',  'gdb', 'nn']\n\n    #### All tune option\n    tune_option = [False, True]\n\n    #### Features\n    feats = [[0], [1], [2], [3], [4], [5], [0,1], [0,2], [0,3], [0,4], [0,5]]  # Use this line to select specific featurizations\n\n    sets = {\n        'flashpoint.csv': 'flashpoint',\n        'logP14k.csv': 'Kow',\n        'jak2_pic50.csv': 'pIC50',\n        'Lipophilicity-ID.csv': 'exp',\n        'ESOL.csv': 'water-sol',\n        'water-energy.csv': 'expt'\n    }\n\n    #### Split percent\n    test_percents = [0.2, 0.3]\n\n    #### Data Splitting methods\n    splitters = ['random', 'index', 'scaffold']\n\n    #### Data scaling methods\n    scalers = ['standard', 'minmax', None]\n\n    #### Tuning methods\n    tuners = ['bayes',  'random']  # \"grid\",\n\n    for alg in learner:  # loop over all learning algorithms\n        for method in feats:  # loop over the featurization methods\n            for data, target in sets.items():  # loop over dataset dictionary\n                # This gets the target columns for classification data sets (Using target lists in the dictionary causes errors later in the workflow)\n                if data in ['BBBP.csv', 'sider.csv', 'clintox.csv', 'bace.csv']:\n                    target = get_classification_targets(data)\n\n                # This checker allows for main.py to skip over algorithm/data set combinations that are not compatible.\n                checker, task_type = Get_Task_Type_1(data, alg)\n                if checker == 0:\n                    pass\n                else:\n                    for isTune in tune_option:\n                        for test_percent in test_percents:\n                            for splitter in splitters:\n                                for scale in scalers:\n                                    for tuner in tuners:\n                                        with cd(str(pathlib.Path(\n                                                __file__).parent.absolute()) + '/dataFiles/'):  # Initialize model\n                                            print('Model Type:', alg)\n                                            print('Featurization:', method)\n                                            print('Dataset:', data)\n                                            print('Target(s):', target)\n                                            print('Task type:', task_type)\n                                            print('Tuning:', isTune)\n                                            print('Tuner:', tuner)\n                                            print()\n                                            print('Initializing model...', end=' ', flush=True)\n                                            # initiate model class with algorithm, dataset and target\n\n                                            model = MlModel(algorithm=alg, dataset=data, target=target,\n                                                            feat_meth=method, tune=isTune, cv=5, opt_iter=25)\n                                            print('Done.\\n')\n                                            model.connect_mysql(user='user', password='dolphin', host='localhost',\n                                                                 database='featurized_datasets',\n                                                                 initialize_all_data=False)\n                                            model.featurize(retrieve_from_mysql=True)\n                                            if model.algorithm not in [\"nn\", \"cnn\"]:\n                                                model.data_split(split=splitter, test=test_percent, scaler=scale)\n                                            else:\n                                                model.data_split(split=splitter, test=test_percent, val=0.1,\n                                                                 scaler=scale)\n                                        with cd('output'):\n                                            model.reg()\n                                            model.run(tuner=tuner)  # Runs the models/featurizations for classification\n                                            model.analyze()\n                                            if model.algorithm not in ['nn', 'cnn']:\n                                                model.pickle_model()\n                                            model.store()\n                                            model.org_files(zip_only=True)\n                                            model.to_neo4j(port=\"bolt://localhost:7687\", username=\"neo4j\",\n                                                           password=\"password\")\n                                    # Have files output to output\n\n\ndef single_model():\n    \"\"\"\n    This model is for debugging, similiar to the lines at the bottom of models.py. This is meant\n    to show how the current workflow works, as well serves as an easy spot to de-bug issues.\n\n    :return: None\n    \"\"\"\n    with cd(str(pathlib.Path(__file__).parent.absolute()) + '/dataFiles/'):  # Initialize model\n        print('Now in:', os.getcwd())\n        print('Initializing model...', end=' ', flush=True)\n        # initiate model class with algorithm, dataset and target\n        # model3 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],\n        #                  tune=False, cv=2, opt_iter=2)\n        model3 = MlModel(algorithm='gdb', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0],\n                         tune=False, cv=2, opt_iter=2)\n        print('done.')\n        print('Model Type:', model3.algorithm)\n        print('Featurization:', model3.feat_meth)\n        print('Dataset:', model3.dataset)\n        print()\n        model3.featurize()\n        if model3.algorithm not in [\"nn\", \"cnn\"]:\n            model3.data_split(split=\"index\", test=0.1, scaler=\"standard\")\n        else:\n            model3.data_split(split=\"scaffold\", test=0.1, val=0.1, scaler=\"standard\")\n\n    with cd('output'):  # Have files output to output\n        model3.reg()\n        model3.run(tuner=\"bayes\")\n\n        model3.store()\n        model3.org_files(zip_only=True)\n        model3.to_neo4j(port=\"bolt://localhost:7687\", username=\"neo4j\", password=\"password\")\n\n\nif __name__ == \"__main__\":\n    main()\n    # single_model()\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision a8a66af20c81ed57679aff3b2b814278e9318859)
++++ b/main.py	(date 1620933702345)
+@@ -14,7 +14,7 @@
+     print('ROOT Working Directory:', ROOT_DIR)
+ 
+     #### list of all learning algorithms
+-    learner = ['rf','nn', 'svm',  'gdb', 'nn']
++    learner = ['rf', 'nn', 'svm',  'gdb', 'nn']
+ 
+     #### All tune option
+     tune_option = [False, True]
+@@ -111,7 +111,7 @@
+         # initiate model class with algorithm, dataset and target
+         # model3 = MlModel(algorithm='gdb', dataset='water-energy.csv', target='expt', feat_meth=[0],
+         #                  tune=False, cv=2, opt_iter=2)
+-        model3 = MlModel(algorithm='gdb', dataset='Lipophilicity-ID.csv', target='exp', feat_meth=[0],
++        model3 = MlModel(algorithm='nn', dataset='water-energy.csv', target='expt', feat_meth=[0],
+                          tune=False, cv=2, opt_iter=2)
+         print('done.')
+         print('Model Type:', model3.algorithm)
+@@ -130,10 +130,11 @@
+ 
+         model3.store()
+         model3.org_files(zip_only=True)
+-        model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
++        model3.QsarDB_export(zip_output=True)
++        # model3.to_neo4j(port="bolt://localhost:7687", username="neo4j", password="password")
+ 
+ 
+ if __name__ == "__main__":
+-    main()
+-    # single_model()
++    # main()
++    single_model()
+ 
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"JavaScriptSettings\">\n    <option name=\"languageLevel\" value=\"ES6\" />\n  </component>\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.7 (test_env)\" project-jdk-type=\"Python SDK\" />\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision a8a66af20c81ed57679aff3b2b814278e9318859)
++++ b/.idea/misc.xml	(date 1620919523147)
+@@ -3,5 +3,5 @@
+   <component name="JavaScriptSettings">
+     <option name="languageLevel" value="ES6" />
+   </component>
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.7 (test_env)" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.7 (mlapp)" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
+Index: .idea/McQuade-Chem-ML.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<module type=\"PYTHON_MODULE\" version=\"4\">\n  <component name=\"NewModuleRootManager\">\n    <content url=\"file://$MODULE_DIR$\">\n      <excludeFolder url=\"file://$MODULE_DIR$/recommender_dev/results\" />\n    </content>\n    <orderEntry type=\"jdk\" jdkName=\"Python 3.7 (test_env)\" jdkType=\"Python SDK\" />\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\n  </component>\n  <component name=\"PackageRequirementsSettings\">\n    <option name=\"requirementsPath\" value=\"\" />\n  </component>\n  <component name=\"TestRunnerService\">\n    <option name=\"PROJECT_TEST_RUNNER\" value=\"pytest\" />\n  </component>\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/McQuade-Chem-ML.iml b/.idea/McQuade-Chem-ML.iml
+--- a/.idea/McQuade-Chem-ML.iml	(revision a8a66af20c81ed57679aff3b2b814278e9318859)
++++ b/.idea/McQuade-Chem-ML.iml	(date 1620919523063)
+@@ -4,7 +4,7 @@
+     <content url="file://$MODULE_DIR$">
+       <excludeFolder url="file://$MODULE_DIR$/recommender_dev/results" />
+     </content>
+-    <orderEntry type="jdk" jdkName="Python 3.7 (test_env)" jdkType="Python SDK" />
++    <orderEntry type="jdk" jdkName="Python 3.7 (mlapp)" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+   <component name="PackageRequirementsSettings">

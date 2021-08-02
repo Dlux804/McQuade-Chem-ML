@@ -6,6 +6,7 @@ from core.storage.misc import cd
 """
 Objective: A systematic way to create a unique name for every single machine learning run
 This code follows the "Letters and Numbers" rule explained in naming_schemes_v2.pptx in the naming branch
+
 """
 
 
@@ -92,7 +93,7 @@ def name(self):
     else:  # If new dataset
         count = 2
         if self.dataset[:-4][0] in dataset_dict.values():  # If this dataset has the same first character as existing ones
-            print("Duplicate First letter in input. Adding last and second to last characters")
+            # print("Duplicate First letter in input. Adding last and second to last characters")
             # Add first, last and second to last just to be safe
             dataset_string = ''.join([self.dataset[:-4][0], self.dataset[:-4][-count:]])
         else:  # If this dataset has a unique first character (compared to what we have in dataFiles)

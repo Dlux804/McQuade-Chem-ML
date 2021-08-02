@@ -51,7 +51,7 @@ class ModelToNeo4j:
         self.model = model
         self.zipped_out_dir = zipped_out_dir
         self.qsar_obj = qsar_obj
-        self.graph = Graph(port, username=username, password=password)
+        self.graph = Graph(port, auth=(username, password))
         self.parsed_models = None
         self.molecule_stats = ['pred_average_error', 'pred_std', 'pred_avg']  # Define stats to pull out of predictions
 
@@ -306,6 +306,10 @@ class ModelToNeo4j:
             model_data['scaled_pred_RMSE'] = None
             model_data['pred_std'] = None
             model_data['scaled_pred_std'] = None
+            model_data['pred_avg'] = None
+            model_data['scaled_pred_avg'] = None
+            model_data['pred_average_error'] = None
+            model_data['scaled_pred_average_error'] = None
 
             # Gather pseudo json_data
             json_data = {'test_percent': round(model.n['testing'] / model.n_total, 2),
@@ -313,13 +317,15 @@ class ModelToNeo4j:
                          'val_percent': round(model.n['validation'] / model.n_total, 2),
                          'predictions_stats': {'r2_avg': model.r2, 'mse_avg': model.mse,
                                                'rmse_avg': model.rmse,
-                                               'time_avg': None},
+                                               'time_avg': None, 'time_raw': None},
                          'run_name': model.name,
                          'feature_list': self.qsar_obj.feats,
                          'algorithm': model.algorithm,
                          'task_type': model.task_type,
                          'target_name': model.target_name,
                          'n_tot': model.n_total,
+                         'n_test': model.n['testing'],
+                         'n_train': model.n['training'],
                          'dataset': self.qsar_obj.dataset,
 
                          'date': None,
@@ -331,6 +337,9 @@ class ModelToNeo4j:
                          'opt_iter': None,
                          'n_best': None,
                          'delta': None,
+                         'split_method': None,
+                         'scaler_method': None,
+                         'original_param': {},
 
                          'tuned': False,
                          'feat_method_name': [],
@@ -393,6 +402,13 @@ class ModelToNeo4j:
         js = self.json_data
         if self.tune_algorithm_name is None:
             js['tune_time'] = 0
+
+        train_time = None
+        total_learning_time = None
+        if self.qsar_obj is None:
+            train_time = sum(js['predictions_stats']['time_raw'])
+            total_learning_time = sum(js['predictions_stats']['time_raw']) + js['tune_time'] + js['feat_time']
+
         self.graph.evaluate(
             """
 
@@ -422,9 +438,9 @@ class ModelToNeo4j:
 
             """,
             parameters={'date': js['date'], 'feat_time': js['feat_time'], 'model_name': js['run_name'],
-                        'tuned': js['tuned'], 'train_time': sum(js['predictions_stats']['time_raw']),
+                        'tuned': js['tuned'], 'train_time': train_time,
                         'tune_time': js['tune_time'], 'seed': js['random_seed'],
-                        'test_percent': js['test_percent'], 'n_test':js["n_test"],
+                        'test_percent': js['test_percent'], 'n_test': js["n_test"],
                         'train_percent': js['train_percent'], 'n_train': js['n_train'],
                         'val_percent': js['val_percent'], 'tune_algorithm_name': self.tune_algorithm_name,
 
@@ -433,7 +449,7 @@ class ModelToNeo4j:
 
                         'features': js['feat_meth'], 'splitter': js['split_method'], 'scaler': js['scaler_method'],
                         'feature_methods': js['feat_method_name'],
-                        'total_learning_time': sum(js['predictions_stats']['time_raw']) + js['tune_time'] + js['feat_time']
+                        'total_learning_time': total_learning_time
                         }
         )
         if js['val_percent'] != 0.0:

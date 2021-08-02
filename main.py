@@ -140,8 +140,8 @@ def some_models():
                             model.pickle_model()
                         model.store()
                         model.org_files(zip_only=True)
-                        model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
-                                       password="password")
+                        #model.to_neo4j(port="bolt://localhost:7687", username="neo4j",
+                                       #password="password")
 
 
 def example_qsar_models_to_neo4j():
@@ -201,6 +201,6 @@ def load_folder_to_neo4j(folder_name):
 
 if __name__ == "__main__":
     # all_models()
-    # some_models()
-    load_folder_to_neo4j('example')
+    some_models()
+    # load_folder_to_neo4j('example')
     # single_model()

@@ -1,0 +1,66 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      # using anaconda3 from continuumio
+      - image: continuumio/anaconda3
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      # Multiple caches are used to increase the chance of a cache hit (source: https://circleci.com/docs/2.0/caching/)
+      - restore_cache:
+          keys:
+            - v2-condareqs-{{ .Branch }}-{{ checksum "env_init/mlapp.yml" }}
+            - v2-condareqs-{{ .Branch }}
+            - v2-condareqs
+            # fallback to using the latest cache if no exact match is found
+            - v2-condareqs-
+
+        # Install the necessary Python packages
+        # activate conda env for future use
+      - run:
+          name: Install dependencies
+          command: |
+            conda env create -f env_init/mlapp.yml
+            source /opt/conda/etc/profile.d/conda.sh
+            conda activate mlapp
+      - save_cache:
+          key: v2-condareqs-{{ .Branch }}-{{ checksum "env_init/mlapp.yml" }}
+          paths:
+            - ~/py_modules
+      # run tests!
+      # this example uses Django's built-in test-runner
+      # other common Python testing frameworks include pytest and nose
+      # https://pytest.org
+      # https://nose.readthedocs.io
+      ## --disable-pytest-warnings: suppress warnings. While warnings can be important, I think it is faster to look
+      # for failures without scrolling through 200 lines of warnings
+      ## -v : Verbose. Pytest will tell us where the errors occurs, on which test functions, and why there's an error
+      ## --maxfail=5: Maximum amount of failures before stopping the tests. We have a lot of redundant
+      # initialization in the testing process. If one part of the module fails, everything that comes after it will fall
+      # apart. No need to look at the same error 50 times.
+      - run:
+          name: Run tests
+          command: |
+            source /opt/conda/etc/profile.d/conda.sh
+            conda activate mlapp
+            python -m pytest tests/
+            pytest --disable-pytest-warnings -v --maxfail=10
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports

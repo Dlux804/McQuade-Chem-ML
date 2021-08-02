@@ -1,0 +1,5 @@
+/barzilay_predictions/logger_dir/fold_0/
+!output/
+output/*
+core/nn_opt.ipynb
+py_module/
